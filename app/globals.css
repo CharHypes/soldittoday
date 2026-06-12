@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --plum: #1a1518;
+  --bruised: #2a1f25;
+  --pearl: #f5e8e4;
+  --dusty: #a89aa0;
+  --ivory: #faf6f1;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--plum);
+    color: var(--pearl);
+    overflow-x: hidden;
+  }
+
+  /* Section anchor offset for sticky nav */
+  section[id] {
+    scroll-margin-top: 88px;
+  }
+
+  ::selection {
+    background-color: #3d2530;
+    color: #f5e8e4;
+  }
+
+  /* Refined scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #1a1518;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #3a2e32;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #3d2530;
+  }
+}
+
+@layer components {
+  .container-lux {
+    @apply mx-auto w-full max-w-container px-6 md:px-10;
+  }
+
+  .eyebrow {
+    @apply text-xs font-medium uppercase tracking-widest text-dusty;
+  }
+
+  /* Thin gradient hairline used as section dividers */
+  .hairline {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(168, 154, 160, 0.35),
+      transparent
+    );
+  }
+
+  .btn {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3.5 text-sm font-medium tracking-wide transition-all duration-500 ease-lux;
+  }
+
+  .btn-primary {
+    @apply btn bg-pearl text-plum hover:-translate-y-0.5;
+  }
+
+  .btn-outline {
+    @apply btn border border-dusty/30 text-pearl hover:border-pearl/70 hover:-translate-y-0.5;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Subtle film-grain / noise texture overlay */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
