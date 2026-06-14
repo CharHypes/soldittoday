@@ -1,111 +1,80 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { testimonials } from "@/lib/data";
+import { motion } from "framer-motion";
+import { reviewThemes, reviewsUrl } from "@/lib/data";
 import SectionHeading from "./ui/SectionHeading";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
+/**
+ * Reviews — focused on the themes clients consistently mention rather than
+ * fabricated direct quotes. Verified, real reviews live on Charlotte's Zillow
+ * profile (linked via "Read More Reviews"). No invented testimonials here.
+ */
 export default function Testimonials() {
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  const go = useCallback(
-    (dir: number) =>
-      setIndex((prev) => (prev + dir + testimonials.length) % testimonials.length),
-    []
-  );
-
-  useEffect(() => {
-    if (paused) return;
-    const id = setInterval(() => go(1), 6000);
-    return () => clearInterval(id);
-  }, [paused, go]);
-
-  const active = testimonials[index];
-
   return (
-    <section
-      className="relative overflow-hidden bg-bruised py-24 md:py-32"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-    >
-      <div className="container-lux">
+    <section className="relative overflow-hidden bg-bruised py-24 md:py-32">
+      <div className="aurora-bloom opacity-60" />
+      <div className="grain-soft" />
+
+      <div className="container-lux relative z-10">
         <SectionHeading
-          eyebrow="Client Stories"
-          title="What it's like to work with SOLD IT TODAY"
+          eyebrow="Client Reviews"
+          title="What clients consistently say"
+          description="Across years of closings, the same themes come up again and again. Here's what working with SOLD IT TODAY tends to feel like."
           align="center"
         />
 
-        <div className="relative mx-auto mt-16 max-w-3xl">
-          {/* Quote mark */}
-          <div className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 select-none font-serif text-[140px] leading-none text-wine/40">
-            &ldquo;
-          </div>
-
-          <div className="relative min-h-[220px] text-center">
-            <AnimatePresence mode="wait">
-              <motion.blockquote
-                key={active.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.6, ease }}
-              >
-                <p className="text-balance text-xl font-light leading-relaxed text-pearl md:text-2xl">
-                  {active.quote}
-                </p>
-                <footer className="mt-8">
-                  <div className="text-base font-semibold text-pearl">
-                    {active.name}
-                  </div>
-                  <div className="mt-1 text-sm uppercase tracking-widest text-dusty">
-                    {active.role}
-                  </div>
-                </footer>
-              </motion.blockquote>
-            </AnimatePresence>
-          </div>
-
-          {/* Controls */}
-          <div className="mt-10 flex items-center justify-center gap-6">
-            <button
-              type="button"
-              onClick={() => go(-1)}
-              aria-label="Previous testimonial"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-dusty/25 text-pearl transition-all duration-400 ease-lux hover:border-pearl/60 hover:-translate-x-0.5"
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {reviewThemes.map((theme, i) => (
+            <motion.div
+              key={theme.title}
+              initial={{ opacity: 0, y: 26 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.65, delay: (i % 3) * 0.08, ease }}
+              className="aurora-ring group rounded-xl2 border border-auroraMauve/18 bg-plum/50 p-7"
             >
-              &larr;
-            </button>
-
-            <div className="flex items-center gap-2.5">
-              {testimonials.map((t, i) => (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => setIndex(i)}
-                  aria-label={`Go to testimonial ${i + 1}`}
-                  className={[
-                    "h-1.5 rounded-full transition-all duration-400 ease-lux",
-                    i === index
-                      ? "w-7 bg-pearl"
-                      : "w-1.5 bg-dusty/40 hover:bg-dusty",
-                  ].join(" ")}
-                />
-              ))}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => go(1)}
-              aria-label="Next testimonial"
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-dusty/25 text-pearl transition-all duration-400 ease-lux hover:border-pearl/60 hover:translate-x-0.5"
-            >
-              &rarr;
-            </button>
-          </div>
+              <div className="flex items-center gap-3">
+                {/* Quotation glyph accent */}
+                <span className="font-serif text-3xl leading-none text-auroraMauve">
+                  &ldquo;
+                </span>
+                <span className="h-px flex-1 bg-auroraMauve/20 transition-colors duration-500 group-hover:bg-auroraMauve/40" />
+              </div>
+              <h3 className="mt-4 text-lg font-semibold text-pearl">
+                {theme.title}
+              </h3>
+              <p className="mt-2.5 text-sm leading-relaxed text-dusty">
+                {theme.description}
+              </p>
+            </motion.div>
+          ))}
         </div>
+
+        {/* Link out to verified reviews */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease }}
+          className="mt-12 flex flex-col items-center gap-3 text-center"
+        >
+          <a
+            href={reviewsUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-aurora group"
+          >
+            Read More Reviews
+            <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
+              &rarr;
+            </span>
+          </a>
+          <span className="text-xs text-dusty/70">
+            Verified client reviews on Zillow
+          </span>
+        </motion.div>
       </div>
     </section>
   );

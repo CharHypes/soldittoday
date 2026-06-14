@@ -36,22 +36,20 @@ export default function Navbar() {
       ].join(" ")}
     >
       <nav className="container-lux flex h-[72px] items-center justify-between">
-        {/* Wordmark */}
-        <a
-          href="#home"
-          className="group flex flex-col leading-none"
-          aria-label="SOLD IT TODAY home"
-        >
-          <span className="text-sm font-bold uppercase tracking-[0.32em] text-pearl">
-            Sold It Today
-          </span>
-          <span className="mt-1 text-[10px] uppercase tracking-[0.28em] text-dusty">
-            Charlotte Hypes
-          </span>
+        {/* Brand logo — SOLD IT TODAY is the primary brand */}
+        <a href="#home" className="flex items-center" aria-label="SOLD IT TODAY home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
+            alt="SOLD IT TODAY"
+            className="h-[38px] w-auto md:h-[43px]"
+          />
         </a>
 
-        {/* Desktop links */}
-        <ul className="hidden items-center gap-9 md:flex">
+        {/* Desktop links — full nav only at lg+ (7 items + CTA need the room);
+            tablets and below use the hamburger menu. Tighter gap at lg so the
+            CTA doesn't wrap; roomier spacing returns at xl. */}
+        <ul className="hidden items-center gap-6 lg:flex xl:gap-9">
           {navLinks.map((link) => (
             <li key={link.href}>
               <a
@@ -65,10 +63,9 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <a
-          href="#contact"
-          className="hidden rounded-full border border-dusty/30 px-5 py-2.5 text-sm font-medium text-pearl transition-all duration-500 ease-lux hover:border-pearl/70 hover:-translate-y-0.5 md:inline-flex"
-        >
+        {/* Primary CTA — aurora glow, strongest action site-wide.
+            ~44px touch target (py-3) to match the site-wide standard. */}
+        <a href="#contact" className="btn-aurora hidden shrink-0 whitespace-nowrap !px-5 !py-3 lg:inline-flex">
           Schedule a Consultation
         </a>
 
@@ -76,7 +73,7 @@ export default function Navbar() {
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center md:hidden"
+          className="flex h-10 w-10 items-center justify-center lg:hidden"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
         >
@@ -111,7 +108,7 @@ export default function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-dusty/10 bg-plum/95 backdrop-blur-xl md:hidden"
+            className="overflow-hidden border-t border-dusty/10 bg-plum/95 backdrop-blur-xl lg:hidden"
           >
             <ul className="container-lux flex flex-col gap-1 py-6">
               {navLinks.map((link) => (
@@ -129,7 +126,7 @@ export default function Navbar() {
                 <a
                   href="#contact"
                   onClick={() => setOpen(false)}
-                  className="btn-primary w-full"
+                  className="btn-aurora w-full"
                 >
                   Schedule a Consultation
                 </a>

@@ -23,18 +23,21 @@ export default function Hero() {
       id="home"
       className="relative flex min-h-screen items-center overflow-hidden bg-mulberry-radial pt-28 pb-20"
     >
-      {/* Ambient glow accents */}
-      <div className="pointer-events-none absolute -left-40 top-20 h-[480px] w-[480px] rounded-full bg-wine/40 blur-[140px]" />
-      <div className="pointer-events-none absolute -right-32 bottom-0 h-[420px] w-[420px] rounded-full bg-smoked/40 blur-[150px]" />
+      {/* Abstract aurora light bloom (replaces the old template grid) */}
+      <div className="pointer-events-none absolute -left-40 top-16 h-[520px] w-[520px] animate-aurora-pulse rounded-full bg-aurora/45 blur-[150px]" />
+      <div className="pointer-events-none absolute right-[-10rem] top-1/3 h-[460px] w-[460px] animate-aurora-drift rounded-full bg-auroraMauve/28 blur-[160px]" />
+      <div className="pointer-events-none absolute -right-24 bottom-0 h-[420px] w-[420px] rounded-full bg-wine/60 blur-[150px]" />
+      <div className="grain-soft" />
 
-      {/* Faint grid lines for editorial structure */}
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, #F5E8E4 1px, transparent 1px), linear-gradient(to bottom, #F5E8E4 1px, transparent 1px)",
-          backgroundSize: "80px 80px",
-        }}
+      {/* Oversized SOLD IT TODAY key — architectural brand signature.
+          Anchored to the right and bled off the bottom edge of the hero so it
+          reads as integrated background artwork, not a placed logo. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        aria-hidden
+        alt=""
+        src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png"
+        className="key-watermark bottom-[-7rem] right-0 hidden h-[54rem] w-auto md:block lg:right-10"
       />
 
       <div className="container-lux relative z-10">
@@ -46,9 +49,9 @@ export default function Hero() {
         >
           <motion.div
             variants={item}
-            className="mb-8 inline-flex items-center gap-3 rounded-full border border-dusty/20 bg-bruised/40 px-4 py-2 backdrop-blur"
+            className="mb-8 inline-flex items-center gap-3 rounded-full border border-auroraMauve/25 bg-wine/30 px-4 py-2 backdrop-blur"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-pearl" />
+            <span className="h-1.5 w-1.5 rounded-full bg-auroraMauve shadow-aurora" />
             <span className="text-xs font-medium uppercase tracking-widest text-dusty">
               Southeast Michigan &middot; Metro Detroit
             </span>
@@ -59,17 +62,17 @@ export default function Hero() {
             className="text-balance text-[2.75rem] font-semibold leading-[1.02] tracking-tightest text-pearl sm:text-6xl lg:text-7xl"
           >
             Real estate guidance with{" "}
-            <span className="italic font-light text-dusty">clarity</span>,
+            <span className="italic font-light text-auroraMauve">clarity</span>,
             strategy, and{" "}
-            <span className="italic font-light text-dusty">results</span>.
+            <span className="italic font-light text-auroraMauve">results</span>.
           </motion.h1>
 
           <motion.p
             variants={item}
             className="mt-7 max-w-xl text-lg leading-relaxed text-dusty"
           >
-            SOLD IT TODAY helps buyers and sellers across Southeast Michigan move
-            forward with experience, honesty, and strong local market knowledge.
+            SOLD IT TODAY is a Southeast Michigan real estate team helping buyers
+            and sellers feel confident, informed, and ready for the next step.
             Luxury feel, practical guidance, real results.
           </motion.p>
 
@@ -77,35 +80,56 @@ export default function Hero() {
             variants={item}
             className="mt-10 flex flex-wrap items-center gap-3"
           >
-            <a href="#contact" className="btn-primary group">
-              Buy With Us
+            {/* Primary CTA — strongest action across the whole site */}
+            <a href="#contact" className="btn-aurora group">
+              Schedule a Consultation
               <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
                 &rarr;
               </span>
             </a>
-            <a href="#contact" className="btn-outline group">
-              Sell With Us
+            {/* Secondary CTA — jumps to the Home Search section */}
+            <a href="#search" className="btn-outline group">
+              Search Homes
               <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
                 &rarr;
               </span>
+            </a>
+          </motion.div>
+
+          {/* Tertiary buyer/seller paths */}
+          <motion.div
+            variants={item}
+            className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-dusty"
+          >
+            <a
+              href="#contact"
+              className="underline-offset-4 transition-colors hover:text-pearl hover:underline"
+            >
+              Buying a home &rarr;
             </a>
             <a
               href="#contact"
-              className="btn text-pearl underline-offset-4 hover:underline"
+              className="underline-offset-4 transition-colors hover:text-pearl hover:underline"
             >
-              Schedule a Consultation
+              Selling a home &rarr;
+            </a>
+            <a
+              href="/relocation"
+              className="underline-offset-4 transition-colors hover:text-pearl hover:underline"
+            >
+              Relocating to Michigan &rarr;
             </a>
           </motion.div>
 
           {/* Stat strip */}
           <motion.div
             variants={item}
-            className="mt-16 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl2 border border-dusty/10 bg-dusty/10 sm:grid-cols-4"
+            className="mt-14 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl2 border border-auroraMauve/15 bg-auroraMauve/15 sm:grid-cols-4"
           >
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="bg-plum/60 px-5 py-6 backdrop-blur transition-colors duration-500 hover:bg-bruised/60"
+                className="bg-plum/60 px-5 py-6 backdrop-blur transition-colors duration-500 hover:bg-wine/50"
               >
                 <div className="text-2xl font-semibold text-pearl sm:text-3xl">
                   {s.value}
@@ -118,23 +142,6 @@ export default function Hero() {
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll cue */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.2, duration: 1 }}
-        className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 md:flex"
-      >
-        <span className="text-[10px] uppercase tracking-widest text-dusty">
-          Scroll
-        </span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-          className="h-8 w-px bg-gradient-to-b from-dusty to-transparent"
-        />
-      </motion.div>
     </section>
   );
 }

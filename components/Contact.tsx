@@ -14,8 +14,15 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
 
   // Front-end only demo handler — wire to a real endpoint/CRM later.
+  // NOTE: when a backend is added, also validate server-side and consider
+  // adding a CAPTCHA (e.g. reCAPTCHA / Turnstile) alongside this honeypot.
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // Honeypot spam trap — bots fill hidden fields; real users never see it.
+    const honeypot = e.currentTarget.elements.namedItem(
+      "company"
+    ) as HTMLInputElement | null;
+    if (honeypot && honeypot.value) return; // silently drop bot submissions
     setSubmitted(true);
   };
 
@@ -74,7 +81,12 @@ export default function Contact() {
                   <div className="mt-1 text-lg font-semibold text-pearl">
                     {contact.brokerage}
                   </div>
-                  <div className="text-sm text-dusty">{contact.region}</div>
+                  <address className="mt-0.5 text-sm not-italic leading-relaxed text-dusty">
+                    {contact.officeStreet}
+                    <br />
+                    {contact.officeCityStateZip}
+                  </address>
+                  <div className="mt-1 text-sm text-dusty">{contact.region}</div>
                 </div>
               </div>
             </Reveal>
@@ -110,6 +122,22 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Honeypot spam trap — off-screen, not focusable, hidden from
+                    assistive tech. Humans never fill it; bots that do are dropped. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -left-[9999px] h-0 w-0 overflow-hidden"
+                >
+                  <label htmlFor="company">Company</label>
+                  <input
+                    id="company"
+                    name="company"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label
@@ -196,7 +224,7 @@ export default function Contact() {
                   />
                 </div>
 
-                <button type="submit" className="btn-primary group w-full">
+                <button type="submit" className="btn-aurora group w-full">
                   Let&rsquo;s Talk Real Estate
                   <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
                     &rarr;

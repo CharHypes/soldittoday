@@ -29,7 +29,7 @@ export default function Services() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.7, delay: i * 0.07, ease }}
-              className="group relative flex flex-col overflow-hidden rounded-xl2 border border-dusty/12 bg-plum/50 p-7 transition-all duration-500 ease-lux hover:-translate-y-1.5 hover:border-dusty/35 hover:bg-plum/80"
+              className="aurora-ring group relative flex flex-col overflow-hidden rounded-xl2 border border-dusty/12 bg-plum/50 p-7 hover:-translate-y-1.5 hover:bg-plum/80"
             >
               {/* Index numeral */}
               <span className="text-sm font-medium tracking-widest text-dusty/60">
@@ -55,6 +55,19 @@ export default function Services() {
                 ))}
               </ul>
 
+              {/* Link to a dedicated service page when one exists */}
+              {service.href && (
+                <a
+                  href={service.href}
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-auroraMauve underline-offset-4 transition-colors hover:text-pearl hover:underline"
+                >
+                  Explore Relocation Services
+                  <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </a>
+              )}
+
               {/* Hover sheen */}
               <span className="pointer-events-none absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-pearl/40 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
             </motion.article>
@@ -77,15 +90,20 @@ export default function Services() {
                 options with zero pressure.
               </p>
             </div>
-            <a
-              href="#contact"
-              className="btn-primary group mt-8 self-start"
-            >
-              Let's Talk
-              <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
-                &rarr;
-              </span>
-            </a>
+            <div className="mt-8 flex flex-col items-start gap-3">
+              <a href="#contact" className="btn-aurora group self-start">
+                Schedule a Consultation
+                <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
+                  &rarr;
+                </span>
+              </a>
+              <a
+                href="/relocation"
+                className="text-sm font-medium text-pearl/85 underline-offset-4 transition-colors hover:text-pearl hover:underline"
+              >
+                Relocating to Michigan? &rarr;
+              </a>
+            </div>
           </motion.div>
         </div>
       </div>

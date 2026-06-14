@@ -13,6 +13,20 @@ const statusStyles: Record<ListingStatus, string> = {
   Sold: "bg-plum/70 text-dusty border border-dusty/30",
 };
 
+/**
+ * Featured Listings.
+ *
+ * ┌──────────────────────────────────────────────────────────────────────────┐
+ * │  IDX / MLS INTEGRATION POINT                                               │
+ * │  Cards render from the `listings` PLACEHOLDER array in lib/data.ts (stock  │
+ * │  imagery — NOT live MLS data). The markup is fully data-driven, so when an │
+ * │  IDX/MLS feed is connected:                                                │
+ * │    1. Replace the `listings` source with live data (same `Listing` shape:  │
+ * │       title, location, price, beds, baths, sqft, status, image).           │
+ * │    2. Map the provider's listing fields onto the `Listing` type.           │
+ * │    3. Point cards / "Inquire About Listings" at IDX detail pages as needed.│
+ * └──────────────────────────────────────────────────────────────────────────┘
+ */
 export default function Listings() {
   return (
     <section id="listings" className="relative bg-plum py-24 md:py-32">
@@ -46,7 +60,7 @@ export default function Listings() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.7, delay: (i % 3) * 0.08, ease }}
-              className="group overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised/40 transition-all duration-500 ease-lux hover:-translate-y-1.5 hover:border-dusty/30 hover:shadow-card"
+              className="aurora-ring group overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised/40 hover:-translate-y-1.5"
             >
               {/* Photo */}
               <div className="relative aspect-[16/11] overflow-hidden">
