@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { contact } from "@/lib/data";
-import { supabase } from "@/lib/supabase";
 import Reveal from "./ui/Reveal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -29,36 +28,39 @@ export default function Contact() {
     if (honeypot && honeypot.value) return; // silently drop bot submissions
 
     const data = new FormData(form);
-    const fullName = String(data.get("name") ?? "").trim();
-    const [firstName, ...rest] = fullName.split(/\s+/);
-    const lastName = rest.join(" ");
 
     setSubmitting(true);
     setError(null);
 
-    const { error: insertError } = await supabase.from("leads").insert({
-      first_name: firstName ?? "",
-      last_name: lastName,
-      email: String(data.get("email") ?? "").trim(),
-      phone: String(data.get("phone") ?? "").trim() || null,
-      lead_type: String(data.get("intent") ?? "Just Exploring"),
-      message: String(data.get("message") ?? "").trim() || null,
-      source_page:
-        typeof window !== "undefined" ? window.location.pathname : "/",
-      status: "new",
-    });
+    try {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          email: data.get("email"),
+          phone: data.get("phone"),
+          intent: data.get("intent"),
+          message: data.get("message"),
+          sourcePage:
+            typeof window !== "undefined" ? window.location.pathname : "/",
+        }),
+      });
 
-    setSubmitting(false);
+      if (!res.ok) {
+        const { error: apiError } = await res.json().catch(() => ({}));
+        throw new Error(apiError ?? "Request failed");
+      }
 
-    if (insertError) {
-      console.error("Lead submission failed:", insertError.message);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Lead submission failed:", err);
       setError(
         "Something went wrong sending your message. Please try again, or reach out by phone or email."
       );
-      return;
+    } finally {
+      setSubmitting(false);
     }
-
-    setSubmitted(true);
   };
 
   return (
