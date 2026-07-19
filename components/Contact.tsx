@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { contact } from "@/lib/data";
+import { supabase } from "@/lib/supabase";
 import Reveal from "./ui/Reveal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -12,17 +13,51 @@ const inputClass =
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Front-end only demo handler — wire to a real endpoint/CRM later.
-  // NOTE: when a backend is added, also validate server-side and consider
-  // adding a CAPTCHA (e.g. reCAPTCHA / Turnstile) alongside this honeypot.
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  // NOTE: also validate server-side (RLS insert policy) and consider adding a
+  // CAPTCHA (e.g. reCAPTCHA / Turnstile) alongside this honeypot.
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+
     // Honeypot spam trap — bots fill hidden fields; real users never see it.
-    const honeypot = e.currentTarget.elements.namedItem(
+    const honeypot = form.elements.namedItem(
       "company"
     ) as HTMLInputElement | null;
     if (honeypot && honeypot.value) return; // silently drop bot submissions
+
+    const data = new FormData(form);
+    const fullName = String(data.get("name") ?? "").trim();
+    const [firstName, ...rest] = fullName.split(/\s+/);
+    const lastName = rest.join(" ");
+
+    setSubmitting(true);
+    setError(null);
+
+    const { error: insertError } = await supabase.from("leads").insert({
+      first_name: firstName ?? "",
+      last_name: lastName,
+      email: String(data.get("email") ?? "").trim(),
+      phone: String(data.get("phone") ?? "").trim() || null,
+      lead_type: String(data.get("intent") ?? "Just Exploring"),
+      message: String(data.get("message") ?? "").trim() || null,
+      source_page:
+        typeof window !== "undefined" ? window.location.pathname : "/",
+      status: "new",
+    });
+
+    setSubmitting(false);
+
+    if (insertError) {
+      console.error("Lead submission failed:", insertError.message);
+      setError(
+        "Something went wrong sending your message. Please try again, or reach out by phone or email."
+      );
+      return;
+    }
+
     setSubmitted(true);
   };
 
@@ -224,12 +259,24 @@ export default function Contact() {
                   />
                 </div>
 
-                <button type="submit" className="btn-aurora group w-full">
-                  Let&rsquo;s Talk Real Estate
-                  <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
-                    &rarr;
-                  </span>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="btn-aurora group w-full disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {submitting ? "Sending..." : "Let’s Talk Real Estate"}
+                  {!submitting && (
+                    <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
+                      &rarr;
+                    </span>
+                  )}
                 </button>
+
+                {error && (
+                  <p role="alert" className="text-sm leading-relaxed text-red-300">
+                    {error}
+                  </p>
+                )}
               </form>
             )}
           </motion.div>
