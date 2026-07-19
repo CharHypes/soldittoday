@@ -318,24 +318,6 @@ export const team: TeamMember[] = [
     image: "/assets/team/christopher-centers.png",
     objectPosition: "center 30%",
   },
-  {
-    id: "nadia-churchill",
-    name: "Naudia Churchill",
-    role: "REALTOR® | Buyer Specialist",
-    bio: "Naudia specializes in helping buyers navigate the process with confidence, providing patient guidance, clear communication, and strong advocacy every step of the way.",
-    specialties: ["Buyer representation", "Relocation", "Neighborhood matching"],
-    email: "naudia@soldittoday.com",
-    phone: "(734) 787-3472",
-    // Reframed copy of her photo: ~50px transparent headroom keeps breathing
-    // room above her head while scaling the subject up to match the other
-    // cards. Crop biased left to de-emphasize the sign.
-    image: "/assets/team/nadia-churchill-framed-v2.png",
-    objectPosition: "40% center",
-    // Scale up ~10% anchored at the top so her face matches the other cards
-    // and the pink sign crops smaller at the bottom — headroom above stays.
-    imageScale: 1.1,
-    imageOrigin: "top",
-  },
 ];
 
 /* -------------------------------------------------------------------------- */

@@ -14,14 +14,14 @@ type TeamProps = {
 
 export default function Team({ bare = false }: TeamProps) {
   const grid = (
-    <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {team.map((member, i) => (
         <motion.article
           key={member.id}
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, delay: (i % 4) * 0.08, ease }}
+          transition={{ duration: 0.7, delay: (i % 3) * 0.08, ease }}
           className="aurora-ring group flex flex-col overflow-hidden rounded-xl2 border border-auroraMauve/18 bg-plum/50"
         >
           {/* Portrait */}
@@ -30,7 +30,7 @@ export default function Team({ bare = false }: TeamProps) {
               src={member.image}
               alt={`${member.name}, ${member.role} at SOLD IT TODAY`}
               fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               style={{
                 objectPosition: member.objectPosition,
                 transform: member.imageScale
