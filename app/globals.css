@@ -246,6 +246,17 @@
   }
 
   /*
+   * Theme-swapped assets. For artwork that cannot be recolored with CSS —
+   * a reversed logo, say — render both variants and let the theme pick.
+   * Done in CSS so the right one is correct at first paint.
+   */
+  :root[data-theme="light"] .theme-dark-only,
+  :root[data-theme="dark"] .theme-light-only,
+  :root:not([data-theme="light"]) .theme-light-only {
+    display: none;
+  }
+
+  /*
    * Aurora bloom — an abstract soft light field placed behind sections to
    * replace the old template-y grid. Pair with .grain-soft for texture.
    */

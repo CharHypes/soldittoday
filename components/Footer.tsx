@@ -19,17 +19,24 @@ export default function Footer() {
               className="h-12 w-auto"
             />
             {/* Brokerage compliance lockup. The official Remerica mark is dark
-                navy + red — illegible directly on the dark footer — so we use a
-                generated pearl-white reversed version (remerica-united-realty-white.png)
-                inside a subtle dark glass card. Reads as an integrated brokerage
-                badge, not a bright white box. Swap in an official reversed asset
-                if the brokerage provides one. */}
+                navy + red — illegible on the dark footer — so a generated
+                pearl-white reversed version is used there. Light mode needs the
+                opposite: the white mark vanishes, so the original dark mark
+                shows instead. Both are rendered and swapped by theme in CSS
+                rather than in JS, so the correct one is present at first paint.
+                Swap in an official reversed asset if the brokerage provides one. */}
             <div className="flex items-center rounded-xl border border-pearl/12 bg-pearl/[0.05] px-4 py-2.5 backdrop-blur-sm">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assets/logos/remerica/remerica-united-realty-white.png"
                 alt="Remerica United Realty — brokerage"
-                className="h-8 w-auto opacity-90"
+                className="theme-dark-only h-8 w-auto opacity-90"
+              />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/logos/remerica/remerica-united-realty.png"
+                alt="Remerica United Realty — brokerage"
+                className="theme-light-only h-8 w-auto"
               />
             </div>
           </div>
