@@ -16,10 +16,10 @@ export default function Ticker() {
     <ul className="flex shrink-0 items-center gap-8 pr-8" aria-hidden="true">
       {tickerItems.map((item, i) => (
         <li key={`${item}-${i}`} className="flex shrink-0 items-center gap-8">
-          <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.25em] text-dusty">
+          <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.25em] text-goldInk">
             {item}
           </span>
-          <span className="text-[10px] text-auroraMauve/70" aria-hidden="true">
+          <span className="text-[10px] text-goldInk/60" aria-hidden="true">
             &#9670;
           </span>
         </li>

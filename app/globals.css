@@ -45,6 +45,9 @@
    * contrast floor the text tokens have to clear.
    */
   --gold: 224 176 160;
+  /* Gold used as TEXT rather than a rim — must clear 4.5:1, so it diverges
+     from --gold in light mode where the rim tone is too pale to read. */
+  --gold-ink: 224 176 160;
   --ring-accent: var(--aurora-mauve);
 
   /* Hero/section gradient stops, tunable per theme without touching the
@@ -110,6 +113,7 @@
      than dark does — without the glow to separate surfaces, the metal edge is
      what keeps cards from looking like plain boxes. */
   --gold: 170 116 78;
+  --gold-ink: 140 90 54;
   --ring-accent: var(--gold);
 
   /* Warm blush at the top of the radial keeps light mode from washing out. */

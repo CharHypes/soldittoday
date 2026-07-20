@@ -57,7 +57,8 @@ export const stats: Stat[] = [
   { value: "20", label: "Years licensed" },
   { value: "350+", label: "Homes sold" },
   { value: "5★", label: "Zillow rated" },
-  { value: "SE MI", label: "Local market depth" },
+  // "SE MI" read as an abbreviation nobody outside the office knows.
+  { value: "Metro Detroit", label: "Local market depth" },
 ];
 
 /* -------------------------------------------------------------------------- */

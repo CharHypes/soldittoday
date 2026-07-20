@@ -31,6 +31,8 @@ const config: Config = {
         bodySoft: "rgb(var(--body-soft) / <alpha-value>)",
         // Rose gold sampled from the logo — accents and rims, not body text.
         gold: "rgb(var(--gold) / <alpha-value>)",
+        // Readable gold for text; --gold alone is too pale on light backgrounds.
+        goldInk: "rgb(var(--gold-ink) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-poppins)", "system-ui", "sans-serif"],

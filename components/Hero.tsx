@@ -124,17 +124,17 @@ export default function Hero() {
           {/* Stat strip */}
           <motion.div
             variants={item}
-            className="mt-14 grid max-w-2xl grid-cols-2 gap-px overflow-hidden rounded-xl2 border border-auroraMauve/15 bg-auroraMauve/15 sm:grid-cols-4"
+            className="mt-12 grid max-w-xl grid-cols-2 gap-px overflow-hidden rounded-xl2 border border-auroraMauve/15 bg-auroraMauve/15 sm:grid-cols-4"
           >
             {stats.map((s) => (
               <div
                 key={s.label}
-                className="bg-plum/60 px-5 py-6 backdrop-blur transition-colors duration-500 hover:bg-wine/50"
+                className="bg-plum/60 px-3.5 py-4 backdrop-blur transition-colors duration-500 hover:bg-wine/50"
               >
-                <div className="text-2xl font-semibold text-pearl sm:text-3xl">
+                <div className="text-xl font-semibold leading-tight text-pearl sm:text-2xl">
                   {s.value}
                 </div>
-                <div className="mt-1 text-xs leading-snug text-dusty">
+                <div className="mt-1 text-[11px] leading-snug text-dusty">
                   {s.label}
                 </div>
               </div>
