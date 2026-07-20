@@ -30,11 +30,33 @@ export const metadata: Metadata = {
   },
 };
 
+/*
+ * Resolves the theme before first paint: a saved choice wins, otherwise the
+ * visitor's OS preference. Must stay a blocking inline script — deferring it
+ * would let the wrong theme paint first and flash.
+ */
+const themeScript = `
+(function() {
+  try {
+    var saved = localStorage.getItem('sit-theme');
+    var theme = saved === 'light' || saved === 'dark'
+      ? saved
+      : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  }
+})();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="font-sans antialiased">
         <div className="grain-overlay" aria-hidden="true" />
         <Providers>{children}</Providers>

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import Footer from "./Footer";
+import ThemeToggle from "./ThemeToggle";
 import { contact } from "@/lib/data";
 
 type PageShellProps = {
@@ -51,6 +52,7 @@ export default function PageShell({
             >
               Home
             </a>
+            <ThemeToggle />
             <a
               href="/#contact"
               className="btn-aurora whitespace-nowrap !px-4 !py-3 text-[13px] sm:!px-5 sm:text-sm"

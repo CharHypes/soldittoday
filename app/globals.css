@@ -2,14 +2,93 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --plum: #1a1518;
-  --bruised: #2a1f25;
-  --pearl: #f5e8e4;
-  --dusty: #a89aa0;
-  --ivory: #faf6f1;
-  --aurora: #7a4a5e;
-  --aurora-mauve: #b89aa4;
+/*
+ * Mulberry Aurora palette.
+ *
+ * Values are space-separated RGB channels, not hex, so Tailwind can apply
+ * opacity modifiers (bg-plum/40) against them. Token names are positional
+ * rather than literal — `plum` means "page background" and `pearl` means
+ * "primary text" in both themes, which is what lets every component keep
+ * its existing classes while the theme swaps underneath.
+ */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --plum: 26 21 24;
+  --bruised: 42 31 37;
+  --truffle: 37 32 31;
+  --smoked: 58 46 50;
+  --pearl: 245 232 228;
+  --dusty: 168 154 160;
+  --wine: 61 37 48;
+  --ivory: 250 246 241;
+  --champagne: 244 233 228;
+  --stone: 236 224 220;
+  --aurora: 122 74 94;
+  --aurora-mauve: 184 154 164;
+
+  /*
+   * Ink tokens for the inverted cream band (WhyWorkWithUs, SectionHeading
+   * light variant). That band stays light in BOTH themes, so its text must
+   * stay dark in both — it cannot ride the normal pearl/dusty swap.
+   */
+  --ink: 58 46 50;
+  --ink-accent: 61 37 48;
+
+  /* Footer body copy — softer than headings for hierarchy, still above AA. */
+  --body-soft: 216 200 207;
+
+  /* Ambient effects: strong and backlit against a dark field. */
+  --bloom-1: 122 74 94 / 0.58;
+  --bloom-2: 184 154 164 / 0.34;
+  --bloom-3: 90 51 67 / 0.62;
+  --sheen-mid: 90 51 67;
+  --shadow-strength: 0.55;
+  --grain-opacity: 0.05;
+  --grain-blend: overlay;
+  --watermark-opacity: 0.06;
+  --scrollbar-track: 26 21 24;
+  --scrollbar-thumb: 58 46 50;
+}
+
+/*
+ * Light theme. Not an inversion — the dark theme's glow does the work of
+ * separating surfaces, so on light we lean on tint and hairlines instead
+ * and pull the blooms/grain back hard to avoid a muddy wash.
+ */
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  --plum: 251 248 246;
+  --bruised: 255 255 255;
+  --truffle: 247 242 240;
+  --smoked: 226 214 217;
+  --pearl: 26 21 24;
+  /* Muted tones run darker here than a straight inversion would give, so
+     small text clears 4.5:1 against the near-white page. */
+  --dusty: 99 85 93;
+  --wine: 226 209 216;
+  --ivory: 255 255 255;
+  --champagne: 250 244 241;
+  --stone: 240 231 227;
+  --aurora: 110 67 85;
+  --aurora-mauve: 124 92 105;
+
+  --ink: 32 26 30;
+  --ink-accent: 110 67 85;
+  --body-soft: 92 79 86;
+
+  --bloom-1: 122 74 94 / 0.10;
+  --bloom-2: 184 154 164 / 0.12;
+  --bloom-3: 90 51 67 / 0.08;
+  --sheen-mid: 236 222 228;
+  --shadow-strength: 0.14;
+  --grain-opacity: 0.03;
+  --grain-blend: multiply;
+  --watermark-opacity: 0.05;
+  --scrollbar-track: 240 231 227;
+  --scrollbar-thumb: 200 184 190;
 }
 
 @layer base {
@@ -20,9 +99,11 @@
   }
 
   body {
-    background-color: var(--plum);
-    color: var(--pearl);
+    background-color: rgb(var(--plum));
+    color: rgb(var(--pearl));
     overflow-x: hidden;
+    transition: background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      color 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   /* Section anchor offset for sticky nav */
@@ -31,7 +112,7 @@
   }
 
   ::selection {
-    background-color: #3d2530;
+    background-color: rgb(var(--aurora) / 0.85);
     color: #f5e8e4;
   }
 
@@ -40,14 +121,14 @@
     width: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #1a1518;
+    background: rgb(var(--scrollbar-track));
   }
   ::-webkit-scrollbar-thumb {
-    background: #3a2e32;
+    background: rgb(var(--scrollbar-thumb));
     border-radius: 999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3d2530;
+    background: rgb(var(--aurora-mauve));
   }
 }
 
@@ -134,21 +215,9 @@
     pointer-events: none;
     background-image: var(--tw-gradient-stops, none);
     background:
-      radial-gradient(
-        58% 78% at 18% 12%,
-        rgba(122, 74, 94, 0.58) 0%,
-        transparent 62%
-      ),
-      radial-gradient(
-        48% 68% at 86% 28%,
-        rgba(184, 154, 164, 0.34) 0%,
-        transparent 66%
-      ),
-      radial-gradient(
-        72% 92% at 50% 112%,
-        rgba(90, 51, 67, 0.62) 0%,
-        transparent 72%
-      );
+      radial-gradient(58% 78% at 18% 12%, rgb(var(--bloom-1)) 0%, transparent 62%),
+      radial-gradient(48% 68% at 86% 28%, rgb(var(--bloom-2)) 0%, transparent 66%),
+      radial-gradient(72% 92% at 50% 112%, rgb(var(--bloom-3)) 0%, transparent 72%);
   }
 }
 
@@ -158,8 +227,8 @@
   inset: 0;
   z-index: 60;
   pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: overlay;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -168,8 +237,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
+  opacity: calc(var(--grain-opacity) * 0.8);
+  mix-blend-mode: var(--grain-blend);
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -182,7 +251,7 @@
   position: absolute;
   pointer-events: none;
   user-select: none;
-  opacity: 0.06;
+  opacity: var(--watermark-opacity);
   filter: blur(4px);
 }
 

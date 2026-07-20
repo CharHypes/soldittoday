@@ -8,21 +8,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Mulberry Noir palette
-        plum: "#1A1518", // Plum Charcoal
-        bruised: "#2A1F25", // Bruised Plum
-        truffle: "#25201F", // Truffle
-        smoked: "#3A2E32", // Smoked Mauve
-        pearl: "#F5E8E4", // Pearl Cream
-        dusty: "#A89AA0", // Dusty Mauve
-        wine: "#3D2530", // Wine Velvet
-        ivory: "#FAF6F1", // Ivory Linen
-        champagne: "#F4E9E4", // Champagne Blush
-        stone: "#ECE0DC", // Stone Blush
+        // Mulberry Aurora palette. Each token resolves to a CSS variable
+        // defined per theme in globals.css, so `bg-plum` means "page
+        // background" in both themes rather than a fixed hex.
+        plum: "rgb(var(--plum) / <alpha-value>)", // Page background
+        bruised: "rgb(var(--bruised) / <alpha-value>)", // Elevated surface
+        truffle: "rgb(var(--truffle) / <alpha-value>)",
+        smoked: "rgb(var(--smoked) / <alpha-value>)",
+        pearl: "rgb(var(--pearl) / <alpha-value>)", // Primary text
+        dusty: "rgb(var(--dusty) / <alpha-value>)", // Muted text / hairlines
+        wine: "rgb(var(--wine) / <alpha-value>)",
+        ivory: "rgb(var(--ivory) / <alpha-value>)",
+        champagne: "rgb(var(--champagne) / <alpha-value>)",
+        stone: "rgb(var(--stone) / <alpha-value>)",
         // Aurora accent — a softly lifted mulberry/mauve used only for glow,
         // never a flat fill. Kept muted on purpose (no neon).
-        aurora: "#7A4A5E", // Soft mulberry
-        auroraMauve: "#B89AA4", // Lifted dusty mauve
+        aurora: "rgb(var(--aurora) / <alpha-value>)",
+        auroraMauve: "rgb(var(--aurora-mauve) / <alpha-value>)",
+        // Always-dark text for the cream band that stays light in both themes.
+        ink: "rgb(var(--ink) / <alpha-value>)",
+        inkAccent: "rgb(var(--ink-accent) / <alpha-value>)",
+        bodySoft: "rgb(var(--body-soft) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
@@ -38,25 +44,27 @@ const config: Config = {
         xl2: "1.25rem",
       },
       boxShadow: {
-        soft: "0 24px 60px -24px rgba(0, 0, 0, 0.55)",
-        card: "0 18px 50px -28px rgba(0, 0, 0, 0.65)",
-        glow: "0 0 0 1px rgba(168, 154, 160, 0.18)",
+        soft: "0 24px 60px -24px rgb(0 0 0 / var(--shadow-strength))",
+        card: "0 18px 50px -28px rgb(0 0 0 / calc(var(--shadow-strength) + 0.1))",
+        glow: "0 0 0 1px rgb(var(--dusty) / 0.18)",
         // Mulberry Aurora — soft, backlit luxury glow (no neon).
         aurora:
-          "0 0 0 1px rgba(184, 154, 164, 0.22), 0 10px 40px -12px rgba(122, 74, 94, 0.55), 0 0 60px -18px rgba(122, 74, 94, 0.45)",
+          "0 0 0 1px rgb(var(--aurora-mauve) / 0.22), 0 10px 40px -12px rgb(var(--aurora) / 0.55), 0 0 60px -18px rgb(var(--aurora) / 0.45)",
         "aurora-strong":
-          "0 0 0 1px rgba(245, 232, 228, 0.28), 0 14px 50px -10px rgba(122, 74, 94, 0.7), 0 0 80px -16px rgba(184, 154, 164, 0.55)",
+          "0 0 0 1px rgb(var(--aurora-mauve) / 0.4), 0 14px 50px -10px rgb(var(--aurora) / 0.7), 0 0 80px -16px rgb(var(--aurora-mauve) / 0.55)",
       },
       backgroundImage: {
+        // Theme-aware: stops resolve through the palette variables, so these
+        // read as deep mulberry on dark and a soft blush wash on light.
         "mulberry-radial":
-          "radial-gradient(120% 120% at 50% 0%, #3D2530 0%, #2A1F25 38%, #1A1518 100%)",
+          "radial-gradient(120% 120% at 50% 0%, rgb(var(--wine)) 0%, rgb(var(--bruised)) 38%, rgb(var(--plum)) 100%)",
         "mulberry-soft":
-          "linear-gradient(135deg, #2A1F25 0%, #3D2530 50%, #1A1518 100%)",
+          "linear-gradient(135deg, rgb(var(--bruised)) 0%, rgb(var(--wine)) 50%, rgb(var(--plum)) 100%)",
         "wine-sheen":
-          "linear-gradient(135deg, #3D2530 0%, #5a3343 50%, #3D2530 100%)",
+          "linear-gradient(135deg, rgb(var(--wine)) 0%, rgb(var(--sheen-mid)) 50%, rgb(var(--wine)) 100%)",
         // Aurora bloom — abstract soft light used behind sections/cards.
         "aurora-bloom":
-          "radial-gradient(60% 80% at 20% 10%, rgba(122, 74, 94, 0.35) 0%, transparent 60%), radial-gradient(50% 70% at 85% 30%, rgba(184, 154, 164, 0.22) 0%, transparent 65%), radial-gradient(70% 90% at 50% 110%, rgba(61, 37, 48, 0.5) 0%, transparent 70%)",
+          "radial-gradient(60% 80% at 20% 10%, rgb(var(--bloom-1)) 0%, transparent 60%), radial-gradient(50% 70% at 85% 30%, rgb(var(--bloom-2)) 0%, transparent 65%), radial-gradient(70% 90% at 50% 110%, rgb(var(--bloom-3)) 0%, transparent 70%)",
       },
       transitionTimingFunction: {
         lux: "cubic-bezier(0.22, 1, 0.36, 1)",

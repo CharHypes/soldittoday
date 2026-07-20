@@ -29,13 +29,15 @@ export default function SectionHeading({
       ].join(" ")}
     >
       <Reveal>
-        <span className="eyebrow">{eyebrow}</span>
+        <span className={light ? "eyebrow text-inkAccent" : "eyebrow"}>
+          {eyebrow}
+        </span>
       </Reveal>
       <Reveal delay={0.08}>
         <h2
           className={[
             "mt-4 text-3xl font-semibold leading-[1.08] tracking-tightest sm:text-4xl md:text-5xl text-balance",
-            light ? "text-plum" : "text-pearl",
+            light ? "text-ink" : "text-pearl",
           ].join(" ")}
         >
           {title}
@@ -46,7 +48,7 @@ export default function SectionHeading({
           <p
             className={[
               "mt-5 text-base leading-relaxed md:text-lg",
-              light ? "text-smoked/80" : "text-dusty",
+              light ? "text-ink/75" : "text-dusty",
             ].join(" ")}
           >
             {description}

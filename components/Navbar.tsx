@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { navLinks } from "@/lib/data";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -65,15 +66,20 @@ export default function Navbar() {
 
         {/* Primary CTA — aurora glow, strongest action site-wide.
             ~44px touch target (py-3) to match the site-wide standard. */}
-        <a href="#contact" className="btn-aurora hidden shrink-0 whitespace-nowrap !px-5 !py-3 lg:inline-flex">
-          Schedule a Consultation
-        </a>
+        <div className="hidden shrink-0 items-center gap-3 lg:flex">
+          <ThemeToggle />
+          <a href="#contact" className="btn-aurora whitespace-nowrap !px-5 !py-3">
+            Schedule a Consultation
+          </a>
+        </div>
 
         {/* Mobile toggle */}
+        <div className="flex items-center gap-1 lg:hidden">
+        <ThemeToggle />
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="flex h-10 w-10 items-center justify-center lg:hidden"
+          className="flex h-10 w-10 items-center justify-center"
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
         >
@@ -98,6 +104,7 @@ export default function Navbar() {
             />
           </div>
         </button>
+        </div>
       </nav>
 
       {/* Mobile menu */}

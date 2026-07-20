@@ -29,15 +29,15 @@ export default function WhyWorkWithUs() {
               className="group bg-ivory p-8 transition-colors duration-500 hover:bg-champagne"
             >
               <div className="flex items-center gap-3">
-                <span className="text-sm font-semibold tracking-widest text-wine/70">
+                <span className="text-sm font-semibold tracking-widest text-inkAccent/90">
                   0{i + 1}
                 </span>
                 <span className="h-px flex-1 bg-smoked/15 transition-colors duration-500 group-hover:bg-wine/30" />
               </div>
-              <h3 className="mt-5 text-lg font-semibold text-plum">
+              <h3 className="mt-5 text-lg font-semibold text-ink">
                 {reason.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-smoked/80">
+              <p className="mt-3 text-sm leading-relaxed text-ink/75">
                 {reason.description}
               </p>
             </motion.div>

@@ -52,14 +52,14 @@ export default function Footer() {
             <div className="text-lg font-bold uppercase tracking-[0.32em] text-pearl">
               {contact.brand}
             </div>
-            {/* Body copy uses a softer tone (#D8C8CF) than headings/names/links
-                for clearer hierarchy while staying well above AA contrast. */}
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#D8C8CF]">
+            {/* Body copy uses a softer tone than headings/names/links for
+                clearer hierarchy while staying well above AA contrast. */}
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-bodySoft">
               Real estate guidance with clarity, strategy, and results. Helping
               Southeast Michigan buyers and sellers feel confident, informed, and
               ready to take the next step.
             </p>
-            <p className="mt-5 text-sm font-medium text-[#D8C8CF]">
+            <p className="mt-5 text-sm font-medium text-bodySoft">
               {contact.serviceStatement}
             </p>
           </div>
