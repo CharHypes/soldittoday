@@ -39,6 +39,20 @@
   /* Footer body copy — softer than headings for hierarchy, still above AA. */
   --body-soft: 216 200 207;
 
+  /*
+   * Rose gold, sampled from the brand logo. Decorative only — used for rims,
+   * hairlines and the watermark, never for text, so it is exempt from the
+   * contrast floor the text tokens have to clear.
+   */
+  --gold: 224 176 160;
+  --ring-accent: var(--aurora-mauve);
+
+  /* Hero/section gradient stops, tunable per theme without touching the
+     surface tokens that cards rely on. */
+  --grad-1: 61 37 48;
+  --grad-2: 42 31 37;
+  --grad-3: 26 21 24;
+
   /* Ambient effects: strong and backlit against a dark field. */
   --bloom-1: 122 74 94 / 0.58;
   --bloom-2: 184 154 164 / 0.34;
@@ -48,6 +62,7 @@
   --grain-opacity: 0.05;
   --grain-blend: overlay;
   --watermark-opacity: 0.06;
+  --watermark-filter: blur(4px);
   --scrollbar-track: 26 21 24;
   --scrollbar-thumb: 58 46 50;
 }
@@ -79,6 +94,16 @@
   --ink-accent: 110 67 85;
   --body-soft: 92 79 86;
 
+  /* Deeper than the logo's rose gold so rims read as metal against white
+     rather than disappearing into it. */
+  --gold: 183 130 96;
+  --ring-accent: var(--gold);
+
+  /* Warm blush at the top of the radial keeps light mode from washing out. */
+  --grad-1: 240 217 227;
+  --grad-2: 252 245 248;
+  --grad-3: 251 248 246;
+
   --bloom-1: 122 74 94 / 0.10;
   --bloom-2: 184 154 164 / 0.12;
   --bloom-3: 90 51 67 / 0.08;
@@ -86,7 +111,11 @@
   --shadow-strength: 0.14;
   --grain-opacity: 0.03;
   --grain-blend: multiply;
-  --watermark-opacity: 0.05;
+  /* The key silhouette loses all definition on a near-white field, so it runs
+     stronger here and is warmed toward gold instead of grey. */
+  --watermark-opacity: 0.22;
+  --watermark-filter: blur(3px) sepia(0.55) saturate(2.2) hue-rotate(-12deg)
+    brightness(0.92);
   --scrollbar-track: 240 231 227;
   --scrollbar-thumb: 200 184 190;
 }
@@ -147,7 +176,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(168, 154, 160, 0.35),
+      rgb(var(--ring-accent) / 0.45),
       transparent
     );
   }
@@ -198,7 +227,7 @@
   }
   .aurora-ring:hover {
     @apply shadow-aurora;
-    border-color: rgba(184, 154, 164, 0.4);
+    border-color: rgb(var(--ring-accent) / 0.55);
   }
 
   .text-balance {
@@ -252,7 +281,7 @@
   pointer-events: none;
   user-select: none;
   opacity: var(--watermark-opacity);
-  filter: blur(4px);
+  filter: var(--watermark-filter);
 }
 
 /* Reduced motion */

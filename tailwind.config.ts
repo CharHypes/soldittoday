@@ -46,20 +46,21 @@ const config: Config = {
       boxShadow: {
         soft: "0 24px 60px -24px rgb(0 0 0 / var(--shadow-strength))",
         card: "0 18px 50px -28px rgb(0 0 0 / calc(var(--shadow-strength) + 0.1))",
-        glow: "0 0 0 1px rgb(var(--dusty) / 0.18)",
-        // Mulberry Aurora — soft, backlit luxury glow (no neon).
+        glow: "0 0 0 1px rgb(var(--ring-accent) / 0.22)",
+        // Mulberry Aurora — soft, backlit luxury glow (no neon). The 1px ring
+        // carries the metal: mauve on dark, rose gold on light.
         aurora:
-          "0 0 0 1px rgb(var(--aurora-mauve) / 0.22), 0 10px 40px -12px rgb(var(--aurora) / 0.55), 0 0 60px -18px rgb(var(--aurora) / 0.45)",
+          "0 0 0 1px rgb(var(--ring-accent) / 0.32), 0 10px 40px -12px rgb(var(--aurora) / 0.55), 0 0 60px -18px rgb(var(--aurora) / 0.45)",
         "aurora-strong":
-          "0 0 0 1px rgb(var(--aurora-mauve) / 0.4), 0 14px 50px -10px rgb(var(--aurora) / 0.7), 0 0 80px -16px rgb(var(--aurora-mauve) / 0.55)",
+          "0 0 0 1px rgb(var(--ring-accent) / 0.5), 0 14px 50px -10px rgb(var(--aurora) / 0.7), 0 0 80px -16px rgb(var(--aurora-mauve) / 0.55)",
       },
       backgroundImage: {
         // Theme-aware: stops resolve through the palette variables, so these
         // read as deep mulberry on dark and a soft blush wash on light.
         "mulberry-radial":
-          "radial-gradient(120% 120% at 50% 0%, rgb(var(--wine)) 0%, rgb(var(--bruised)) 38%, rgb(var(--plum)) 100%)",
+          "radial-gradient(120% 120% at 50% 0%, rgb(var(--grad-1)) 0%, rgb(var(--grad-2)) 38%, rgb(var(--grad-3)) 100%)",
         "mulberry-soft":
-          "linear-gradient(135deg, rgb(var(--bruised)) 0%, rgb(var(--wine)) 50%, rgb(var(--plum)) 100%)",
+          "linear-gradient(135deg, rgb(var(--grad-2)) 0%, rgb(var(--grad-1)) 50%, rgb(var(--grad-3)) 100%)",
         "wine-sheen":
           "linear-gradient(135deg, rgb(var(--wine)) 0%, rgb(var(--sheen-mid)) 50%, rgb(var(--wine)) 100%)",
         // Aurora bloom — abstract soft light used behind sections/cards.
