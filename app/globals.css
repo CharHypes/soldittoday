@@ -75,23 +75,34 @@
 :root[data-theme="light"] {
   color-scheme: light;
 
-  --plum: 251 248 246;
+  /*
+   * Light mode earns its depth from VALUE RANGE, not saturation. A first
+   * pass kept every surface between 85–100% lightness and read as flat
+   * white-on-white; the dark theme spans ~87 points of lightness, and that
+   * spread is what makes it feel rich. So: the page sits at a tinted warm
+   * blush (not white), cards stay pure white to separate against it, and
+   * the ivory band inverts to deep mulberry — mirroring how dark mode
+   * breaks its darkness with one cream band.
+   */
+  --plum: 244 237 234;
   --bruised: 255 255 255;
-  --truffle: 247 242 240;
-  --smoked: 226 214 217;
+  --truffle: 236 228 226;
+  --smoked: 206 189 195;
   --pearl: 26 21 24;
   /* Muted tones run darker here than a straight inversion would give, so
-     small text clears 4.5:1 against the near-white page. */
-  --dusty: 99 85 93;
-  --wine: 226 209 216;
-  --ivory: 255 255 255;
-  --champagne: 250 244 241;
-  --stone: 240 231 227;
+     small text clears 4.5:1 against the tinted page and the blush gradient. */
+  --dusty: 86 73 80;
+  --wine: 216 193 203;
+  /* ivory/champagne are used only by the inverted band — safe to flip. */
+  --ivory: 40 29 35;
+  --champagne: 54 39 47;
+  --stone: 228 214 210;
   --aurora: 110 67 85;
   --aurora-mauve: 124 92 105;
 
-  --ink: 32 26 30;
-  --ink-accent: 110 67 85;
+  /* Band text flips with the band it sits on. */
+  --ink: 245 236 233;
+  --ink-accent: 214 168 146;
   --body-soft: 92 79 86;
 
   /* Deeper than the logo's rose gold so rims read as metal against white
@@ -100,15 +111,15 @@
   --ring-accent: var(--gold);
 
   /* Warm blush at the top of the radial keeps light mode from washing out. */
-  --grad-1: 240 217 227;
-  --grad-2: 252 245 248;
-  --grad-3: 251 248 246;
+  --grad-1: 234 205 219;
+  --grad-2: 249 238 242;
+  --grad-3: 244 237 234;
 
-  --bloom-1: 122 74 94 / 0.10;
-  --bloom-2: 184 154 164 / 0.12;
-  --bloom-3: 90 51 67 / 0.08;
-  --sheen-mid: 236 222 228;
-  --shadow-strength: 0.14;
+  --bloom-1: 122 74 94 / 0.20;
+  --bloom-2: 184 154 164 / 0.24;
+  --bloom-3: 90 51 67 / 0.15;
+  --sheen-mid: 228 208 218;
+  --shadow-strength: 0.22;
   --grain-opacity: 0.03;
   --grain-blend: multiply;
   /* The key silhouette loses all definition on a near-white field, so it runs

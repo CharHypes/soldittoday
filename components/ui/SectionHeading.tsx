@@ -10,7 +10,8 @@ type SectionHeadingProps = {
 
 /**
  * Editorial section header: small eyebrow label, large headline, optional lede.
- * `light` flips the type colors for use on cream/ivory sections.
+ * `light` flips the type colors for the inverted band — cream in dark mode,
+ * deep mulberry in light mode. The ink tokens track whichever it is.
  */
 export default function SectionHeading({
   eyebrow,
