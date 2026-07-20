@@ -38,7 +38,10 @@ export default function Team({ bare = false }: TeamProps) {
                   : undefined,
                 transformOrigin: member.imageOrigin,
               }}
-              className="object-cover transition-transform duration-700 ease-lux group-hover:scale-105"
+              /* The source files are already grayscale; the filter is a
+                 backstop so a colour headshot dropped in later still matches
+                 the row instead of standing out. */
+              className="object-cover grayscale transition-transform duration-700 ease-lux group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-plum/85 via-plum/10 to-transparent" />
             <div className="absolute bottom-0 left-0 p-5 pb-8">
