@@ -304,8 +304,11 @@ export const team: TeamMember[] = [
     specialties: ["Listing & marketing", "Pricing strategy", "Staging guidance"],
     email: "nisha@soldittoday.com",
     phone: "(734) 717-1169",
-    image: "/assets/team/nisha-patel.jpg",
-    objectPosition: "center 22%",
+    // Headshot supplied by Nisha, June 2026. Replaces a 318px original that
+    // was soft on retina screens. Pre-cropped to the card's 4:5 ratio, so the
+    // default centering needs no vertical nudge.
+    image: "/assets/team/nisha-patel-2026.jpg",
+    objectPosition: "center",
   },
   {
     id: "christopher-centers",
