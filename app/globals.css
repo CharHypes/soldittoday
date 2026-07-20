@@ -69,8 +69,8 @@
 
 /*
  * Light theme. Not an inversion — the dark theme's glow does the work of
- * separating surfaces, so on light we lean on tint and hairlines instead
- * and pull the blooms/grain back hard to avoid a muddy wash.
+ * separating surfaces, so on light we lean on tint, gold hairlines and real
+ * value contrast instead, and pull the grain back to avoid a muddy wash.
  */
 :root[data-theme="light"] {
   color-scheme: light;
@@ -105,9 +105,11 @@
   --ink-accent: 214 168 146;
   --body-soft: 92 79 86;
 
-  /* Deeper than the logo's rose gold so rims read as metal against white
-     rather than disappearing into it. */
-  --gold: 183 130 96;
+  /* Deeper and warmer than the logo's rose gold so rims read as metal against
+     white rather than disappearing into it. Light mode leans on this harder
+     than dark does — without the glow to separate surfaces, the metal edge is
+     what keeps cards from looking like plain boxes. */
+  --gold: 170 116 78;
   --ring-accent: var(--gold);
 
   /* Warm blush at the top of the radial keeps light mode from washing out. */
@@ -239,6 +241,15 @@
   .aurora-ring:hover {
     @apply shadow-aurora;
     border-color: rgb(var(--ring-accent) / 0.55);
+  }
+
+  /*
+   * Light mode has no glow to define card edges, so the resting border picks
+   * up a gold cast — enough to read as a deliberate metal rim rather than a
+   * default grey hairline. Dark mode keeps its existing dusty borders.
+   */
+  :root[data-theme="light"] .aurora-ring {
+    border-color: rgb(var(--gold) / 0.28);
   }
 
   .text-balance {

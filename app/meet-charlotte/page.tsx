@@ -15,7 +15,7 @@ import {
 export const metadata: Metadata = {
   title: "Meet Charlotte Hypes | Founder of SOLD IT TODAY — Southeast Michigan",
   description:
-    "Meet Charlotte Hypes, Founder & Team Lead of SOLD IT TODAY. 19+ years, 350+ homes sold, and a Circle of Excellence recipient guiding Southeast Michigan buyers and sellers with clarity, strategy, and honesty.",
+    "Meet Charlotte Hypes, Founder & Team Lead of SOLD IT TODAY. 20 years, 350+ homes sold, and a Circle of Excellence recipient guiding Southeast Michigan buyers and sellers with clarity, strategy, and honesty.",
 };
 
 // Person / RealEstateAgent structured data for SEO + AI discoverability.
@@ -114,7 +114,7 @@ export default function MeetCharlottePage() {
                   I founded SOLD IT TODAY to do real estate differently — to lead
                   with education instead of pressure, and to treat every client
                   like the decision is theirs to make, fully informed. Over{" "}
-                  <span className="text-pearl">19 years</span> and{" "}
+                  <span className="text-pearl">20 years</span> and{" "}
                   <span className="text-pearl">350+ homes sold</span>, that
                   approach has guided first-time buyers, growing families,
                   investors, and homeowners across Southeast Michigan.

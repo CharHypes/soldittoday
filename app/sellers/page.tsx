@@ -39,7 +39,7 @@ const pillars = [
   },
   {
     t: "Strong Negotiation",
-    d: "Nearly two decades of deals sharpen one thing: protecting your position when offers, inspections, and appraisals are on the line.",
+    d: "Two decades of deals sharpen one thing: protecting your position when offers, inspections, and appraisals are on the line.",
   },
 ];
 

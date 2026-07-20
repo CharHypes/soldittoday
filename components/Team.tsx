@@ -56,6 +56,20 @@ export default function Team({ bare = false }: TeamProps) {
           <div className="flex flex-1 flex-col p-5">
             <p className="text-sm leading-relaxed text-dusty">{member.bio}</p>
 
+            {member.quote && (
+              <figure className="mt-4 border-l-2 border-gold/70 pl-3">
+                <blockquote className="text-[13px] leading-relaxed text-pearl/90">
+                  <span aria-hidden="true" className="mr-1 text-gold">
+                    &#9733;
+                  </span>
+                  &ldquo;{member.quote.text}&rdquo;
+                </blockquote>
+                <figcaption className="mt-1 text-[11px] uppercase tracking-wider text-dusty">
+                  {member.quote.attribution}
+                </figcaption>
+              </figure>
+            )}
+
             <div className="mt-4 flex flex-wrap gap-1.5">
               {member.specialties.map((s) => (
                 <span

@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
+import Ticker from "@/components/Ticker";
 import HomeSearch from "@/components/search/HomeSearch";
 import About from "@/components/About";
 import Team from "@/components/Team";
@@ -19,6 +20,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <Ticker />
         {/* Home Search sits high on the page, directly below the hero */}
         <HomeSearch />
         <About />

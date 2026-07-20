@@ -29,9 +29,22 @@ const config: Config = {
         ink: "rgb(var(--ink) / <alpha-value>)",
         inkAccent: "rgb(var(--ink-accent) / <alpha-value>)",
         bodySoft: "rgb(var(--body-soft) / <alpha-value>)",
+        // Rose gold sampled from the logo — accents and rims, not body text.
+        gold: "rgb(var(--gold) / <alpha-value>)",
       },
       fontFamily: {
         sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
+      },
+      /*
+       * Tailwind's opacity scale has no 12, 18 or 28, so slash modifiers using
+       * them were never generated — 37 borders across the site silently fell
+       * back to the preflight default grey instead of the brand colour. Adding
+       * the steps fixes them all without touching the markup.
+       */
+      opacity: {
+        12: "0.12",
+        18: "0.18",
+        28: "0.28",
       },
       letterSpacing: {
         tightest: "-0.05em",

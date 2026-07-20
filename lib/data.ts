@@ -29,12 +29,34 @@ export const futurePages: NavLink[] = [
   { label: "Preferred Partners", href: "/preferred-partners" },
 ];
 
+/* -------------------------------------------------------------------------- */
+/*  Brand ticker — the scrolling band under the hero                          */
+/*  Services first, then markets served. Keep it to terms that are genuinely  */
+/*  covered elsewhere on the site.                                            */
+/* -------------------------------------------------------------------------- */
+
+export const tickerItems: string[] = [
+  "Buyers",
+  "Sellers",
+  "First-Time Buyers",
+  "Investors",
+  "Relocation",
+  "Novi",
+  "Northville",
+  "Brighton",
+  "Ann Arbor",
+  "Livonia",
+  "Monroe",
+  "Southeast Michigan",
+];
+
 export type Stat = { value: string; label: string };
 
+// Charlotte was licensed 19 July 2006 — twenty years as of 19 July 2026.
 export const stats: Stat[] = [
-  { value: "19+", label: "Years of experience" },
+  { value: "20", label: "Years licensed" },
   { value: "350+", label: "Homes sold" },
-  { value: "100%", label: "Client-first focus" },
+  { value: "5★", label: "Zillow rated" },
   { value: "SE MI", label: "Local market depth" },
 ];
 
@@ -268,6 +290,11 @@ export type TeamMember = {
   specialties: string[];
   email: string;
   phone: string;
+  /**
+   * Optional pull-quote from a verified Zillow review of this agent. Must be
+   * a real client's words — omit the field rather than inventing one.
+   */
+  quote?: { text: string; attribution: string };
   image: string;
   // CSS object-position for the card crop — tuned per photo so no head,
   // hair, or forehead is cut off (portraits are biased toward the top).
@@ -284,7 +311,7 @@ export const team: TeamMember[] = [
     id: "charlotte-hypes",
     name: "Charlotte Hypes",
     role: "Founder & Team Lead, REALTOR®",
-    bio: "With 19+ years of experience and 350+ homes sold, Charlotte founded SOLD IT TODAY to make real estate clear, strategic, and genuinely client-first across Southeast Michigan.",
+    bio: "With 20 years of experience and 350+ homes sold, Charlotte founded SOLD IT TODAY to make real estate clear, strategic, and genuinely client-first across Southeast Michigan.",
     specialties: [
       "Listing strategy",
       "Negotiation",
@@ -293,6 +320,10 @@ export const team: TeamMember[] = [
     ],
     email: "charlotte@soldittoday.com",
     phone: "(313) 529-5750",
+    quote: {
+      text: "She goes above and beyond and takes calls at all hours.",
+      attribution: "Janette W. · Zillow",
+    },
     image: "/assets/team/charlotte-hypes.png",
     objectPosition: "center 18%",
   },
@@ -410,7 +441,7 @@ export const reasons: Reason[] = [
   {
     title: "Strong Negotiation",
     description:
-      "Nearly two decades of deals sharpen one thing: protecting your position when it matters most.",
+      "Two decades of deals sharpen one thing: protecting your position when it matters most.",
   },
   {
     title: "Local Expertise",
@@ -445,34 +476,32 @@ export type Testimonial = {
   role: string;
 };
 
+/*
+ * Verified Zillow reviews only. Every entry here must correspond to a real
+ * review on the profile at `reviewsUrl` — never write a plausible-sounding
+ * quote to fill the section out.
+ */
 export const testimonials: Testimonial[] = [
   {
-    id: "t1",
+    id: "zillow-warren-2024",
     quote:
-      "The SOLD IT TODAY team made selling our home feel effortless. Their pricing strategy was spot-on and we closed above asking with multiple offers.",
-    name: "Megan & Ryan T.",
-    role: "Sellers — Trenton",
+      "Charlotte was extremely patient with all the questions I had and walked me through the process thoroughly. She truly cares about helping you. She goes above and beyond and takes calls at all hours and on weekends if necessary.",
+    name: "Janette Warren",
+    role: "Bought & Sold — Taylor, MI · Nov 2024",
   },
   {
-    id: "t2",
+    id: "zillow-tyredbeard-2022",
     quote:
-      "As first-time buyers we were nervous, but the team walked us through every step with patience and total honesty. We never felt rushed.",
-    name: "Daniel P.",
-    role: "First-Time Buyer — Detroit",
+      "Charlotte and her team were extremely helpful. Everything from understanding the process, working with my schedule, getting me to closing super fast, and saving me money. I can't imagine there being a better realtor for my situation.",
+    name: "TyRedBeard",
+    role: "First-Time Buyer — Westland, MI · May 2022",
   },
   {
-    id: "t3",
+    id: "zillow-winkler-2021",
     quote:
-      "Their negotiation saved us thousands. This team knows the market cold and fought for our interests the entire way.",
-    name: "Alicia R.",
-    role: "Buyer — Dearborn",
-  },
-  {
-    id: "t4",
-    quote:
-      "We've worked with SOLD IT TODAY on three investment properties now. Clear numbers, sharp advice, and results every time.",
-    name: "James & Carol M.",
-    role: "Investors — Metro Detroit",
+      "Charlotte went above and beyond to help me find a place to live. There were many ups and downs but she hung in there with me. I really appreciate the individual attention she gave me. She was a pleasure to work with.",
+    name: "Jackyewinkler",
+    role: "Bought — Melvindale, MI · June 2021",
   },
 ];
 
@@ -481,7 +510,7 @@ export const testimonials: Testimonial[] = [
 /* -------------------------------------------------------------------------- */
 
 export const charlotteStats: Stat[] = [
-  { value: "19+", label: "Years Experience" },
+  { value: "20", label: "Years Licensed" },
   { value: "Southeast Michigan", label: "Market Expert" },
   { value: "350+", label: "Homes Sold" },
   { value: "Circle of Excellence", label: "Recipient" },
