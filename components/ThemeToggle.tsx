@@ -9,11 +9,23 @@ import { useCallback, useEffect, useState } from "react";
  * script in layout.tsx before first paint. This component only mirrors and
  * updates that state, so there is no flash and no SSR/CSR mismatch — it
  * renders a stable placeholder until mounted.
+ *
+ * Several instances mount at once (desktop header, mobile header, page
+ * shell). The DOM attribute is the single source of truth and a custom
+ * event keeps every instance in sync, so toggling one never leaves another
+ * showing the wrong icon.
  */
 
 type Theme = "light" | "dark";
 
 const STORAGE_KEY = "sit-theme";
+const CHANGE_EVENT = "sit-theme-change";
+
+function readTheme(): Theme {
+  return document.documentElement.getAttribute("data-theme") === "light"
+    ? "light"
+    : "dark";
+}
 
 function applyTheme(theme: Theme) {
   document.documentElement.setAttribute("data-theme", theme);
@@ -22,22 +34,26 @@ function applyTheme(theme: Theme) {
   } catch {
     // Private browsing / storage disabled — theme still applies for this visit.
   }
+  window.dispatchEvent(new CustomEvent(CHANGE_EVENT));
 }
 
 export default function ThemeToggle({ className = "" }: { className?: string }) {
   const [theme, setTheme] = useState<Theme | null>(null);
 
   useEffect(() => {
-    const current = document.documentElement.getAttribute("data-theme");
-    setTheme(current === "light" ? "light" : "dark");
+    const sync = () => setTheme(readTheme());
+    sync();
+    window.addEventListener(CHANGE_EVENT, sync);
+    // Another tab may change the saved preference.
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(CHANGE_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
   }, []);
 
   const toggle = useCallback(() => {
-    setTheme((prev) => {
-      const next: Theme = prev === "light" ? "dark" : "light";
-      applyTheme(next);
-      return next;
-    });
+    applyTheme(readTheme() === "light" ? "dark" : "light");
   }, []);
 
   const isLight = theme === "light";

@@ -31,18 +31,20 @@ export const metadata: Metadata = {
 };
 
 /*
- * Resolves the theme before first paint: a saved choice wins, otherwise the
- * visitor's OS preference. Must stay a blocking inline script — deferring it
- * would let the wrong theme paint first and flash.
+ * Resolves the theme before first paint. Dark is the brand default and is
+ * what every first-time visitor sees regardless of their OS setting — light
+ * is strictly opt-in via the toggle, and only a previously saved choice
+ * overrides it. Must stay a blocking inline script; deferring it would let
+ * the wrong theme paint first and flash.
  */
 const themeScript = `
 (function() {
   try {
     var saved = localStorage.getItem('sit-theme');
-    var theme = saved === 'light' || saved === 'dark'
-      ? saved
-      : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute(
+      'data-theme',
+      saved === 'light' ? 'light' : 'dark'
+    );
   } catch (e) {
     document.documentElement.setAttribute('data-theme', 'dark');
   }
