@@ -56,6 +56,7 @@ export default function DpaFloatingButton() {
       <a
         href="/dpa"
         aria-label="Down payment assistance programs. See if you qualify."
+        className="sit-dpa-fab"
         style={{
           display: "flex",
           alignItems: "center",
@@ -65,9 +66,6 @@ export default function DpaFloatingButton() {
           borderRadius: "14px",
           textDecoration: "none",
           background: "linear-gradient(155deg, #5A2E48, #2A1B28)",
-          border: "1px solid #C99383",
-          boxShadow:
-            "0 14px 34px -14px rgba(0,0,0,0.55), 0 0 0 2.5px rgba(224,176,160,0.7)",
         }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

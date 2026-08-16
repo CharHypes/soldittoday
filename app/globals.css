@@ -336,3 +336,28 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Floating Down Payment Assistance button: the rim adapts to the theme so it
+   stands out on light AND dark backgrounds (a rose-gold rim disappears on a
+   light page, so light mode gets a bolder, more saturated ring). */
+.sit-dpa-fab,
+:root[data-theme="light"] .sit-dpa-fab {
+  border: 2px solid #e7b48f;
+  box-shadow:
+    0 16px 30px -12px rgba(50, 18, 32, 0.4),
+    0 0 0 3px rgba(224, 150, 110, 0.9);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .sit-dpa-fab {
+    border: 1px solid #c99383;
+    box-shadow:
+      0 14px 34px -14px rgba(0, 0, 0, 0.6),
+      0 0 0 2.5px rgba(224, 176, 160, 0.7);
+  }
+}
+:root[data-theme="dark"] .sit-dpa-fab {
+  border: 1px solid #c99383;
+  box-shadow:
+    0 14px 34px -14px rgba(0, 0, 0, 0.6),
+    0 0 0 2.5px rgba(224, 176, 160, 0.7);
+}
