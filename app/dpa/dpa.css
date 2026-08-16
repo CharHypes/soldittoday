@@ -483,6 +483,20 @@
   border-top: 1px solid #3a2836;
   margin-top: 34px;
 }
+/* COMPLIANCE: broker logo (Remerica) kept at the same height as the team logo
+   (Sold It Today) so the broker is at least as prominent. */
+.dpa-root .flogo-team {
+  display: block;
+  height: 42px;
+  width: auto;
+  margin-bottom: 12px;
+}
+.dpa-root .flogo-broker {
+  display: block;
+  height: 42px;
+  width: auto;
+  margin-bottom: 4px;
+}
 /* COMPLIANCE: .fbroker (Remerica United Realty) must stay >= .fteam
    (Sold It Today) in font-size. They are equal here on purpose. */
 .dpa-root .fbroker {

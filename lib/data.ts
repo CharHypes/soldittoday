@@ -47,6 +47,12 @@ export const tickerItems: string[] = [
   "Ann Arbor",
   "Livonia",
   "Monroe",
+  "Wyandotte",
+  "Allen Park",
+  "Taylor",
+  "Lincoln Park",
+  "Dearborn",
+  "Flat Rock",
   "Southeast Michigan",
 ];
 

@@ -21,7 +21,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-screen items-center overflow-hidden bg-mulberry-radial pt-28 pb-20"
+      className="relative flex min-h-[88vh] items-center overflow-hidden bg-mulberry-radial pt-28 pb-14"
     >
       {/* Abstract aurora light bloom (replaces the old template grid) */}
       <div className="pointer-events-none absolute -left-40 top-16 h-[520px] w-[520px] animate-aurora-pulse rounded-full bg-aurora/45 blur-[150px]" />

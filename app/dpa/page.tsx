@@ -66,8 +66,18 @@ export default function DpaIndexPage() {
 
       {/* Footer: compliance block (broker name >= team name, address, EHO, disclaimer) */}
       <footer>
-        <div className="fteam">Sold It Today</div>
-        <div className="fbroker">Remerica United Realty</div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="flogo-team"
+          src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
+          alt="Sold It Today"
+        />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          className="flogo-broker"
+          src="/assets/logos/optimized/remerica-cream-320w.png"
+          alt="Remerica United Realty"
+        />
         <div className="fmeta">
           {ADDRESS}
           <br />

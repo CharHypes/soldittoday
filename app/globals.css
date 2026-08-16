@@ -218,6 +218,8 @@
    */
   .btn-aurora {
     @apply btn bg-[#6e4355] text-white shadow-aurora hover:-translate-y-0.5 hover:bg-[#7e4d60] hover:shadow-aurora-strong;
+    /* Wine rim to match the DPA floating button (#8C3A63). */
+    border: 1px solid #8c3a63;
   }
   .btn-aurora::before {
     content: "";
