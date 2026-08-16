@@ -1,0 +1,523 @@
+/*
+ * DPA campaign landing-page styles.
+ * Every selector is scoped under .dpa-root so these styles never leak into the
+ * rest of the Sold It Today site. Fonts come from next/font (see layout.tsx)
+ * via the --font-fraunces / --font-manrope CSS variables.
+ *
+ * These are intentionally a distinct, focused, dark conversion design that is
+ * separate from the main "Mulberry Aurora" site theme.
+ */
+
+.dpa-root {
+  background: #191219;
+  color: #f3eaec;
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  padding-bottom: 70px;
+}
+.dpa-root * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.dpa-root .wrap {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+.dpa-root .serif {
+  font-family: var(--font-fraunces), Georgia, serif;
+}
+
+/* brand bar */
+.dpa-root .brandbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid #3a2836;
+}
+.dpa-root .lockup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+/* COMPLIANCE: .team (Sold It Today) and .broker (Remerica United Realty) are the
+   same font-size on purpose. The broker name must never render smaller than the
+   team name. Keep these >= each other. */
+.dpa-root .team {
+  font-family: var(--font-fraunces), serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f3eaec;
+}
+.dpa-root .broker {
+  font-size: 15px;
+  font-weight: 700;
+  color: #c99383;
+  letter-spacing: 0.01em;
+}
+.dpa-root .brandbar a {
+  flex: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #191219;
+  background: #c99383;
+  padding: 9px 13px;
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+/* hero */
+.dpa-root .hero {
+  padding: 38px 0 34px;
+}
+.dpa-root .kicker {
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #c99383;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.dpa-root h1 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 300;
+  font-size: 38px;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+}
+.dpa-root h1 em {
+  font-style: italic;
+  color: #e0b8ab;
+}
+.dpa-root .lede {
+  margin-top: 16px;
+  font-size: 16px;
+  color: #d6c4cb;
+  max-width: 38ch;
+}
+
+/* the two numbers */
+.dpa-root .numbers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin-top: 30px;
+  background: #3a2836;
+  border: 1px solid #3a2836;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.dpa-root .num {
+  background: #221822;
+  padding: 20px 16px;
+}
+.dpa-root .num:first-child {
+  background: linear-gradient(155deg, #5a2e48, #2a1b28);
+}
+.dpa-root .num .lab {
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #a88295;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.dpa-root .num:first-child .lab {
+  color: #e0b8ab;
+}
+.dpa-root .num .val {
+  font-family: var(--font-fraunces), serif;
+  font-size: 29px;
+  font-weight: 500;
+  line-height: 1;
+  color: #f3eaec;
+}
+.dpa-root .num .sub {
+  font-size: 11.5px;
+  color: #b9a6ae;
+  margin-top: 8px;
+  line-height: 1.45;
+}
+.dpa-root .numnote {
+  font-size: 12.5px;
+  color: #a88295;
+  margin-top: 12px;
+  line-height: 1.5;
+}
+
+/* sections */
+.dpa-root section {
+  padding: 34px 0;
+  border-top: 1px solid #3a2836;
+}
+.dpa-root h2 {
+  font-family: var(--font-fraunces), Georgia, serif;
+  font-weight: 500;
+  font-size: 22px;
+  letter-spacing: -0.005em;
+  margin-bottom: 8px;
+}
+.dpa-root .h2sub {
+  font-size: 13.5px;
+  color: #b9a6ae;
+  margin-bottom: 20px;
+}
+
+.dpa-root ul.rules {
+  list-style: none;
+}
+.dpa-root ul.rules li {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #2c1e2a;
+  font-size: 14.5px;
+}
+.dpa-root ul.rules li:last-child {
+  border-bottom: none;
+}
+.dpa-root ul.rules li::before {
+  content: "";
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c99383;
+  margin-top: 8px;
+}
+.dpa-root ul.rules b {
+  color: #f3eaec;
+}
+.dpa-root ul.rules span {
+  color: #d6c4cb;
+}
+
+/* income table */
+.dpa-root table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+}
+.dpa-root th {
+  text-align: left;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a88295;
+  font-weight: 700;
+  padding: 0 0 10px;
+  border-bottom: 1px solid #3a2836;
+}
+.dpa-root th:last-child,
+.dpa-root td:last-child {
+  text-align: right;
+}
+.dpa-root td {
+  padding: 10px 0;
+  border-bottom: 1px solid #2c1e2a;
+  color: #d6c4cb;
+}
+.dpa-root td:last-child {
+  font-family: var(--font-fraunces), serif;
+  font-weight: 500;
+  color: #f3eaec;
+}
+
+/* steps */
+.dpa-root ol.steps {
+  list-style: none;
+  counter-reset: s;
+}
+.dpa-root ol.steps li {
+  counter-increment: s;
+  display: flex;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #2c1e2a;
+}
+.dpa-root ol.steps li:last-child {
+  border-bottom: none;
+}
+.dpa-root ol.steps li::before {
+  content: counter(s);
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid #c99383;
+  color: #c99383;
+  font-size: 11.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+.dpa-root ol.steps b {
+  display: block;
+  font-size: 14.5px;
+  color: #f3eaec;
+  margin-bottom: 2px;
+}
+.dpa-root ol.steps p {
+  font-size: 13.5px;
+  color: #b9a6ae;
+}
+
+/* form */
+.dpa-root .formcard {
+  background: linear-gradient(160deg, rgba(110, 43, 78, 0.34), rgba(34, 24, 34, 0.9));
+  border: 1px solid #8c3a63;
+  border-radius: 12px;
+  padding: 24px 20px;
+}
+.dpa-root .formcard h2 {
+  margin-bottom: 6px;
+}
+.dpa-root .formcard .h2sub {
+  margin-bottom: 22px;
+}
+.dpa-root label {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e0b8ab;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+.dpa-root input[type="text"],
+.dpa-root input[type="email"],
+.dpa-root input[type="tel"],
+.dpa-root select {
+  width: 100%;
+  background: #191219;
+  border: 1px solid #3a2836;
+  border-radius: 7px;
+  padding: 13px 13px;
+  color: #f3eaec;
+  font-family: inherit;
+  font-size: 16px;
+  margin-bottom: 17px;
+}
+.dpa-root input::placeholder {
+  color: #6e5a64;
+}
+.dpa-root .toggle {
+  display: flex;
+  gap: 9px;
+  margin-bottom: 17px;
+}
+.dpa-root .toggle button {
+  flex: 1;
+  background: #191219;
+  border: 1px solid #3a2836;
+  border-radius: 7px;
+  padding: 12px;
+  color: #d6c4cb;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.dpa-root .toggle button[aria-pressed="true"] {
+  background: #c99383;
+  border-color: #c99383;
+  color: #191219;
+}
+.dpa-root .submit {
+  width: 100%;
+  background: #c99383;
+  border: none;
+  border-radius: 7px;
+  padding: 16px;
+  color: #191219;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+.dpa-root .submit:hover {
+  background: #e0b8ab;
+}
+.dpa-root .submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.dpa-root .formerror {
+  color: #f0b3c2;
+  font-size: 13px;
+  margin-top: 12px;
+  text-align: center;
+}
+.dpa-root .privacy {
+  font-size: 11.5px;
+  color: #a88295;
+  margin-top: 14px;
+  line-height: 1.55;
+  text-align: center;
+}
+/* honeypot: off-screen, never shown to humans */
+.dpa-root .hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.dpa-root .thanks {
+  text-align: center;
+  padding: 14px 0;
+}
+.dpa-root .thanks .serif {
+  font-size: 21px;
+  color: #e0b8ab;
+  display: block;
+  margin-bottom: 8px;
+}
+.dpa-root .thanks p {
+  font-size: 14px;
+  color: #d6c4cb;
+}
+
+/* funding banner */
+.dpa-root .banner {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  background: rgba(201, 147, 131, 0.1);
+  border: 1px solid #8c3a63;
+  border-radius: 9px;
+  padding: 15px 16px;
+  margin-top: 26px;
+  font-size: 13.5px;
+  color: #d6c4cb;
+  line-height: 1.55;
+}
+.dpa-root .banner span {
+  flex: none;
+  color: #c99383;
+  font-weight: 700;
+}
+
+/* index grid (the /dpa hub) */
+.dpa-root .grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 26px;
+}
+.dpa-root .card {
+  display: block;
+  background: #221822;
+  border: 1px solid #3a2836;
+  border-radius: 10px;
+  padding: 18px 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.dpa-root .card:hover {
+  border-color: #8c3a63;
+  background: #2a1b28;
+}
+.dpa-root .card .cval {
+  font-family: var(--font-fraunces), serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #f3eaec;
+}
+.dpa-root .card .ccity {
+  font-size: 13px;
+  color: #c99383;
+  font-weight: 700;
+  margin-top: 6px;
+}
+.dpa-root .card .carr {
+  font-size: 12px;
+  color: #a88295;
+  margin-top: 10px;
+}
+@media (max-width: 420px) {
+  .dpa-root .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* footer */
+.dpa-root footer {
+  padding: 30px 0 0;
+  border-top: 1px solid #3a2836;
+  margin-top: 34px;
+}
+/* COMPLIANCE: .fbroker (Remerica United Realty) must stay >= .fteam
+   (Sold It Today) in font-size. They are equal here on purpose. */
+.dpa-root .fbroker {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f3eaec;
+}
+.dpa-root .fteam {
+  font-family: var(--font-fraunces), serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #c99383;
+  margin-bottom: 6px;
+}
+.dpa-root .fmeta {
+  font-size: 12.5px;
+  color: #a88295;
+  line-height: 1.7;
+  margin-top: 8px;
+}
+.dpa-root .eho {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 14px;
+  font-size: 11.5px;
+  color: #a88295;
+}
+.dpa-root .ehobox {
+  width: 15px;
+  height: 15px;
+  border: 1.4px solid #a88295;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+}
+.dpa-root .disclaimer {
+  font-size: 11.5px;
+  color: #8a7580;
+  line-height: 1.65;
+  margin-top: 18px;
+}
+
+.dpa-root a {
+  color: #e0b8ab;
+}
+.dpa-root :focus-visible {
+  outline: 2px solid #c99383;
+  outline-offset: 3px;
+}
+@media (max-width: 360px) {
+  .dpa-root .numbers {
+    grid-template-columns: 1fr;
+  }
+}
