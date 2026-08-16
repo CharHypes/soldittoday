@@ -43,14 +43,20 @@ export default function DpaLanding({ program }: { program: DpaProgram }) {
     return (
       <div className="wrap">
         <div className="brandbar">
-          <div className="lockup">
-            <div className="team">Sold It Today</div>
-            <div className="broker">Remerica United Realty</div>
-          </div>
-          <a href={`tel:${PHONE_TEL}`}>Call</a>
+          <a className="brandlogo" href="/" aria-label="Sold It Today home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
+              alt="Sold It Today"
+            />
+          </a>
+          <a className="callbtn" href={`tel:${PHONE_TEL}`}>Call</a>
         </div>
 
         <div className="hero">
+          <a className="backlink" href="/dpa">
+            &larr; All down payment programs
+          </a>
           <div className="kicker">{kicker}</div>
           <h1>
             Down payment assistance in <em>{city}</em>
@@ -145,17 +151,24 @@ export default function DpaLanding({ program }: { program: DpaProgram }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Brand bar: team + broker (equal size), plus a quick Call action */}
+      {/* Brand bar: clickable logo (home) + a quick Call action. The broker name
+          and full compliance block live in the footer on every page. */}
       <div className="brandbar">
-        <div className="lockup">
-          <div className="team">Sold It Today</div>
-          <div className="broker">Remerica United Realty</div>
-        </div>
-        <a href={`tel:${PHONE_TEL}`}>Call</a>
+        <a className="brandlogo" href="/" aria-label="Sold It Today home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
+            alt="Sold It Today"
+          />
+        </a>
+        <a className="callbtn" href={`tel:${PHONE_TEL}`}>Call</a>
       </div>
 
       {/* Hero */}
       <div className="hero">
+        <a className="backlink" href="/dpa">
+          &larr; All down payment programs
+        </a>
         <div className="kicker">{kicker}</div>
         <h1>
           Up to {maxAssistance} toward <em>buying your first home</em> in {city}.

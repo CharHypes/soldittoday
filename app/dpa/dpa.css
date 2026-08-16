@@ -63,7 +63,17 @@
   color: #c99383;
   letter-spacing: 0.01em;
 }
-.dpa-root .brandbar a {
+.dpa-root .brandbar .brandlogo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.dpa-root .brandbar .brandlogo img {
+  height: 34px;
+  width: auto;
+  display: block;
+}
+.dpa-root .brandbar .callbtn {
   flex: none;
   font-size: 12px;
   font-weight: 700;
@@ -77,6 +87,17 @@
 }
 
 /* hero */
+.dpa-root .backlink {
+  display: inline-block;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #c99383;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+.dpa-root .backlink:hover {
+  text-decoration: underline;
+}
 .dpa-root .hero {
   padding: 38px 0 34px;
 }

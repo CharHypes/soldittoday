@@ -21,13 +21,17 @@ export const metadata: Metadata = {
 export default function DpaIndexPage() {
   return (
     <div className="wrap">
-      {/* Brand bar: team + broker (equal size), plus a quick Call action */}
+      {/* Brand bar: clickable logo (home) + a quick Call action. Broker name and
+          full compliance block live in the footer. */}
       <div className="brandbar">
-        <div className="lockup">
-          <div className="team">Sold It Today</div>
-          <div className="broker">Remerica United Realty</div>
-        </div>
-        <a href={`tel:${PHONE_TEL}`}>Call</a>
+        <a className="brandlogo" href="/" aria-label="Sold It Today home">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
+            alt="Sold It Today"
+          />
+        </a>
+        <a className="callbtn" href={`tel:${PHONE_TEL}`}>Call</a>
       </div>
 
       {/* Hero */}
