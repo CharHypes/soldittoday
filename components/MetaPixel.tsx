@@ -7,16 +7,16 @@ import { useEffect, useRef } from "react";
 /*
  * Meta (Facebook/Instagram) Pixel, installed site-wide.
  *
- * It stays completely inert until a Pixel ID is provided via the
- * NEXT_PUBLIC_META_PIXEL_ID environment variable (set it in the Vercel
- * dashboard for production, and in .env.local for local testing). Without an
- * ID, this renders nothing and changes nothing on the site.
+ * Uses the Sold It Today pixel by default; setting NEXT_PUBLIC_META_PIXEL_ID
+ * in the environment overrides it (e.g. to swap pixels without a code change).
+ * A pixel ID is not a secret; it is visible in any site's client code by design.
  *
  * Fires the initial PageView on load, then one PageView per client-side route
  * change (the site is a single-page app, so navigations do not reload the page).
  */
 
-const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+const PIXEL_ID =
+  process.env.NEXT_PUBLIC_META_PIXEL_ID || "207302473856582";
 
 declare global {
   interface Window {
