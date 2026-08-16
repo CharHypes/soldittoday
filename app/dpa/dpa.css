@@ -9,7 +9,16 @@
  */
 
 .dpa-root {
-  background: #191219;
+  /* Match the main site's "mulberry-radial" hero background (warm wine glow at
+     the top fading to plum) so DPA pages feel like the same website. */
+  background-color: #1a1518;
+  background-image: radial-gradient(
+    120% 120% at 50% 0%,
+    #3d2530 0%,
+    #2a1f25 38%,
+    #1a1518 100%
+  );
+  background-attachment: fixed;
   color: #f3eaec;
   font-family: var(--font-manrope), system-ui, sans-serif;
   font-size: 15px;
