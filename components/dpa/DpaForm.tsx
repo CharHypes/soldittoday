@@ -72,6 +72,12 @@ export default function DpaForm({
       });
       const json = await res.json().catch(() => ({}));
       if (res.ok && json.ok) {
+        // Report the conversion to Meta so ads can optimize for real leads
+        // (tagged by city). Safe no-op if the pixel has not loaded.
+        window.fbq?.("track", "Lead", {
+          content_name: `DPA ${city}`,
+          content_category: "down-payment-assistance",
+        });
         setStatus("done");
       } else {
         setStatus("error");
