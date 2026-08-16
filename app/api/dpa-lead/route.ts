@@ -72,7 +72,7 @@ async function sendNotification(lead: {
   sourcePage: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return; // Not configured (e.g. local dev) — lead is already saved.
+  if (!apiKey) return; // Not configured (e.g. local dev); the lead is already saved.
 
   const rows: [string, string][] = [
     ["Name", lead.fullName],
@@ -164,7 +164,7 @@ export async function POST(request: Request) {
   // Eligibility answers captured into the existing message column (readable in
   // the same leads list). Nothing beyond the collected fields is stored.
   const message = [
-    `Down payment assistance inquiry — ${city}`,
+    `Down payment assistance inquiry for ${city}`,
     `Household size: ${householdSize || "Not provided"}`,
     `Owned a home in the past 3 years: ${owned}`,
     `Completed homebuyer education: ${education}`,
