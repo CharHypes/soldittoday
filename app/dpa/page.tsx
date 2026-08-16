@@ -45,9 +45,16 @@ export default function DpaIndexPage() {
         <div className="grid">
           {DPA_PROGRAMS.map((p) => (
             <a key={p.slug} className="card" href={`/dpa/${p.slug}`}>
-              <div className="cval">{p.maxAssistance}</div>
+              <div
+                className="cval"
+                style={p.comingSoon ? { fontSize: "17px", color: "#B9A6AE" } : undefined}
+              >
+                {p.comingSoon ? "Coming soon" : p.maxAssistance}
+              </div>
               <div className="ccity">{p.city}</div>
-              <div className="carr">See if you qualify &rarr;</div>
+              <div className="carr">
+                {p.comingSoon ? "Get the details" : "See if you qualify"} &rarr;
+              </div>
             </a>
           ))}
         </div>

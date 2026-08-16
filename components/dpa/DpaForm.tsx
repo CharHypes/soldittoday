@@ -23,7 +23,15 @@ const HOUSEHOLD_SIZES = [
   "8 people",
 ];
 
-export default function DpaForm({ city, slug }: { city: string; slug: string }) {
+export default function DpaForm({
+  city,
+  slug,
+  comingSoon = false,
+}: {
+  city: string;
+  slug: string;
+  comingSoon?: boolean;
+}) {
   const [owned, setOwned] = useState<"" | "yes" | "no">("");
   const [education, setEducation] = useState<"" | "yes" | "no">("");
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">(
@@ -80,8 +88,9 @@ export default function DpaForm({ city, slug }: { city: string; slug: string }) 
       <div className="thanks">
         <span className="serif">Got it.</span>
         <p>
-          I will reach out within one business day, and your {city} eligibility
-          guide is on its way to your inbox now.
+          {comingSoon
+            ? `Thanks for raising your hand early. I will reach out as soon as the ${city} program details are confirmed.`
+            : `I will reach out within one business day, and your ${city} eligibility guide is on its way to your inbox now.`}
         </p>
       </div>
     );
@@ -153,7 +162,7 @@ export default function DpaForm({ city, slug }: { city: string; slug: string }) 
       </div>
 
       <button className="submit" type="submit" disabled={sending}>
-        {sending ? "Checking..." : "Check my eligibility"}
+        {sending ? "Sending..." : comingSoon ? "Keep me posted" : "Check my eligibility"}
       </button>
 
       {status === "error" && <p className="formerror">{error}</p>}

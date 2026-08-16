@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
 import MetaPixel from "@/components/MetaPixel";
+import DpaFloatingButton from "@/components/DpaFloatingButton";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -64,6 +65,7 @@ export default function RootLayout({
         <MetaPixel />
         <div className="grain-overlay" aria-hidden="true" />
         <Providers>{children}</Providers>
+        <DpaFloatingButton />
       </body>
     </html>
   );

@@ -24,20 +24,81 @@ const ADDRESS = "47720 Grand River Ave, Novi, MI 48374";
 const SITE = "soldittoday.com";
 
 export default function DpaLanding({ program }: { program: DpaProgram }) {
-  const {
-    slug,
-    city,
-    kicker,
-    maxAssistance,
-    lede,
-    secondStat,
-    numnote,
-    rules,
-    providedBy,
-    administrator,
-  } = program;
+  const { slug, city, kicker } = program;
+  // Optional detail fields (absent for "coming soon" placeholders). Fallbacks
+  // keep the full-page render below type-safe; real programs always supply them.
+  const lede = program.lede ?? "";
+  const maxAssistance = program.maxAssistance ?? "";
+  const secondStat = program.secondStat ?? { label: "", value: "", sub: "" };
+  const numnote = program.numnote ?? "";
+  const rules = program.rules ?? [];
+  const providedBy = program.providedBy ?? "";
+  const administrator = program.administrator ?? "";
 
   const url = `https://www.soldittoday.com/dpa/${slug}`;
+
+  // Placeholder page: real branding, lead capture, and compliance, but no
+  // program figures until they are confirmed.
+  if (program.comingSoon) {
+    return (
+      <div className="wrap">
+        <div className="brandbar">
+          <div className="lockup">
+            <div className="team">Sold It Today</div>
+            <div className="broker">Remerica United Realty</div>
+          </div>
+          <a href={`tel:${PHONE_TEL}`}>Call</a>
+        </div>
+
+        <div className="hero">
+          <div className="kicker">{kicker}</div>
+          <h1>
+            Down payment assistance in <em>{city}</em>
+          </h1>
+          <p className="lede">{lede}</p>
+        </div>
+
+        <section>
+          <div className="formcard">
+            <DpaForm city={city} slug={slug} comingSoon />
+          </div>
+          <div className="banner">
+            <span>Note</span>
+            <div>
+              We are confirming the current {city} program amounts and rules.
+              Leave your info and we will reach out with the details as soon as
+              they are available.
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <div className="fteam">Sold It Today</div>
+          <div className="fbroker">Remerica United Realty</div>
+          <div className="fmeta">
+            {ADDRESS}
+            <br />
+            Call or text {PHONE_DISPLAY}
+            <br />
+            {SITE}
+            <br />
+            <a href="/privacy-policy">Privacy Policy</a>
+          </div>
+          <div className="eho">
+            <span className="ehobox">&#8962;</span> Equal Housing Opportunity
+          </div>
+          <p className="disclaimer">
+            Sold It Today is a real estate team and is not the administrator of
+            any assistance program and does not determine eligibility, approve
+            applications, or disburse funds. Program terms, amounts, and
+            availability are set by the administering agencies and are subject to
+            change without notice. This is not an offer of credit or a commitment
+            to lend.
+          </p>
+        </footer>
+      </div>
+    );
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",

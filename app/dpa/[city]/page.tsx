@@ -19,6 +19,8 @@ export function generateMetadata({ params }: { params: Params }): Metadata {
     title,
     description: program.metaDescription,
     alternates: { canonical: url },
+    // Placeholder pages stay out of search until real figures are added.
+    robots: program.comingSoon ? { index: false, follow: true } : undefined,
     openGraph: {
       title,
       description: program.metaDescription,

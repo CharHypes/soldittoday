@@ -26,14 +26,18 @@ export type DpaProgram = {
   slug: string; // route segment, e.g. "detroit" -> /dpa/detroit
   city: string; // display name, e.g. "Detroit", "Wayne County"
   kicker: string; // "Detroit, Michigan"
-  maxAssistance: string; // headline number, e.g. "$25,000"
-  lede: string;
-  secondStat: DpaStat; // the second number box (residency OR price limit)
-  numnote: string; // small note under the two numbers
-  rules: DpaRule[]; // "Who qualifies" checklist
-  providedBy: string; // "the City of Detroit" | "Wayne County"
-  administrator: string; // public label, e.g. "a nonprofit organization"
   metaDescription: string; // SEO meta description
+  // When true, the page renders a "details coming soon" placeholder (no
+  // fabricated figures) and is set to noindex until real data is added. The
+  // detail fields below are omitted for coming-soon programs.
+  comingSoon?: boolean;
+  maxAssistance?: string; // headline number, e.g. "$25,000"
+  lede?: string;
+  secondStat?: DpaStat; // the second number box (residency OR price limit)
+  numnote?: string; // small note under the two numbers
+  rules?: DpaRule[]; // "Who qualifies" checklist
+  providedBy?: string; // "the City of Detroit" | "Wayne County"
+  administrator?: string; // public label, e.g. "a nonprofit organization"
 };
 
 // Shared across all six programs (identical in every source page).
@@ -337,6 +341,24 @@ export const DPA_PROGRAMS: DpaProgram[] = [
     administrator: ADMIN,
     metaDescription:
       "Up to $13,999 in down payment assistance for first-time home buyers in participating Wayne County, MI communities. See if you qualify. Free eligibility check.",
+  },
+  {
+    slug: "pontiac",
+    city: "Pontiac",
+    kicker: "Pontiac, Michigan",
+    comingSoon: true,
+    lede: "The City of Pontiac has a down payment assistance program for first-time buyers. We are confirming the current amounts and rules, and will have the full details shortly.",
+    metaDescription:
+      "Down payment assistance for first-time home buyers in Pontiac, MI. Program details coming soon. Tell us you're interested and we'll reach out with the specifics.",
+  },
+  {
+    slug: "warren",
+    city: "Warren",
+    kicker: "Warren, Michigan",
+    comingSoon: true,
+    lede: "The City of Warren has a down payment assistance program for first-time buyers. We are confirming the current amounts and rules, and will have the full details shortly.",
+    metaDescription:
+      "Down payment assistance for first-time home buyers in Warren, MI. Program details coming soon. Tell us you're interested and we'll reach out with the specifics.",
   },
 ];
 
