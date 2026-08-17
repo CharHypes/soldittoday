@@ -11,7 +11,7 @@ export const navLinks: NavLink[] = [
   { label: "About", href: "#about" },
   { label: "Services", href: "#services" },
   { label: "Relocation", href: "/relocation" }, // dedicated page (route, not anchor)
-  { label: "Listings", href: "#listings" },
+  { label: "Resources", href: "/resources" }, // dedicated content hub (route)
   { label: "Contact", href: "#contact" },
 ];
 
