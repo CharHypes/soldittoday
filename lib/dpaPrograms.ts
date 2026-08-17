@@ -346,15 +346,15 @@ export const DPA_PROGRAMS: DpaProgram[] = [
     slug: "pontiac",
     city: "Pontiac",
     kicker: "Pontiac, Michigan",
-    maxAssistance: "$40,000",
-    lede: "The City of Pontiac helps first-time buyers cover the down payment and closing costs. It is one of the larger programs in the area, and most people who qualify have no idea it exists.",
+    maxAssistance: "$20,000",
+    lede: "The City of Pontiac helps first-time buyers cover the down payment and closing costs, and most people who qualify have no idea it exists.",
     secondStat: {
       label: "Forgivable in full",
       value: "10 years",
       sub: "Live in the home for the ownership period and the assistance is forgiven.",
     },
     numnote:
-      "The assistance is a forgivable second mortgage. Awards from $15,000 to $40,000 are forgiven over a 10-year ownership period, so if you stay in the home, there is nothing to pay back.",
+      "The assistance is a forgivable second mortgage. Awards of $1 to $14,999 are forgiven over 5 years and $15,000 to $20,000 over 10 years, so if you stay in the home, there is nothing to pay back.",
     rules: [
       {
         strong: "Buy in the City of Pontiac.",
@@ -382,13 +382,13 @@ export const DPA_PROGRAMS: DpaProgram[] = [
       },
       {
         strong: "Stay for the forgiveness period.",
-        rest: "Awards of $1 to $14,999 are forgiven over 5 years; $15,000 to $40,000 over 10 years.",
+        rest: "Awards of $1 to $14,999 are forgiven over 5 years; $15,000 to $20,000 over 10 years.",
       },
     ],
     providedBy: "the City of Pontiac",
     administrator: "a nonprofit organization",
     metaDescription:
-      "Up to $40,000 in down payment assistance for first-time home buyers in Pontiac, MI. See if you qualify. Free eligibility check, no credit pull.",
+      "Up to $20,000 in down payment assistance for first-time home buyers in Pontiac, MI. See if you qualify. Free eligibility check, no credit pull.",
   },
   {
     slug: "warren",

@@ -42,7 +42,7 @@ export const resources: Resource[] = [
     keyPoints: [
       "Assistance can go toward your down payment and eligible closing costs.",
       "Many programs are forgivable, so if you stay in the home you never pay it back.",
-      "Amounts range from a few thousand dollars up to $40,000 depending on the city.",
+      "Amounts range from a few thousand dollars up to $25,000 depending on the city.",
       "You do not need perfect credit or a large income to qualify.",
       "Checking your eligibility is free and does not affect your credit.",
     ],
@@ -73,7 +73,7 @@ export const resources: Resource[] = [
       {
         heading: "How much can you actually get",
         body: [
-          "It depends entirely on the program. Statewide assistance is typically a few thousand dollars. Local city programs are often larger, ranging from around $14,999 up to $40,000 in some cities like Pontiac.",
+          "It depends entirely on the program. Statewide assistance is typically a few thousand dollars. Local city programs are often larger, ranging from around $14,999 up to $25,000 in some cities like Detroit.",
           "Because the amount is tied to where you buy and which program you use, the honest answer is: it varies, and the only way to know your number is to check the programs that apply to your situation. That is exactly what we help with, at no cost.",
         ],
       },
@@ -102,7 +102,7 @@ export const resources: Resource[] = [
       },
       {
         q: "How much down payment assistance can I get in Metro Detroit?",
-        a: "It varies by program and city. Statewide assistance is typically a few thousand dollars, while local city programs often range from about $14,999 up to $40,000 in cities like Pontiac. The only way to know your number is to check the specific programs that apply to where you are buying.",
+        a: "It varies by program and city. Statewide assistance is typically a few thousand dollars, while local city programs often range from about $14,999 up to $25,000 in cities like Detroit. The only way to know your number is to check the specific programs that apply to where you are buying.",
       },
       {
         q: "Do I need to be a first-time buyer?",

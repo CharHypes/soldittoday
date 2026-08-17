@@ -818,25 +818,25 @@ export const serviceAreas: { name: string; county: string; slug?: string }[] = [
   { name: "Westland", county: "Wayne County", slug: "westland-mi" },
   { name: "Dearborn Heights", county: "Wayne County" },
   { name: "Garden City", county: "Wayne County" },
-  { name: "Canton", county: "Wayne County" },
-  { name: "Plymouth", county: "Wayne County" },
+  { name: "Canton", county: "Wayne County", slug: "canton-mi" },
+  { name: "Plymouth", county: "Wayne County", slug: "plymouth-mi" },
   { name: "Redford", county: "Wayne County" },
   { name: "Detroit", county: "Wayne County" },
   // Oakland
   { name: "Novi", county: "Oakland County", slug: "novi-mi" },
   { name: "Northville", county: "Oakland County", slug: "northville-mi" },
-  { name: "Pontiac", county: "Oakland County" },
-  { name: "Milford", county: "Oakland County" },
+  { name: "Pontiac", county: "Oakland County", slug: "pontiac-mi" },
+  { name: "Milford", county: "Oakland County", slug: "milford-mi" },
   { name: "Farmington", county: "Oakland County" },
-  { name: "Farmington Hills", county: "Oakland County" },
+  { name: "Farmington Hills", county: "Oakland County", slug: "farmington-hills-mi" },
   { name: "West Bloomfield", county: "Oakland County" },
   { name: "Commerce Township", county: "Oakland County" },
   { name: "South Lyon", county: "Oakland County" },
   { name: "Franklin", county: "Oakland County" },
   { name: "Southfield", county: "Oakland County" },
   // Macomb
-  { name: "Warren", county: "Macomb County" },
-  { name: "Sterling Heights", county: "Macomb County" },
+  { name: "Warren", county: "Macomb County", slug: "warren-mi" },
+  { name: "Sterling Heights", county: "Macomb County", slug: "sterling-heights-mi" },
   { name: "Eastpointe", county: "Macomb County" },
   // Washtenaw / Livingston
   { name: "Ypsilanti", county: "Washtenaw County" },
@@ -1205,6 +1205,188 @@ export const cityPages: CityPage[] = [
       { q: "What is Dearborn, MI known for?", a: "Dearborn is Ford's hometown, home to The Henry Ford and Greenfield Village, two walkable downtowns, and a nationally known dining scene." },
       { q: "Is Dearborn a good place to buy a home?", a: "Yes. Demand stays steady thanks to Ford, UM-Dearborn, and the city's character, with homes ranging from historic to mid-century. We can help you target the right neighborhood." },
       { q: "Is Dearborn convenient to Detroit?", a: "Very. Dearborn sits right next to Detroit with quick access to downtown, the airport, and major freeways." },
+    ],
+  },
+  {
+    slug: "pontiac-mi",
+    name: "Pontiac",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Considering Pontiac, MI? Explore this revitalizing Oakland County seat, historic homes, a comeback downtown, and real value near Auburn Hills, with SOLD IT TODAY.",
+    heroIntro:
+      "An Oakland County comeback story: a revitalizing downtown, historic homes with real value, and a central spot near Auburn Hills and the region's job centers.",
+    community: [
+      "Pontiac is the seat of Oakland County and a city on the rise. Its downtown has seen real revitalization, and it offers some of the most approachable historic homes in Oakland County, from craftsman bungalows to larger period houses.",
+      "The location is a strength: close to Auburn Hills, Great Lakes Crossing, Oakland University, and the M1 Concourse, with quick access to I-75 and Woodward. For buyers who want character and value with upside, Pontiac is worth a serious look.",
+    ],
+    lifestyle: [
+      { title: "Value and character", description: "Approachable historic homes with detail and upside." },
+      { title: "Comeback downtown", description: "A revitalizing core with dining and events." },
+      { title: "Central location", description: "Near Auburn Hills, Great Lakes Crossing, and I-75." },
+      { title: "Room to grow", description: "One of Oakland County's most improvable markets." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "Is Pontiac, MI a good place to buy?", a: "Pontiac offers some of Oakland County's most approachable historic homes, a revitalizing downtown, and a central location near Auburn Hills. It is a strong pick for value and upside." },
+      { q: "Does Pontiac have down payment assistance?", a: "Yes. Pontiac has an active down payment assistance program of up to $20,000 for eligible first-time buyers. See our Pontiac assistance page or ask us to check your eligibility." },
+      { q: "Where is Pontiac located?", a: "Pontiac is the seat of Oakland County, near Auburn Hills and Great Lakes Crossing, with quick access to I-75 and Woodward." },
+    ],
+  },
+  {
+    slug: "farmington-hills-mi",
+    name: "Farmington Hills",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Thinking about Farmington Hills, MI? Explore this established Oakland County city with parks, a strong schools reputation, and easy access, with SOLD IT TODAY.",
+    heroIntro:
+      "One of Oakland County's most established suburbs: leafy neighborhoods, excellent parks, a strong schools reputation, and easy access to the whole region.",
+    community: [
+      "Farmington Hills is a large, well-regarded Oakland County suburb known for its stability, green space, and convenience. It pairs with the historic downtown of neighboring Farmington and offers everything from ranches and colonials to newer and upscale homes.",
+      "Heritage Park and a strong parks system, corporate offices along the I-696 and M-5 corridors, and a well-rated schools reputation make it a steady favorite for families and professionals alike.",
+    ],
+    lifestyle: [
+      { title: "Parks and green space", description: "Heritage Park and an extensive parks system." },
+      { title: "Strong schools reputation", description: "A long-standing draw for families." },
+      { title: "Convenient corridors", description: "Easy access via I-696 and M-5." },
+      { title: "Range of homes", description: "From ranches and colonials to upscale newer builds." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why is Farmington Hills, MI popular?", a: "Farmington Hills is known for its stability, parks, strong schools reputation, and convenient location, which makes it a steady favorite for families and professionals." },
+      { q: "What kind of homes are in Farmington Hills?", a: "A wide range, from ranches and colonials to newer and upscale homes. We can help you find the right neighborhood and price point." },
+      { q: "Is Farmington Hills good for relocation?", a: "Yes. Its schools reputation, parks, and easy access make it a popular landing spot for families relocating to Metro Detroit." },
+    ],
+  },
+  {
+    slug: "milford-mi",
+    name: "Milford",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Considering Milford, MI? Explore this charming Oakland County village with a walkable historic downtown, Kensington Metropark, and small-town character, with SOLD IT TODAY.",
+    heroIntro:
+      "A charming Oakland County village: a walkable historic downtown, the Huron River and Kensington Metropark nearby, and a genuine small-town feel.",
+    community: [
+      "Milford is one of the most charming villages in Oakland County, with a walkable historic downtown full of local shops and restaurants along Main Street. It sits along the Huron River, minutes from Kensington Metropark, with a relaxed, small-town character that is hard to find this close to the metro.",
+      "Homes range from historic in-town houses to newer subdivisions and semi-rural properties on larger lots, appealing to buyers who want space, nature, and a real downtown.",
+    ],
+    lifestyle: [
+      { title: "Walkable downtown", description: "Historic Main Street shops, dining, and events." },
+      { title: "Nature nearby", description: "The Huron River and Kensington Metropark minutes away." },
+      { title: "Small-town feel", description: "A relaxed village character close to the metro." },
+      { title: "Space and variety", description: "From in-town historic homes to larger semi-rural lots." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "What is Milford, MI known for?", a: "Milford is known for its charming walkable downtown, small-town character, and proximity to the Huron River and Kensington Metropark." },
+      { q: "Are there larger lots in Milford?", a: "Yes. Milford offers everything from historic in-town homes to newer subdivisions and semi-rural properties on larger lots." },
+      { q: "Is Milford close to the metro?", a: "Yes. Milford keeps a small-town feel while staying convenient to Oakland County and the broader Metro Detroit area." },
+    ],
+  },
+  {
+    slug: "warren-mi",
+    name: "Warren",
+    county: "Macomb County",
+    region: "Macomb County",
+    metaDescription:
+      "Looking at Warren, MI? Explore Macomb County's largest city with affordable established neighborhoods, the GM Tech Center, and central access, with SOLD IT TODAY.",
+    heroIntro:
+      "Macomb County's largest city: affordable, established neighborhoods, major employers like the GM Tech Center, and a central location close to Detroit.",
+    community: [
+      "Warren is the largest city in Macomb County and the third largest in Michigan, known for its affordability and its established, working neighborhoods. It is home to the GM Technical Center and sits right against Detroit's northern border, which keeps jobs and the city close.",
+      "Housing is largely well-kept postwar ranches and bungalows at approachable prices, making Warren a strong first-home and value market with easy access to I-696, I-75, and Van Dyke.",
+    ],
+    lifestyle: [
+      { title: "Affordability", description: "Approachable postwar ranches and bungalows." },
+      { title: "Major employers", description: "Home to the GM Technical Center." },
+      { title: "Central access", description: "Close to Detroit via I-696, I-75, and Van Dyke." },
+      { title: "Established neighborhoods", description: "Steady, well-kept streets across the city." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "Is Warren, MI affordable?", a: "Yes. Warren is known for approachable, well-kept postwar homes, which makes it a strong first-home and value market in Macomb County." },
+      { q: "What is Warren known for?", a: "Warren is Macomb County's largest city, home to the GM Technical Center, with established neighborhoods and a central location next to Detroit." },
+      { q: "How is the commute from Warren?", a: "Very convenient. Warren has easy access to I-696, I-75, and Van Dyke, keeping Detroit and the region close." },
+    ],
+  },
+  {
+    slug: "sterling-heights-mi",
+    name: "Sterling Heights",
+    county: "Macomb County",
+    region: "Macomb County",
+    metaDescription:
+      "Considering Sterling Heights, MI? Explore this large, family-friendly Macomb city with parks, a strong schools reputation, and great amenities, with SOLD IT TODAY.",
+    heroIntro:
+      "A large, family-friendly Macomb County city: well-kept neighborhoods, an extensive parks system, a strong schools reputation, and standout amenities.",
+    community: [
+      "Sterling Heights is one of Macomb County's most sought-after cities, known for its family-friendly neighborhoods, safety reputation, and strong schools. It offers a mix of established subdivisions and newer homes, plus major employers and shopping around the Lakeside area.",
+      "An extensive parks system, Dodge Park and the Nature Center, diverse dining, and easy access via M-59 and Van Dyke make it a steady, high-demand choice for families and move-up buyers.",
+    ],
+    lifestyle: [
+      { title: "Family-friendly", description: "Well-kept neighborhoods and a safety reputation." },
+      { title: "Parks and recreation", description: "Dodge Park, the Nature Center, and an extensive system." },
+      { title: "Strong schools reputation", description: "A long-standing draw for families." },
+      { title: "Shopping and dining", description: "The Lakeside area and a diverse dining scene." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why do families choose Sterling Heights, MI?", a: "Sterling Heights is known for its family-friendly neighborhoods, safety reputation, strong schools, parks, and amenities, which makes it one of Macomb County's most in-demand cities." },
+      { q: "What kind of homes are in Sterling Heights?", a: "A mix of established subdivisions and newer homes across a range of prices. We can help you find the right neighborhood and budget." },
+      { q: "Is Sterling Heights good for relocation?", a: "Yes. Its schools, safety reputation, and amenities make it a popular choice for families relocating to the Macomb County side of Metro Detroit." },
+    ],
+  },
+  {
+    slug: "canton-mi",
+    name: "Canton",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Thinking about Canton, MI? Explore this fast-growing western-Wayne community with strong schools, family neighborhoods, and easy Ann Arbor and Metro access, with SOLD IT TODAY.",
+    heroIntro:
+      "A fast-growing western-Wayne community: strong schools, newer family neighborhoods, and a location right between Ann Arbor and the rest of Metro Detroit.",
+    community: [
+      "Canton is one of western Wayne County's most popular communities, known for its strong schools, newer subdivisions, and family-friendly feel. It has grown quickly for good reason, sitting conveniently between Ann Arbor and Metro Detroit with abundant shopping and parks.",
+      "Housing leans toward newer colonials and subdivisions along with established neighborhoods, appealing to families and professionals who want space, schools, and an easy commute in either direction.",
+    ],
+    lifestyle: [
+      { title: "Strong schools", description: "A top reason families choose Canton." },
+      { title: "Newer neighborhoods", description: "Colonials and subdivisions with space." },
+      { title: "Between two hubs", description: "Convenient to both Ann Arbor and Metro Detroit." },
+      { title: "Shopping and parks", description: "Abundant retail and an active parks system." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why is Canton, MI popular?", a: "Canton is known for its strong schools, newer family neighborhoods, and a convenient location between Ann Arbor and Metro Detroit, which has driven its fast growth." },
+      { q: "What kind of homes are in Canton?", a: "Mostly newer colonials and subdivisions along with established neighborhoods, appealing to families and professionals." },
+      { q: "Is Canton a good relocation choice?", a: "Yes. Its schools and central location between Ann Arbor and Detroit make it a favorite for families relocating to the area." },
+    ],
+  },
+  {
+    slug: "plymouth-mi",
+    name: "Plymouth",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Considering Plymouth, MI? Explore this charming western-Wayne city with a walkable historic downtown, Kellogg Park, and an upscale small-town feel, with SOLD IT TODAY.",
+    heroIntro:
+      "A charming western-Wayne favorite: a walkable historic downtown around Kellogg Park, an upscale small-town feel, and a beloved dining and events scene.",
+    community: [
+      "Plymouth is one of the most charming communities in western Wayne County, centered on a walkable historic downtown around Kellogg Park. It has an upscale small-town character, a strong dining scene, and signature events like the Ice Festival that draw people from across the region.",
+      "Homes range from historic in-town houses to established neighborhoods and newer builds, appealing to buyers who want walkability, character, and a real sense of community close to Northville and Canton.",
+    ],
+    lifestyle: [
+      { title: "Walkable downtown", description: "Kellogg Park, shops, and dining you can stroll to." },
+      { title: "Events and culture", description: "The Ice Festival and a lively local scene." },
+      { title: "Upscale small-town feel", description: "Character and community with real charm." },
+      { title: "Well-connected", description: "Close to Northville, Canton, and the M-14 corridor." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "What is Plymouth, MI known for?", a: "Plymouth is known for its walkable historic downtown around Kellogg Park, its dining and events like the Ice Festival, and an upscale small-town feel." },
+      { q: "Are homes in Plymouth expensive?", a: "Plymouth spans a range, from historic in-town homes to established neighborhoods and newer builds. We can find options that fit your goals and budget." },
+      { q: "Is Plymouth good for families and relocation?", a: "Yes. Its walkability, character, and community feel make it a popular choice for families and people relocating to western Wayne County." },
     ],
   },
 ];
