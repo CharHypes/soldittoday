@@ -781,6 +781,66 @@ export const featuredCommunities: FeaturedCommunity[] = [
   { name: "South Lyon", county: "Oakland County", slug: "south-lyon-mi" },
   { name: "Monroe", county: "Monroe County", slug: "monroe-mi" },
   { name: "Rochester Hills", county: "Oakland County", slug: "rochester-hills-mi" },
+  { name: "Taylor", county: "Wayne County", slug: "taylor-mi" },
+  { name: "Wyandotte", county: "Wayne County", slug: "wyandotte-mi" },
+  { name: "Lincoln Park", county: "Wayne County", slug: "lincoln-park-mi" },
+  { name: "Allen Park", county: "Wayne County", slug: "allen-park-mi" },
+  { name: "Southgate", county: "Wayne County", slug: "southgate-mi" },
+  { name: "Westland", county: "Wayne County", slug: "westland-mi" },
+  { name: "Dearborn", county: "Wayne County", slug: "dearborn-mi" },
+];
+
+/*
+ * Full service-area list (every city SOLD IT TODAY serves). Cities with a live
+ * /communities/[slug] page carry a slug; the rest are declared for coverage
+ * (used in the Communities "Areas We Serve" list and the RealEstateAgent
+ * areaServed schema) and get full pages over time.
+ */
+export const serviceAreas: { name: string; county: string; slug?: string }[] = [
+  // Downriver (Wayne)
+  { name: "Taylor", county: "Wayne County", slug: "taylor-mi" },
+  { name: "Wyandotte", county: "Wayne County", slug: "wyandotte-mi" },
+  { name: "Lincoln Park", county: "Wayne County", slug: "lincoln-park-mi" },
+  { name: "Southgate", county: "Wayne County", slug: "southgate-mi" },
+  { name: "Allen Park", county: "Wayne County", slug: "allen-park-mi" },
+  { name: "Woodhaven", county: "Wayne County" },
+  { name: "Flat Rock", county: "Wayne County" },
+  { name: "Riverview", county: "Wayne County" },
+  { name: "Trenton", county: "Wayne County" },
+  { name: "Grosse Ile", county: "Wayne County" },
+  { name: "Brownstown Township", county: "Wayne County" },
+  { name: "Romulus", county: "Wayne County" },
+  { name: "Belleville", county: "Wayne County" },
+  { name: "Huron Township", county: "Wayne County" },
+  // Western / Central Wayne
+  { name: "Livonia", county: "Wayne County", slug: "livonia-mi" },
+  { name: "Dearborn", county: "Wayne County", slug: "dearborn-mi" },
+  { name: "Westland", county: "Wayne County", slug: "westland-mi" },
+  { name: "Dearborn Heights", county: "Wayne County" },
+  { name: "Garden City", county: "Wayne County" },
+  { name: "Canton", county: "Wayne County" },
+  { name: "Plymouth", county: "Wayne County" },
+  { name: "Redford", county: "Wayne County" },
+  { name: "Detroit", county: "Wayne County" },
+  // Oakland
+  { name: "Novi", county: "Oakland County", slug: "novi-mi" },
+  { name: "Northville", county: "Oakland County", slug: "northville-mi" },
+  { name: "Pontiac", county: "Oakland County" },
+  { name: "Milford", county: "Oakland County" },
+  { name: "Farmington", county: "Oakland County" },
+  { name: "Farmington Hills", county: "Oakland County" },
+  { name: "West Bloomfield", county: "Oakland County" },
+  { name: "Commerce Township", county: "Oakland County" },
+  { name: "South Lyon", county: "Oakland County" },
+  { name: "Franklin", county: "Oakland County" },
+  { name: "Southfield", county: "Oakland County" },
+  // Macomb
+  { name: "Warren", county: "Macomb County" },
+  { name: "Sterling Heights", county: "Macomb County" },
+  { name: "Eastpointe", county: "Macomb County" },
+  // Washtenaw / Livingston
+  { name: "Ypsilanti", county: "Washtenaw County" },
+  { name: "Howell", county: "Livingston County" },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -963,6 +1023,188 @@ export const cityPages: CityPage[] = [
       { q: "Are there waterfront homes in Monroe?", a: "Yes — the River Raisin and Lake Erie offer waterfront and water-access options. We can help you weigh the lifestyle and the costs." },
       { q: "Is Monroe more affordable than the northern suburbs?", a: "Often, yes — Monroe tends to offer more home for the money. Reach out for what's currently available in your price range." },
       { q: "Where is Monroe located?", a: "Monroe sits south of Downriver along I-75, convenient to both Metro Detroit and Toledo." },
+    ],
+  },
+  {
+    slug: "taylor-mi",
+    name: "Taylor",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Thinking about Taylor, MI? Explore this central Downriver city with Heritage Park, easy I-75 and Telegraph access, and approachable family neighborhoods, with SOLD IT TODAY.",
+    heroIntro:
+      "Central Downriver living with room to breathe: Heritage Park green space, quick I-75 and Telegraph access, and approachable, family-friendly neighborhoods.",
+    community: [
+      "Taylor sits right in the heart of Downriver, a practical, welcoming city known for its convenience and value. It is centrally located between the riverfront communities and the I-75 corridor, which makes it an easy base for commuting almost anywhere in Metro Detroit.",
+      "You'll find a mix of well-kept postwar neighborhoods, ranch homes, and newer builds, with parks, shopping along Eureka and Telegraph, and Southland Center nearby. It is a strong pick for first-time buyers and families who want space and access without a premium price.",
+    ],
+    lifestyle: [
+      { title: "Heritage Park", description: "A large community park with trails, the Petting Farm, and year-round events." },
+      { title: "Easy commuting", description: "Quick access to I-75, Telegraph, and Metro Airport for the whole region." },
+      { title: "Everyday convenience", description: "Southland Center, Eureka Road shopping, and dining close at hand." },
+      { title: "Value and space", description: "Approachable pricing and real yards make it a first-time-buyer favorite." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is it like to live in Taylor, MI?", a: "Taylor is a central, convenient Downriver city with approachable prices, parks like Heritage Park, and easy access to I-75, Telegraph, and Metro Airport." },
+      { q: "Is Taylor good for first-time buyers?", a: "Yes. Taylor offers some of the most approachable pricing in Downriver, and it is one of the areas where down payment assistance can apply. We can check your options." },
+      { q: "How is the commute from Taylor?", a: "Excellent. Taylor sits near I-75 and Telegraph, so most of Metro Detroit and the airport are a short drive away." },
+    ],
+  },
+  {
+    slug: "wyandotte-mi",
+    name: "Wyandotte",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Considering Wyandotte, MI? Explore this historic Detroit River city with a walkable downtown, waterfront parks, and character homes, with SOLD IT TODAY.",
+    heroIntro:
+      "One of Downriver's true gems: a walkable historic downtown on the Detroit River, waterfront parks, and homes with real character.",
+    community: [
+      "Wyandotte is the crown jewel of Downriver for a lot of buyers, and for good reason. Its historic downtown along Biddle Avenue is genuinely walkable, lined with local shops and restaurants, and it sits right on the Detroit River with parks and marinas.",
+      "The housing is full of character, older homes with detail you don't find in newer subdivisions, and the community is tight-knit, with signature events like the Wyandotte Street Art Fair and Third Fridays downtown.",
+    ],
+    lifestyle: [
+      { title: "Walkable downtown", description: "Biddle Avenue shops, dining, and events you can stroll to." },
+      { title: "On the river", description: "Bishop Park, the waterfront, and marinas right in town." },
+      { title: "Character homes", description: "Historic architecture and detail throughout its neighborhoods." },
+      { title: "Community events", description: "The Street Art Fair, Third Fridays, and a strong local scene." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Wyandotte, MI known for?", a: "Wyandotte is known for its walkable historic downtown on the Detroit River, waterfront parks, character homes, and events like the Street Art Fair." },
+      { q: "Are homes in Wyandotte expensive?", a: "Wyandotte spans a range, from approachable starter homes to larger historic properties. We can find options that fit your budget and goals." },
+      { q: "Is Wyandotte a good place to buy a first home?", a: "Many first-time buyers love Wyandotte for its character and walkability, and down payment assistance can apply here. Let's check your eligibility." },
+    ],
+  },
+  {
+    slug: "lincoln-park-mi",
+    name: "Lincoln Park",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Looking at Lincoln Park, MI? Explore this close-in Downriver city with established neighborhoods, value, and quick Detroit and airport access, with SOLD IT TODAY.",
+    heroIntro:
+      "Close-in Downriver value: established, walkable neighborhoods with quick access to Detroit, the airport, and the rest of the region.",
+    community: [
+      "Lincoln Park is one of the closest-in Downriver communities, which makes it a favorite for buyers who want easy access to Detroit and the airport without a big-city price tag. Its neighborhoods are established and compact, with a strong first-home market.",
+      "You'll find affordable bungalows and ranches, local shopping along Fort Street and Dix, and a practical, connected location that keeps the whole region within reach.",
+    ],
+    lifestyle: [
+      { title: "Close to everything", description: "Quick to Detroit, the airport, and the I-75 corridor." },
+      { title: "First-home value", description: "One of Downriver's most approachable markets for buyers." },
+      { title: "Established neighborhoods", description: "Compact, walkable streets with classic bungalows and ranches." },
+      { title: "Local convenience", description: "Fort Street and Dix corridors for everyday needs." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "Is Lincoln Park, MI affordable?", a: "Yes. Lincoln Park is one of the more approachable Downriver markets, which makes it popular with first-time buyers, and down payment assistance can apply here." },
+      { q: "How is the location of Lincoln Park?", a: "Very convenient. It is one of the closest-in Downriver cities, with quick access to Detroit, Metro Airport, and I-75." },
+      { q: "What kind of homes are in Lincoln Park?", a: "Mostly bungalows and ranches in established neighborhoods, a great fit for first homes and value-focused buyers." },
+    ],
+  },
+  {
+    slug: "southgate-mi",
+    name: "Southgate",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Considering Southgate, MI? Explore this central Downriver city with convenient shopping, family neighborhoods, and easy access, with SOLD IT TODAY.",
+    heroIntro:
+      "Central Downriver convenience: family neighborhoods, everyday shopping, and a location that keeps the whole area close.",
+    community: [
+      "Southgate is a practical, central Downriver community that a lot of families choose for its convenience. It sits right in the middle of the action, with shopping along Eureka and Trenton Roads and quick access to the surrounding cities.",
+      "The neighborhoods are steady and well-kept, with a mix of ranches and colonials, and the city keeps everyday essentials, from groceries to restaurants, close at hand.",
+    ],
+    lifestyle: [
+      { title: "Central location", description: "Right in the middle of Downriver, close to everything." },
+      { title: "Everyday shopping", description: "Eureka Road and Trenton Road retail and dining." },
+      { title: "Family neighborhoods", description: "Steady, well-kept streets of ranches and colonials." },
+      { title: "Easy access", description: "Convenient to I-75 and the neighboring Downriver cities." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is living in Southgate, MI like?", a: "Southgate is a convenient, central Downriver city with family neighborhoods and easy shopping, a practical choice for buyers who want to be close to everything." },
+      { q: "Is Southgate good for families?", a: "Many families choose Southgate for its central location, steady neighborhoods, and everyday convenience. We can help you find the right fit." },
+      { q: "Does down payment assistance apply in Southgate?", a: "Assistance programs can apply across Downriver depending on your situation. Let's check what you may qualify for." },
+    ],
+  },
+  {
+    slug: "allen-park-mi",
+    name: "Allen Park",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Thinking about Allen Park, MI? Explore this well-kept Downriver city on the Dearborn border with tree-lined streets and standout convenience, with SOLD IT TODAY.",
+    heroIntro:
+      "A well-kept, tree-lined Downriver city on the Dearborn border, with pride-of-ownership neighborhoods and standout convenience to Metro Detroit's job centers.",
+    community: [
+      "Allen Park sits at the northern edge of Downriver, right against Dearborn and close to Detroit, which puts it within easy reach of Ford, the airport, and downtown. It is known for tidy, tree-lined neighborhoods and a real pride of ownership.",
+      "Homes tend to be well-maintained brick ranches, bungalows, and colonials, and the location near I-94 and the Southfield Freeway makes commuting simple. It is a steady, desirable choice for buyers who want a settled feel close to everything.",
+    ],
+    lifestyle: [
+      { title: "Pride of ownership", description: "Tidy, tree-lined streets and well-kept homes." },
+      { title: "Job-center access", description: "Close to Ford, Dearborn, Detroit, and the airport." },
+      { title: "Easy commuting", description: "Near I-94 and the Southfield Freeway." },
+      { title: "Settled feel", description: "Established brick homes and a steady, community feel." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "Why do buyers like Allen Park, MI?", a: "Allen Park is known for well-kept, tree-lined neighborhoods, pride of ownership, and an excellent location near Dearborn, Detroit, Ford, and the airport." },
+      { q: "Is Allen Park close to Dearborn and Detroit?", a: "Yes. Allen Park borders Dearborn and is very close to Detroit, with quick freeway access to major job centers." },
+      { q: "What are homes like in Allen Park?", a: "Mostly well-maintained brick ranches, bungalows, and colonials in established, tidy neighborhoods." },
+    ],
+  },
+  {
+    slug: "westland-mi",
+    name: "Westland",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Looking at Westland, MI? Explore this central western-Wayne city with value, parks, and a convenient location near Livonia and Canton, with SOLD IT TODAY.",
+    heroIntro:
+      "Central western-Wayne value: approachable neighborhoods, plenty of parks, and a location that keeps Livonia, Canton, and the airport close.",
+    community: [
+      "Westland is one of western Wayne County's larger communities, and it is a practical, affordable choice for a lot of buyers. It sits conveniently between Livonia, Canton, and Dearborn, with easy access across the region.",
+      "You'll find a wide range of homes, from starter ranches to larger family houses, plus parks, the Hines Park corridor nearby, and everyday shopping. It is a solid value market with something for most budgets.",
+    ],
+    lifestyle: [
+      { title: "Central and connected", description: "Between Livonia, Canton, and Dearborn, close to the airport." },
+      { title: "Parks and green space", description: "City parks and the nearby Hines Park corridor." },
+      { title: "Range of homes", description: "From starter ranches to larger family homes." },
+      { title: "Everyday value", description: "Approachable pricing and convenient shopping." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "Is Westland, MI affordable?", a: "Westland is a solid value market with a wide range of homes, which makes it popular with first-time and move-up buyers alike." },
+      { q: "Where is Westland located?", a: "In western Wayne County, conveniently between Livonia, Canton, and Dearborn, with easy access to Metro Airport." },
+      { q: "Is Westland good for first-time buyers?", a: "Yes, its approachable pricing makes it a strong first-home market, and down payment assistance can apply. Let's check your options." },
+    ],
+  },
+  {
+    slug: "dearborn-mi",
+    name: "Dearborn",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Considering Dearborn, MI? Explore Ford's hometown with The Henry Ford, walkable downtowns, and a renowned dining scene, with SOLD IT TODAY.",
+    heroIntro:
+      "Ford's hometown and one of Metro Detroit's most distinctive cities: home to The Henry Ford, two walkable downtowns, and a nationally known dining scene.",
+    community: [
+      "Dearborn is a city with a strong identity. It is the home of Ford Motor Company and The Henry Ford museum complex with Greenfield Village, and it anchors western Wayne County with real culture, history, and one of the region's most celebrated food scenes.",
+      "Its neighborhoods range from historic homes near the west and east downtowns to established mid-century streets, with the University of Michigan-Dearborn and major employers keeping demand steady. It is walkable in the right pockets and endlessly convenient to Detroit and the airport.",
+    ],
+    lifestyle: [
+      { title: "The Henry Ford", description: "World-class museum and Greenfield Village right in town." },
+      { title: "Renowned dining", description: "One of Metro Detroit's most celebrated food scenes." },
+      { title: "Walkable downtowns", description: "West and east Dearborn cores with local character." },
+      { title: "Jobs and schools", description: "Ford, UM-Dearborn, and major employers close by." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "What is Dearborn, MI known for?", a: "Dearborn is Ford's hometown, home to The Henry Ford and Greenfield Village, two walkable downtowns, and a nationally known dining scene." },
+      { q: "Is Dearborn a good place to buy a home?", a: "Yes. Demand stays steady thanks to Ford, UM-Dearborn, and the city's character, with homes ranging from historic to mid-century. We can help you target the right neighborhood." },
+      { q: "Is Dearborn convenient to Detroit?", a: "Very. Dearborn sits right next to Detroit with quick access to downtown, the airport, and major freeways." },
     ],
   },
 ];

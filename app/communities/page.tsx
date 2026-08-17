@@ -5,6 +5,7 @@ import {
   counties,
   featuredCommunities,
   cityPages,
+  serviceAreas,
   contact,
 } from "@/lib/data";
 
@@ -89,10 +90,16 @@ const jsonLd = {
       addressCountry: "US",
     },
     parentOrganization: { "@type": "Organization", name: contact.brokerage },
-    areaServed: counties.map((c) => ({
-      "@type": "AdministrativeArea",
-      name: `${c.name}, Michigan`,
-    })),
+    areaServed: [
+      ...counties.map((c) => ({
+        "@type": "AdministrativeArea",
+        name: `${c.name}, Michigan`,
+      })),
+      ...serviceAreas.map((s) => ({
+        "@type": "City",
+        name: `${s.name}, Michigan`,
+      })),
+    ],
   },
 };
 
@@ -241,6 +248,42 @@ export default function CommunitiesPage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------------- */}
+      {/* 3b. AREAS WE SERVE (full service-area list)                      */}
+      {/* ---------------------------------------------------------------- */}
+      <section className="relative overflow-hidden bg-plum py-20 md:py-24">
+        <div className="aurora-bloom opacity-40" />
+        <div className="grain-soft" />
+        <div className="container-lux relative z-10">
+          <SectionHeading
+            eyebrow="Areas We Serve"
+            title="Buying or selling across Southeast Michigan"
+            description="SOLD IT TODAY serves Downriver, Metro Detroit, and the surrounding communities across Wayne, Oakland, Macomb, Washtenaw, and Livingston counties. Cities with a live guide are linked; more are on the way."
+            align="center"
+          />
+          <div className="mx-auto mt-10 flex max-w-4xl flex-wrap items-center justify-center gap-2.5">
+            {serviceAreas.map((s) =>
+              s.slug ? (
+                <a
+                  key={s.name}
+                  href={`/communities/${s.slug}`}
+                  className="rounded-full border border-auroraMauve/30 bg-wine/25 px-4 py-2 text-sm text-pearl transition-colors duration-300 hover:border-auroraMauve/60"
+                >
+                  {s.name}
+                </a>
+              ) : (
+                <span
+                  key={s.name}
+                  className="rounded-full border border-dusty/15 bg-plum/40 px-4 py-2 text-sm text-dusty"
+                >
+                  {s.name}
+                </span>
+              )
+            )}
           </div>
         </div>
       </section>

@@ -1,55 +1,42 @@
 import type { MetadataRoute } from "next";
-import { DPA_PROGRAMS } from "@/lib/dpaPrograms";
+import { cityPages } from "@/lib/data";
 import { publishedResources } from "@/lib/resources";
+import { DPA_PROGRAMS } from "@/lib/dpaPrograms";
 
 const SITE = "https://www.soldittoday.com";
+const LAST = "2026-08-16";
 
-/**
- * XML sitemap for search engines. Includes the core pages, the indexable DPA
- * program pages (coming-soon ones are excluded, matching their noindex), and
- * the published resource articles.
- */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
-  const staticPaths = [
-    "",
-    "/meet-charlotte",
-    "/team",
-    "/buyers",
-    "/sellers",
-    "/first-time-buyers",
-    "/relocation",
-    "/communities",
-    "/neighborhood-guides",
-    "/resources",
-    "/preferred-partners",
-    "/privacy-policy",
-    "/dpa",
+  const staticPaths: { p: string; pr: number }[] = [
+    { p: "", pr: 1 },
+    { p: "/dpa", pr: 0.9 },
+    { p: "/buyers", pr: 0.8 },
+    { p: "/sellers", pr: 0.8 },
+    { p: "/first-time-buyers", pr: 0.8 },
+    { p: "/communities", pr: 0.8 },
+    { p: "/resources", pr: 0.8 },
+    { p: "/meet-charlotte", pr: 0.7 },
+    { p: "/relocation", pr: 0.6 },
+    { p: "/team", pr: 0.5 },
+    { p: "/preferred-partners", pr: 0.5 },
+    { p: "/neighborhood-guides", pr: 0.4 },
+    { p: "/privacy-policy", pr: 0.3 },
   ];
 
-  const staticEntries: MetadataRoute.Sitemap = staticPaths.map((p) => ({
+  const cities = cityPages.map((c) => ({ p: `/communities/${c.slug}`, pr: 0.7 }));
+  const dpa = DPA_PROGRAMS.filter((d) => !d.comingSoon).map((d) => ({
+    p: `/dpa/${d.slug}`,
+    pr: 0.8,
+  }));
+  const res = publishedResources.map((r) => ({
+    p: `/resources/${r.slug}`,
+    pr: 0.7,
+  }));
+
+  return [...staticPaths, ...cities, ...dpa, ...res].map(({ p, pr }) => ({
     url: `${SITE}${p}`,
-    lastModified: now,
-    changeFrequency: "monthly",
-    priority: p === "" ? 1 : 0.7,
+    lastModified: LAST,
+    changeFrequency: "weekly" as const,
+    priority: pr,
   }));
-
-  const dpaEntries: MetadataRoute.Sitemap = DPA_PROGRAMS.filter(
-    (p) => !p.comingSoon
-  ).map((p) => ({
-    url: `${SITE}/dpa/${p.slug}`,
-    lastModified: now,
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
-
-  const resourceEntries: MetadataRoute.Sitemap = publishedResources.map((r) => ({
-    url: `${SITE}/resources/${r.slug}`,
-    lastModified: new Date(`${r.updated}T00:00:00`),
-    changeFrequency: "monthly",
-    priority: 0.8,
-  }));
-
-  return [...staticEntries, ...dpaEntries, ...resourceEntries];
 }
