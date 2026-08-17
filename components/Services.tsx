@@ -18,7 +18,7 @@ export default function Services() {
         <SectionHeading
           eyebrow="What We Do"
           title="Guidance built around every kind of move"
-          description="Whether you're buying your first home or your fifth investment property, the strategy is tailored to your goals — and explained every step of the way."
+          description="Whether you're buying your first home or your fifth investment property, the strategy is tailored to your goals ... and explained every step of the way."
         />
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

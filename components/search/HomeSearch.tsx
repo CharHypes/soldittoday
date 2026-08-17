@@ -12,7 +12,7 @@ import SearchSelect from "./SearchSelect";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
- * HomeSearch — premium, Zillow/Redfin-style search experience for the homepage.
+ * HomeSearch ... premium, Zillow/Redfin-style search experience for the homepage.
  *
  * ┌──────────────────────────────────────────────────────────────────────────┐
  * │  IDX INTEGRATION POINT                                                     │
@@ -25,7 +25,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
  * │    1. Replace `handleSubmit` below with a redirect/query to the IDX search │
  * │       results route, passing the `query` object built here.                │
  * │    2. Or POST `query` to an internal /api/search route that proxies IDX.   │
- * │    3. The `query` shape (location + filters) is already assembled — map it │
+ * │    3. The `query` shape (location + filters) is already assembled ... map it │
  * │       to the provider's expected params.                                   │
  * └──────────────────────────────────────────────────────────────────────────┘
  */
@@ -95,7 +95,7 @@ export default function HomeSearch() {
             transition={{ duration: 0.7, delay: 0.12, ease }}
             className="mx-auto mt-4 max-w-xl text-dusty"
           >
-            Search by city, neighborhood, ZIP code, or address — then refine by
+            Search by city, neighborhood, ZIP code, or address ... then refine by
             price, beds, baths, and property type.
           </motion.p>
         </div>
@@ -177,7 +177,7 @@ export default function HomeSearch() {
             />
           </div>
 
-          {/* Placeholder confirmation — replaced by IDX results once connected */}
+          {/* Placeholder confirmation ... replaced by IDX results once connected */}
           {submitted && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}

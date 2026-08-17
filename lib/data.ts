@@ -1,5 +1,5 @@
 // Centralized placeholder data for SOLD IT TODAY.
-// Swap these arrays for a CMS, API, or IDX feed later — components read from here.
+// Swap these arrays for a CMS, API, or IDX feed later ... components read from here.
 
 export type NavLink = { label: string; href: string };
 
@@ -15,9 +15,9 @@ export const navLinks: NavLink[] = [
   { label: "Contact", href: "#contact" },
 ];
 
-// Future content routes — scaffolded for AI/SEO discoverability. These pages
+// Future content routes ... scaffolded for AI/SEO discoverability. These pages
 // exist as branded placeholders today; content gets filled in over time.
-// Relocation is intentionally NOT here — it now lives in navLinks (which the
+// Relocation is intentionally NOT here ... it now lives in navLinks (which the
 // footer also renders), so listing it here too would duplicate it in the footer.
 export const futurePages: NavLink[] = [
   { label: "Meet Charlotte", href: "/meet-charlotte" },
@@ -31,7 +31,7 @@ export const futurePages: NavLink[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Brand ticker — the scrolling band under the hero                          */
+/*  Brand ticker ... the scrolling band under the hero                          */
 /*  Services first, then markets served. Keep it to terms that are genuinely  */
 /*  covered elsewhere on the site.                                            */
 /* -------------------------------------------------------------------------- */
@@ -59,7 +59,7 @@ export const tickerItems: string[] = [
 
 export type Stat = { value: string; label: string };
 
-// Charlotte was licensed 19 July 2006 — twenty years as of 19 July 2026.
+// Charlotte was licensed 19 July 2006 ... twenty years as of 19 July 2026.
 export const stats: Stat[] = [
   { value: "20", label: "Years licensed" },
   { value: "350+", label: "Homes sold" },
@@ -69,7 +69,7 @@ export const stats: Stat[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Home Search — filter option data (frontend only, ready for IDX)           */
+/*  Home Search ... filter option data (frontend only, ready for IDX)           */
 /* -------------------------------------------------------------------------- */
 
 export type SearchOption = { value: string; label: string };
@@ -120,7 +120,7 @@ export const services: Service[] = [
     id: "buying",
     title: "Buying",
     description:
-      "A calm, strategic search built around your goals — from first showing to final signature.",
+      "A calm, strategic search built around your goals ... from first showing to final signature.",
     points: ["Curated home search", "Negotiation strategy", "Closing guidance"],
   },
   {
@@ -155,7 +155,7 @@ export const services: Service[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Featured Listings (placeholder imagery — NOT live MLS data)               */
+/*  Featured Listings (placeholder imagery ... NOT live MLS data)               */
 /* -------------------------------------------------------------------------- */
 
 export type ListingStatus = "Just Listed" | "Under Contract" | "Sold";
@@ -248,7 +248,7 @@ export const listings: Listing[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Brand values — what SOLD IT TODAY is built around                         */
+/*  Brand values ... what SOLD IT TODAY is built around                         */
 /* -------------------------------------------------------------------------- */
 
 export type Value = { title: string; description: string };
@@ -282,12 +282,12 @@ export const brandValues: Value[] = [
   {
     title: "Options Before Decisions",
     description:
-      "A team that informs first — so you move forward confident and ready.",
+      "A team that informs first ... so you move forward confident and ready.",
   },
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Team — built to support a growing roster of agents                        */
+/*  Team ... built to support a growing roster of agents                        */
 /* -------------------------------------------------------------------------- */
 
 export type TeamMember = {
@@ -300,11 +300,11 @@ export type TeamMember = {
   phone: string;
   /**
    * Optional pull-quote from a verified Zillow review of this agent. Must be
-   * a real client's words — omit the field rather than inventing one.
+   * a real client's words ... omit the field rather than inventing one.
    */
   quote?: { text: string; attribution: string };
   image: string;
-  // CSS object-position for the card crop — tuned per photo so no head,
+  // CSS object-position for the card crop ... tuned per photo so no head,
   // hair, or forehead is cut off (portraits are biased toward the top).
   objectPosition: string;
   // Optional per-photo zoom for balancing cards (e.g. scaling a wider photo up
@@ -363,9 +363,9 @@ export const team: TeamMember[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Preferred Partners — full public-facing company names only                */
+/*  Preferred Partners ... full public-facing company names only                */
 /*  NOTE: entries below are PLACEHOLDERS. Replace with real, client-provided  */
-/*  partners. Do not invent companies — use the labeled placeholders.         */
+/*  partners. Do not invent companies ... use the labeled placeholders.         */
 /* -------------------------------------------------------------------------- */
 
 export type Partner = {
@@ -388,8 +388,8 @@ export const partnerCategories: PartnerCategory[] = [
     blurb:
       "Trusted mortgage professionals for pre-approval, down payment assistance, and creative financing.",
     partners: [
-      { name: "Preferred Lender — Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Lender — Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Lender ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Lender ... Placeholder", detail: "Company name to be added", placeholder: true },
     ],
   },
   {
@@ -398,8 +398,8 @@ export const partnerCategories: PartnerCategory[] = [
     blurb:
       "Title and closing partners that keep transactions clean, clear, and on schedule.",
     partners: [
-      { name: "First Centennial Title — Example Placeholder", detail: "Confirm before publishing", placeholder: true },
-      { name: "Preferred Title Company — Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "First Centennial Title ... Example Placeholder", detail: "Confirm before publishing", placeholder: true },
+      { name: "Preferred Title Company ... Placeholder", detail: "Company name to be added", placeholder: true },
     ],
   },
   {
@@ -408,8 +408,8 @@ export const partnerCategories: PartnerCategory[] = [
     blurb:
       "Thorough, honest inspectors who help you understand a home before you commit.",
     partners: [
-      { name: "Preferred Home Inspector — Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Home Inspector — Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Home Inspector ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Home Inspector ... Placeholder", detail: "Company name to be added", placeholder: true },
     ],
   },
   {
@@ -418,8 +418,8 @@ export const partnerCategories: PartnerCategory[] = [
     blurb:
       "Homeowners insurance partners to protect your investment from day one.",
     partners: [
-      { name: "Preferred Insurance Agency — Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Insurance Agency — Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Insurance Agency ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Insurance Agency ... Placeholder", detail: "Company name to be added", placeholder: true },
     ],
   },
   {
@@ -428,8 +428,8 @@ export const partnerCategories: PartnerCategory[] = [
     blurb:
       "Vetted contractors and trades for repairs, updates, and getting a home market-ready.",
     partners: [
-      { name: "Preferred Contractor — Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Contractor — Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Contractor ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Preferred Contractor ... Placeholder", detail: "Company name to be added", placeholder: true },
     ],
   },
 ];
@@ -444,7 +444,7 @@ export const reasons: Reason[] = [
   {
     title: "Clear Communication",
     description:
-      "You always know where things stand. No guessing, no chasing — just steady, honest updates.",
+      "You always know where things stand. No guessing, no chasing ... just steady, honest updates.",
   },
   {
     title: "Strong Negotiation",
@@ -469,7 +469,7 @@ export const reasons: Reason[] = [
   {
     title: "Real, Measurable Results",
     description:
-      "350+ homes sold across the region — experience that turns strategy into outcomes.",
+      "350+ homes sold across the region ... experience that turns strategy into outcomes.",
   },
 ];
 
@@ -486,7 +486,7 @@ export type Testimonial = {
 
 /*
  * Verified Zillow reviews only. Every entry here must correspond to a real
- * review on the profile at `reviewsUrl` — never write a plausible-sounding
+ * review on the profile at `reviewsUrl` ... never write a plausible-sounding
  * quote to fill the section out.
  */
 export const testimonials: Testimonial[] = [
@@ -495,26 +495,26 @@ export const testimonials: Testimonial[] = [
     quote:
       "Charlotte was extremely patient with all the questions I had and walked me through the process thoroughly. She truly cares about helping you. She goes above and beyond and takes calls at all hours and on weekends if necessary.",
     name: "Janette Warren",
-    role: "Bought & Sold — Taylor, MI · Nov 2024",
+    role: "Bought & Sold ... Taylor, MI · Nov 2024",
   },
   {
     id: "zillow-tyredbeard-2022",
     quote:
       "Charlotte and her team were extremely helpful. Everything from understanding the process, working with my schedule, getting me to closing super fast, and saving me money. I can't imagine there being a better realtor for my situation.",
     name: "TyRedBeard",
-    role: "First-Time Buyer — Westland, MI · May 2022",
+    role: "First-Time Buyer ... Westland, MI · May 2022",
   },
   {
     id: "zillow-winkler-2021",
     quote:
       "Charlotte went above and beyond to help me find a place to live. There were many ups and downs but she hung in there with me. I really appreciate the individual attention she gave me. She was a pleasure to work with.",
     name: "Jackyewinkler",
-    role: "Bought — Melvindale, MI · June 2021",
+    role: "Bought ... Melvindale, MI · June 2021",
   },
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Meet Charlotte — founder spotlight                                         */
+/*  Meet Charlotte ... founder spotlight                                         */
 /* -------------------------------------------------------------------------- */
 
 export const charlotteStats: Stat[] = [
@@ -528,7 +528,7 @@ export const charlotteStats: Stat[] = [
 export const reviewsUrl = "https://www.zillow.com/profile/CharlotteHypes";
 
 /* -------------------------------------------------------------------------- */
-/*  Review themes — what clients consistently mention                          */
+/*  Review themes ... what clients consistently mention                          */
 /*  (Descriptive themes, NOT fabricated direct quotes. Verified reviews live   */
 /*   on the Zillow profile linked above.)                                      */
 /* -------------------------------------------------------------------------- */
@@ -539,7 +539,7 @@ export const reviewThemes: ReviewTheme[] = [
   {
     title: "Clear Communication",
     description:
-      "You always know where things stand — steady updates, plain answers, and no chasing for information.",
+      "You always know where things stand ... steady updates, plain answers, and no chasing for information.",
   },
   {
     title: "Patience",
@@ -549,7 +549,7 @@ export const reviewThemes: ReviewTheme[] = [
   {
     title: "Education",
     description:
-      "Clients leave understanding their options — the reasoning behind each decision, not just the outcome.",
+      "Clients leave understanding their options ... the reasoning behind each decision, not just the outcome.",
   },
   {
     title: "Responsiveness",
@@ -559,7 +559,7 @@ export const reviewThemes: ReviewTheme[] = [
   {
     title: "First-Time Buyer Guidance",
     description:
-      "First-time buyers get extra care — the whole process demystified from pre-approval to keys in hand.",
+      "First-time buyers get extra care ... the whole process demystified from pre-approval to keys in hand.",
   },
   {
     title: "Comfortable & Supported",
@@ -586,7 +586,7 @@ export const marketAreas: MarketArea[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Relocation — content for the /relocation page                              */
+/*  Relocation ... content for the /relocation page                              */
 /* -------------------------------------------------------------------------- */
 
 export type RelocationAudience = { title: string; description: string };
@@ -595,7 +595,7 @@ export const relocationAudiences: RelocationAudience[] = [
   {
     title: "Out-of-State Buyers",
     description:
-      "Moving to Michigan from elsewhere — virtual tours, honest market context, and trusted eyes on every home so you can decide with confidence.",
+      "Moving to Michigan from elsewhere ... virtual tours, honest market context, and trusted eyes on every home so you can decide with confidence.",
   },
   {
     title: "Job Transfers",
@@ -610,7 +610,7 @@ export const relocationAudiences: RelocationAudience[] = [
   {
     title: "Automotive Industry",
     description:
-      "Metro Detroit runs on the auto industry — guidance for engineers, suppliers, and transferees settling into the area.",
+      "Metro Detroit runs on the auto industry ... guidance for engineers, suppliers, and transferees settling into the area.",
   },
   {
     title: "Healthcare Professionals",
@@ -638,7 +638,7 @@ export const relocationAreaMatch: { title: string; description: string }[] = [
   {
     title: "Budget-Based",
     description:
-      "Where your numbers go furthest — with the honest trade-offs explained.",
+      "Where your numbers go furthest ... with the honest trade-offs explained.",
   },
 ];
 
@@ -655,13 +655,13 @@ export const relocationProcess: ProcessStep[] = [
     step: "02",
     title: "Area matching",
     description:
-      "A short list of areas matched to your commute, lifestyle, and budget — with the reasoning behind each.",
+      "A short list of areas matched to your commute, lifestyle, and budget ... with the reasoning behind each.",
   },
   {
     step: "03",
     title: "Guided search",
     description:
-      "Curated homes, virtual or in-person tours, and clear comparisons. No pressure — just clarity.",
+      "Curated homes, virtual or in-person tours, and clear comparisons. No pressure ... just clarity.",
   },
   {
     step: "04",
@@ -682,7 +682,7 @@ export type Faq = { q: string; a: string };
 export const relocationFaqs: Faq[] = [
   {
     q: "Can you help if I'm moving from out of state?",
-    a: "Absolutely — it's a large part of what we do. Out-of-state buyers get virtual tours, local market context, and trusted eyes on every home so you can decide with confidence from afar.",
+    a: "Absolutely ... it's a large part of what we do. Out-of-state buyers get virtual tours, local market context, and trusted eyes on every home so you can decide with confidence from afar.",
   },
   {
     q: "How do you help me choose the right area?",
@@ -694,7 +694,7 @@ export const relocationFaqs: Faq[] = [
   },
   {
     q: "What areas do you serve?",
-    a: "Southeast Michigan and Metro Detroit, with deep local roots in Downriver — from the city to the suburbs and lake communities.",
+    a: "Southeast Michigan and Metro Detroit, with deep local roots in Downriver ... from the city to the suburbs and lake communities.",
   },
   {
     q: "How early should I reach out?",
@@ -703,7 +703,7 @@ export const relocationFaqs: Faq[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  Communities Hub — counties + featured communities                          */
+/*  Communities Hub ... counties + featured communities                          */
 /*  Approximate counts; future city/county pages are planned, not yet built.   */
 /* -------------------------------------------------------------------------- */
 
@@ -720,7 +720,7 @@ export const counties: County[] = [
     name: "Wayne County",
     slug: "wayne-county",
     description:
-      "Our home base — Downriver roots plus Dearborn, Livonia, Canton, and the City of Detroit.",
+      "Our home base ... Downriver roots plus Dearborn, Livonia, Canton, and the City of Detroit.",
     communities: 22,
     plannedPages: 10,
   },
@@ -728,7 +728,7 @@ export const counties: County[] = [
     name: "Oakland County",
     slug: "oakland-county",
     description:
-      "Upscale suburbs and strong schools — Novi, Northville, Rochester, Troy, and beyond.",
+      "Upscale suburbs and strong schools ... Novi, Northville, Rochester, Troy, and beyond.",
     communities: 13,
     plannedPages: 5,
   },
@@ -744,7 +744,7 @@ export const counties: County[] = [
     name: "Livingston County",
     slug: "livingston-county",
     description:
-      "Small-town charm and lakes — Brighton, Howell, and the Hartland area.",
+      "Small-town charm and lakes ... Brighton, Howell, and the Hartland area.",
     communities: 5,
     plannedPages: 3,
   },
@@ -752,7 +752,7 @@ export const counties: County[] = [
     name: "Washtenaw County",
     slug: "washtenaw-county",
     description:
-      "College-town energy and culture — Ann Arbor, Ypsilanti, Saline, and Chelsea.",
+      "College-town energy and culture ... Ann Arbor, Ypsilanti, Saline, and Chelsea.",
     communities: 7,
     plannedPages: 3,
   },
@@ -760,7 +760,7 @@ export const counties: County[] = [
     name: "Monroe County",
     slug: "monroe-county",
     description:
-      "Riverfront living and value south of Downriver — Monroe, Dundee, and Temperance.",
+      "Riverfront living and value south of Downriver ... Monroe, Dundee, and Temperance.",
     communities: 6,
     plannedPages: 3,
   },
@@ -844,7 +844,7 @@ export const serviceAreas: { name: string; county: string; slug?: string }[] = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  City pages — Tier 1 (route: /communities/[slug])                           */
+/*  City pages ... Tier 1 (route: /communities/[slug])                           */
 /*  Qualitative, fair-housing-safe content. No fabricated stats; live market   */
 /*  data comes later via IDX/MLS.                                              */
 /* -------------------------------------------------------------------------- */
@@ -869,12 +869,12 @@ export const cityPages: CityPage[] = [
     county: "Oakland County",
     region: "Western Oakland County",
     metaDescription:
-      "Buying or selling in Novi, MI? Explore what it's like to live in this convenient Oakland County suburb — shopping, schools, commutes, and homes — with SOLD IT TODAY guiding the way.",
+      "Buying or selling in Novi, MI? Explore what it's like to live in this convenient Oakland County suburb ... shopping, schools, commutes, and homes ... with SOLD IT TODAY guiding the way.",
     heroIntro:
-      "A polished, convenient suburb in western Oakland County — known for top-tier shopping, strong schools, and easy access to the I-96 and M-5 corridors, with everything from modern subdivisions to executive homes.",
+      "A polished, convenient suburb in western Oakland County ... known for top-tier shopping, strong schools, and easy access to the I-96 and M-5 corridors, with everything from modern subdivisions to executive homes.",
     community: [
       "Novi has grown into one of Oakland County's most sought-after suburbs, popular with professionals and families who value convenience. You'll find everything from modern subdivisions and condos to larger executive homes, often near parks, lakes, and golf.",
-      "Its central location — minutes from Twelve Oaks Mall, major employers, and the freeways — makes it a natural home base for commuters heading toward Detroit, Ann Arbor, or the surrounding job centers.",
+      "Its central location ... minutes from Twelve Oaks Mall, major employers, and the freeways ... makes it a natural home base for commuters heading toward Detroit, Ann Arbor, or the surrounding job centers.",
     ],
     lifestyle: [
       { title: "Shopping & dining", description: "Twelve Oaks Mall, West Oaks, and a deep bench of restaurants and everyday conveniences." },
@@ -886,21 +886,21 @@ export const cityPages: CityPage[] = [
     faqs: [
       { q: "What is it like to live in Novi, MI?", a: "Novi offers a convenient, suburban lifestyle with excellent shopping, dining, and freeway access. It's popular with families and professionals who want newer homes, good schools, and an easy commute across Metro Detroit." },
       { q: "What kinds of homes are available in Novi?", a: "Everything from condos and townhomes to modern subdivisions and larger executive homes. Inventory and pricing shift with the market, so reach out for what's currently available in your range." },
-      { q: "Is Novi good for commuters?", a: "Yes — Novi sits near I-96, M-5, and I-275, making it convenient for commutes toward Detroit, Ann Arbor, and the surrounding employment centers." },
-      { q: "How's the Novi real estate market?", a: "It varies by neighborhood and home type. We'll give you an honest, current read on pricing and demand for the areas you're considering — no pressure." },
+      { q: "Is Novi good for commuters?", a: "Yes ... Novi sits near I-96, M-5, and I-275, making it convenient for commutes toward Detroit, Ann Arbor, and the surrounding employment centers." },
+      { q: "How's the Novi real estate market?", a: "It varies by neighborhood and home type. We'll give you an honest, current read on pricing and demand for the areas you're considering ... no pressure." },
     ],
   },
   {
     slug: "northville-mi",
     name: "Northville",
     county: "Oakland & Wayne Counties",
-    region: "On the Oakland–Wayne county line",
+    region: "On the Oakland-Wayne county line",
     metaDescription:
-      "Considering Northville, MI? Discover its historic walkable downtown, beautiful homes, and top-rated schools on the Oakland–Wayne line — with SOLD IT TODAY as your local guide.",
+      "Considering Northville, MI? Discover its historic walkable downtown, beautiful homes, and top-rated schools on the Oakland-Wayne line ... with SOLD IT TODAY as your local guide.",
     heroIntro:
-      "One of the area's most charming communities — a historic, walkable downtown, beautiful older homes, and top-rated schools, right on the Oakland–Wayne county line.",
+      "One of the area's most charming communities ... a historic, walkable downtown, beautiful older homes, and top-rated schools, right on the Oakland-Wayne county line.",
     community: [
-      "Northville is beloved for its picturesque downtown — Victorian architecture, boutique shops, restaurants, and a popular farmers market — paired with highly regarded schools. It draws families and buyers who want small-town character without giving up convenience.",
+      "Northville is beloved for its picturesque downtown ... Victorian architecture, boutique shops, restaurants, and a popular farmers market ... paired with highly regarded schools. It draws families and buyers who want small-town character without giving up convenience.",
       "Homes range from historic in-town residences to newer developments on the edges of the city, with Maybury State Park and trails close by.",
     ],
     lifestyle: [
@@ -912,9 +912,9 @@ export const cityPages: CityPage[] = [
     relocation: true,
     faqs: [
       { q: "What makes Northville special?", a: "Its historic, walkable downtown and strong schools. Northville has a distinctive small-town feel that's hard to find this close to Metro Detroit." },
-      { q: "Is Northville in Wayne or Oakland County?", a: "The city of Northville actually straddles both Wayne and Oakland counties, which can affect taxes and school boundaries depending on the exact address — we'll help you understand the differences before you buy." },
+      { q: "Is Northville in Wayne or Oakland County?", a: "The city of Northville actually straddles both Wayne and Oakland counties, which can affect taxes and school boundaries depending on the exact address ... we'll help you understand the differences before you buy." },
       { q: "What types of homes are in Northville?", a: "From historic in-town homes to newer subdivisions on the outskirts. We'll help you find the right fit for your style and budget." },
-      { q: "Is Northville good for families?", a: "Very — the schools, downtown, and parks make it a popular choice for families. We can match you to the neighborhoods that fit your needs." },
+      { q: "Is Northville good for families?", a: "Very ... the schools, downtown, and parks make it a popular choice for families. We can match you to the neighborhoods that fit your needs." },
     ],
   },
   {
@@ -923,9 +923,9 @@ export const cityPages: CityPage[] = [
     county: "Livingston County",
     region: "Livingston County lake country",
     metaDescription:
-      "Thinking about Brighton, MI? Explore its lively downtown, lakes, and trails in Livingston County — plus homes from in-town to lakefront — with SOLD IT TODAY.",
+      "Thinking about Brighton, MI? Explore its lively downtown, lakes, and trails in Livingston County ... plus homes from in-town to lakefront ... with SOLD IT TODAY.",
     heroIntro:
-      "Livingston County's lake country — a vibrant downtown on the Mill Pond, abundant lakes and trails, and an easy drive between Detroit, Ann Arbor, and Lansing.",
+      "Livingston County's lake country ... a vibrant downtown on the Mill Pond, abundant lakes and trails, and an easy drive between Detroit, Ann Arbor, and Lansing.",
     community: [
       "Brighton pairs a lively, walkable downtown with the outdoor lifestyle of Livingston County's lakes and recreation areas. It's popular with families and buyers who want space, nature, and a strong sense of community.",
       "You'll find in-town homes, lakefront and lake-access properties, and newer subdivisions, plus more rural acreage just outside the city.",
@@ -933,15 +933,15 @@ export const cityPages: CityPage[] = [
     lifestyle: [
       { title: "Walkable downtown", description: "Shops, restaurants, and events around the Mill Pond and Main Street." },
       { title: "Lakes & recreation", description: "Brighton State Recreation Area, Huron Meadows, and many nearby lakes." },
-      { title: "Central location", description: "I-96 and US-23 meet here — convenient to Detroit, Ann Arbor, and Lansing." },
+      { title: "Central location", description: "I-96 and US-23 meet here ... convenient to Detroit, Ann Arbor, and Lansing." },
       { title: "Room to spread out", description: "Everything from in-town homes to lakefront and acreage." },
     ],
     relocation: true,
     faqs: [
       { q: "What's living in Brighton like?", a: "Brighton offers a lively downtown plus lake and outdoor living. It's a favorite for buyers who want recreation and community with a central location between major cities." },
-      { q: "Are there lakefront homes in Brighton?", a: "Yes — the area has many lakes with lakefront and lake-access homes. We can help you understand the differences (and costs) before you fall in love with one." },
+      { q: "Are there lakefront homes in Brighton?", a: "Yes ... the area has many lakes with lakefront and lake-access homes. We can help you understand the differences (and costs) before you fall in love with one." },
       { q: "Is Brighton a good commuter location?", a: "It's well-positioned where I-96 meets US-23, making commutes toward Detroit, Ann Arbor, and Lansing convenient." },
-      { q: "What does the Brighton market look like?", a: "It varies a lot by home type — in-town vs. lakefront vs. acreage. Reach out for current availability and an honest read on pricing." },
+      { q: "What does the Brighton market look like?", a: "It varies a lot by home type ... in-town vs. lakefront vs. acreage. Reach out for current availability and an honest read on pricing." },
     ],
   },
   {
@@ -950,11 +950,11 @@ export const cityPages: CityPage[] = [
     county: "Washtenaw County",
     region: "Washtenaw County",
     metaDescription:
-      "Moving to Ann Arbor, MI? Explore this vibrant University of Michigan college town — culture, neighborhoods, economy, and homes — with SOLD IT TODAY guiding your search.",
+      "Moving to Ann Arbor, MI? Explore this vibrant University of Michigan college town ... culture, neighborhoods, economy, and homes ... with SOLD IT TODAY guiding your search.",
     heroIntro:
-      "A one-of-a-kind college town — home to the University of Michigan, with vibrant culture, walkable neighborhoods, a strong economy, and some of the region's most distinctive homes.",
+      "A one-of-a-kind college town ... home to the University of Michigan, with vibrant culture, walkable neighborhoods, a strong economy, and some of the region's most distinctive homes.",
     community: [
-      "Ann Arbor blends college-town energy with a sophisticated arts, dining, and tech scene. Its neighborhoods each have a personality — from historic districts near downtown to leafy, established areas and modern builds.",
+      "Ann Arbor blends college-town energy with a sophisticated arts, dining, and tech scene. Its neighborhoods each have a personality ... from historic districts near downtown to leafy, established areas and modern builds.",
       "It's a competitive, in-demand market driven by the university, hospitals, and a thriving research and tech economy, attracting buyers and relocations from across the country.",
     ],
     lifestyle: [
@@ -965,9 +965,9 @@ export const cityPages: CityPage[] = [
     ],
     relocation: true,
     faqs: [
-      { q: "What's it like to live in Ann Arbor?", a: "Ann Arbor offers big-city culture in a walkable, mid-size city — arts, dining, and a strong economy, with distinctive neighborhoods and excellent parks." },
+      { q: "What's it like to live in Ann Arbor?", a: "Ann Arbor offers big-city culture in a walkable, mid-size city ... arts, dining, and a strong economy, with distinctive neighborhoods and excellent parks." },
       { q: "Is the Ann Arbor market competitive?", a: "It often is, thanks to steady demand from the university, hospitals, and tech employers. Having a strategy and an experienced guide makes a real difference here." },
-      { q: "Can you help me relocate to Ann Arbor?", a: "Absolutely — we regularly help buyers relocating for the University of Michigan, Michigan Medicine, and area employers, with area matching and remote-friendly support." },
+      { q: "Can you help me relocate to Ann Arbor?", a: "Absolutely ... we regularly help buyers relocating for the University of Michigan, Michigan Medicine, and area employers, with area matching and remote-friendly support." },
       { q: "What kinds of homes are in Ann Arbor?", a: "Historic homes, downtown condos, established family neighborhoods, and modern builds. We'll help you find the right neighborhood for your life." },
     ],
   },
@@ -977,9 +977,9 @@ export const cityPages: CityPage[] = [
     county: "Wayne County",
     region: "Wayne County",
     metaDescription:
-      "Buying or selling in Livonia, MI? Explore this established, well-located Wayne County suburb — schools, parks, and classic neighborhoods — with SOLD IT TODAY.",
+      "Buying or selling in Livonia, MI? Explore this established, well-located Wayne County suburb ... schools, parks, and classic neighborhoods ... with SOLD IT TODAY.",
     heroIntro:
-      "A classic, well-located Wayne County suburb — established neighborhoods, strong schools, abundant parks, and convenient access to I-96, I-275, and the surrounding corridors.",
+      "A classic, well-located Wayne County suburb ... established neighborhoods, strong schools, abundant parks, and convenient access to I-96, I-275, and the surrounding corridors.",
     community: [
       "Livonia is a stable, family-oriented suburb known for solid value, mature neighborhoods, and a central Wayne County location. It's a favorite for buyers who want an established community with easy commutes in every direction.",
       "Housing leans toward classic mid-century brick ranches and colonials, with pockets of newer construction and condos.",
@@ -994,7 +994,7 @@ export const cityPages: CityPage[] = [
     faqs: [
       { q: "What's living in Livonia like?", a: "Livonia is an established, family-friendly suburb with strong schools, lots of parks, and a central location that makes commuting easy in any direction." },
       { q: "What kinds of homes are in Livonia?", a: "Mostly classic brick ranches and colonials, with some newer construction and condos. It's known for offering solid value." },
-      { q: "Is Livonia good for commuters?", a: "Yes — its position near I-96 and I-275 makes commutes across Metro Detroit convenient." },
+      { q: "Is Livonia good for commuters?", a: "Yes ... its position near I-96 and I-275 makes commutes across Metro Detroit convenient." },
       { q: "Is Livonia a good place for families?", a: "It's a longtime favorite for families thanks to its schools, parks, and stable neighborhoods." },
     ],
   },
@@ -1004,9 +1004,9 @@ export const cityPages: CityPage[] = [
     county: "Monroe County",
     region: "Monroe County, south of Downriver",
     metaDescription:
-      "Considering Monroe, MI? Discover this historic river-and-lake city south of Downriver — waterfront, value, and I-75 access — with SOLD IT TODAY as your guide.",
+      "Considering Monroe, MI? Discover this historic river-and-lake city south of Downriver ... waterfront, value, and I-75 access ... with SOLD IT TODAY as your guide.",
     heroIntro:
-      "A historic river-and-lake city south of Downriver — waterfront character, real value, and easy I-75 access to both Metro Detroit and Toledo.",
+      "A historic river-and-lake city south of Downriver ... waterfront character, real value, and easy I-75 access to both Metro Detroit and Toledo.",
     community: [
       "Monroe is the seat of Monroe County, set along the River Raisin and near Lake Erie. It offers historic downtown charm, waterfront living, and generally more approachable price points than the northern suburbs.",
       "You'll find historic homes near downtown, established neighborhoods, and newer subdivisions, with lake and river access for those who want it.",
@@ -1020,8 +1020,8 @@ export const cityPages: CityPage[] = [
     relocation: false,
     faqs: [
       { q: "What's it like to live in Monroe, MI?", a: "Monroe offers historic, riverfront character with generally more approachable home prices, plus lake and river access and easy I-75 commuting." },
-      { q: "Are there waterfront homes in Monroe?", a: "Yes — the River Raisin and Lake Erie offer waterfront and water-access options. We can help you weigh the lifestyle and the costs." },
-      { q: "Is Monroe more affordable than the northern suburbs?", a: "Often, yes — Monroe tends to offer more home for the money. Reach out for what's currently available in your price range." },
+      { q: "Are there waterfront homes in Monroe?", a: "Yes ... the River Raisin and Lake Erie offer waterfront and water-access options. We can help you weigh the lifestyle and the costs." },
+      { q: "Is Monroe more affordable than the northern suburbs?", a: "Often, yes ... Monroe tends to offer more home for the money. Reach out for what's currently available in your price range." },
       { q: "Where is Monroe located?", a: "Monroe sits south of Downriver along I-75, convenient to both Metro Detroit and Toledo." },
     ],
   },
@@ -1972,7 +1972,7 @@ export const contact = {
   founder: "Charlotte Hypes",
   founderTitle: "Founder & Team Lead, REALTOR®",
   brokerage: "Remerica United Realty",
-  // Brokerage office address — used where brokerage info is appropriate
+  // Brokerage office address ... used where brokerage info is appropriate
   // (footer, contact, legal). Not displayed prominently on every page.
   officeStreet: "47720 Grand River Ave",
   officeCityStateZip: "Novi, MI 48374",
@@ -1980,5 +1980,5 @@ export const contact = {
   email: "charlotte@soldittoday.com",
   region: "Serving Southeast Michigan",
   serviceStatement:
-    "Serving Southeast Michigan and Metro Detroit — with local roots in Downriver.",
+    "Serving Southeast Michigan and Metro Detroit ... with local roots in Downriver.",
 };

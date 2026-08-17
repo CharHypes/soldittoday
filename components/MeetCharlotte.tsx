@@ -8,7 +8,7 @@ import Reveal from "./ui/Reveal";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
- * Meet Charlotte — a personal founder spotlight. Intentionally smaller and
+ * Meet Charlotte ... a personal founder spotlight. Intentionally smaller and
  * editorial: SOLD IT TODAY stays the primary brand, with Charlotte positioned
  * as the founder/guide. Refined portrait card (not oversized) + a first-person
  * note + supporting stats.
@@ -24,7 +24,7 @@ export default function MeetCharlotte() {
 
       <div className="container-lux relative z-10">
         <div className="mx-auto grid max-w-5xl items-center gap-12 md:grid-cols-[auto_1fr] md:gap-16">
-          {/* Refined portrait card — deliberately compact */}
+          {/* Refined portrait card ... deliberately compact */}
           <Reveal>
             <div className="relative mx-auto w-[230px] sm:w-[260px]">
               <div className="aurora-ring relative aspect-[4/5] overflow-hidden rounded-xl2 border border-auroraMauve/20 shadow-aurora">

@@ -29,7 +29,7 @@ export default function About() {
                 <div className="absolute inset-0 bg-gradient-to-t from-plum/70 via-transparent to-transparent" />
               </div>
 
-              {/* Founder callout — Charlotte included, not the whole focus */}
+              {/* Founder callout ... Charlotte included, not the whole focus */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ export default function About() {
                   Founded by Charlotte Hypes and rooted in Downriver, our team
                   brings strong negotiation, creative problem-solving, and deep
                   local market knowledge to buyers and sellers across Metro
-                  Detroit — guiding each client with clarity from first
+                  Detroit ... guiding each client with clarity from first
                   conversation to closing table.
                 </p>
               </div>

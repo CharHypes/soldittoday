@@ -7,7 +7,7 @@ import SectionHeading from "./ui/SectionHeading";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
- * Reviews — focused on the themes clients consistently mention rather than
+ * Reviews ... focused on the themes clients consistently mention rather than
  * fabricated direct quotes. Verified, real reviews live on Charlotte's Zillow
  * profile (linked via "Read More Reviews"). No invented testimonials here.
  */

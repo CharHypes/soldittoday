@@ -13,7 +13,7 @@ export default function WhyWorkWithUs() {
         <SectionHeading
           eyebrow="Why Work With Us"
           title="The difference is in how it feels to work together"
-          description="Experience matters — but so does the way you're treated along the way. Here's what clients can count on from start to finish."
+          description="Experience matters ... but so does the way you're treated along the way. Here's what clients can count on from start to finish."
           align="center"
           light
         />

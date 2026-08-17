@@ -19,7 +19,7 @@ const statusStyles: Record<ListingStatus, string> = {
  * ┌──────────────────────────────────────────────────────────────────────────┐
  * │  IDX / MLS INTEGRATION POINT                                               │
  * │  Cards render from the `listings` PLACEHOLDER array in lib/data.ts (stock  │
- * │  imagery — NOT live MLS data). The markup is fully data-driven, so when an │
+ * │  imagery ... NOT live MLS data). The markup is fully data-driven, so when an │
  * │  IDX/MLS feed is connected:                                                │
  * │    1. Replace the `listings` source with live data (same `Listing` shape:  │
  * │       title, location, price, beds, baths, sqft, status, image).           │
@@ -35,7 +35,7 @@ export default function Listings() {
           <SectionHeading
             eyebrow="Featured Listings"
             title="A look at recent homes"
-            description="A small selection from across Southeast Michigan. New opportunities come on the market often — reach out for current availability."
+            description="A small selection from across Southeast Michigan. New opportunities come on the market often ... reach out for current availability."
           />
           <motion.a
             href="#contact"

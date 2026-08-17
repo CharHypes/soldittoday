@@ -4,7 +4,7 @@ import CrossLinks from "@/components/CrossLinks";
 import { resources } from "@/lib/resources";
 
 export const metadata: Metadata = {
-  title: "Resources | SOLD IT TODAY — Southeast Michigan Real Estate",
+  title: "Resources | SOLD IT TODAY ... Southeast Michigan Real Estate",
   description:
     "Clear, honest real estate guides for Southeast Michigan buyers and sellers: down payment assistance, first-time buying, FHA loans, closing costs, and more.",
   alternates: { canonical: "https://www.soldittoday.com/resources" },

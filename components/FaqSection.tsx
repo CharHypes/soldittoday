@@ -4,7 +4,7 @@ export type FaqItem = { q: string; a: string };
 
 /**
  * Reusable FAQ section. Native <details> accordions (no client JS, SEO-friendly)
- * plus FAQPage structured data built from the same items. Content is real — no
+ * plus FAQPage structured data built from the same items. Content is real ... no
  * fabricated schema.
  */
 export default function FaqSection({

@@ -3,7 +3,7 @@ import PageShell from "@/components/PageShell";
 import { partnerCategories } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Preferred Partners | SOLD IT TODAY — Southeast Michigan Real Estate",
+  title: "Preferred Partners | SOLD IT TODAY ... Southeast Michigan Real Estate",
   description:
     "SOLD IT TODAY's preferred partners: trusted lenders, title companies, home inspectors, insurance agents, and contractors supporting buyers and sellers across Southeast Michigan and Metro Detroit.",
 };
@@ -13,7 +13,7 @@ export default function PreferredPartnersPage() {
     <PageShell
       eyebrow="Preferred Partners"
       title="A trusted network around every transaction"
-      description="The professionals we rely on to keep your move smooth — from financing and title to inspection, insurance, and repairs. Partner companies will be confirmed and listed here."
+      description="The professionals we rely on to keep your move smooth ... from financing and title to inspection, insurance, and repairs. Partner companies will be confirmed and listed here."
     >
       <section className="relative bg-plum py-20 md:py-28">
         <div className="container-lux space-y-12">

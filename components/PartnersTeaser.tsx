@@ -24,7 +24,7 @@ export default function PartnersTeaser() {
             </h2>
             <p className="mt-4 text-dusty">
               Lenders, title companies, inspectors, insurance agents, and
-              tradespeople we trust — so the people supporting your move are as
+              tradespeople we trust ... so the people supporting your move are as
               dependable as your agent.
             </p>
           </div>

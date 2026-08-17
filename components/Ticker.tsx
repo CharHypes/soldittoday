@@ -4,7 +4,7 @@ import { tickerItems } from "@/lib/data";
  * Scrolling brand ticker.
  *
  * The list is rendered twice and translated -50%, so the second copy is
- * exactly where the first started when the loop restarts — that seam is what
+ * exactly where the first started when the loop restarts ... that seam is what
  * makes it read as continuous rather than snapping.
  *
  * Marked aria-hidden: it is decorative, and a screen reader announcing a

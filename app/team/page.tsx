@@ -3,9 +3,9 @@ import PageShell from "@/components/PageShell";
 import Team from "@/components/Team";
 
 export const metadata: Metadata = {
-  title: "Our Team | SOLD IT TODAY — Southeast Michigan Real Estate",
+  title: "Our Team | SOLD IT TODAY ... Southeast Michigan Real Estate",
   description:
-    "Meet the SOLD IT TODAY team — a growing Southeast Michigan real estate group led by founder Charlotte Hypes, focused on clear guidance, honest education, and strong negotiation for buyers and sellers across Metro Detroit.",
+    "Meet the SOLD IT TODAY team ... a growing Southeast Michigan real estate group led by founder Charlotte Hypes, focused on clear guidance, honest education, and strong negotiation for buyers and sellers across Metro Detroit.",
 };
 
 export default function TeamPage() {

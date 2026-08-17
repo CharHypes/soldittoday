@@ -13,7 +13,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "SOLD IT TODAY | Charlotte Hypes — Southeast Michigan Real Estate",
+  title: "SOLD IT TODAY | Charlotte Hypes ... Southeast Michigan Real Estate",
   description:
     "Real estate guidance with clarity, strategy, and results. Charlotte Hypes and SOLD IT TODAY serve Southeast Michigan and Metro Detroit buyers and sellers with experience, honesty, and strong local market knowledge.",
   keywords: [
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "Remerica United Realty",
   ],
   openGraph: {
-    title: "SOLD IT TODAY | Charlotte Hypes — Southeast Michigan Real Estate",
+    title: "SOLD IT TODAY | Charlotte Hypes ... Southeast Michigan Real Estate",
     description:
       "Luxury feel, practical guidance, real results. Serving Southeast Michigan buyers and sellers.",
     type: "website",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 /*
  * Resolves the theme before first paint. Dark is the brand default and is
- * what every first-time visitor sees regardless of their OS setting — light
+ * what every first-time visitor sees regardless of their OS setting ... light
  * is strictly opt-in via the toggle, and only a previously saved choice
  * overrides it. Must stay a blocking inline script; deferring it would let
  * the wrong theme paint first and flash.

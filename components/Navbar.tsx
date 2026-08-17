@@ -37,7 +37,7 @@ export default function Navbar() {
       ].join(" ")}
     >
       <nav className="container-lux flex h-[72px] items-center justify-between">
-        {/* Brand logo — SOLD IT TODAY is the primary brand */}
+        {/* Brand logo ... SOLD IT TODAY is the primary brand */}
         <a href="#home" className="flex items-center" aria-label="SOLD IT TODAY home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -47,7 +47,7 @@ export default function Navbar() {
           />
         </a>
 
-        {/* Desktop links — full nav only at lg+ (7 items + CTA need the room);
+        {/* Desktop links ... full nav only at lg+ (7 items + CTA need the room);
             tablets and below use the hamburger menu. Tighter gap at lg so the
             CTA doesn't wrap; roomier spacing returns at xl. */}
         <ul className="hidden items-center gap-6 lg:flex xl:gap-9">
@@ -64,7 +64,7 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* Primary CTA — aurora glow, strongest action site-wide.
+        {/* Primary CTA ... aurora glow, strongest action site-wide.
             ~44px touch target (py-3) to match the site-wide standard. */}
         <div className="hidden shrink-0 items-center gap-3 lg:flex">
           <ThemeToggle />

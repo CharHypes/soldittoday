@@ -8,30 +8,30 @@ import { contact } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Buy a Home in Southeast Michigan | SOLD IT TODAY",
   description:
-    "Buy with clarity and confidence across Southeast Michigan. SOLD IT TODAY guides first-time, move-up, and relocating buyers through search, financing, negotiation, and closing — education first, no pressure.",
+    "Buy with clarity and confidence across Southeast Michigan. SOLD IT TODAY guides first-time, move-up, and relocating buyers through search, financing, negotiation, and closing ... education first, no pressure.",
   alternates: { canonical: "/buyers" },
   openGraph: {
     title: "Buy a Home in Southeast Michigan | SOLD IT TODAY",
     description:
-      "A calm, strategic home search built around your goals — from pre-approval to keys in hand.",
+      "A calm, strategic home search built around your goals ... from pre-approval to keys in hand.",
     type: "website",
     url: "/buyers",
   },
 };
 
 const steps = [
-  { n: "01", t: "Strategy call", d: "We start with your goals, budget, and timeline — no pressure, just a clear plan." },
+  { n: "01", t: "Strategy call", d: "We start with your goals, budget, and timeline ... no pressure, just a clear plan." },
   { n: "02", t: "Get pre-approved", d: "We connect you with a trusted lender so you know your numbers and shop with confidence." },
-  { n: "03", t: "Search with focus", d: "Curated homes that actually fit — we cut the noise so you see what matters." },
+  { n: "03", t: "Search with focus", d: "Curated homes that actually fit ... we cut the noise so you see what matters." },
   { n: "04", t: "Tour & evaluate", d: "Honest pros and cons on every home, including the things easy to miss." },
-  { n: "05", t: "Offer & negotiate", d: "Strategy that protects your position — and your budget — when it counts." },
+  { n: "05", t: "Offer & negotiate", d: "Strategy that protects your position ... and your budget ... when it counts." },
   { n: "06", t: "Inspect & close", d: "Guidance through inspection, appraisal, and closing all the way to the keys." },
 ];
 
 const audiences = [
   {
     t: "First-Time Buyers",
-    d: "Extra patience and education — the whole process demystified, plus down payment assistance and credit guidance.",
+    d: "Extra patience and education ... the whole process demystified, plus down payment assistance and credit guidance.",
     href: "/first-time-buyers",
     cta: "First-Time Buyer Guide",
   },
@@ -52,19 +52,19 @@ const audiences = [
 const faqs: FaqItem[] = [
   {
     q: "How much do I need for a down payment?",
-    a: "Less than many people expect. Some loan programs allow as little as 3–3.5% down, and certain VA or USDA loans can go to 0% for those who qualify. Down payment assistance may help too. We'll connect you with a trusted lender to find the right fit.",
+    a: "Less than many people expect. Some loan programs allow as little as 3-3.5% down, and certain VA or USDA loans can go to 0% for those who qualify. Down payment assistance may help too. We'll connect you with a trusted lender to find the right fit.",
   },
   {
     q: "Should I get pre-approved before I start looking?",
-    a: "Yes — pre-approval clarifies your budget and makes your offers far stronger. It's the first practical step, and we'll introduce you to lenders we trust if you need one.",
+    a: "Yes ... pre-approval clarifies your budget and makes your offers far stronger. It's the first practical step, and we'll introduce you to lenders we trust if you need one.",
   },
   {
     q: "How long does it take to buy a home?",
-    a: "The search varies by your needs and the market, but once you're under contract it's typically 30–45 days to closing. We map out the timeline up front so there are no surprises.",
+    a: "The search varies by your needs and the market, but once you're under contract it's typically 30-45 days to closing. We map out the timeline up front so there are no surprises.",
   },
   {
     q: "How are you paid as my buyer's agent?",
-    a: "We discuss representation and exactly how I'm compensated up front and in writing, before you commit to anything — so it's clear and transparent from day one.",
+    a: "We discuss representation and exactly how I'm compensated up front and in writing, before you commit to anything ... so it's clear and transparent from day one.",
   },
   {
     q: "What's the very first step?",
@@ -91,7 +91,7 @@ export default function BuyersPage() {
     <PageShell
       eyebrow="Buyers"
       title="Buy a home with clarity and confidence"
-      description="Whether it's your first home, your next one, or a move across the state, SOLD IT TODAY guides you through every step — search, financing, negotiation, and closing — with honest answers the whole way."
+      description="Whether it's your first home, your next one, or a move across the state, SOLD IT TODAY guides you through every step ... search, financing, negotiation, and closing ... with honest answers the whole way."
       actions={
         <div className="flex flex-wrap gap-3">
           <a href="/#contact" className="btn-aurora group">
@@ -123,7 +123,7 @@ export default function BuyersPage() {
           <SectionHeading
             eyebrow="The Process"
             title="How buying works with us"
-            description="A clear, six-step path from first conversation to closing table — explained at every stage."
+            description="A clear, six-step path from first conversation to closing table ... explained at every stage."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {steps.map((s) => (
@@ -188,7 +188,7 @@ export default function BuyersPage() {
             <SectionHeading
               eyebrow="Financing"
               title="Understand your options before you decide"
-              description="Financing is where confidence is won or lost. We help you understand the path — and connect you with lenders we trust — so the numbers are never a mystery."
+              description="Financing is where confidence is won or lost. We help you understand the path ... and connect you with lenders we trust ... so the numbers are never a mystery."
             />
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="/first-time-buyers" className="btn-aurora group">
@@ -205,7 +205,7 @@ export default function BuyersPage() {
           <div className="grid gap-px overflow-hidden rounded-xl2 border border-auroraMauve/15 bg-auroraMauve/15 sm:grid-cols-2">
             {[
               ["Pre-approval", "Know your budget and strengthen every offer."],
-              ["Loan types", "Conventional, FHA, VA, USDA — matched to you."],
+              ["Loan types", "Conventional, FHA, VA, USDA ... matched to you."],
               ["Down payment help", "Assistance programs for those who qualify."],
               ["Credit guidance", "A plan to get mortgage-ready, step by step."],
             ].map(([t, d]) => (

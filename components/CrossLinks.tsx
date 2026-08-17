@@ -26,7 +26,7 @@ export default function CrossLinks({ current }: { current?: string }) {
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-dusty">
           Have a question or want a clear plan? Start with a no-pressure
-          conversation — you&rsquo;ll get straight answers and a confident next
+          conversation ... you&rsquo;ll get straight answers and a confident next
           step.
         </p>
 

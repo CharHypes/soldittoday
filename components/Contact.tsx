@@ -21,7 +21,7 @@ export default function Contact() {
     e.preventDefault();
     const form = e.currentTarget;
 
-    // Honeypot spam trap — bots fill hidden fields; real users never see it.
+    // Honeypot spam trap ... bots fill hidden fields; real users never see it.
     const honeypot = form.elements.namedItem(
       "company"
     ) as HTMLInputElement | null;
@@ -81,7 +81,7 @@ export default function Contact() {
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-5 max-w-md text-base leading-relaxed text-dusty md:text-lg">
-                Buying, selling, or just exploring your options — start with a
+                Buying, selling, or just exploring your options ... start with a
                 no-pressure conversation. You&rsquo;ll get straight answers and a
                 clear next step.
               </p>
@@ -159,7 +159,7 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Honeypot spam trap — off-screen, not focusable, hidden from
+                {/* Honeypot spam trap ... off-screen, not focusable, hidden from
                     assistive tech. Humans never fill it; bots that do are dropped. */}
                 <div
                   aria-hidden="true"

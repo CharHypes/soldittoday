@@ -7,7 +7,7 @@ import { useCallback, useEffect, useState } from "react";
  *
  * The resolved theme lives on <html data-theme>, written by the blocking
  * script in layout.tsx before first paint. This component only mirrors and
- * updates that state, so there is no flash and no SSR/CSR mismatch — it
+ * updates that state, so there is no flash and no SSR/CSR mismatch ... it
  * renders a stable placeholder until mounted.
  *
  * Several instances mount at once (desktop header, mobile header, page
@@ -32,7 +32,7 @@ function applyTheme(theme: Theme) {
   try {
     window.localStorage.setItem(STORAGE_KEY, theme);
   } catch {
-    // Private browsing / storage disabled — theme still applies for this visit.
+    // Private browsing / storage disabled ... theme still applies for this visit.
   }
   window.dispatchEvent(new CustomEvent(CHANGE_EVENT));
 }

@@ -25,7 +25,7 @@ export default function Market() {
             <Reveal delay={0.16}>
               <div className="mt-6 space-y-5 text-base leading-relaxed text-dusty md:text-lg">
                 <p>
-                  SOLD IT TODAY started with deep local roots in Downriver — but
+                  SOLD IT TODAY started with deep local roots in Downriver ... but
                   Charlotte's market knowledge reaches throughout Metro Detroit
                   and the wider Southeast Michigan region.
                 </p>

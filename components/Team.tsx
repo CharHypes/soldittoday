@@ -113,7 +113,7 @@ export default function Team({ bare = false }: TeamProps) {
         <SectionHeading
           eyebrow="Our Team"
           title="Real people, real local expertise"
-          description="A growing Southeast Michigan team — each member focused on guiding you with honesty, strategy, and clear next steps."
+          description="A growing Southeast Michigan team ... each member focused on guiding you with honesty, strategy, and clear next steps."
           align="center"
         />
         {grid}

@@ -12,7 +12,7 @@ import {
 export const metadata: Metadata = {
   title: "Relocating to Southeast Michigan | SOLD IT TODAY Relocation",
   description:
-    "Relocating to Metro Detroit or Southeast Michigan? SOLD IT TODAY helps out-of-state buyers, job transfers, and companies relocating employees — with area matching by commute, lifestyle, and budget.",
+    "Relocating to Metro Detroit or Southeast Michigan? SOLD IT TODAY helps out-of-state buyers, job transfers, and companies relocating employees ... with area matching by commute, lifestyle, and budget.",
 };
 
 // Service + FAQPage structured data for SEO + AI discoverability.
@@ -27,7 +27,7 @@ const serviceLd = {
   },
   areaServed: ["Southeast Michigan", "Metro Detroit", "Downriver"],
   description:
-    "Relocation guidance for individuals, families, and companies moving to Southeast Michigan — including out-of-state buyers, job transfers, and corporate relocations.",
+    "Relocation guidance for individuals, families, and companies moving to Southeast Michigan ... including out-of-state buyers, job transfers, and corporate relocations.",
 };
 
 const faqLd = {
@@ -45,7 +45,7 @@ export default function RelocationPage() {
     <PageShell
       eyebrow="Relocation"
       title="Relocating to Southeast Michigan"
-      description="Whether you're moving across the state or across the country, SOLD IT TODAY helps individuals, families, and companies land in the right place — confident and informed."
+      description="Whether you're moving across the state or across the country, SOLD IT TODAY helps individuals, families, and companies land in the right place ... confident and informed."
     >
       {/* eslint-disable-next-line react/no-danger */}
       <script
@@ -65,7 +65,7 @@ export default function RelocationPage() {
         <div className="container-lux relative z-10 max-w-3xl">
           <Reveal>
             <p className="text-lg leading-relaxed text-dusty md:text-xl">
-              Moving is a big step — especially to a region you don&rsquo;t know
+              Moving is a big step ... especially to a region you don&rsquo;t know
               yet. Our job is to make Southeast Michigan feel familiar fast: the
               right neighborhoods for your commute and lifestyle, honest market
               context, and a steady guide from your first question to closing day.
@@ -126,7 +126,7 @@ export default function RelocationPage() {
           <Reveal delay={0.12}>
             <p className="mt-4 max-w-2xl text-dusty">
               Not sure where to land? We narrow it down with you across three
-              lenses — so the shortlist actually fits your life.
+              lenses ... so the shortlist actually fits your life.
             </p>
           </Reveal>
           <div className="mt-10 grid gap-5 sm:grid-cols-3">
@@ -196,7 +196,7 @@ export default function RelocationPage() {
                 </h2>
                 <p className="mt-3 text-pearl/80">
                   We support Michigan employers moving talent into the region with
-                  a smooth, consistent experience — from automotive and healthcare
+                  a smooth, consistent experience ... from automotive and healthcare
                   to university and executive moves.
                 </p>
               </div>

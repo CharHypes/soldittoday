@@ -13,7 +13,7 @@ import {
 } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "Meet Charlotte Hypes | Founder of SOLD IT TODAY — Southeast Michigan",
+  title: "Meet Charlotte Hypes | Founder of SOLD IT TODAY ... Southeast Michigan",
   description:
     "Meet Charlotte Hypes, Founder & Team Lead of SOLD IT TODAY. 20 years, 350+ homes sold, and a Circle of Excellence recipient guiding Southeast Michigan buyers and sellers with clarity, strategy, and honesty.",
 };
@@ -61,7 +61,7 @@ export default function MeetCharlottePage() {
     <PageShell
       eyebrow="Meet Charlotte"
       title="Meet Charlotte Hypes"
-      description="Founder & Team Lead, SOLD IT TODAY — your guide to buying and selling in Southeast Michigan with clarity, strategy, and honesty."
+      description="Founder & Team Lead, SOLD IT TODAY ... your guide to buying and selling in Southeast Michigan with clarity, strategy, and honesty."
     >
       {/* eslint-disable-next-line react/no-danger */}
       <script
@@ -111,7 +111,7 @@ export default function MeetCharlottePage() {
                   step of the way.
                 </p>
                 <p>
-                  I founded SOLD IT TODAY to do real estate differently — to lead
+                  I founded SOLD IT TODAY to do real estate differently ... to lead
                   with education instead of pressure, and to treat every client
                   like the decision is theirs to make, fully informed. Over{" "}
                   <span className="text-pearl">20 years</span> and{" "}
@@ -215,7 +215,7 @@ export default function MeetCharlottePage() {
             <Reveal delay={0.12}>
               <p className="mt-6 text-base leading-relaxed text-dusty md:text-lg">
                 My roots are in Downriver, but our team guides buyers and sellers
-                throughout Metro Detroit and the wider region — from the City of
+                throughout Metro Detroit and the wider region ... from the City of
                 Detroit to the suburbs of Oakland, Macomb, and Washtenaw counties.
               </p>
             </Reveal>

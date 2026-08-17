@@ -12,7 +12,7 @@ type SearchSelectProps = {
 
 /**
  * Reusable, premium-styled select for the Home Search filters.
- * Pure UI — no data fetching. Wire the selected value into the IDX query later.
+ * Pure UI ... no data fetching. Wire the selected value into the IDX query later.
  */
 export default function SearchSelect({
   id,

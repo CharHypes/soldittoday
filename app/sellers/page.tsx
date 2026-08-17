@@ -8,12 +8,12 @@ import { contact } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Sell Your Home in Southeast Michigan | SOLD IT TODAY",
   description:
-    "Sell with strategy. SOLD IT TODAY prices, prepares, markets, and negotiates your Southeast Michigan home to present it at its strongest — and maximize your net proceeds in any market.",
+    "Sell with strategy. SOLD IT TODAY prices, prepares, markets, and negotiates your Southeast Michigan home to present it at its strongest ... and maximize your net proceeds in any market.",
   alternates: { canonical: "/sellers" },
   openGraph: {
     title: "Sell Your Home in Southeast Michigan | SOLD IT TODAY",
     description:
-      "Pricing, marketing, and negotiation that present your home at its strongest — and protect your bottom line.",
+      "Pricing, marketing, and negotiation that present your home at its strongest ... and protect your bottom line.",
     type: "website",
     url: "/sellers",
   },
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
 
 const steps = [
   { n: "01", t: "Walk-through & strategy", d: "We learn your home and your goals, then build a plan around both." },
-  { n: "02", t: "Price it right", d: "A data-driven pricing strategy — to attract demand, not leave money behind." },
-  { n: "03", t: "Prep & present", d: "Honest, ROI-focused advice on what's worth doing before listing — and what isn't." },
+  { n: "02", t: "Price it right", d: "A data-driven pricing strategy ... to attract demand, not leave money behind." },
+  { n: "03", t: "Prep & present", d: "Honest, ROI-focused advice on what's worth doing before listing ... and what isn't." },
   { n: "04", t: "Market widely", d: "Premium presentation that reaches the right buyers, online and beyond." },
   { n: "05", t: "Negotiate offers", d: "Experienced advocacy that protects your position and your net." },
   { n: "06", t: "Manage to close", d: "We steer inspection, appraisal, and closing so nothing stalls the sale." },
@@ -31,7 +31,7 @@ const steps = [
 const pillars = [
   {
     t: "Pricing Strategy",
-    d: "A real comparative market analysis — comps, local trends, and your home's condition — to price for maximum interest and the strongest net, not just a number that sounds good.",
+    d: "A real comparative market analysis ... comps, local trends, and your home's condition ... to price for maximum interest and the strongest net, not just a number that sounds good.",
   },
   {
     t: "Premium Marketing",
@@ -46,7 +46,7 @@ const pillars = [
 const faqs: FaqItem[] = [
   {
     q: "How do you decide my list price?",
-    a: "With data, not guesswork — a comparative market analysis using recent comparable sales, current local trends, and your home's specific condition and features. We price to attract real demand and protect your net.",
+    a: "With data, not guesswork ... a comparative market analysis using recent comparable sales, current local trends, and your home's specific condition and features. We price to attract real demand and protect your net.",
   },
   {
     q: "What does it cost to sell my home?",
@@ -54,7 +54,7 @@ const faqs: FaqItem[] = [
   },
   {
     q: "Should I make repairs or updates before listing?",
-    a: "Only the ones worth it. We give honest, ROI-focused guidance — what tends to pay off in your market, and what to skip — so you don't over-invest before a sale.",
+    a: "Only the ones worth it. We give honest, ROI-focused guidance ... what tends to pay off in your market, and what to skip ... so you don't over-invest before a sale.",
   },
   {
     q: "How long will it take to sell?",
@@ -62,7 +62,7 @@ const faqs: FaqItem[] = [
   },
   {
     q: "When is the best time to list?",
-    a: "It depends on your goals and the market — sometimes sooner is better, sometimes timing the season helps. We build the timeline around your situation, not a generic rule.",
+    a: "It depends on your goals and the market ... sometimes sooner is better, sometimes timing the season helps. We build the timeline around your situation, not a generic rule.",
   },
 ];
 
@@ -85,7 +85,7 @@ export default function SellersPage() {
     <PageShell
       eyebrow="Sellers"
       title="Sell your home at its strongest"
-      description="Pricing, preparation, marketing, and negotiation built to present your Southeast Michigan home at its best — and maximize what you walk away with, in any market."
+      description="Pricing, preparation, marketing, and negotiation built to present your Southeast Michigan home at its best ... and maximize what you walk away with, in any market."
       actions={
         <div className="flex flex-wrap gap-3">
           <a href="/#contact" className="btn-aurora group">
@@ -117,7 +117,7 @@ export default function SellersPage() {
           <SectionHeading
             eyebrow="The Process"
             title="How selling works with us"
-            description="A clear six-step path from first walk-through to closing — with strategy behind every move."
+            description="A clear six-step path from first walk-through to closing ... with strategy behind every move."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {steps.map((s) => (
@@ -174,7 +174,7 @@ export default function SellersPage() {
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-pearl/80">
                 The trickiest part is timing and the math. We coordinate both
-                sides of your move so the sale and the purchase work together —
+                sides of your move so the sale and the purchase work together ...
                 not against each other.
               </p>
             </div>

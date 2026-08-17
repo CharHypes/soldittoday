@@ -174,7 +174,7 @@ export default function CityPage({ params }: { params: Params }) {
                 Buying in {city.name}
               </h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-dusty">
-                A focused, strategic search built around your goals — from
+                A focused, strategic search built around your goals ... from
                 financing prep to the right neighborhood and a smooth closing.
               </p>
               <a href="/buyers" className="btn-outline group mt-7 self-start">
@@ -189,7 +189,7 @@ export default function CityPage({ params }: { params: Params }) {
                 Selling in {city.name}
               </h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-dusty">
-                Pricing, preparation, and marketing tuned to local buyers — to
+                Pricing, preparation, and marketing tuned to local buyers ... to
                 present your home at its strongest and protect your net.
               </p>
               <a href="/sellers" className="btn-outline group mt-7 self-start">

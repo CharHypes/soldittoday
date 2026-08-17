@@ -19,7 +19,7 @@ export default function Footer() {
               className="h-12 w-auto"
             />
             {/* Brokerage compliance lockup. The official Remerica mark is dark
-                navy + red — illegible on the dark footer — so a generated
+                navy + red ... illegible on the dark footer ... so a generated
                 pearl-white reversed version is used there. Light mode needs the
                 opposite: the white mark vanishes, so the original dark mark
                 shows instead. Both are rendered and swapped by theme in CSS
@@ -29,18 +29,18 @@ export default function Footer() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assets/logos/remerica/remerica-united-realty-white.png"
-                alt="Remerica United Realty — brokerage"
+                alt="Remerica United Realty ... brokerage"
                 className="theme-dark-only h-8 w-auto opacity-90"
               />
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/assets/logos/remerica/remerica-united-realty.png"
-                alt="Remerica United Realty — brokerage"
+                alt="Remerica United Realty ... brokerage"
                 className="theme-light-only h-8 w-auto"
               />
             </div>
           </div>
-          {/* Footer CTA — a friendly, smaller invitation to the founder page
+          {/* Footer CTA ... a friendly, smaller invitation to the founder page
               (distinct from the header's "Schedule a Consultation" primary CTA). */}
           <a
             href="/meet-charlotte"
@@ -137,10 +137,10 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Legal / disclaimer area — placeholder copy until reviewed */}
+        {/* Legal / disclaimer area ... placeholder copy until reviewed */}
         <div className="space-y-4 border-t border-dusty/10 pt-8 text-xs leading-relaxed text-dusty/70">
           <p>
-            {/* DISCLAIMER PLACEHOLDER — replace with brokerage-approved legal text,
+            {/* DISCLAIMER PLACEHOLDER ... replace with brokerage-approved legal text,
                 Equal Housing Opportunity, and license disclosures before launch. */}
             SOLD IT TODAY is a real estate team at {contact.brokerage},{" "}
             {contact.officeStreet}, {contact.officeCityStateZip}. Equal Housing

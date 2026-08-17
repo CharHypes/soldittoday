@@ -29,7 +29,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute -right-24 bottom-0 h-[420px] w-[420px] rounded-full bg-wine/60 blur-[150px]" />
       <div className="grain-soft" />
 
-      {/* Oversized SOLD IT TODAY key — architectural brand signature.
+      {/* Oversized SOLD IT TODAY key ... architectural brand signature.
           Anchored to the right and bled off the bottom edge of the hero so it
           reads as integrated background artwork, not a placed logo. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -80,14 +80,14 @@ export default function Hero() {
             variants={item}
             className="mt-10 flex flex-wrap items-center gap-3"
           >
-            {/* Primary CTA — strongest action across the whole site */}
+            {/* Primary CTA ... strongest action across the whole site */}
             <a href="#contact" className="btn-aurora group">
               Schedule a Consultation
               <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
                 &rarr;
               </span>
             </a>
-            {/* Secondary CTA — jumps to the Home Search section */}
+            {/* Secondary CTA ... jumps to the Home Search section */}
             <a href="#search" className="btn-outline group">
               Search Homes
               <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">

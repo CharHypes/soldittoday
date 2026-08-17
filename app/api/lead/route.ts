@@ -37,7 +37,7 @@ async function sendNotification(lead: {
   sourcePage: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return; // Not configured yet — lead is already saved.
+  if (!apiKey) return; // Not configured yet ... lead is already saved.
 
   const fullName = [lead.firstName, lead.lastName].filter(Boolean).join(" ");
   const rows: [string, string][] = [

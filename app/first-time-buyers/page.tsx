@@ -8,19 +8,19 @@ import { contact } from "@/lib/data";
 export const metadata: Metadata = {
   title: "First-Time Home Buyers in Michigan | SOLD IT TODAY",
   description:
-    "A patient, step-by-step guide for first-time home buyers in Southeast Michigan — mortgage prep, down payment assistance, common mistakes to avoid, and honest answers from pre-approval to keys in hand.",
+    "A patient, step-by-step guide for first-time home buyers in Southeast Michigan ... mortgage prep, down payment assistance, common mistakes to avoid, and honest answers from pre-approval to keys in hand.",
   alternates: { canonical: "/first-time-buyers" },
   openGraph: {
     title: "First-Time Home Buyers in Michigan | SOLD IT TODAY",
     description:
-      "The whole process demystified — mortgage prep, down payment assistance, and a guide in your corner the whole way.",
+      "The whole process demystified ... mortgage prep, down payment assistance, and a guide in your corner the whole way.",
     type: "website",
     url: "/first-time-buyers",
   },
 };
 
 const steps = [
-  { n: "01", t: "Talk it through", d: "We answer your questions and map a plan around your goals and budget — zero pressure." },
+  { n: "01", t: "Talk it through", d: "We answer your questions and map a plan around your goals and budget ... zero pressure." },
   { n: "02", t: "Get mortgage-ready", d: "Pre-approval plus credit guidance, so you know your numbers and what you can afford." },
   { n: "03", t: "Understand your help", d: "We review down payment assistance and loan options you may qualify for." },
   { n: "04", t: "Search & tour", d: "Find the right fit with honest feedback on every home you see." },
@@ -29,7 +29,7 @@ const steps = [
 ];
 
 const mistakes = [
-  ["Skipping pre-approval", "Shopping before you know your real budget — and weakening your offers."],
+  ["Skipping pre-approval", "Shopping before you know your real budget ... and weakening your offers."],
   ["Maxing your budget", "Forgetting taxes, insurance, and maintenance on top of the mortgage."],
   ["Missing assistance you qualify for", "Not checking down payment help before you start."],
   ["Waiving inspections blindly", "Giving up protection without understanding the risk."],
@@ -40,15 +40,15 @@ const mistakes = [
 const faqs: FaqItem[] = [
   {
     q: "How much money do I really need to buy my first home?",
-    a: "Often less than you'd think. Down payments can start around 3–3.5%, and some programs go to 0% for those who qualify — plus closing costs. Down payment assistance may lower it further. We'll connect you with a trusted lender to see your real numbers.",
+    a: "Often less than you'd think. Down payments can start around 3-3.5%, and some programs go to 0% for those who qualify ... plus closing costs. Down payment assistance may lower it further. We'll connect you with a trusted lender to see your real numbers.",
   },
   {
     q: "What credit score do I need?",
-    a: "It varies by loan program, and there's no single magic number. If you're not there yet, that's okay — we offer credit-improvement guidance and lender connections to help you get mortgage-ready over time.",
+    a: "It varies by loan program, and there's no single magic number. If you're not there yet, that's okay ... we offer credit-improvement guidance and lender connections to help you get mortgage-ready over time.",
   },
   {
     q: "What is down payment assistance?",
-    a: "It's grants or low-cost loans that help eligible buyers cover the down payment and sometimes closing costs. Michigan has programs (such as MSHDA) for qualifying first-time buyers — we'll help you see whether you qualify.",
+    a: "It's grants or low-cost loans that help eligible buyers cover the down payment and sometimes closing costs. Michigan has programs (such as MSHDA) for qualifying first-time buyers ... we'll help you see whether you qualify.",
   },
   {
     q: "How long does buying my first home take?",
@@ -56,7 +56,7 @@ const faqs: FaqItem[] = [
   },
   {
     q: "Should I keep renting instead?",
-    a: "Sometimes the honest answer is yes — and we'll tell you. We'll run the real numbers with you, with no pressure, so you can decide with clarity rather than fear of missing out.",
+    a: "Sometimes the honest answer is yes ... and we'll tell you. We'll run the real numbers with you, with no pressure, so you can decide with clarity rather than fear of missing out.",
   },
 ];
 
@@ -79,7 +79,7 @@ export default function FirstTimeBuyersPage() {
     <PageShell
       eyebrow="First-Time Buyers"
       title="Your first home, without the guesswork"
-      description="Buying your first home should feel exciting, not overwhelming. We demystify the whole process — mortgage prep, down payment assistance, and the mistakes to avoid — with a patient guide in your corner the entire way."
+      description="Buying your first home should feel exciting, not overwhelming. We demystify the whole process ... mortgage prep, down payment assistance, and the mistakes to avoid ... with a patient guide in your corner the entire way."
       actions={
         <div className="flex flex-wrap gap-3">
           <a href="/#contact" className="btn-aurora group">
@@ -111,7 +111,7 @@ export default function FirstTimeBuyersPage() {
           <SectionHeading
             eyebrow="Step By Step"
             title="The path to your first home"
-            description="Six clear steps — explained in plain language, at a pace that works for you."
+            description="Six clear steps ... explained in plain language, at a pace that works for you."
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {steps.map((s) => (
@@ -170,7 +170,7 @@ export default function FirstTimeBuyersPage() {
               Help may be closer than you think
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-dusty">
-              Many first-time buyers assume they need 20% down — you usually
+              Many first-time buyers assume they need 20% down ... you usually
               don&rsquo;t. Grants and low-cost assistance programs can help
               eligible buyers with the down payment and even closing costs.
               Michigan offers programs (such as MSHDA) for qualifying buyers, and
@@ -199,7 +199,7 @@ export default function FirstTimeBuyersPage() {
           <SectionHeading
             eyebrow="Avoid These"
             title="Common first-time buyer mistakes"
-            description="The pitfalls we help our first-time buyers steer around — before they cost time or money."
+            description="The pitfalls we help our first-time buyers steer around ... before they cost time or money."
             align="center"
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -219,7 +219,7 @@ export default function FirstTimeBuyersPage() {
       <FaqSection
         items={faqs}
         title="First-time buyer questions, answered"
-        description="The questions new buyers ask us most — answered honestly."
+        description="The questions new buyers ask us most ... answered honestly."
       />
 
       <CrossLinks current="/first-time-buyers" />

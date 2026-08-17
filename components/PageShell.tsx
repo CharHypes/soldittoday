@@ -18,7 +18,7 @@ type PageShellProps = {
  * links back to the homepage sections, a branded hero band, and the footer.
  *
  * These pages exist for AI/SEO discoverability and future content. Most carry
- * placeholder content today — fill them in over time.
+ * placeholder content today ... fill them in over time.
  */
 export default function PageShell({
   eyebrow,

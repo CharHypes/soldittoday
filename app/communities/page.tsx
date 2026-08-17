@@ -17,21 +17,21 @@ const liveCitySlugs = new Set(cityPages.map((c) => c.slug));
 /* -------------------------------------------------------------------------- */
 export const metadata: Metadata = {
   title:
-    "Michigan Communities | SOLD IT TODAY — Explore Southeast Michigan",
+    "Michigan Communities | SOLD IT TODAY ... Explore Southeast Michigan",
   description:
-    "Explore Southeast Michigan communities with SOLD IT TODAY. County guides for Wayne, Oakland, Macomb, Livingston, Washtenaw, and Monroe — for buyers, sellers, and anyone relocating to Metro Detroit.",
+    "Explore Southeast Michigan communities with SOLD IT TODAY. County guides for Wayne, Oakland, Macomb, Livingston, Washtenaw, and Monroe ... for buyers, sellers, and anyone relocating to Metro Detroit.",
   alternates: { canonical: "/communities" },
   openGraph: {
     title: "Explore Michigan Communities With Confidence | SOLD IT TODAY",
     description:
-      "Discover Southeast Michigan communities that fit your lifestyle, goals, and budget — whether you're relocating, buying, upgrading, downsizing, or investing.",
+      "Discover Southeast Michigan communities that fit your lifestyle, goals, and budget ... whether you're relocating, buying, upgrading, downsizing, or investing.",
     type: "website",
     url: "/communities",
   },
 };
 
 /*
- * COMMUNITIES HUB — flagship entry point for Living / Moving / Investing /
+ * COMMUNITIES HUB ... flagship entry point for Living / Moving / Investing /
  * Owning in Michigan. The central hub for future COUNTY pages
  * (/communities/[county]) and CITY pages (/communities/[city]-mi), which are
  * NOT built yet. County and featured-community cards are intentionally
@@ -55,7 +55,7 @@ const exploreLinks: {
   label: string;
   href: string;
   live: boolean;
-  current?: boolean; // the page we're on — shown as active, not a link
+  current?: boolean; // the page we're on ... shown as active, not a link
 }[] = [
   { label: "Buying a Home", href: "/buyers", live: false },
   { label: "Selling a Home", href: "/sellers", live: false },
@@ -201,7 +201,7 @@ export default function CommunitiesPage() {
           <SectionHeading
             eyebrow="Featured Communities"
             title="A few places to know"
-            description="A first look at communities we serve. Full city guides — market trends, neighborhoods, schools, and lifestyle — are in development."
+            description="A first look at communities we serve. Full city guides ... market trends, neighborhoods, schools, and lifestyle ... are in development."
             align="center"
           />
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -302,7 +302,7 @@ export default function CommunitiesPage() {
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-pearl/80">
                 We help out-of-state buyers, transferees, and corporate
-                relocations find the right community — with area matching,
+                relocations find the right community ... with area matching,
                 commute and school research, and guidance every step of the way.
               </p>
             </div>
@@ -331,7 +331,7 @@ export default function CommunitiesPage() {
             {[
               {
                 title: "Buying a Home",
-                copy: "From first showing to final signature — a calm, strategic search built around your goals.",
+                copy: "From first showing to final signature ... a calm, strategic search built around your goals.",
                 href: "/buyers",
               },
               {
@@ -377,7 +377,7 @@ export default function CommunitiesPage() {
                   Michigan Getaways
                 </h2>
                 <p className="mt-3 text-sm leading-relaxed text-dusty">
-                  Lake homes, cottages, and Up North properties — a dedicated
+                  Lake homes, cottages, and Up North properties ... a dedicated
                   guide to vacation and second-home ownership across Michigan.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-2">
@@ -391,7 +391,7 @@ export default function CommunitiesPage() {
                   ))}
                 </div>
               </div>
-              {/* Non-navigating placeholder — no route yet */}
+              {/* Non-navigating placeholder ... no route yet */}
               <span className="btn-outline cursor-default select-none whitespace-nowrap opacity-70">
                 Coming Soon
               </span>
@@ -401,7 +401,7 @@ export default function CommunitiesPage() {
       </section>
 
       {/* ---------------------------------------------------------------- */}
-      {/* 8. INTERNAL LINKING — explore cluster (architecture-ready)        */}
+      {/* 8. INTERNAL LINKING ... explore cluster (architecture-ready)        */}
       {/* ---------------------------------------------------------------- */}
       <section className="relative overflow-hidden bg-bruised py-16 md:py-20">
         <div className="container-lux relative z-10">
