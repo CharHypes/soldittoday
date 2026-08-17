@@ -803,44 +803,44 @@ export const serviceAreas: { name: string; county: string; slug?: string }[] = [
   { name: "Lincoln Park", county: "Wayne County", slug: "lincoln-park-mi" },
   { name: "Southgate", county: "Wayne County", slug: "southgate-mi" },
   { name: "Allen Park", county: "Wayne County", slug: "allen-park-mi" },
-  { name: "Woodhaven", county: "Wayne County" },
-  { name: "Flat Rock", county: "Wayne County" },
-  { name: "Riverview", county: "Wayne County" },
-  { name: "Trenton", county: "Wayne County" },
-  { name: "Grosse Ile", county: "Wayne County" },
-  { name: "Brownstown Township", county: "Wayne County" },
-  { name: "Romulus", county: "Wayne County" },
-  { name: "Belleville", county: "Wayne County" },
-  { name: "Huron Township", county: "Wayne County" },
+  { name: "Woodhaven", county: "Wayne County", slug: "woodhaven-mi" },
+  { name: "Flat Rock", county: "Wayne County", slug: "flat-rock-mi" },
+  { name: "Riverview", county: "Wayne County", slug: "riverview-mi" },
+  { name: "Trenton", county: "Wayne County", slug: "trenton-mi" },
+  { name: "Grosse Ile", county: "Wayne County", slug: "grosse-ile-mi" },
+  { name: "Brownstown Township", county: "Wayne County", slug: "brownstown-mi" },
+  { name: "Romulus", county: "Wayne County", slug: "romulus-mi" },
+  { name: "Belleville", county: "Wayne County", slug: "belleville-mi" },
+  { name: "Huron Township", county: "Wayne County", slug: "huron-township-mi" },
   // Western / Central Wayne
   { name: "Livonia", county: "Wayne County", slug: "livonia-mi" },
   { name: "Dearborn", county: "Wayne County", slug: "dearborn-mi" },
   { name: "Westland", county: "Wayne County", slug: "westland-mi" },
-  { name: "Dearborn Heights", county: "Wayne County" },
-  { name: "Garden City", county: "Wayne County" },
+  { name: "Dearborn Heights", county: "Wayne County", slug: "dearborn-heights-mi" },
+  { name: "Garden City", county: "Wayne County", slug: "garden-city-mi" },
   { name: "Canton", county: "Wayne County", slug: "canton-mi" },
   { name: "Plymouth", county: "Wayne County", slug: "plymouth-mi" },
-  { name: "Redford", county: "Wayne County" },
-  { name: "Detroit", county: "Wayne County" },
+  { name: "Redford", county: "Wayne County", slug: "redford-mi" },
+  { name: "Detroit", county: "Wayne County", slug: "detroit-mi" },
   // Oakland
   { name: "Novi", county: "Oakland County", slug: "novi-mi" },
   { name: "Northville", county: "Oakland County", slug: "northville-mi" },
   { name: "Pontiac", county: "Oakland County", slug: "pontiac-mi" },
   { name: "Milford", county: "Oakland County", slug: "milford-mi" },
-  { name: "Farmington", county: "Oakland County" },
+  { name: "Farmington", county: "Oakland County", slug: "farmington-mi" },
   { name: "Farmington Hills", county: "Oakland County", slug: "farmington-hills-mi" },
-  { name: "West Bloomfield", county: "Oakland County" },
-  { name: "Commerce Township", county: "Oakland County" },
-  { name: "South Lyon", county: "Oakland County" },
-  { name: "Franklin", county: "Oakland County" },
-  { name: "Southfield", county: "Oakland County" },
+  { name: "West Bloomfield", county: "Oakland County", slug: "west-bloomfield-mi" },
+  { name: "Commerce Township", county: "Oakland County", slug: "commerce-township-mi" },
+  { name: "South Lyon", county: "Oakland County", slug: "south-lyon-mi" },
+  { name: "Franklin", county: "Oakland County", slug: "franklin-mi" },
+  { name: "Southfield", county: "Oakland County", slug: "southfield-mi" },
   // Macomb
   { name: "Warren", county: "Macomb County", slug: "warren-mi" },
   { name: "Sterling Heights", county: "Macomb County", slug: "sterling-heights-mi" },
-  { name: "Eastpointe", county: "Macomb County" },
+  { name: "Eastpointe", county: "Macomb County", slug: "eastpointe-mi" },
   // Washtenaw / Livingston
-  { name: "Ypsilanti", county: "Washtenaw County" },
-  { name: "Howell", county: "Livingston County" },
+  { name: "Ypsilanti", county: "Washtenaw County", slug: "ypsilanti-mi" },
+  { name: "Howell", county: "Livingston County", slug: "howell-mi" },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -1387,6 +1387,578 @@ export const cityPages: CityPage[] = [
       { q: "What is Plymouth, MI known for?", a: "Plymouth is known for its walkable historic downtown around Kellogg Park, its dining and events like the Ice Festival, and an upscale small-town feel." },
       { q: "Are homes in Plymouth expensive?", a: "Plymouth spans a range, from historic in-town homes to established neighborhoods and newer builds. We can find options that fit your goals and budget." },
       { q: "Is Plymouth good for families and relocation?", a: "Yes. Its walkability, character, and community feel make it a popular choice for families and people relocating to western Wayne County." },
+    ],
+  },
+  {
+    slug: "woodhaven-mi",
+    name: "Woodhaven",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Considering Woodhaven, MI? Discover this newer Downriver city with Woodhaven Village, West Road shopping, and tidy family subdivisions, with SOLD IT TODAY.",
+    heroIntro:
+      "One of Downriver's newer, master-planned cities: the Woodhaven Village core, a busy West Road retail strip, and neat subdivisions that feel move-in ready.",
+    community: [
+      "Woodhaven grew up later than most of its Downriver neighbors, and it shows in the planning. Streets are laid out with intention, the Woodhaven Village area anchors the city with a walkable civic feel, and West Road serves as the main artery for shopping, dining, and everyday errands. It is a city built for convenience, close to I-75 yet set back enough from the busier corridors to keep neighborhoods calm.",
+      "Housing here leans toward well-kept subdivisions and newer construction, with brick ranches, colonials, and split-levels sitting on comfortable lots. Buyers are often drawn by the sense of order and the practical location, with Costco, Meijer, and the West Road corridor handling most needs without a long drive. Parks and community events give the city a friendly, family-friendly rhythm throughout the year.",
+    ],
+    lifestyle: [
+      { title: "Woodhaven Village", description: "A central civic and gathering area that gives the city a walkable heart." },
+      { title: "West Road retail", description: "Costco, Meijer, and a long strip of shops and restaurants close to home." },
+      { title: "Easy I-75 access", description: "Quick freeway connections make commutes across Downriver and Metro Detroit simple." },
+      { title: "Tidy subdivisions", description: "Newer, well-planned neighborhoods with comfortable lots and move-in-ready homes." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is it like to live in Woodhaven, MI?", a: "Woodhaven is one of Downriver's newer, well-planned cities, known for tidy subdivisions, the West Road shopping corridor, and quick I-75 access. It is convenient and calm." },
+      { q: "Is Woodhaven good for families?", a: "Many buyers choose Woodhaven for its orderly subdivisions, parks, and community events, plus everyday shopping close at hand. We are happy to walk you through neighborhoods." },
+      { q: "How is shopping and commuting in Woodhaven?", a: "The West Road corridor covers most daily needs, and I-75 is minutes away for commuting across Metro Detroit. Reach out and we can map it to your routine." },
+    ],
+  },
+  {
+    slug: "flat-rock-mi",
+    name: "Flat Rock",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Exploring Flat Rock, MI? Get to know this southern Downriver city on the Huron River, home to Flat Rock Speedway and a small-town feel, with SOLD IT TODAY.",
+    heroIntro:
+      "Southern Downriver where the Huron River winds through town: a genuine small-town core, the historic Flat Rock Speedway, and rural edges that keep things spacious.",
+    community: [
+      "Flat Rock sits at the southern edge of Downriver, straddling the Huron River and the line between Wayne and Monroe counties. The river gives the city its name and much of its character, with parks and quiet stretches of water threading through town. A long-standing Ford presence anchors the local economy, and the compact downtown keeps a friendly, small-town feel that many residents treasure.",
+      "The city is perhaps best known beyond its borders for the Flat Rock Speedway, a short track that has drawn racing fans for generations. Away from the roar of race night, neighborhoods range from older homes near the center to newer builds and roomier parcels toward the rural fringes. It is a place that blends practical Downriver convenience with a bit of countryside breathing room.",
+    ],
+    lifestyle: [
+      { title: "Huron River", description: "Riverfront parks and quiet water give the city its name and scenery." },
+      { title: "Flat Rock Speedway", description: "A classic short track that has drawn racing fans for decades." },
+      { title: "Small-town downtown", description: "A compact, walkable center with a friendly, familiar feel." },
+      { title: "Room to spread out", description: "Rural edges and larger parcels offer space toward the city's outskirts." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Flat Rock, MI known for?", a: "Flat Rock is a southern Downriver city on the Huron River, known for its small-town feel, a long-standing Ford plant, and the historic Flat Rock Speedway." },
+      { q: "Does Flat Rock have larger lots?", a: "Toward the rural edges of town you will find roomier parcels and more space, alongside older homes near the center and some newer builds. We can help you find the right fit." },
+      { q: "Where is Flat Rock located?", a: "Flat Rock sits at the southern end of Downriver near the Wayne and Monroe county line, with easy reach to I-75 and US-24. Ask us about the commute from here." },
+    ],
+  },
+  {
+    slug: "riverview-mi",
+    name: "Riverview",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Looking at Riverview, MI? Discover this small, quiet Downriver city with Riverview Highlands golf and a beloved sledding hill, with SOLD IT TODAY.",
+    heroIntro:
+      "A small, quiet, almost entirely residential Downriver city: the Riverview Highlands golf course, a favorite winter sledding hill, and calm, well-kept streets.",
+    community: [
+      "Riverview is one of Downriver's smaller cities, and it wears that quietness proudly. Almost entirely residential, it offers a settled, easygoing pace with well-maintained neighborhoods and a strong sense of local pride. The city sits conveniently among its Downriver neighbors, so shopping and freeways are never far, yet the streets themselves stay calm and low-traffic.",
+      "Two local landmarks give Riverview its personality. The Riverview Highlands golf course draws players from across the region, and the Land Preserve, built atop a former landfill, has become a beloved winter sledding hill and a green overlook the rest of the year. Homes here are mostly comfortable postwar ranches and colonials on tidy lots, appealing to buyers who want quiet and convenience in equal measure.",
+    ],
+    lifestyle: [
+      { title: "Riverview Highlands", description: "A well-known public golf course that draws players from across Downriver." },
+      { title: "The sledding hill", description: "The Land Preserve doubles as a favorite winter sledding spot and green overlook." },
+      { title: "Quiet and residential", description: "An almost entirely residential city with calm, low-traffic streets." },
+      { title: "Central Downriver spot", description: "Neighboring cities keep shopping and freeways just a short drive away." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is it like to live in Riverview, MI?", a: "Riverview is a small, quiet, almost entirely residential Downriver city, known for calm streets, the Riverview Highlands golf course, and a beloved winter sledding hill." },
+      { q: "Is Riverview a good place for a quiet neighborhood?", a: "Yes. Riverview is one of the calmer Downriver cities, with well-kept residential streets and little through traffic. We can show you what is available." },
+      { q: "What is there to do in Riverview?", a: "Golf at Riverview Highlands, sledding at the Land Preserve in winter, and easy trips to nearby Downriver shopping. Reach out if you would like a local tour." },
+    ],
+  },
+  {
+    slug: "trenton-mi",
+    name: "Trenton",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Thinking about Trenton, MI? Explore this riverfront Downriver city with Elizabeth Park, historic West Jefferson, and Detroit River charm, with SOLD IT TODAY.",
+    heroIntro:
+      "Riverfront Downriver at its most charming: island greenery at Elizabeth Park, a historic West Jefferson downtown, and front-row views of the Detroit River.",
+    community: [
+      "Trenton hugs the Detroit River, and that waterfront setting defines the city. Elizabeth Park, one of the oldest county parks in Michigan, sits on an island reached by bridge and offers lagoons, boat wells, and shaded picnic grounds right on the water. The historic West Jefferson downtown adds a walkable stretch of shops and restaurants, giving Trenton a real sense of place that many Downriver cities envy.",
+      "Neighborhoods range from stately older homes near the river to comfortable mid-century streets a little farther in, and the riverfront draws boaters, walkers, and anglers year-round. With its blend of history, water, and a genuine downtown, Trenton has long been one of the most sought-after addresses in Downriver, while still keeping the practical convenience of freeway and shopping access.",
+    ],
+    lifestyle: [
+      { title: "Elizabeth Park", description: "A historic island park on the Detroit River with lagoons and boat wells." },
+      { title: "West Jefferson downtown", description: "A walkable historic strip of shops, restaurants, and local character." },
+      { title: "Detroit River living", description: "Waterfront views, boating, and riverside walks close to home." },
+      { title: "Real sense of place", description: "History, water, and a true downtown give Trenton lasting appeal." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What makes Trenton, MI special?", a: "Trenton is a riverfront Downriver city known for Elizabeth Park on the Detroit River, its historic West Jefferson downtown, and genuine waterfront charm." },
+      { q: "Can you find waterfront homes in Trenton?", a: "Trenton offers riverside neighborhoods and views along the Detroit River, along with comfortable inland streets. We can help you explore what is available near the water." },
+      { q: "Is Trenton a walkable city?", a: "The historic West Jefferson downtown gives Trenton a walkable core of shops and restaurants, plus Elizabeth Park for riverside strolls. Ask us for a tour." },
+    ],
+  },
+  {
+    slug: "grosse-ile-mi",
+    name: "Grosse Ile",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Dreaming of Grosse Ile, MI? Discover this upscale island township in the Detroit River, with waterfront living and natural beauty, with SOLD IT TODAY.",
+    heroIntro:
+      "An island township set in the Detroit River: bridges to the mainland, quiet tree-lined lanes, abundant waterfront, and an unmistakably exclusive, natural feel.",
+    community: [
+      "Grosse Ile is a true island community, a cluster of land in the Detroit River connected to the mainland by bridges. That geography sets it apart from everywhere else in Downriver. Winding lanes pass under mature trees, the shoreline offers boat docks and river views at nearly every turn, and a small airport and historic landmarks add to the township's distinctive character. It is a place that feels a world away while remaining close to the region.",
+      "Homes here tend toward the upscale, from gracious waterfront estates to comfortable island residences tucked among the greenery. Nature is never far, with parks, nature preserves, and the ever-present river shaping daily life. For buyers seeking privacy, water, and a genuinely unique setting, Grosse Ile is one of the most sought-after addresses in Southeast Michigan, and relocation buyers often find it worth the drive to discover.",
+    ],
+    lifestyle: [
+      { title: "Island living", description: "Bridges connect this Detroit River township to the mainland Downriver." },
+      { title: "Waterfront everywhere", description: "Docks, river views, and boating are woven into daily island life." },
+      { title: "Nature and preserves", description: "Parks, mature trees, and nature areas keep the setting green and quiet." },
+      { title: "Exclusive character", description: "Gracious homes and a private feel make it a distinctive address." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "What is Grosse Ile, MI like?", a: "Grosse Ile is an upscale island township in the Detroit River, connected by bridges, known for waterfront living, mature trees, and a quiet, exclusive character." },
+      { q: "Is Grosse Ile good for relocation buyers?", a: "It can be a wonderful fit for those seeking water, privacy, and a unique setting. As a relocation-friendly community, we are glad to introduce you to island living." },
+      { q: "Does Grosse Ile have waterfront homes?", a: "Yes. The island offers everything from gracious waterfront estates to comfortable residences near the river. Reach out and we can explore current options together." },
+    ],
+  },
+  {
+    slug: "brownstown-mi",
+    name: "Brownstown Township",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Considering Brownstown Township, MI? Explore this growing Downriver community with Lake Erie Metropark, newer subdivisions, and rural pockets, with SOLD IT TODAY.",
+    heroIntro:
+      "A large, growing Downriver township: newer subdivisions and modern amenities on one side, Lake Erie Metropark and open rural stretches on the other.",
+    community: [
+      "Brownstown Township is one of Downriver's larger and faster-growing communities, spread across several distinct pockets rather than a single center. That size gives it real variety, with busy retail and newer subdivisions in some areas and quieter, semi-rural stretches in others. Its position along the southern edge of the region puts Lake Erie and the wider Downriver corridor within easy reach.",
+      "The crown jewel is Lake Erie Metropark, a sprawling waterfront park known for its marshland, marina, wave pool, and outstanding birdwatching along the Detroit River's mouth. Housing ranges from modern subdivision homes with contemporary layouts to properties on larger, more open lots toward the rural edges. For buyers who want newer construction and room to grow, Brownstown offers space and momentum in equal measure.",
+    ],
+    lifestyle: [
+      { title: "Lake Erie Metropark", description: "A large waterfront park with a marina, wave pool, and famous birdwatching." },
+      { title: "Newer subdivisions", description: "Modern homes and contemporary layouts in growing residential areas." },
+      { title: "Rural pockets", description: "Open, semi-rural stretches offer larger lots and breathing room." },
+      { title: "Room to grow", description: "A large, expanding township with space and steady development." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Brownstown Township, MI known for?", a: "Brownstown is a large, growing Downriver township known for Lake Erie Metropark, newer subdivisions, and a mix of modern neighborhoods and rural pockets." },
+      { q: "Are there newer homes in Brownstown?", a: "Yes. Brownstown has seen steady development, with modern subdivisions and contemporary layouts alongside more open, rural parcels. We can help you compare areas." },
+      { q: "What outdoor spaces does Brownstown offer?", a: "Lake Erie Metropark is the standout, with a marina, wave pool, marshland trails, and renowned birdwatching. Ask us about neighborhoods near the park." },
+    ],
+  },
+  {
+    slug: "romulus-mi",
+    name: "Romulus",
+    county: "Wayne County",
+    region: "Downriver, Wayne County",
+    metaDescription:
+      "Looking at Romulus, MI? Discover this convenient Downriver city, home to Detroit Metro Airport, with affordable homes and easy access, with SOLD IT TODAY.",
+    heroIntro:
+      "Home to Detroit Metro Airport and a hub of logistics and industry: Romulus offers hard-to-beat convenience, easy freeway access, and approachable pricing.",
+    community: [
+      "Romulus is defined in large part by Detroit Metropolitan Wayne County Airport, one of the busiest in the country and a major regional employer. That airport anchors a broad base of logistics, warehousing, and industry, giving the city an economy built on movement and access. For anyone who travels often or works in the trades and transport sectors, few locations in the region are more practical.",
+      "Beyond the runways, Romulus is a spread-out city with residential neighborhoods, open parcels, and a quiet, workaday character. Homes tend toward the approachable end of the market, from older ranches to newer builds, making it a popular landing spot for first-time buyers and those who prioritize location and value. Freeways including I-94 and I-275 fan out in every direction, putting the whole metro within easy reach.",
+    ],
+    lifestyle: [
+      { title: "Detroit Metro Airport", description: "DTW anchors the city as a major employer and travel gateway." },
+      { title: "Logistics and industry", description: "Warehousing and transport give the local economy a steady base." },
+      { title: "Unbeatable access", description: "I-94, I-275, and the airport put the whole metro within reach." },
+      { title: "Approachable pricing", description: "Value-friendly homes make it a practical pick for many buyers." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Romulus, MI known for?", a: "Romulus is home to Detroit Metro Airport and a hub of logistics and industry, known for its central location, freeway access, and approachable home prices." },
+      { q: "Is Romulus affordable for buyers?", a: "Romulus tends toward the value-friendly end of the market, with older ranches and some newer builds. It is popular with first-time buyers, and we can review your options." },
+      { q: "How convenient is Romulus for travel and commuting?", a: "Very. With Detroit Metro Airport in the city and I-94 and I-275 close by, travel and commuting across the metro are simple. Ask us about specific neighborhoods." },
+    ],
+  },
+  {
+    slug: "belleville-mi",
+    name: "Belleville",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Exploring Belleville, MI? Discover this lakeside city with Belleville Lake, a historic downtown, and the Strawberry Festival, with SOLD IT TODAY.",
+    heroIntro:
+      "Lakeside living in Western Wayne County: the shores of Belleville Lake, a charming historic downtown, and the beloved annual National Strawberry Festival.",
+    community: [
+      "Belleville is a small city with an outsized personality, wrapped around the shores of Belleville Lake in the heart of the Van Buren area. The lake is the centerpiece of local life, drawing boaters, anglers, and walkers to its shoreline and lending the city a relaxed, waterfront feel. A compact historic downtown along Main Street adds walkable shops, restaurants, and a strong sense of community identity.",
+      "Each year the city fills for the National Strawberry Festival, a signature event that brings the whole area together with a parade, entertainment, and plenty of strawberry treats. Homes range from historic residences near downtown to lakeside properties and comfortable neighborhoods in the surrounding Van Buren Township. With water, walkability, and small-town warmth, Belleville offers a distinctive lifestyle within easy reach of I-94 and the wider metro.",
+    ],
+    lifestyle: [
+      { title: "Belleville Lake", description: "A scenic lake at the city's heart for boating, fishing, and lakeside walks." },
+      { title: "Historic downtown", description: "A walkable Main Street with local shops, restaurants, and character." },
+      { title: "Strawberry Festival", description: "The beloved annual National Strawberry Festival brings the area together." },
+      { title: "Easy I-94 access", description: "Quick freeway connections link the city to Ann Arbor and Metro Detroit." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Belleville, MI known for?", a: "Belleville is a lakeside Western Wayne city known for Belleville Lake, a charming historic downtown, and the beloved annual National Strawberry Festival." },
+      { q: "Are there lakefront homes in Belleville?", a: "Yes. Belleville Lake shapes the area, with lakeside properties and neighborhoods nearby in the Van Buren area. We can help you explore homes near the water." },
+      { q: "Where is Belleville located?", a: "Belleville sits in Western Wayne County near I-94, roughly between Ann Arbor and Metro Detroit. Ask us about commuting and neighborhoods around the lake." },
+    ],
+  },
+  {
+    slug: "huron-township-mi",
+    name: "Huron Township",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Considering Huron Township, MI? Discover this semi-rural community around New Boston, with Willow and Lower Huron Metroparks and larger lots, with SOLD IT TODAY.",
+    heroIntro:
+      "Semi-rural living in southwestern Wayne County: the village feel of New Boston, the sprawling Huron-Clinton Metroparks, and roomy lots with space to breathe.",
+    community: [
+      "Huron Township covers a broad, semi-rural stretch of southwestern Wayne County, centered on the small community of New Boston. Here the pace slows, the parcels grow larger, and the landscape opens into fields, woods, and winding roads. It is a place for buyers who want elbow room and a quieter setting while staying within reach of Downriver shopping and the airport corridor.",
+      "The Huron River and the metroparks are the township's great outdoor draw. Willow and Lower Huron Metroparks offer miles of trails, picnic areas, and paddling along the river, making the outdoors part of everyday life. Homes range from older farmhouses and ranches to newer builds on generous lots, giving the area a rural character that is increasingly rare so close to the metro. For those craving space and nature, Huron Township delivers.",
+    ],
+    lifestyle: [
+      { title: "Willow Metropark", description: "Trails, picnic areas, and river access in a large Huron-Clinton park." },
+      { title: "Lower Huron Metropark", description: "More miles of riverside trails and green space along the Huron River." },
+      { title: "New Boston village", description: "A small, friendly community center anchoring the township." },
+      { title: "Larger lots", description: "Semi-rural parcels and open land offer real space to spread out." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Huron Township, MI like?", a: "Huron Township is a semi-rural community in southwestern Wayne County around New Boston, known for the Willow and Lower Huron Metroparks and larger, open lots." },
+      { q: "Can you find larger lots in Huron Township?", a: "Yes. The township is known for roomier, semi-rural parcels and open land, along with farmhouses, ranches, and newer builds. We can help you find the right amount of space." },
+      { q: "What outdoor recreation is near Huron Township?", a: "Willow and Lower Huron Metroparks offer trails, picnic spots, and paddling along the Huron River. Ask us about neighborhoods near the parks." },
+    ],
+  },
+  {
+    slug: "dearborn-heights-mi",
+    name: "Dearborn Heights",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Thinking about Dearborn Heights, MI? Discover this settled Western Wayne suburb with Warren Valley golf, parks, and easy Detroit access, with SOLD IT TODAY.",
+    heroIntro:
+      "A settled, budget-friendly residential city just west of Dearborn, known for its quiet neighborhoods, Warren Valley golf course, and quick reach to Detroit and the freeways.",
+    community: [
+      "Dearborn Heights sits in Western Wayne County, wrapping around the west side of Dearborn in two sections split by the city of Dearborn. Its streets are lined with sturdy postwar ranches, bungalows, and colonials on comfortable lots, giving the city a calm, established feel that draws people looking for room and value close to the urban core.",
+      "Everyday life here leans on well-kept neighborhood parks, the Warren Valley golf course and its surrounding greenspace, and a handful of local shopping corridors along Ford Road, Michigan Avenue, and Telegraph. The Rouge River corridor threads through parts of town, and residents appreciate that so much of Metro Detroit sits within a short drive.",
+    ],
+    lifestyle: [
+      { title: "Warren Valley golf", description: "A longtime local golf course and greenspace anchoring the community." },
+      { title: "Everyday value", description: "Practical ranches, bungalows, and colonials at approachable price points." },
+      { title: "Parks and recreation", description: "Neighborhood parks and the Rouge River corridor close to home." },
+      { title: "Easy commuting", description: "Quick access to Telegraph, Ford Road, and nearby freeways into Detroit." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Dearborn Heights, MI known for?", a: "Dearborn Heights is a quiet residential city next to Dearborn, known for settled neighborhoods, Warren Valley golf, and convenient access to Detroit and the freeways." },
+      { q: "Is Dearborn Heights a good place to buy a home?", a: "Yes. It offers solid value on established homes with an easy commute. We can help you find the right street and style for your budget." },
+      { q: "Is Dearborn Heights convenient to Detroit?", a: "Very. The city borders Dearborn and sits minutes from Detroit, with Telegraph, Ford Road, and major freeways all close by." },
+    ],
+  },
+  {
+    slug: "garden-city-mi",
+    name: "Garden City",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Considering Garden City, MI? Explore this small, tidy Western Wayne community with close-knit streets and great value, with SOLD IT TODAY.",
+    heroIntro:
+      "A small, tidy postwar city tucked between Westland and Livonia, Garden City is known for its neat residential streets, close-knit feel, and dependable value.",
+    community: [
+      "Garden City earns its name honestly, a compact Western Wayne community of trim lots and modest, well-maintained homes that trace back to the area's postwar building boom. Ranches and bungalows on orderly blocks give the city a friendly, unpretentious character that appeals to first-time buyers and longtime owners alike.",
+      "Life here centers on neighborhood parks, local ball fields, and the shops and eateries along Ford Road and Middlebelt. Bordered by Westland to the south and Livonia to the north, Garden City offers a genuine small-town feel while keeping the wider amenities of Metro Detroit within easy reach.",
+    ],
+    lifestyle: [
+      { title: "Tidy neighborhoods", description: "Neat blocks of well-kept ranches and bungalows on manageable lots." },
+      { title: "Small-town feel", description: "A compact, close-knit community with a friendly local character." },
+      { title: "Local shopping", description: "Everyday shops and restaurants along Ford Road and Middlebelt." },
+      { title: "Central location", description: "Set between Westland and Livonia with easy reach across Western Wayne." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Garden City, MI known for?", a: "Garden City is a small, tidy postwar community in Western Wayne County, known for its neat residential streets, close-knit feel, and strong value." },
+      { q: "Is Garden City a good place to buy a home?", a: "Yes. Its affordable, well-kept homes make it popular with first-time buyers. We can help you spot the right one as it comes to market." },
+      { q: "Where is Garden City located?", a: "Garden City sits in Western Wayne County between Westland and Livonia, with quick access to Ford Road, Middlebelt, and nearby freeways." },
+    ],
+  },
+  {
+    slug: "redford-mi",
+    name: "Redford",
+    county: "Wayne County",
+    region: "Western Wayne County",
+    metaDescription:
+      "Looking at Redford, MI? Explore this settled township on Detroit's northwest border with established homes and Hines Park nearby, with SOLD IT TODAY.",
+    heroIntro:
+      "Redford Township hugs Detroit's northwest border, offering established, budget-friendly neighborhoods with the Bell Creek and Hines Park greenway close at hand.",
+    community: [
+      "Redford Township lies right along Detroit's northwest edge in Western Wayne County, a settled community of brick bungalows, ranches, and Tudors on tree-lined streets. Its long-established feel and approachable pricing make it a favorite for buyers who want character and value while staying close to the city.",
+      "Bell Creek winds through town and connects to the beloved Hines Park corridor just to the west, giving residents miles of trails, picnic spots, and greenspace. Shopping and dining gather along corridors like Grand River, Telegraph, and Plymouth Road, and freeway access keeps downtown Detroit and the western suburbs within an easy drive.",
+    ],
+    lifestyle: [
+      { title: "Hines Park nearby", description: "Trails, picnic areas, and greenway access along the Rouge River corridor." },
+      { title: "Established homes", description: "Brick bungalows, ranches, and Tudors on settled, tree-lined streets." },
+      { title: "Bell Creek greenway", description: "A local waterway threading through town toward the parkway system." },
+      { title: "Border-of-Detroit access", description: "Grand River, Telegraph, and freeways put the city minutes away." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Redford, MI known for?", a: "Redford Township is a settled community on Detroit's northwest border, known for established brick homes, approachable prices, and easy access to Hines Park." },
+      { q: "Is Redford a good place to buy a home?", a: "Yes. It offers character-filled homes at solid value close to Detroit. We can help you target the right pocket of the township." },
+      { q: "Is Redford close to Detroit?", a: "Very. Redford borders Detroit's northwest side, with Grand River, Telegraph, and nearby freeways making the city a short drive." },
+    ],
+  },
+  {
+    slug: "detroit-mi",
+    name: "Detroit",
+    county: "Wayne County",
+    region: "Wayne County",
+    metaDescription:
+      "Buying in Detroit, MI? Explore historic neighborhoods, a revitalizing downtown and riverfront, and real value and opportunity, with SOLD IT TODAY.",
+    heroIntro:
+      "Michigan's largest city and cultural heart, Detroit pairs storied historic neighborhoods with a revitalizing downtown, a transformed riverfront, and genuine value and opportunity for buyers.",
+    community: [
+      "Detroit is a city of remarkable neighborhoods, from the grand boulevards of Boston-Edison and the stately homes of Indian Village to the winding, tree-canopied streets of Rosedale Park and the historic character of Corktown and Woodbridge. Each district carries its own architecture and story, offering buyers a range of settings from stately historic homes to walkable, close-knit blocks.",
+      "Downtown and Midtown continue a striking revitalization, with restored landmarks, new restaurants and shops, and a riverfront that has been reborn into a celebrated network of parks and promenades. Add world-class museums, the sports venues that fill downtown on game days, and a deep well of music and culture, and Detroit stands out as a place with real momentum. Down payment assistance of up to $25,000 is available to help qualified buyers put down roots in the city.",
+    ],
+    lifestyle: [
+      { title: "Historic neighborhoods", description: "Boston-Edison, Indian Village, Rosedale Park, and more, each with its own character." },
+      { title: "Riverfront reborn", description: "A celebrated network of parks and promenades along the Detroit River." },
+      { title: "Sports and culture", description: "Downtown venues, world-class museums, and a deep music heritage." },
+      { title: "Value and assistance", description: "Real opportunity plus down payment assistance up to $25,000 for qualified buyers." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "What is Detroit, MI known for?", a: "Detroit is known for its historic neighborhoods, revitalizing downtown and riverfront, sports and music heritage, world-class museums, and real value and opportunity for buyers." },
+      { q: "Is there down payment assistance in Detroit?", a: "Yes. Down payment assistance of up to $25,000 is available to help qualified buyers purchase in the city. We can walk you through how it works." },
+      { q: "Which Detroit neighborhoods should I consider?", a: "It depends on your goals. Historic districts like Boston-Edison, Indian Village, and Rosedale Park each offer distinct character. We can help you match the right one." },
+    ],
+  },
+  {
+    slug: "eastpointe-mi",
+    name: "Eastpointe",
+    county: "Macomb County",
+    region: "Macomb County",
+    metaDescription:
+      "Considering Eastpointe, MI? Explore this convenient inner-ring Macomb suburb with established homes and great value, with SOLD IT TODAY.",
+    heroIntro:
+      "An inner-ring Macomb County suburb right on Detroit's border, Eastpointe offers established postwar neighborhoods, everyday convenience, and dependable value.",
+    community: [
+      "Eastpointe sits at the southern edge of Macomb County, sharing its border with Detroit and neighboring Warren and Roseville. It is a compact, walkable-in-parts community of postwar bungalows and ranches on tidy blocks, the kind of settled neighborhoods that make it easy for buyers to find solid homes at an approachable price.",
+      "Daily needs are covered by the shops, restaurants, and services strung along Gratiot Avenue, Nine Mile, and Ten Mile, while local parks give families room to spread out. With Detroit next door and the rest of Macomb County just up the road, Eastpointe combines a convenient location with the value of an inner-ring suburb.",
+    ],
+    lifestyle: [
+      { title: "Established homes", description: "Postwar bungalows and ranches on tidy, settled blocks." },
+      { title: "Everyday convenience", description: "Shops and services along Gratiot, Nine Mile, and Ten Mile." },
+      { title: "Inner-ring value", description: "Approachable pricing for buyers who want to stay close to Detroit." },
+      { title: "Central Macomb access", description: "Bordering Detroit with quick reach to Warren, Roseville, and beyond." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "What is Eastpointe, MI known for?", a: "Eastpointe is an inner-ring Macomb County suburb on Detroit's border, known for established postwar neighborhoods, convenience, and strong value." },
+      { q: "Is Eastpointe a good place to buy a home?", a: "Yes. Its affordable, established homes and central location make it appealing. We can help you find the right one at the right time." },
+      { q: "Where is Eastpointe located?", a: "Eastpointe sits in southern Macomb County, bordering Detroit and near Warren and Roseville, with Gratiot Avenue and freeways keeping everything close." },
+    ],
+  },
+  {
+    slug: "ypsilanti-mi",
+    name: "Ypsilanti",
+    county: "Washtenaw County",
+    region: "Washtenaw County",
+    metaDescription:
+      "Thinking about Ypsilanti, MI? Explore historic Depot Town, Eastern Michigan University, a walkable arts scene, and strong value, with SOLD IT TODAY.",
+    heroIntro:
+      "Home to Eastern Michigan University and the beloved historic districts of Depot Town and downtown, Ypsilanti offers a walkable, creative atmosphere and strong value right next to Ann Arbor.",
+    community: [
+      "Ypsilanti anchors the eastern side of Washtenaw County and blends college-town energy with genuine historic charm. Eastern Michigan University shapes much of the city's rhythm, while the landmark Ypsilanti Water Tower, the Michigan Avenue corridor, and the Huron River give the city its distinctive skyline and setting.",
+      "The heart of local life beats in Depot Town and downtown, where restored 19th-century storefronts house restaurants, cafes, galleries, and music venues within easy walking distance. Neighborhoods like the historic districts feature well-preserved Victorians and craftsman homes, and buyers are drawn by the walkable character and the value that comes with sitting just east of Ann Arbor.",
+    ],
+    lifestyle: [
+      { title: "Eastern Michigan University", description: "A major university shaping the city's energy and culture." },
+      { title: "Depot Town", description: "Historic storefronts, dining, and music in a walkable district." },
+      { title: "Arts and music", description: "Galleries, venues, and a creative scene downtown and beyond." },
+      { title: "Value near Ann Arbor", description: "Historic homes and strong value just east of Ann Arbor." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "What is Ypsilanti, MI known for?", a: "Ypsilanti is known for Eastern Michigan University, the historic Depot Town and downtown districts, its walkable arts and music scene, and its value next to Ann Arbor." },
+      { q: "Is Ypsilanti a good place to buy a home?", a: "Yes. Its historic homes, walkable districts, and value near Ann Arbor make it attractive. We can help you find the right neighborhood." },
+      { q: "Is Ypsilanti close to Ann Arbor?", a: "Very. Ypsilanti sits just east of Ann Arbor along Washtenaw and Michigan Avenues and the I-94 corridor, keeping it minutes away." },
+    ],
+  },
+  {
+    slug: "howell-mi",
+    name: "Howell",
+    county: "Livingston County",
+    region: "Livingston County",
+    metaDescription:
+      "Considering Howell, MI? Explore the Livingston County seat with a charming historic downtown, festivals, and lakes-area living, with SOLD IT TODAY.",
+    heroIntro:
+      "The Livingston County seat, Howell is beloved for its charming historic downtown, hometown festivals, and lakes-area setting, with a true small-town feel midway between Detroit and Lansing.",
+    community: [
+      "Howell sits in the heart of Livingston County and serves as its county seat, centered on a picturesque downtown anchored by the historic courthouse and blocks of vintage storefronts filled with shops, restaurants, and local businesses. The walkable Main Street district gives the city a genuine small-town character that residents take real pride in.",
+      "The surrounding area is dotted with lakes and rolling countryside, and Howell is famous for its seasonal celebrations, including the Michigan Challenge Balloonfest that fills the sky with hot air balloons and the long-running Howell Melon Festival. Positioned along the I-96 corridor roughly midway between Detroit and Lansing, the city offers a relaxed pace with easy reach to both metros.",
+    ],
+    lifestyle: [
+      { title: "Historic downtown", description: "A picturesque Main Street with the landmark courthouse and local shops." },
+      { title: "Balloonfest", description: "The Michigan Challenge Balloonfest fills the sky each year." },
+      { title: "Melon Festival", description: "A long-running hometown celebration and Howell tradition." },
+      { title: "Lakes and countryside", description: "Rolling terrain and area lakes for a relaxed outdoor pace." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "What is Howell, MI known for?", a: "Howell is the Livingston County seat, known for its charming historic downtown, the Michigan Challenge Balloonfest, the Melon Festival, and its lakes-area setting." },
+      { q: "Is Howell a good place to buy a home?", a: "Yes. Its historic downtown, festivals, and lakes-area living give it lasting appeal. We can help you find the right home in and around town." },
+      { q: "Where is Howell located?", a: "Howell sits in Livingston County along the I-96 corridor, roughly midway between Detroit and Lansing, offering a small-town pace with easy metro access." },
+    ],
+  },
+  {
+    slug: "farmington-mi",
+    name: "Farmington",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Considering Farmington, MI? Discover this small Oakland County city with a walkable historic downtown and character homes, with SOLD IT TODAY.",
+    heroIntro:
+      "A compact Oakland County city with an old-fashioned, walkable downtown, historic charm, and easy access to the wider Farmington Hills area.",
+    community: [
+      "Farmington is a small, tight-knit city set within the larger footprint of Farmington Hills, and its heart is a genuinely walkable historic downtown along Grand River Avenue. Independent shops, restaurants, and the seasonal Farmington Farmers Market give it a distinct village feel that many surrounding suburbs lack, and the well-preserved storefronts keep a real sense of the city's past.",
+      "The city is anchored by Riley Park, a downtown gathering spot that hosts concerts and community events, and by the annual Founders Festival that draws crowds each summer. Neighborhoods hold a lot of character homes and older architecture on established, tree-lined streets, all with quick connections to the region via Grand River and nearby freeways.",
+    ],
+    lifestyle: [
+      { title: "Walkable downtown", description: "A historic Grand River district with shops, dining, and a farmers market." },
+      { title: "Riley Park", description: "A downtown park hosting concerts and community gatherings." },
+      { title: "Founders Festival", description: "A beloved annual summer celebration in the heart of the city." },
+      { title: "Character homes", description: "Older architecture and established streets with genuine charm." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why is Farmington, MI popular?", a: "Farmington is loved for its walkable historic downtown, Riley Park, and small-city charm inside a convenient Oakland County location." },
+      { q: "What kind of homes are in Farmington?", a: "Largely character homes and older architecture on established streets, with some newer options. We can help you find the right fit." },
+      { q: "Is Farmington good for relocation?", a: "Yes. Its downtown, community events, and easy regional access make it an appealing landing spot for people relocating to Metro Detroit." },
+    ],
+  },
+  {
+    slug: "west-bloomfield-mi",
+    name: "West Bloomfield",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Exploring West Bloomfield, MI? Discover this upscale, lake-dotted Oakland County township with larger homes and abundant nature, with SOLD IT TODAY.",
+    heroIntro:
+      "An upscale, wooded Oakland County township known for its many lakes, spacious homes, and a strong emphasis on recreation and natural beauty.",
+    community: [
+      "West Bloomfield is an established, upscale township defined by water and woods. Cass Lake, Union Lake, and Pine Lake are among the many lakes scattered across the community, and the rolling, tree-covered terrain gives neighborhoods a private, retreat-like quality even though the township sits close to major shopping and freeways.",
+      "Homes here tend toward the larger side, from lakefront properties to spacious subdivisions and custom builds tucked into wooded lots. A strong schools reputation, the West Bloomfield Woods Nature Preserve, and an extensive parks-and-trails system make it a favorite for those who want space, greenery, and recreation without leaving Oakland County.",
+    ],
+    lifestyle: [
+      { title: "Lakes everywhere", description: "Cass, Union, Pine, and many more lakes for boating and recreation." },
+      { title: "Wooded setting", description: "Rolling, tree-covered terrain and nature preserves throughout." },
+      { title: "Strong schools reputation", description: "A long-standing draw for families in the township." },
+      { title: "Spacious homes", description: "From lakefront properties to larger subdivisions and custom builds." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why is West Bloomfield, MI popular?", a: "West Bloomfield is known for its lakes, wooded setting, larger homes, and strong schools reputation, all in an upscale township." },
+      { q: "What kind of homes are in West Bloomfield?", a: "A range of larger homes, including lakefront properties, spacious subdivisions, and custom builds. We can help you find the right fit." },
+      { q: "Is West Bloomfield good for relocation?", a: "Yes. Its lakes, nature, and schools reputation make it a popular choice for families relocating to Metro Detroit." },
+    ],
+  },
+  {
+    slug: "commerce-township-mi",
+    name: "Commerce Township",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Looking at Commerce Township, MI? Explore this growing Oakland County lakes community with subdivisions and lakefront living, with SOLD IT TODAY.",
+    heroIntro:
+      "A growing Oakland County lakes community where suburban subdivisions and lakefront homes sit close to abundant recreation and everyday conveniences.",
+    community: [
+      "Commerce Township is a lakes-area community built around water and open space, with Commerce Lake and Union Lake shaping much of its character. The township blends established suburban subdivisions with lakefront neighborhoods, and its steady growth has brought newer developments, shopping, and dining alongside the older lake cottages and year-round homes.",
+      "Recreation is a big part of daily life here, from boating and fishing on the lakes to parks, trails, and nearby golf. With convenient access to M-5 and surrounding corridors, the township offers a relaxed, outdoors-oriented setting while keeping the rest of Oakland County within easy reach.",
+    ],
+    lifestyle: [
+      { title: "Lake living", description: "Commerce and Union Lakes anchor boating, fishing, and waterfront homes." },
+      { title: "Growing community", description: "Newer developments, shopping, and dining alongside established areas." },
+      { title: "Recreation focus", description: "Parks, trails, and golf for an outdoors-oriented lifestyle." },
+      { title: "Mix of homes", description: "From suburban subdivisions to lakefront properties." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why is Commerce Township, MI popular?", a: "Commerce Township is known for its lakes, recreation, steady growth, and a mix of subdivision and lakefront homes." },
+      { q: "What kind of homes are in Commerce Township?", a: "A blend of suburban subdivisions and lakefront properties, from cottages to newer builds. We can help you find the right fit." },
+      { q: "Is Commerce Township good for relocation?", a: "Yes. Its lakes, recreation, and convenient access make it an appealing spot for those relocating to the region." },
+    ],
+  },
+  {
+    slug: "south-lyon-mi",
+    name: "South Lyon",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Thinking about South Lyon, MI? Discover this growing Oakland County city with a charming small-town downtown and trails, with SOLD IT TODAY.",
+    heroIntro:
+      "A growing city at the western edge of Oakland County with a charming small-town downtown, a strong schools reputation, and a friendly community feel.",
+    community: [
+      "South Lyon sits at the Oakland and Washtenaw county edge and has kept a genuine small-town identity even as it has grown. Its walkable downtown along Lake Street offers local shops, restaurants, and community events, and landmarks like the McHattie Park and the historic depot area give the city a distinct sense of place.",
+      "The community leans into its schools reputation and its network of trails, including access to the Huron Valley Trail for walking and biking. New subdivisions have expanded the housing options alongside established neighborhoods, and the location offers a quieter pace while staying connected to Ann Arbor, Novi, and the wider region.",
+    ],
+    lifestyle: [
+      { title: "Small-town downtown", description: "A walkable Lake Street district with shops, dining, and events." },
+      { title: "Strong schools reputation", description: "A steady draw for families settling in the area." },
+      { title: "Trails and recreation", description: "McHattie Park and access to the Huron Valley Trail." },
+      { title: "Growing housing options", description: "New subdivisions alongside established neighborhoods." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why is South Lyon, MI popular?", a: "South Lyon is known for its charming downtown, schools reputation, trails, and a welcoming small-town feel." },
+      { q: "What kind of homes are in South Lyon?", a: "A mix of established neighborhoods and newer subdivisions. We can help you find the right fit." },
+      { q: "Is South Lyon good for relocation?", a: "Yes. Its downtown, schools reputation, and location near Ann Arbor and Novi make it a popular relocation choice." },
+    ],
+  },
+  {
+    slug: "franklin-mi",
+    name: "Franklin",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Curious about Franklin, MI? Explore this historic, upscale Oakland County village with wooded lots and rare charm, with SOLD IT TODAY.",
+    heroIntro:
+      "A historic, upscale Oakland County village known as the town that time forgot, with wooded lots, large parcels, and an exclusive small-village character.",
+    community: [
+      "Franklin, often called Franklin Village, has earned its nickname as the town that time forgot for the way it has preserved its historic New England style village center. The compact downtown, with its landmark Franklin Community Church, the historic Franklin Cider Mill nearby, and well-kept older buildings, gives the village a rare and timeless feel within Oakland County.",
+      "Beyond the village center, Franklin is defined by wooded, rolling terrain and large lots that create a private, estate-like setting. Homes range from historic residences to spacious custom builds, and the village's careful preservation and quiet, tree-lined roads set it apart as one of the area's most distinctive small communities.",
+    ],
+    lifestyle: [
+      { title: "Historic village center", description: "A preserved New England style downtown with real character." },
+      { title: "Wooded, large lots", description: "Rolling terrain and spacious parcels for a private setting." },
+      { title: "Timeless charm", description: "Known as the town that time forgot for its careful preservation." },
+      { title: "Distinctive homes", description: "From historic residences to spacious custom builds." },
+    ],
+    relocation: true,
+    faqs: [
+      { q: "Why is Franklin, MI popular?", a: "Franklin is prized for its historic village charm, wooded large lots, and an exclusive, timeless small-village character." },
+      { q: "What kind of homes are in Franklin?", a: "A range from historic residences to spacious custom builds on wooded lots. We can help you find the right fit." },
+      { q: "Is Franklin good for relocation?", a: "Yes. Its distinctive village character and private setting make it a sought-after choice for those relocating to Oakland County." },
+    ],
+  },
+  {
+    slug: "southfield-mi",
+    name: "Southfield",
+    county: "Oakland County",
+    region: "Oakland County",
+    metaDescription:
+      "Considering Southfield, MI? Explore this central Oakland County business hub with quick freeway access and varied housing, with SOLD IT TODAY.",
+    heroIntro:
+      "A major Metro Detroit business and office hub with a central Oakland County location, quick freeway access, and a mix of condos and established neighborhoods.",
+    community: [
+      "Southfield is one of Metro Detroit's key business and office centers, with a skyline of corporate towers along the Northwestern Highway and Town Center area. That employment base, combined with its central position in Oakland County, makes it one of the most convenient places to be based in the region for commuting and daily errands alike.",
+      "Beyond the office corridors, Southfield offers a practical mix of housing, from condos and apartments to established single-family neighborhoods and ranch and colonial homes. Quick access via the Lodge Freeway, I-696, and the Southfield Freeway connects residents to downtown Detroit, the airport, and the rest of the metro area with ease.",
+    ],
+    lifestyle: [
+      { title: "Business hub", description: "A major Metro Detroit office center with corporate towers and Town Center." },
+      { title: "Central location", description: "Quick access via the Lodge, I-696, and the Southfield Freeway." },
+      { title: "Varied housing", description: "From condos and apartments to established single-family homes." },
+      { title: "Everyday convenience", description: "Close to shopping, dining, and the wider metro area." },
+    ],
+    relocation: false,
+    faqs: [
+      { q: "Why is Southfield, MI popular?", a: "Southfield is known as a central business hub with excellent freeway access and a convenient mix of housing options." },
+      { q: "What kind of homes are in Southfield?", a: "A practical range, from condos and apartments to ranches, colonials, and established single-family homes. We can help you find the right fit." },
+      { q: "What makes Southfield convenient?", a: "Its central location and quick access via the Lodge, I-696, and the Southfield Freeway connect you to Detroit, the airport, and the whole metro area." },
     ],
   },
 ];
