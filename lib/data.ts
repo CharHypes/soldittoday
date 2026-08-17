@@ -26,6 +26,7 @@ export const futurePages: NavLink[] = [
   { label: "Communities", href: "/communities" },
   { label: "Neighborhood Guides", href: "/neighborhood-guides" },
   { label: "Resources", href: "/resources" },
+  { label: "Down Payment Assistance", href: "/dpa" },
   { label: "Preferred Partners", href: "/preferred-partners" },
 ];
 
