@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   propertyTypes,
@@ -30,31 +31,27 @@ const ease = [0.22, 1, 0.36, 1] as const;
  * └──────────────────────────────────────────────────────────────────────────┘
  */
 export default function HomeSearch() {
+  const router = useRouter();
   const [location, setLocation] = useState("");
   const [propertyType, setPropertyType] = useState("any");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [beds, setBeds] = useState("any");
   const [baths, setBaths] = useState("any");
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Assembled, IDX-ready query. Hand this to the IDX provider when integrated.
-    const query = {
-      location: location.trim(), // City, Neighborhood, ZIP code, or Address
-      propertyType,
-      minPrice,
-      maxPrice,
-      beds,
-      baths,
-    };
-
-    // Placeholder behavior until IDX is connected.
-    // eslint-disable-next-line no-console
-    console.info("[HomeSearch] IDX query ready (not yet connected):", query);
-    setSubmitted(true);
+    // Carry the criteria to the /search results page, which calls the IDX feed.
+    const params = new URLSearchParams();
+    if (location.trim()) params.set("location", location.trim());
+    if (propertyType !== "any") params.set("propertyType", propertyType);
+    if (minPrice) params.set("minPrice", minPrice);
+    if (maxPrice) params.set("maxPrice", maxPrice);
+    if (beds !== "any") params.set("beds", beds);
+    if (baths !== "any") params.set("baths", baths);
+    const qs = params.toString();
+    router.push(qs ? `/search?${qs}` : "/search");
   };
 
   return (
@@ -177,26 +174,6 @@ export default function HomeSearch() {
             />
           </div>
 
-          {/* Placeholder confirmation ... replaced by IDX results once connected */}
-          {submitted && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, ease }}
-              className="mt-5 flex flex-col items-start gap-1 rounded-xl border border-auroraMauve/25 bg-wine/30 px-4 py-3 text-sm sm:flex-row sm:items-center sm:justify-between"
-            >
-              <span className="text-pearl/90">
-                Live home search is coming soon. Want listings now?{" "}
-                <a
-                  href="#contact"
-                  className="font-semibold underline-offset-4 hover:underline"
-                >
-                  Schedule a Consultation
-                </a>{" "}
-                and we&rsquo;ll send matches directly.
-              </span>
-            </motion.div>
-          )}
         </motion.form>
 
         <p className="mx-auto mt-4 max-w-5xl px-1 text-center text-xs text-dusty/70">
