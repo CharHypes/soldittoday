@@ -110,6 +110,73 @@ export default function RelocationPage() {
         </div>
       </section>
 
+      {/* Leaving Michigan (outbound relocation) */}
+      <section className="relative overflow-hidden bg-plum py-20 md:py-28">
+        <div className="aurora-bloom opacity-40" />
+        <div className="container-lux relative z-10">
+          <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+            <div>
+              <Reveal>
+                <span className="eyebrow text-auroraMauve">Leaving Michigan?</span>
+              </Reveal>
+              <Reveal delay={0.06}>
+                <h2 className="mt-4 max-w-xl text-balance text-3xl font-semibold tracking-tightest text-pearl sm:text-4xl">
+                  Moving out of state? We can still help.
+                </h2>
+              </Reveal>
+              <Reveal delay={0.12}>
+                <p className="mt-4 max-w-xl text-dusty">
+                  Relocation goes both ways. If you&rsquo;re leaving Southeast
+                  Michigan, we&rsquo;ll sell your current home for what it&rsquo;s
+                  worth and connect you with a trusted, vetted agent wherever
+                  you&rsquo;re headed ... coordinating the timing so buying there
+                  and selling here stay in sync.
+                </p>
+              </Reveal>
+              <Reveal delay={0.18}>
+                <a href="/#contact" className="btn-aurora group mt-8">
+                  Plan Your Move
+                  <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
+                    &rarr;
+                  </span>
+                </a>
+              </Reveal>
+            </div>
+            <div className="grid gap-4">
+              {[
+                {
+                  title: "Sell your Michigan home",
+                  description:
+                    "Full-service listing, pricing, and negotiation so you leave with the most in your pocket.",
+                },
+                {
+                  title: "A trusted agent at your destination",
+                  description:
+                    "We connect you with a vetted agent almost anywhere in the country through our referral network.",
+                },
+                {
+                  title: "Coordinated timing",
+                  description:
+                    "We line up your sale here with your purchase there, so the two moves work together.",
+                },
+              ].map((point) => (
+                <div
+                  key={point.title}
+                  className="aurora-ring rounded-xl2 border border-auroraMauve/18 bg-bruised/40 p-6"
+                >
+                  <h3 className="text-base font-semibold text-pearl">
+                    {point.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-dusty">
+                    {point.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Area matching */}
       <section className="relative overflow-hidden bg-plum py-20 md:py-28">
         <div className="aurora-bloom opacity-40" />

@@ -73,6 +73,8 @@ export const relocationTickerItems: string[] = [
   "Closer to Family",
   "Retirement",
   "More Space",
+  "Downsizing",
+  "New Construction",
   "Better Commute",
   "Coming Home to Michigan",
   "A Fresh Start",
@@ -704,6 +706,10 @@ export const relocationFaqs: Faq[] = [
   {
     q: "Can you help if I'm moving from out of state?",
     a: "Absolutely ... it's a large part of what we do. Out-of-state buyers get virtual tours, local market context, and trusted eyes on every home so you can decide with confidence from afar.",
+  },
+  {
+    q: "What if I'm moving out of Michigan?",
+    a: "We can still help. We'll sell your current Michigan home and connect you with a trusted, vetted agent at your destination through our referral network, then coordinate the timing so your sale here and purchase there stay in sync.",
   },
   {
     q: "How do you help me choose the right area?",
