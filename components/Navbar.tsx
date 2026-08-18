@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { navLinks } from "@/lib/data";
 import ThemeToggle from "./ThemeToggle";
@@ -8,6 +9,14 @@ import ThemeToggle from "./ThemeToggle";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const onHome = pathname === "/";
+
+  // Anchor links (#about, #contact, ...) scroll in place on the homepage, but
+  // from a sub-page they must jump to the homepage first ("/#about"). Route
+  // links (/relocation, /resources) pass through unchanged.
+  const resolve = (href: string) =>
+    href.startsWith("#") ? (onHome ? href : `/${href}`) : href;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -38,7 +47,7 @@ export default function Navbar() {
     >
       <nav className="container-lux flex h-[72px] items-center justify-between">
         {/* Brand logo ... SOLD IT TODAY is the primary brand */}
-        <a href="#home" className="flex items-center" aria-label="SOLD IT TODAY home">
+        <a href={resolve("#home")} className="flex items-center" aria-label="SOLD IT TODAY home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
@@ -54,7 +63,7 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <li key={link.href}>
               <a
-                href={link.href}
+                href={resolve(link.href)}
                 className="group relative text-sm font-medium tracking-wide text-dusty transition-colors duration-300 hover:text-pearl"
               >
                 {link.label}
@@ -68,7 +77,7 @@ export default function Navbar() {
             ~44px touch target (py-3) to match the site-wide standard. */}
         <div className="hidden shrink-0 items-center gap-3 lg:flex">
           <ThemeToggle />
-          <a href="#contact" className="btn-aurora whitespace-nowrap !px-5 !py-3">
+          <a href={resolve("#contact")} className="btn-aurora whitespace-nowrap !px-5 !py-3">
             Schedule a Consultation
           </a>
         </div>
@@ -121,7 +130,7 @@ export default function Navbar() {
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a
-                    href={link.href}
+                    href={resolve(link.href)}
                     onClick={() => setOpen(false)}
                     className="block py-3 text-lg font-medium text-pearl/90 transition-colors hover:text-pearl"
                   >
@@ -131,7 +140,7 @@ export default function Navbar() {
               ))}
               <li className="pt-3">
                 <a
-                  href="#contact"
+                  href={resolve("#contact")}
                   onClick={() => setOpen(false)}
                   className="btn-aurora w-full"
                 >

@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
+import Navbar from "./Navbar";
 import Footer from "./Footer";
-import ThemeToggle from "./ThemeToggle";
-import { contact } from "@/lib/data";
 
 type PageShellProps = {
   eyebrow: string;
@@ -14,8 +13,9 @@ type PageShellProps = {
 
 /**
  * Shared shell for scaffolded sub-pages (Team, Service Areas, Neighborhood
- * Guides, Resources, Preferred Partners). Provides a lightweight header that
- * links back to the homepage sections, a branded hero band, and the footer.
+ * Guides, Resources, Preferred Partners). Uses the same site-wide Navbar as the
+ * homepage (so navigation is identical everywhere), a branded hero band, and the
+ * footer.
  *
  * These pages exist for AI/SEO discoverability and future content. Most carry
  * placeholder content today ... fill them in over time.
@@ -29,40 +29,7 @@ export default function PageShell({
 }: PageShellProps) {
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-dusty/10 bg-plum/80 backdrop-blur-xl">
-        <nav className="container-lux flex h-[72px] items-center justify-between">
-          <a href="/" className="flex items-center" aria-label="SOLD IT TODAY home">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
-              alt="SOLD IT TODAY"
-              className="h-8 w-auto sm:h-[38px] md:h-[43px]"
-            />
-          </a>
-          <div className="flex items-center gap-6">
-            <a
-              href="/#search"
-              className="hidden text-sm font-medium text-dusty transition-colors hover:text-pearl sm:inline"
-            >
-              Search Homes
-            </a>
-            <a
-              href="/"
-              className="hidden text-sm font-medium text-dusty transition-colors hover:text-pearl sm:inline"
-            >
-              Home
-            </a>
-            <ThemeToggle />
-            <a
-              href="/#contact"
-              className="btn-aurora whitespace-nowrap !px-4 !py-3 text-[13px] sm:!px-5 sm:text-sm"
-            >
-              <span className="sm:hidden">Schedule</span>
-              <span className="hidden sm:inline">Schedule a Consultation</span>
-            </a>
-          </div>
-        </nav>
-      </header>
+      <Navbar />
 
       <main>
         {/* Hero band */}
