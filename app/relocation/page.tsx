@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
+import RelocationArt from "@/components/relocation/RelocationArt";
 import Reveal from "@/components/ui/Reveal";
 import {
   relocationAudiences,
@@ -46,6 +47,15 @@ export default function RelocationPage() {
       eyebrow="Relocation"
       title="Relocating to Southeast Michigan"
       description="Whether you're moving across the state or across the country, SOLD IT TODAY helps individuals, families, and companies land in the right place ... confident and informed."
+      actions={
+        <a href="/#contact" className="btn-aurora group">
+          Start With a Consultation
+          <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
+            &rarr;
+          </span>
+        </a>
+      }
+      heroVisual={<RelocationArt />}
     >
       {/* eslint-disable-next-line react/no-danger */}
       <script
@@ -57,30 +67,6 @@ export default function RelocationPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-
-      {/* Intro */}
-      <section className="relative overflow-hidden bg-plum py-20 md:py-28">
-        <div className="aurora-bloom opacity-50" />
-        <div className="grain-soft" />
-        <div className="container-lux relative z-10 max-w-3xl">
-          <Reveal>
-            <p className="text-lg leading-relaxed text-dusty md:text-xl">
-              Moving is a big step ... especially to a region you don&rsquo;t know
-              yet. Our job is to make Southeast Michigan feel familiar fast: the
-              right neighborhoods for your commute and lifestyle, honest market
-              context, and a steady guide from your first question to closing day.
-            </p>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <a href="/#contact" className="btn-aurora group mt-8">
-              Start With a Consultation
-              <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
-                &rarr;
-              </span>
-            </a>
-          </Reveal>
-        </div>
-      </section>
 
       {/* Who we help */}
       <section className="relative overflow-hidden bg-bruised py-20 md:py-28">
@@ -94,6 +80,14 @@ export default function RelocationPage() {
             <h2 className="mt-4 max-w-2xl text-balance text-3xl font-semibold tracking-tightest text-pearl sm:text-4xl">
               Built for every kind of move to Michigan
             </h2>
+          </Reveal>
+          <Reveal delay={0.12}>
+            <p className="mt-4 max-w-2xl text-dusty">
+              Moving is a big step ... especially to a region you don&rsquo;t know
+              yet. Our job is to make Southeast Michigan feel familiar fast: the
+              right neighborhoods for your commute and lifestyle, honest market
+              context, and a steady guide from your first question to closing day.
+            </p>
           </Reveal>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {relocationAudiences.map((a) => (

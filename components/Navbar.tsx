@@ -7,7 +7,6 @@ import { navLinks } from "@/lib/data";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const onHome = pathname === "/";
@@ -17,13 +16,6 @@ export default function Navbar() {
   // links (/relocation, /resources) pass through unchanged.
   const resolve = (href: string) =>
     href.startsWith("#") ? (onHome ? href : `/${href}`) : href;
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Lock body scroll when the mobile menu is open
   useEffect(() => {
@@ -38,12 +30,7 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className={[
-        "fixed inset-x-0 top-0 z-50 transition-all duration-500 ease-lux",
-        scrolled
-          ? "border-b border-dusty/10 bg-plum/80 backdrop-blur-xl"
-          : "border-b border-transparent bg-transparent",
-      ].join(" ")}
+      className="fixed inset-x-0 top-0 z-50 border-b border-dusty/10 bg-plum/85 backdrop-blur-xl"
     >
       <nav className="container-lux flex h-[72px] items-center justify-between">
         {/* Brand logo ... SOLD IT TODAY is the primary brand */}

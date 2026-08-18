@@ -8,6 +8,8 @@ type PageShellProps = {
   description?: string;
   /** Optional hero CTA row, rendered under the description. */
   actions?: ReactNode;
+  /** Optional hero illustration/image. When set, the hero becomes two-column. */
+  heroVisual?: ReactNode;
   children: ReactNode;
 };
 
@@ -25,6 +27,7 @@ export default function PageShell({
   title,
   description,
   actions,
+  heroVisual,
   children,
 }: PageShellProps) {
   return (
@@ -33,20 +36,29 @@ export default function PageShell({
 
       <main>
         {/* Hero band */}
-        <section className="relative overflow-hidden bg-mulberry-radial pb-16 pt-24 md:pb-20 md:pt-32">
+        <section className="relative overflow-hidden bg-mulberry-radial pb-16 pt-28 md:pb-24 md:pt-36">
           <div className="aurora-bloom opacity-70" />
           <div className="grain-soft" />
-          <div className="container-lux relative z-10 max-w-3xl">
-            <span className="eyebrow">{eyebrow}</span>
-            <h1 className="mt-4 text-balance text-4xl font-semibold leading-[1.05] tracking-tightest text-pearl sm:text-5xl md:text-6xl">
-              {title}
-            </h1>
-            {description && (
-              <p className="mt-5 max-w-2xl text-lg leading-relaxed text-dusty">
-                {description}
-              </p>
-            )}
-            {actions && <div className="mt-8">{actions}</div>}
+          <div
+            className={
+              heroVisual
+                ? "container-lux relative z-10 grid items-center gap-10 lg:grid-cols-2 lg:gap-16"
+                : "container-lux relative z-10 max-w-3xl"
+            }
+          >
+            <div className={heroVisual ? "max-w-2xl" : ""}>
+              <span className="eyebrow">{eyebrow}</span>
+              <h1 className="mt-4 text-balance text-4xl font-semibold leading-[1.05] tracking-tightest text-pearl sm:text-5xl md:text-6xl">
+                {title}
+              </h1>
+              {description && (
+                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-dusty">
+                  {description}
+                </p>
+              )}
+              {actions && <div className="mt-8">{actions}</div>}
+            </div>
+            {heroVisual && <div className="relative">{heroVisual}</div>}
           </div>
         </section>
 
