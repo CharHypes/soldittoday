@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import RelocationArt from "@/components/relocation/RelocationArt";
+import Ticker from "@/components/Ticker";
 import Reveal from "@/components/ui/Reveal";
 import {
   relocationAudiences,
   relocationAreaMatch,
   relocationProcess,
   relocationFaqs,
+  relocationTickerItems,
   contact,
 } from "@/lib/data";
 
@@ -67,6 +69,9 @@ export default function RelocationPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
+
+      {/* Relocation-reasons ticker ... sits at the hero/content seam */}
+      <Ticker items={relocationTickerItems} />
 
       {/* Who we help */}
       <section className="relative overflow-hidden bg-bruised py-20 md:py-28">

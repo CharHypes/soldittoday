@@ -57,6 +57,27 @@ export const tickerItems: string[] = [
   "Southeast Michigan",
 ];
 
+/* Relocation-reasons ticker ... shown on the /relocation page, at the band
+   between the hero and the content. Reasons people actually move, drawn from the
+   relocation audiences plus common life-move reasons. Inclusive, not exclusionary. */
+export const relocationTickerItems: string[] = [
+  "Military Relocation",
+  "Corporate Relocation",
+  "Job Transfers",
+  "New Job",
+  "Automotive Industry",
+  "Healthcare Careers",
+  "University & Faculty",
+  "Executive Moves",
+  "Out-of-State Moves",
+  "Closer to Family",
+  "Retirement",
+  "More Space",
+  "Better Commute",
+  "Coming Home to Michigan",
+  "A Fresh Start",
+];
+
 export type Stat = { value: string; label: string };
 
 // Charlotte was licensed 19 July 2006 ... twenty years as of 19 July 2026.

@@ -11,10 +11,10 @@ import { tickerItems } from "@/lib/data";
  * looping word salad is noise. Every term here also exists as real navigation
  * or page content elsewhere.
  */
-export default function Ticker() {
+export default function Ticker({ items = tickerItems }: { items?: string[] }) {
   const row = (
     <ul className="flex shrink-0 items-center gap-8 pr-8" aria-hidden="true">
-      {tickerItems.map((item, i) => (
+      {items.map((item, i) => (
         <li key={`${item}-${i}`} className="flex shrink-0 items-center gap-8">
           <span className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.25em] text-goldInk">
             {item}
