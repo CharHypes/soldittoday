@@ -19,12 +19,19 @@ const statusStyles: Record<ListingStatus, string> = {
  * ┌──────────────────────────────────────────────────────────────────────────┐
  * │  IDX / MLS INTEGRATION POINT                                               │
  * │  Cards render from the `listings` PLACEHOLDER array in lib/data.ts (stock  │
- * │  imagery ... NOT live MLS data). The markup is fully data-driven, so when an │
- * │  IDX/MLS feed is connected:                                                │
- * │    1. Replace the `listings` source with live data (same `Listing` shape:  │
- * │       title, location, price, beds, baths, sqft, status, image).           │
- * │    2. Map the provider's listing fields onto the `Listing` type.           │
- * │    3. Point cards / "Inquire About Listings" at IDX detail pages as needed.│
+ * │  imagery ... NOT live MLS data). The markup is fully data-driven, so when   │
+ * │  the IDX feed (lib/idx.ts) is connected:                                   │
+ * │                                                                            │
+ * │  DECIDED CONTENT (Aug 2026): feature CHARLOTTE'S OWN active listings first │
+ * │  (filter the feed to her agent/office ID ... her own listings need no       │
+ * │  "courtesy of" attribution). When she has none, fall back to a curated set │
+ * │  of fresh IDX listings in the core service areas (Downriver / Metro        │
+ * │  Detroit), which DO require the listing-broker attribution + disclaimer     │
+ * │  (see ListingCard). If both are empty, hide the section.                   │
+ * │                                                                            │
+ * │  Steps: 1) pull from searchListings()/a dedicated "my listings" query.     │
+ * │  2) map onto the display shape. 3) remove these placeholders (no fake or   │
+ * │  non-MLS data co-mingled with the feed).                                   │
  * └──────────────────────────────────────────────────────────────────────────┘
  */
 export default function Listings() {
