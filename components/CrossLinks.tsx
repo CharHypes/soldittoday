@@ -10,6 +10,7 @@ const PAGES: { label: string; href: string }[] = [
   { label: "Buyers", href: "/buyers" },
   { label: "Sellers", href: "/sellers" },
   { label: "First-Time Buyers", href: "/first-time-buyers" },
+  { label: "Investment", href: "/investment" },
   { label: "Communities", href: "/communities" },
   { label: "Relocation", href: "/relocation" },
 ];

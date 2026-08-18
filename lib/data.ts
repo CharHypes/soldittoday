@@ -136,6 +136,7 @@ export type Service = {
   description: string;
   points: string[];
   href?: string; // optional link to a dedicated service page
+  cta?: string; // link label shown on the card
 };
 
 export const services: Service[] = [
@@ -145,6 +146,8 @@ export const services: Service[] = [
     description:
       "A calm, strategic search built around your goals ... from first showing to final signature.",
     points: ["Curated home search", "Negotiation strategy", "Closing guidance"],
+    href: "/buyers",
+    cta: "How Buying Works",
   },
   {
     id: "selling",
@@ -152,6 +155,8 @@ export const services: Service[] = [
     description:
       "Positioning, pricing, and marketing that present your home at its strongest in any market.",
     points: ["Pricing strategy", "Premium marketing", "Maximized net proceeds"],
+    href: "/sellers",
+    cta: "How Selling Works",
   },
   {
     id: "first-time",
@@ -159,6 +164,8 @@ export const services: Service[] = [
     description:
       "Clear, patient guidance through every step so your first purchase feels confident, not confusing.",
     points: ["Step-by-step process", "Lender connections", "Honest expectations"],
+    href: "/first-time-buyers",
+    cta: "First-Time Buyer Guide",
   },
   {
     id: "investment",
@@ -166,6 +173,8 @@ export const services: Service[] = [
     description:
       "Numbers-first guidance to help you build and protect long-term wealth through real estate.",
     points: ["Cash-flow analysis", "Market opportunities", "Portfolio strategy"],
+    href: "/investment",
+    cta: "Investment Services",
   },
   {
     id: "relocation",
@@ -174,6 +183,7 @@ export const services: Service[] = [
       "Coordinated buying and selling so your next chapter in Southeast Michigan stays seamless.",
     points: ["Timeline coordination", "Area expertise", "Dual transaction support"],
     href: "/relocation",
+    cta: "Relocation Services",
   },
 ];
 

@@ -61,7 +61,7 @@ export default function Services() {
                   href={service.href}
                   className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-auroraMauve underline-offset-4 transition-colors hover:text-pearl hover:underline"
                 >
-                  Explore Relocation Services
+                  {service.cta ?? "Learn More"}
                   <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
                     &rarr;
                   </span>

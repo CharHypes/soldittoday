@@ -20,12 +20,39 @@ export const metadata: Metadata = {
 };
 
 const steps = [
-  { n: "01", t: "Strategy call", d: "We start with your goals, budget, and timeline ... no pressure, just a clear plan." },
-  { n: "02", t: "Get pre-approved", d: "We connect you with a trusted lender so you know your numbers and shop with confidence." },
+  { n: "01", t: "Strategy call", d: "We start with your goals, budget, and timeline ... ideally a few months ahead, so you're ready when the right home shows up." },
+  { n: "02", t: "Get pre-approved", d: "We introduce you to several trusted lenders so you can compare rates and programs and shop with confidence." },
   { n: "03", t: "Search with focus", d: "Curated homes that actually fit ... we cut the noise so you see what matters." },
   { n: "04", t: "Tour & evaluate", d: "Honest pros and cons on every home, including the things easy to miss." },
   { n: "05", t: "Offer & negotiate", d: "Strategy that protects your position ... and your budget ... when it counts." },
   { n: "06", t: "Inspect & close", d: "Guidance through inspection, appraisal, and closing all the way to the keys." },
+];
+
+const experience = [
+  {
+    t: "Start early",
+    d: "The best time to talk is a few months before you buy. An early consultation gets your budget, credit, and plan ready so nothing is rushed later.",
+  },
+  {
+    t: "Several lenders, not one",
+    d: "We introduce you to multiple trusted lenders so you can compare rates, programs, and fit ... never just a single option.",
+  },
+  {
+    t: "A search built for you",
+    d: "A customized MLS search sends new and price-changed listings straight to you by text and email the moment they hit the market.",
+  },
+  {
+    t: "Everything in one app",
+    d: "Browse new listings, save favorites, and see your showing schedule in a mobile app ... and reach us by text, email, or in-app whenever you need.",
+  },
+  {
+    t: "Your under-contract portal",
+    d: "Once you're under contract, an online portal keeps your dates, documents, and next steps organized in one place.",
+  },
+  {
+    t: "Inspectors you choose",
+    d: "We hand you several vetted, recommended inspectors so you can pick the one that fits your budget and timeline.",
+  },
 ];
 
 const audiences = [
@@ -139,6 +166,30 @@ export default function BuyersPage() {
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-pearl">{s.t}</h3>
                 <p className="mt-2.5 text-sm leading-relaxed text-dusty">{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* The experience / tools */}
+      <section className="relative overflow-hidden bg-bruised py-20 md:py-28">
+        <div className="aurora-bloom opacity-40" />
+        <div className="grain-soft" />
+        <div className="container-lux relative z-10">
+          <SectionHeading
+            eyebrow="The Experience"
+            title="What working with us actually looks like"
+            description="The tools and touchpoints that keep you informed and in control, from your first search to closing day."
+          />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {experience.map((e) => (
+              <div
+                key={e.t}
+                className="aurora-ring rounded-xl2 border border-dusty/12 bg-plum/50 p-7"
+              >
+                <h3 className="text-lg font-semibold text-pearl">{e.t}</h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-dusty">{e.d}</p>
               </div>
             ))}
           </div>
