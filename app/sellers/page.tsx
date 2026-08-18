@@ -43,6 +43,33 @@ const pillars = [
   },
 ];
 
+const experience = [
+  {
+    t: "Pre-listing walk-through & net sheet",
+    d: "We tour your home, then hand you an estimated net sheet so you know what you'll walk away with before you ever list.",
+  },
+  {
+    t: "Prep, staging & trusted vendors",
+    d: "ROI-focused prep advice, plus vetted cleaners, stagers, and handymen so your home shows its best without over-spending.",
+  },
+  {
+    t: "Professional photography & media",
+    d: "Magazine-quality photos, plus video or 3D tours where they help, so your listing stops the scroll.",
+  },
+  {
+    t: "Everywhere buyers look",
+    d: "Your home syndicates to Zillow, Realtor.com, and the major sites, backed by targeted social and email marketing.",
+  },
+  {
+    t: "Showings & real feedback",
+    d: "Easy online showing scheduling, and we gather and share buyer feedback so we can adjust quickly if we need to.",
+  },
+  {
+    t: "Managed to the closing table",
+    d: "An online portal keeps your dates, documents, and next steps in one place while we coordinate inspection, appraisal, and title.",
+  },
+];
+
 const faqs: FaqItem[] = [
   {
     q: "How do you decide my list price?",
@@ -133,6 +160,30 @@ export default function SellersPage() {
                 </div>
                 <h3 className="mt-5 text-lg font-semibold text-pearl">{s.t}</h3>
                 <p className="mt-2.5 text-sm leading-relaxed text-dusty">{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* The experience / full-service listing care */}
+      <section className="relative overflow-hidden bg-bruised py-20 md:py-28">
+        <div className="aurora-bloom opacity-40" />
+        <div className="grain-soft" />
+        <div className="container-lux relative z-10">
+          <SectionHeading
+            eyebrow="The Experience"
+            title="What working with us actually looks like"
+            description="Full-service listing care from the first walk-through to the closing table ... so your home is prepared, presented, and marketed to sell."
+          />
+          <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {experience.map((e) => (
+              <div
+                key={e.t}
+                className="aurora-ring rounded-xl2 border border-dusty/12 bg-plum/50 p-7"
+              >
+                <h3 className="text-lg font-semibold text-pearl">{e.t}</h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-dusty">{e.d}</p>
               </div>
             ))}
           </div>
