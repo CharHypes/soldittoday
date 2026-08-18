@@ -1,10 +1,11 @@
 /**
  * RelocationArt ... a branded illustration for the Relocation hero.
  *
- * Shows a dashed route arcing from an origin pin (with moving boxes) to a pin
- * dropped on the Michigan mitten. Communicates "relocating from another place to
- * Southeast Michigan" at a glance. Pure inline SVG, no external assets, reads on
- * both light and dark themes because the framed card carries its own dark ground.
+ * A dashed route arcs from an origin pin (with moving boxes) to a pin dropped on
+ * Southeast Michigan. Michigan is drawn as a recognizable two-peninsula
+ * silhouette: the Lower Peninsula mitten (with thumb and Saginaw Bay notch) and
+ * the Upper Peninsula (with the Keweenaw hook). Pure inline SVG, no external
+ * assets, reads on both themes because the framed card carries its own ground.
  */
 export default function RelocationArt() {
   return (
@@ -25,7 +26,7 @@ export default function RelocationArt() {
           <title>Relocating to Southeast Michigan</title>
           <defs>
             <linearGradient id="mitten" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#e0b0a0" stopOpacity="0.9" />
+              <stop offset="0" stopColor="#e0b0a0" stopOpacity="0.92" />
               <stop offset="1" stopColor="#7c5c69" stopOpacity="0.85" />
             </linearGradient>
             <linearGradient id="pin" x1="0" y1="0" x2="0" y2="1">
@@ -40,47 +41,68 @@ export default function RelocationArt() {
 
           {/* faint map latitude lines */}
           <g stroke="rgba(243,233,236,0.06)" strokeWidth="1" fill="none">
-            <path d="M20 90 C 140 70, 260 110, 384 84" />
-            <path d="M16 160 C 150 145, 250 180, 388 156" />
-            <path d="M20 234 C 140 220, 270 250, 384 228" />
+            <path d="M20 96 C 140 78, 260 112, 384 90" />
+            <path d="M16 168 C 150 152, 250 186, 388 162" />
+            <path d="M20 238 C 140 224, 270 252, 384 232" />
           </g>
 
-          {/* Upper Peninsula sliver */}
+          <g transform="translate(14 18) scale(0.9)">
+          {/* Upper Peninsula (with Keweenaw hook) */}
           <path
-            d="M214 60 C 232 50, 258 50, 276 54 C 292 58, 304 54, 302 62 C 288 68, 258 66, 236 66 C 224 66, 212 68, 214 60 Z"
+            d="M150 86
+               C 146 78, 152 71, 163 71
+               C 178 70, 196 72, 210 68
+               C 220 65, 226 54, 236 46
+               C 241 42, 249 43, 248 51
+               C 247 58, 239 63, 231 66
+               C 248 65, 272 64, 292 66
+               C 310 68, 326 71, 335 79
+               C 339 83, 334 89, 325 89
+               C 288 91, 200 92, 172 92
+               C 160 92, 153 91, 150 86 Z"
             fill="url(#mitten)"
-            opacity="0.45"
+            stroke="rgba(243,233,236,0.22)"
+            strokeWidth="1.25"
+            opacity="0.9"
           />
 
-          {/* Michigan Lower Peninsula (stylized mitten) */}
+          {/* Lower Peninsula (mitten): thumb + Saginaw Bay notch */}
           <path
-            d="M236 82 C 232 100, 232 122, 234 150 C 235 178, 244 214, 270 232
-               C 292 247, 316 240, 324 214 C 329 198, 328 186, 330 174
-               C 332 166, 340 164, 347 167 C 356 171, 362 162, 357 153
-               C 353 146, 343 147, 337 151 C 332 154, 329 151, 329 144
-               C 329 124, 326 102, 320 88 C 314 76, 300 72, 284 74
-               C 267 76, 250 76, 236 82 Z"
+            d="M228 104
+               C 255 98, 283 100, 300 108
+               C 309 113, 313 123, 314 133
+               C 321 132, 329 128, 335 134
+               C 340 139, 335 149, 326 148
+               C 319 147, 316 141, 311 144
+               C 307 148, 306 155, 307 162
+               C 302 156, 296 156, 296 165
+               C 297 179, 305 193, 308 208
+               C 310 222, 307 234, 300 240
+               C 285 246, 260 244, 244 240
+               L 214 240
+               C 210 214, 206 168, 210 140
+               C 212 122, 217 111, 228 104 Z"
             fill="url(#mitten)"
-            stroke="rgba(243,233,236,0.25)"
+            stroke="rgba(243,233,236,0.28)"
             strokeWidth="1.5"
           />
 
           <text
-            x="286"
-            y="150"
+            x="252"
+            y="182"
             textAnchor="middle"
-            fontSize="11"
+            fontSize="10.5"
             letterSpacing="2.5"
-            fill="rgba(23,19,26,0.55)"
+            fill="rgba(23,19,26,0.5)"
             fontFamily="system-ui, sans-serif"
             fontWeight="700"
           >
             MICHIGAN
           </text>
 
-          {/* Route arc from origin to destination */}
+          {/* Route arc from origin to the destination pin */}
           <path
-            d="M76 250 C 120 150, 235 120, 305 200"
+            d="M76 252 C 120 168, 226 150, 294 214"
             fill="none"
             stroke="#e0b0a0"
             strokeWidth="2.5"
@@ -88,8 +110,7 @@ export default function RelocationArt() {
             strokeDasharray="2 9"
             opacity="0.85"
           />
-          {/* traveling marker (static) */}
-          <circle cx="215" cy="132" r="4" fill="#f3e9ec" opacity="0.9" />
+          <circle cx="196" cy="150" r="4" fill="#f3e9ec" opacity="0.9" />
 
           {/* Origin: moving boxes + pin (lower left) */}
           <g stroke="rgba(243,233,236,0.4)" strokeWidth="1.5" fill="rgba(243,233,236,0.05)">
@@ -105,17 +126,17 @@ export default function RelocationArt() {
           />
           <circle cx="74" cy="243" r="4.5" fill="#17131a" />
 
-          {/* Destination: glowing pin dropped on Southeast Michigan */}
-          <circle cx="305" cy="204" r="30" fill="url(#glow)" className="animate-pulse" />
+          {/* Destination: glowing pin on Southeast Michigan */}
+          <circle cx="296" cy="212" r="28" fill="url(#glow)" className="animate-pulse" />
           <path
-            d="M305 176 C 296 176 289 183 289 191 C 289 202 305 218 305 218 C 305 218 321 202 321 191 C 321 183 314 176 305 176 Z"
+            d="M296 188 C 287 188 280 195 280 203 C 280 214 296 228 296 228 C 296 228 312 214 312 203 C 312 195 305 188 296 188 Z"
             fill="url(#pin)"
             stroke="rgba(243,233,236,0.35)"
             strokeWidth="1"
           />
-          {/* tiny key head inside the pin */}
-          <circle cx="305" cy="190" r="4.5" fill="#17131a" />
-          <rect x="303.6" y="190" width="2.8" height="8" rx="1" fill="#17131a" />
+          <circle cx="296" cy="202" r="4.5" fill="#17131a" />
+          <rect x="294.6" y="202" width="2.8" height="8" rx="1" fill="#17131a" />
+          </g>
         </svg>
       </div>
     </div>
