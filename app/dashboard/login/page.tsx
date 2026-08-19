@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
 import { createSupabaseBrowser } from "@/lib/supabase/client";
 
 const inputClass =
@@ -9,57 +8,52 @@ const inputClass =
 
 export default function DashboardLogin() {
   const supabase = createSupabaseBrowser();
-  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [stage, setStage] = useState<"email" | "code">("email");
-  const [msg, setMsg] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function sendCode(e: FormEvent) {
+  async function send(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setErr(null);
-    setMsg(null);
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { shouldCreateUser: true },
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
     setLoading(false);
     if (error) setErr(error.message);
-    else {
-      setStage("code");
-      setMsg(`We emailed a 6-digit code to ${email}.`);
-    }
-  }
-
-  async function verify(e: FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setErr(null);
-    // Try the magic-link OTP type first, then fall back to the signup type
-    // (new users on a project with email confirmation on get a "signup" token).
-    const token = code.trim();
-    let error = (await supabase.auth.verifyOtp({ email, token, type: "email" })).error;
-    if (error) error = (await supabase.auth.verifyOtp({ email, token, type: "signup" })).error;
-    setLoading(false);
-    if (error) setErr(error.message);
-    else router.replace("/dashboard");
+    else setSent(true);
   }
 
   return (
     <main className="grid min-h-screen place-items-center bg-mulberry-radial px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="text-sm font-semibold uppercase tracking-[0.18em] text-pearl">
-            Sold It Today
-          </div>
+          <div className="text-sm font-semibold uppercase tracking-[0.18em] text-pearl">Sold It Today</div>
           <div className="mt-1 text-xs text-dusty">Agent Dashboard</div>
         </div>
 
-        {stage === "email" ? (
-          <form onSubmit={sendCode} className="space-y-4">
+        {sent ? (
+          <div className="rounded-xl2 border border-auroraMauve/25 bg-plum/50 p-6 text-center">
+            <p className="text-pearl">Check your email.</p>
+            <p className="mt-2 text-sm text-dusty">
+              We sent a login link to <b className="text-pearl">{email}</b>. Open it and click the link (it may say
+              &ldquo;Confirm email address&rdquo;) to sign in.
+            </p>
+            <button
+              type="button"
+              onClick={() => { setSent(false); setErr(null); }}
+              className="mt-5 text-xs text-dusty hover:text-pearl"
+            >
+              Use a different email
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={send} className="space-y-4">
             <label className="block text-sm text-dusty">
               Your email
               <input
@@ -73,37 +67,11 @@ export default function DashboardLogin() {
               />
             </label>
             <button type="submit" disabled={loading} className="btn-aurora w-full justify-center disabled:opacity-60">
-              {loading ? "Sending..." : "Email me a login code"}
-            </button>
-          </form>
-        ) : (
-          <form onSubmit={verify} className="space-y-4">
-            <label className="block text-sm text-dusty">
-              6-digit code
-              <input
-                inputMode="numeric"
-                required
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder="123456"
-                className={`mt-1.5 tracking-[0.4em] ${inputClass}`}
-                autoComplete="one-time-code"
-              />
-            </label>
-            <button type="submit" disabled={loading} className="btn-aurora w-full justify-center disabled:opacity-60">
-              {loading ? "Verifying..." : "Sign in"}
-            </button>
-            <button
-              type="button"
-              onClick={() => { setStage("email"); setCode(""); setErr(null); setMsg(null); }}
-              className="w-full text-center text-xs text-dusty hover:text-pearl"
-            >
-              Use a different email
+              {loading ? "Sending..." : "Email me a login link"}
             </button>
           </form>
         )}
 
-        {msg && <p className="mt-4 text-center text-sm text-pearl/80">{msg}</p>}
         {err && <p className="mt-4 text-center text-sm text-rose-300">{err}</p>}
       </div>
     </main>
