@@ -38,11 +38,11 @@ export default function DashboardLogin() {
     e.preventDefault();
     setLoading(true);
     setErr(null);
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token: code.trim(),
-      type: "email",
-    });
+    // Try the magic-link OTP type first, then fall back to the signup type
+    // (new users on a project with email confirmation on get a "signup" token).
+    const token = code.trim();
+    let error = (await supabase.auth.verifyOtp({ email, token, type: "email" })).error;
+    if (error) error = (await supabase.auth.verifyOtp({ email, token, type: "signup" })).error;
     setLoading(false);
     if (error) setErr(error.message);
     else router.replace("/dashboard");
