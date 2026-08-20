@@ -47,6 +47,10 @@ export default function NewListing() {
             <label className={lbl}>Sq Ft<input name="sqft" inputMode="numeric" className={`mt-1.5 ${inp}`} /></label>
             <label className={lbl}>Listed<input type="date" name="list_date" className={`mt-1.5 ${inp}`} /></label>
           </div>
+          <label className={lbl}>
+            Listing photo URL <span className="text-dusty/60">(optional)</span>
+            <input name="photo_url" placeholder="https://... (or leave blank; IDX fills it later)" className={`mt-1.5 ${inp}`} />
+          </label>
 
           <div className="rounded-xl2 border border-dusty/15 bg-plum/40 p-5">
             <p className="text-sm font-semibold text-pearl">Seller</p>

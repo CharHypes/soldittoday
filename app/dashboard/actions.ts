@@ -52,6 +52,7 @@ export async function createListing(formData: FormData) {
       sqft: num(formData.get("sqft")),
       status: str(formData.get("status")) ?? "Active",
       list_date: str(formData.get("list_date")),
+      photo_url: str(formData.get("photo_url")),
     })
     .select("id")
     .single();
@@ -78,6 +79,7 @@ export async function updateListing(formData: FormData) {
       sqft: num(formData.get("sqft")),
       status: str(formData.get("status")) ?? "Active",
       list_date: str(formData.get("list_date")),
+      photo_url: str(formData.get("photo_url")),
     })
     .eq("id", id);
   revalidatePath(`/dashboard/listings/${id}`);

@@ -90,6 +90,10 @@ export default async function EditListing({ params }: { params: { id: string } }
             <label className={lbl}>Sq Ft<input name="sqft" defaultValue={listing.sqft ?? ""} className={`mt-1.5 ${inp}`} /></label>
             <label className={lbl}>Listed<input type="date" name="list_date" defaultValue={listing.list_date ?? ""} className={`mt-1.5 ${inp}`} /></label>
           </div>
+          <label className={lbl}>
+            Listing photo URL
+            <input name="photo_url" defaultValue={listing.photo_url ?? ""} placeholder="https://... (paste a photo link; auto-fills once IDX is live)" className={`mt-1.5 ${inp}`} />
+          </label>
           <button type="submit" className="btn-aurora">Save changes</button>
         </form>
 
