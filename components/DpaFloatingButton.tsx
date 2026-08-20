@@ -19,7 +19,14 @@ export default function DpaFloatingButton() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (pathname?.startsWith("/dpa")) {
+    // Hide on the DPA pages themselves and on private app surfaces
+    // (client seller portals, the agent dashboard, and auth screens).
+    if (
+      pathname?.startsWith("/dpa") ||
+      pathname?.startsWith("/seller") ||
+      pathname?.startsWith("/dashboard") ||
+      pathname?.startsWith("/auth")
+    ) {
       setShow(false);
       return;
     }
