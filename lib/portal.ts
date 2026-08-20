@@ -28,7 +28,7 @@ export type PortalData = {
     photo_url: string | null;
     list_date: string | null;
   };
-  agent: { name: string; brand: string | null; phone: string | null; email: string | null };
+  agent: { name: string; brand: string | null; phone: string | null; email: string | null; avatar_url: string | null };
   client: { name: string | null };
   stats: PortalStats | null;
   notes: { body: string; created_at: string }[];

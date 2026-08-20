@@ -69,9 +69,18 @@ export default async function SellerPortalPage({ params }: { params: { token: st
           {/* Top bar */}
           <div className="flex items-center justify-between gap-4 py-5">
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-gold to-auroraMauve text-sm font-bold text-plum">
-                {agent.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
-              </span>
+              {agent.avatar_url ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={agent.avatar_url}
+                  alt={agent.name}
+                  className="h-11 w-11 rounded-full border border-pearl/25 object-cover object-top"
+                />
+              ) : (
+                <span className="grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-gold to-auroraMauve text-sm font-bold text-plum">
+                  {agent.name.split(" ").map((w) => w[0]).slice(0, 2).join("")}
+                </span>
+              )}
               <div className="leading-tight">
                 <p className="text-sm font-semibold text-pearl">{agent.name}</p>
                 <p className="text-xs text-dusty">{agent.brand ?? "Sold It Today"}</p>
