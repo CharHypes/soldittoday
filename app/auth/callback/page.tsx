@@ -24,6 +24,19 @@ export default function AuthCallback() {
         router.replace("/dashboard");
         return true;
       }
+      // Implicit flow: self-contained tokens in the URL hash (works cross-browser).
+      if (window.location.hash && window.location.hash.length > 1) {
+        const h = new URLSearchParams(window.location.hash.slice(1));
+        const access_token = h.get("access_token");
+        const refresh_token = h.get("refresh_token");
+        if (access_token && refresh_token) {
+          const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+          if (!error) {
+            router.replace("/dashboard");
+            return true;
+          }
+        }
+      }
       // Fall back to exchanging a PKCE code if one is present.
       const code = new URLSearchParams(window.location.search).get("code");
       if (code) {
