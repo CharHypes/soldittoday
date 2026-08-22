@@ -11,7 +11,7 @@ import { createClient } from "@supabase/supabase-js";
 export const runtime = "nodejs";
 
 const NOTIFY_TO = process.env.LEAD_NOTIFICATION_EMAIL ?? "charlotte@soldittoday.com";
-const NOTIFY_FROM = process.env.LEAD_NOTIFICATION_FROM ?? "onboarding@resend.dev";
+const NOTIFY_FROM = process.env.LEAD_NOTIFICATION_FROM ?? "no-reply@soldittoday.com";
 
 type LeadPayload = {
   name?: string;

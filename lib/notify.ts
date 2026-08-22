@@ -4,7 +4,9 @@
  * error is logged, never thrown, so it can't break the action that triggered it.
  */
 
-const NOTIFY_FROM = process.env.LEAD_NOTIFICATION_FROM ?? "onboarding@resend.dev";
+// soldittoday.com is verified in Resend, so send from the domain by default ...
+// Resend's shared onboarding@resend.dev gets junked/dropped by Outlook.
+const NOTIFY_FROM = process.env.LEAD_NOTIFICATION_FROM ?? "no-reply@soldittoday.com";
 
 export async function sendAgentEmail(opts: {
   to: string;
