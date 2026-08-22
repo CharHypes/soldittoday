@@ -126,15 +126,15 @@ export default async function BuyerPortalPage({ params }: { params: { token: str
                   <span
                     className={[
                       "grid h-9 w-9 place-items-center rounded-full border text-sm font-semibold",
-                      done ? "border-transparent bg-gradient-to-br from-gold to-auroraMauve text-plum" : "",
-                      active ? "border-auroraMauve/70 bg-wine/40 text-pearl" : "",
+                      done ? "border-transparent bg-gradient-to-br from-gold to-auroraMauve text-plum tracker-done" : "",
+                      active ? "border-auroraMauve/70 bg-wine/40 text-pearl tracker-active" : "",
                       !done && !active ? "border-dusty/25 bg-plum/40 text-dusty/60" : "",
                     ].join(" ")}
                   >
                     {done ? "✓" : i + 1}
                   </span>
                   {i < milestones.length - 1 && (
-                    <span className={["my-1 w-px flex-1", done ? "bg-auroraMauve/50" : "bg-dusty/15"].join(" ")} style={{ minHeight: 28 }} />
+                    <span className={["my-1 w-px flex-1", done ? "bg-auroraMauve/50" : "bg-dusty/15 tracker-rail-up"].join(" ")} style={{ minHeight: 28 }} />
                   )}
                 </div>
                 {/* label */}

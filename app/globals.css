@@ -116,9 +116,11 @@
   --gold-ink: 140 90 54;
   --ring-accent: var(--gold);
 
-  /* Warm blush at the top of the radial keeps light mode from washing out. */
-  --grad-1: 234 205 219;
-  --grad-2: 249 238 242;
+  /* Warm blush at the top of the radial keeps light mode from washing out.
+     Deepened toward mauve/pink so light mode reads with real brand color
+     instead of fading to beige. */
+  --grad-1: 228 182 205;
+  --grad-2: 240 206 222;
   --grad-3: 244 237 234;
 
   --bloom-1: 122 74 94 / 0.20;
@@ -135,6 +137,24 @@
     brightness(0.92);
   --scrollbar-track: 240 231 227;
   --scrollbar-thumb: 200 184 190;
+}
+
+/*
+ * Buyer closing tracker ... light mode only. In dark mode the "done" marker is
+ * the rose-gold gradient (which reads beautifully), but in light that same
+ * gradient turns muddy brown. Here we give the markers a clear mauve->pink
+ * identity so the checklist reads at a glance. Dark mode is untouched.
+ */
+:root[data-theme="light"] .tracker-done {
+  background-image: linear-gradient(135deg, rgb(156 61 104), rgb(207 133 161));
+  color: #fff;
+}
+:root[data-theme="light"] .tracker-active {
+  border-color: rgba(156, 61, 104, 0.75);
+  background: rgba(207, 133, 161, 0.2);
+}
+:root[data-theme="light"] .tracker-rail-up {
+  background: rgba(156, 61, 104, 0.16);
 }
 
 @layer base {
