@@ -24,6 +24,7 @@ export default function DpaFloatingButton() {
     if (
       pathname?.startsWith("/dpa") ||
       pathname?.startsWith("/seller") ||
+      pathname?.startsWith("/buyer") ||
       pathname?.startsWith("/dashboard") ||
       pathname?.startsWith("/auth")
     ) {

@@ -116,6 +116,120 @@ export async function addSnapshot(formData: FormData) {
   revalidatePath(`/dashboard/listings/${listing_id}`);
 }
 
+/* -------------------------------------------------------------------------- */
+/*  Buyers (transactions + closing tracker)                                    */
+/* -------------------------------------------------------------------------- */
+
+const DEFAULT_MILESTONES = [
+  "Under Contract",
+  "Earnest Money",
+  "Inspection",
+  "Appraisal",
+  "Financing / Clear to Close",
+  "Final Walkthrough",
+  "Closing Day",
+];
+
+export async function createBuyer(formData: FormData) {
+  const { supabase, id: agent_id } = await agentId();
+  if (!agent_id) redirect("/dashboard/login");
+
+  let client_id: string | null = null;
+  const clientName = str(formData.get("client_name"));
+  if (clientName) {
+    const { data: client } = await supabase
+      .from("clients")
+      .insert({ agent_id, name: clientName, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")), type: "buyer" })
+      .select("id")
+      .single();
+    client_id = client?.id ?? null;
+  }
+
+  const { data: tx } = await supabase
+    .from("transactions")
+    .insert({
+      agent_id,
+      client_id,
+      address: str(formData.get("address")),
+      city: str(formData.get("city")),
+      state: str(formData.get("state")),
+      zip: str(formData.get("zip")),
+      price: num(formData.get("price")),
+      status: str(formData.get("status")) ?? "Under Contract",
+      target_close_date: str(formData.get("target_close_date")),
+      photo_url: str(formData.get("photo_url")),
+    })
+    .select("id")
+    .single();
+
+  if (tx?.id) {
+    await supabase.from("milestones").insert(
+      DEFAULT_MILESTONES.map((label, i) => ({
+        transaction_id: tx.id,
+        label,
+        sort_order: i + 1,
+        status: i === 0 ? "done" : "upcoming",
+      }))
+    );
+  }
+
+  revalidatePath("/dashboard/buyers");
+  redirect(tx?.id ? `/dashboard/buyers/${tx.id}` : "/dashboard/buyers");
+}
+
+export async function updateTransaction(formData: FormData) {
+  const { supabase } = await agentId();
+  const id = str(formData.get("id"));
+  if (!id) return;
+  await supabase
+    .from("transactions")
+    .update({
+      address: str(formData.get("address")),
+      city: str(formData.get("city")),
+      state: str(formData.get("state")),
+      zip: str(formData.get("zip")),
+      price: num(formData.get("price")),
+      status: str(formData.get("status")) ?? "Under Contract",
+      target_close_date: str(formData.get("target_close_date")),
+      photo_url: str(formData.get("photo_url")),
+    })
+    .eq("id", id);
+  revalidatePath(`/dashboard/buyers/${id}`);
+  revalidatePath("/dashboard/buyers");
+}
+
+export async function updateMilestones(formData: FormData) {
+  const { supabase } = await agentId();
+  const transaction_id = str(formData.get("transaction_id"));
+  if (!transaction_id) return;
+  const { data: ms } = await supabase
+    .from("milestones")
+    .select("id")
+    .eq("transaction_id", transaction_id);
+  for (const m of ms ?? []) {
+    const status = str(formData.get(`status_${m.id}`));
+    const date = str(formData.get(`date_${m.id}`));
+    await supabase
+      .from("milestones")
+      .update({ status: status ?? "upcoming", date })
+      .eq("id", m.id);
+  }
+  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
+export async function addBuyerNote(formData: FormData) {
+  const { supabase } = await agentId();
+  const transaction_id = str(formData.get("transaction_id"));
+  const body = str(formData.get("body"));
+  if (!transaction_id || !body) return;
+  await supabase.from("notes").insert({
+    transaction_id,
+    body,
+    client_visible: formData.get("client_visible") === "on",
+  });
+  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
 export async function signOut() {
   const supabase = createSupabaseServer();
   await supabase.auth.signOut();

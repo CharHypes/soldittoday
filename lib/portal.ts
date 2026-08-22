@@ -49,3 +49,37 @@ export async function getSellerPortal(token: string): Promise<PortalData | null>
   }
   return (data as PortalData | null) ?? null;
 }
+
+export type BuyerMilestone = {
+  label: string;
+  status: "upcoming" | "in_progress" | "done";
+  date: string | null;
+};
+
+export type BuyerPortalData = {
+  transaction: {
+    address: string;
+    city: string | null;
+    state: string | null;
+    zip: string | null;
+    price: number | null;
+    status: string;
+    target_close_date: string | null;
+    photo_url: string | null;
+  };
+  agent: { name: string; brand: string | null; phone: string | null; email: string | null; avatar_url: string | null };
+  client: { name: string | null };
+  milestones: BuyerMilestone[];
+  notes: { body: string; created_at: string }[];
+};
+
+/** Fetch a buyer portal by its unguessable token (token-only RPC, no login). */
+export async function getBuyerPortal(token: string): Promise<BuyerPortalData | null> {
+  const { data, error } = await supabase.rpc("get_buyer_portal", { p_token: token });
+  if (error) {
+    // eslint-disable-next-line no-console
+    console.error("[portal] buyer rpc error:", error.message);
+    return null;
+  }
+  return (data as BuyerPortalData | null) ?? null;
+}
