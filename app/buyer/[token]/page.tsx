@@ -34,7 +34,11 @@ export default async function BuyerPortalPage({ params }: { params: { token: str
   if (!data) return <NotAvailable />;
 
   const { transaction: tx, agent, client, milestones, notes } = data;
-  const firstName = client.name?.split(" ")[0] ?? null;
+  // Greet couples by both first names ("Maroun & Kellie"), everyone else by first name.
+  const nameParts = (client.name ?? "").trim().split(/\s+/).filter(Boolean);
+  const firstName = client.name?.includes("&")
+    ? nameParts.slice(0, -1).join(" ")
+    : nameParts[0] ?? null;
   const agentFirst = agent.name.split(" ")[0];
   const phoneDigits = agent.phone?.replace(/[^0-9]/g, "") ?? "";
   const cityLine = [tx.city, tx.state].filter(Boolean).join(", ") + (tx.zip ? ` ${tx.zip}` : "");
