@@ -70,7 +70,8 @@ export type BuyerPortalData = {
   agent: { name: string; brand: string | null; phone: string | null; email: string | null; avatar_url: string | null };
   client: { name: string | null };
   milestones: BuyerMilestone[];
-  notes: { body: string; created_at: string }[];
+  notes: { body: string; created_at: string; from_client: boolean }[];
+  documents: { id: string; name: string; uploaded_by: "agent" | "buyer"; created_at: string }[];
 };
 
 /** Fetch a buyer portal by its unguessable token (token-only RPC, no login). */

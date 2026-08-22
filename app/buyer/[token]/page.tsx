@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { getBuyerPortal } from "@/lib/portal";
 import ThemeToggle from "@/components/ThemeToggle";
 import PortalLightTheme from "@/components/PortalLightTheme";
+import BuyerReply from "@/components/portal/BuyerReply";
+import BuyerDocUpload from "@/components/portal/BuyerDocUpload";
+import { DOCS_ENABLED } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = {
   title: "Your Home Purchase | Sold It Today",
@@ -34,7 +37,7 @@ export default async function BuyerPortalPage({ params }: { params: { token: str
   const data = await getBuyerPortal(params.token);
   if (!data) return <NotAvailable />;
 
-  const { transaction: tx, agent, client, milestones, notes } = data;
+  const { transaction: tx, agent, client, milestones, notes, documents } = data;
   // Greet couples by both first names ("Maroun & Kellie"), everyone else by first name.
   const nameParts = (client.name ?? "").trim().split(/\s+/).filter(Boolean);
   const firstName = client.name?.includes("&")
@@ -150,17 +153,84 @@ export default async function BuyerPortalPage({ params }: { params: { token: str
           })}
         </ol>
 
-        {notes.length > 0 && (
-          <section className="mt-8">
-            <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">Notes from {agentFirst}</h2>
-            <div className="mt-4 space-y-4">
-              {notes.map((n, i) => (
-                <div key={i} className="aurora-ring rounded-xl2 border border-dusty/15 bg-bruised/40 p-6">
-                  <p className="leading-relaxed text-pearl/90">{n.body}</p>
-                  <p className="mt-3 text-xs text-dusty/70">{longDate(n.created_at)}</p>
-                </div>
-              ))}
-            </div>
+        {/* Messages ... two-way conversation with the agent */}
+        <section className="mt-10">
+          <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">
+            Messages with {agentFirst}
+          </h2>
+          <div className="mt-4 space-y-3">
+            {notes.length === 0 && (
+              <p className="text-sm text-dusty">
+                No messages yet. Send {agentFirst} a note below anytime ... question about the
+                closing, a document, anything.
+              </p>
+            )}
+            {notes.map((n, i) => (
+              <div
+                key={i}
+                className={[
+                  "max-w-[85%] rounded-xl2 border p-4",
+                  n.from_client
+                    ? "ml-auto border-auroraMauve/30 bg-wine/30"
+                    : "mr-auto border-dusty/15 bg-bruised/40",
+                ].join(" ")}
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-auroraMauve">
+                  {n.from_client ? "You" : agentFirst}
+                </p>
+                <p className="mt-1 whitespace-pre-line leading-relaxed text-pearl/90">{n.body}</p>
+                <p className="mt-2 text-[11px] text-dusty/70">{longDate(n.created_at)}</p>
+              </div>
+            ))}
+          </div>
+          <BuyerReply token={params.token} />
+        </section>
+
+        {/* Documents ... download what Charlotte shares, upload what she needs */}
+        {(DOCS_ENABLED || documents.length > 0) && (
+          <section className="mt-10">
+            <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">Documents</h2>
+            {documents.length > 0 ? (
+              <ul className="mt-4 space-y-2">
+                {documents.map((d) => (
+                  <li
+                    key={d.id}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-dusty/15 bg-bruised/40 px-4 py-3"
+                  >
+                    <div className="min-w-0">
+                      <a
+                        href={`/api/buyer/${params.token}/documents/${d.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block truncate font-medium text-pearl hover:text-auroraMauve"
+                      >
+                        {d.name}
+                      </a>
+                      <p className="text-[11px] text-dusty/70">
+                        {d.uploaded_by === "buyer" ? "You uploaded" : `Shared by ${agentFirst}`} ·{" "}
+                        {longDate(d.created_at)}
+                      </p>
+                    </div>
+                    <a
+                      href={`/api/buyer/${params.token}/documents/${d.id}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="shrink-0 text-sm font-semibold text-auroraMauve hover:text-pearl"
+                    >
+                      Download
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-4 text-sm text-dusty">Nothing here yet.</p>
+            )}
+            {DOCS_ENABLED && (
+              <div className="mt-4 rounded-xl2 border border-dusty/15 bg-plum/40 p-4">
+                <p className="text-sm text-pearl">Need to send {agentFirst} a document?</p>
+                <BuyerDocUpload token={params.token} />
+              </div>
+            )}
           </section>
         )}
 

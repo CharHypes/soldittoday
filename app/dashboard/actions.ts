@@ -1,8 +1,10 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { createAdminClient, PORTAL_DOCS_BUCKET } from "@/lib/supabase/admin";
 
 const num = (v: FormDataEntryValue | null): number | null => {
   const s = String(v ?? "").trim();
@@ -228,6 +230,76 @@ export async function addBuyerNote(formData: FormData) {
     client_visible: formData.get("client_visible") === "on",
   });
   revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
+// ============ Documents (agent side) ============
+
+const safeDocName = (name: string): string =>
+  (name || "document").replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 120) || "document";
+
+/** Agent uploads a document to a buyer's file. Optionally shares it immediately. */
+export async function uploadBuyerDocument(formData: FormData) {
+  const { supabase, id: agent_id } = await agentId();
+  if (!agent_id) redirect("/dashboard/login");
+  const transaction_id = str(formData.get("transaction_id"));
+  const file = formData.get("file");
+  if (!transaction_id || !(file instanceof File) || file.size === 0) return;
+
+  const admin = createAdminClient();
+  if (!admin) return; // service-role key not configured yet
+
+  // Confirm the agent owns this transaction (RLS-scoped read).
+  const { data: tx } = await supabase
+    .from("transactions").select("id").eq("id", transaction_id).maybeSingle();
+  if (!tx) return;
+
+  const display = safeDocName(file.name);
+  const path = `${transaction_id}/${randomUUID()}-${display}`;
+  const buf = Buffer.from(await file.arrayBuffer());
+
+  const { error: upErr } = await admin.storage
+    .from(PORTAL_DOCS_BUCKET)
+    .upload(path, buf, { contentType: file.type || "application/octet-stream", upsert: false });
+  if (upErr) return;
+
+  await admin.from("documents").insert({
+    transaction_id,
+    agent_id,
+    name: display,
+    storage_path: path,
+    content_type: file.type || null,
+    size_bytes: file.size,
+    uploaded_by: "agent",
+    client_visible: formData.get("client_visible") === "on",
+  });
+  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
+/** Flip whether a document is visible on the buyer's portal. */
+export async function toggleDocumentShare(formData: FormData) {
+  const { supabase } = await agentId();
+  const id = str(formData.get("id"));
+  const transaction_id = str(formData.get("transaction_id"));
+  const share = str(formData.get("share")) === "1";
+  if (!id) return;
+  await supabase.from("documents").update({ client_visible: share }).eq("id", id);
+  if (transaction_id) revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
+/** Permanently delete a document (removes the stored file too). */
+export async function deleteDocument(formData: FormData) {
+  const { supabase } = await agentId();
+  const id = str(formData.get("id"));
+  const transaction_id = str(formData.get("transaction_id"));
+  if (!id) return;
+  const { data: doc } = await supabase
+    .from("documents").select("storage_path").eq("id", id).maybeSingle();
+  if (doc?.storage_path) {
+    const admin = createAdminClient();
+    if (admin) await admin.storage.from(PORTAL_DOCS_BUCKET).remove([doc.storage_path]);
+  }
+  await supabase.from("documents").delete().eq("id", id);
+  if (transaction_id) revalidatePath(`/dashboard/buyers/${transaction_id}`);
 }
 
 export async function signOut() {
