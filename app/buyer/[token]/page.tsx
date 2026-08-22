@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getBuyerPortal } from "@/lib/portal";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Your Home Purchase | Sold It Today",
@@ -73,11 +74,14 @@ export default async function BuyerPortalPage({ params }: { params: { token: str
                 <p className="text-xs text-dusty">{agent.brand ?? "Sold It Today"}</p>
               </div>
             </div>
-            {agent.phone && (
-              <a href={`tel:${phoneDigits}`} className="rounded-full border border-pearl/25 bg-plum/40 px-4 py-2 text-sm font-semibold text-pearl backdrop-blur transition-colors hover:border-pearl/50">
-                Call {agentFirst}
-              </a>
-            )}
+            <div className="flex items-center gap-2">
+              <ThemeToggle className="bg-plum/40 backdrop-blur" />
+              {agent.phone && (
+                <a href={`tel:${phoneDigits}`} className="rounded-full border border-pearl/25 bg-plum/40 px-4 py-2 text-sm font-semibold text-pearl backdrop-blur transition-colors hover:border-pearl/50">
+                  Call {agentFirst}
+                </a>
+              )}
+            </div>
           </div>
 
           <div className="mt-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-pearl/90">

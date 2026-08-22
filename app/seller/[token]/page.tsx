@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getSellerPortal } from "@/lib/portal";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export const metadata: Metadata = {
   title: "Your Listing Update | Sold It Today",
@@ -86,11 +87,14 @@ export default async function SellerPortalPage({ params }: { params: { token: st
                 <p className="text-xs text-dusty">{agent.brand ?? "Sold It Today"}</p>
               </div>
             </div>
-            {agent.phone && (
-              <a href={`tel:${phoneDigits}`} className="rounded-full border border-pearl/25 bg-plum/40 px-4 py-2 text-sm font-semibold text-pearl backdrop-blur transition-colors hover:border-pearl/50">
-                Call {agentFirst}
-              </a>
-            )}
+            <div className="flex items-center gap-2">
+              <ThemeToggle className="bg-plum/40 backdrop-blur" />
+              {agent.phone && (
+                <a href={`tel:${phoneDigits}`} className="rounded-full border border-pearl/25 bg-plum/40 px-4 py-2 text-sm font-semibold text-pearl backdrop-blur transition-colors hover:border-pearl/50">
+                  Call {agentFirst}
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Status pill */}
