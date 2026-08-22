@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getSellerPortal } from "@/lib/portal";
 import ThemeToggle from "@/components/ThemeToggle";
+import PortalLightTheme from "@/components/PortalLightTheme";
 
 export const metadata: Metadata = {
   title: "Your Listing Update | Sold It Today",
@@ -49,6 +50,7 @@ export default async function SellerPortalPage({ params }: { params: { token: st
 
   return (
     <main className="min-h-screen bg-plum pb-20">
+      <PortalLightTheme />
       {/* ===== Photo hero ===== */}
       <section className="relative isolate overflow-hidden">
         {/* Background: property photo when present, branded aurora otherwise */}

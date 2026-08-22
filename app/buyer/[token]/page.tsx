@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getBuyerPortal } from "@/lib/portal";
 import ThemeToggle from "@/components/ThemeToggle";
+import PortalLightTheme from "@/components/PortalLightTheme";
 
 export const metadata: Metadata = {
   title: "Your Home Purchase | Sold It Today",
@@ -46,6 +47,7 @@ export default async function BuyerPortalPage({ params }: { params: { token: str
 
   return (
     <main className="min-h-screen bg-plum pb-20">
+      <PortalLightTheme />
       {/* Hero */}
       <section className="relative isolate overflow-hidden">
         {tx.photo_url ? (
