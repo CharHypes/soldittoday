@@ -30,7 +30,7 @@ export default function DashboardLogin() {
     if (error) setErr(error.message);
     else {
       setStage("code");
-      setMsg(`We emailed a 6-digit code to ${email}.`);
+      setMsg(`We emailed a login code to ${email}.`);
     }
   }
 
@@ -72,19 +72,19 @@ export default function DashboardLogin() {
               />
             </label>
             <button type="submit" disabled={loading} className="btn-aurora w-full justify-center disabled:opacity-60">
-              {loading ? "Sending..." : "Email me a 6-digit code"}
+              {loading ? "Sending..." : "Email me a login code"}
             </button>
           </form>
         ) : (
           <form onSubmit={verify} className="space-y-4">
             <label className="block text-sm text-dusty">
-              6-digit code
+              Login code
               <input
                 inputMode="numeric"
                 required
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder="123456"
+                placeholder="Enter the code"
                 className={`mt-1.5 tracking-[0.4em] ${inputClass}`}
                 autoComplete="one-time-code"
               />
