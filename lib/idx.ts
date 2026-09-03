@@ -76,6 +76,7 @@ export type Listing = {
   /** Listing agent identity ... to flag Charlotte's own listings. */
   listAgentMlsId?: string;
   listAgentName?: string;
+  county?: string | null;
   listDate?: string;
 };
 
@@ -237,6 +238,7 @@ function mapRecord(rec: any): Listing | null {
     listingBrokerEmail: f.ListOfficeEmail || undefined,
     listAgentMlsId: f.ListAgentMlsId || undefined,
     listAgentName: f.ListAgentFullName || undefined,
+    county: f.CountyOrParish || null,
     listDate: f.ListingContractDate || undefined,
   };
 }
@@ -347,6 +349,29 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
  * have a photo so the band always looks full. Empty when the feed is off ...
  * the section then hides itself (never fake data).
  */
+/**
+ * Charlotte's market: Jackson eastward through Metro Detroit / Downriver and the
+ * northern Detroit suburbs. Keeps far-West-Michigan office listings off the site.
+ */
+const SE_MI_COUNTIES = new Set([
+  "wayne",
+  "oakland",
+  "macomb",
+  "washtenaw",
+  "livingston",
+  "monroe",
+  "jackson",
+  "lenawee",
+  "genesee",
+  "ingham",
+  "st clair",
+  "st. clair",
+]);
+function inSoutheastMichigan(l: Listing): boolean {
+  const c = (l.county || "").toLowerCase().trim().replace(/\s+county$/, "");
+  return c !== "" && SE_MI_COUNTIES.has(c);
+}
+
 /** Photos-first ordering so the band never leads with a photoless card. */
 function preferPhotos(list: Listing[]): Listing[] {
   return [...list.filter((l) => l.photoUrl), ...list.filter((l) => !l.photoUrl)];
@@ -389,14 +414,16 @@ export async function getFeaturedListings(fallbackCities: string[], limit = 6): 
     }
   };
 
-  // 1) Charlotte's own active listings first.
+  // 1) Charlotte's own active listings first (her market by definition).
   const mine = await searchListings({ agentId: AGENT_ID });
   push(preferPhotos(mine.listings));
 
-  // 2) Then her Remerica office's active listings.
+  // 2) Then her Remerica office's active listings ... but only in HER Southeast
+  //    Michigan market (the office is registered in West MI and also lists in
+  //    the Grand Rapids area; those shouldn't surface on a Metro Detroit site).
   if (out.length < limit) {
     const office = await searchListings({ officeId: OFFICE_ID });
-    push(preferPhotos(office.listings));
+    push(preferPhotos(office.listings.filter(inSoutheastMichigan)));
   }
 
   // 3) Fill any remainder with fresh local IDX (deduped + city-diversified).
