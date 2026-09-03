@@ -32,7 +32,13 @@ export async function GET(request: Request) {
       cache: "no-store",
     });
     const status = res.status;
-    const json: any = await res.json().catch(async () => ({ raw: (await res.text()).slice(0, 500) }));
+    const raw = await res.text(); // read once, then try to parse
+    let json: any = null;
+    try {
+      json = JSON.parse(raw);
+    } catch {
+      return NextResponse.json({ status, note: "non-JSON response", rawSnippet: raw.slice(0, 800), requestUrl: req });
+    }
     const first = json?.D?.Results?.[0]?.StandardFields;
 
     return NextResponse.json({
