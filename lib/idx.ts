@@ -24,9 +24,15 @@
 /** Brokerage name must be clearly displayed on every IDX display we control. */
 export const BROKERAGE_NAME = "Remerica United Realty";
 
-/** Charlotte's MLS identity (public ids) ... used to feature HER inventory. */
+/**
+ * Charlotte's MLS identity. AGENT_MLS_ID ("e344564") is her display id, used to
+ * LABEL her own cards. AGENT_ID / OFFICE_ID are the long numeric keys the Spark
+ * replication feed actually FILTERS on (the *MlsId fields are NOT filterable ...
+ * verified: filtering by ListAgentMlsId is silently ignored, ListAgentId works).
+ */
 export const AGENT_MLS_ID = "e344564";
-export const OFFICE_MLS_ID = "oe314367";
+export const AGENT_ID = "20231208173205156904000000";
+export const OFFICE_ID = "20231208172526640588000000";
 
 /** Required on any result displaying listing data (min 10pt). */
 export const IDX_DISCLAIMER = "Information Deemed Reliable But Not Guaranteed.";
@@ -185,8 +191,8 @@ function buildFilter(params: IdxSearchParams): string {
   if (params.waterfront === "1") clauses.push("WaterFrontYN Eq true");
   if (params.newConstruction === "1") clauses.push("NewConstructionYN Eq true");
 
-  if (params.agentId) clauses.push(`ListAgentMlsId Eq '${params.agentId.replace(/'/g, "''")}'`);
-  if (params.officeId) clauses.push(`ListOfficeMlsId Eq '${params.officeId.replace(/'/g, "''")}'`);
+  if (params.agentId) clauses.push(`ListAgentId Eq '${params.agentId.replace(/'/g, "''")}'`);
+  if (params.officeId) clauses.push(`ListOfficeId Eq '${params.officeId.replace(/'/g, "''")}'`);
 
   return clauses.join(" And ");
 }
@@ -384,12 +390,12 @@ export async function getFeaturedListings(fallbackCities: string[], limit = 6): 
   };
 
   // 1) Charlotte's own active listings first.
-  const mine = await searchListings({ agentId: AGENT_MLS_ID });
+  const mine = await searchListings({ agentId: AGENT_ID });
   push(preferPhotos(mine.listings));
 
   // 2) Then her Remerica office's active listings.
   if (out.length < limit) {
-    const office = await searchListings({ officeId: OFFICE_MLS_ID });
+    const office = await searchListings({ officeId: OFFICE_ID });
     push(preferPhotos(office.listings));
   }
 
