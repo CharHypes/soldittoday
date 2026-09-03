@@ -170,7 +170,6 @@ function buildFilter(params: IdxSearchParams): string {
 
   // Feature toggles ... reliable (non-masked) MichRIC boolean/numeric fields.
   if (params.garage === "1") clauses.push("GarageYN Eq true");
-  if (params.ac === "1") clauses.push("CoolingYN Eq true");
   if (params.fireplace === "1") clauses.push("FireplaceYN Eq true");
   if (params.singleStory === "1") clauses.push("Stories Eq 1");
   if (params.waterfront === "1") clauses.push("WaterFrontYN Eq true");

@@ -8,7 +8,6 @@ import SearchSelect from "./SearchSelect";
 /** Feature toggles ... only fields MichRIC returns reliably (not masked). */
 const FEATURES = [
   { key: "garage", label: "Garage" },
-  { key: "ac", label: "Central A/C" },
   { key: "fireplace", label: "Fireplace" },
   { key: "singleStory", label: "Single story" },
   { key: "waterfront", label: "Waterfront" },

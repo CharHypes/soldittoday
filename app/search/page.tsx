@@ -65,7 +65,6 @@ export default async function SearchPage({
               baths: params.baths,
               features: {
                 garage: params.garage === "1",
-                ac: params.ac === "1",
                 fireplace: params.fireplace === "1",
                 singleStory: params.singleStory === "1",
                 waterfront: params.waterfront === "1",
