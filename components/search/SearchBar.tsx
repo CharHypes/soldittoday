@@ -5,6 +5,18 @@ import { useRouter } from "next/navigation";
 import { propertyTypes, priceOptions, bedBathOptions } from "@/lib/data";
 import SearchSelect from "./SearchSelect";
 
+/** Feature toggles ... only fields MichRIC returns reliably (not masked). */
+const FEATURES = [
+  { key: "garage", label: "Garage" },
+  { key: "ac", label: "Central A/C" },
+  { key: "fireplace", label: "Fireplace" },
+  { key: "singleStory", label: "Single story" },
+  { key: "waterfront", label: "Waterfront" },
+  { key: "newConstruction", label: "New construction" },
+] as const;
+
+type FeatureKey = (typeof FEATURES)[number]["key"];
+
 type SearchBarProps = {
   initial?: {
     location?: string;
@@ -13,13 +25,15 @@ type SearchBarProps = {
     maxPrice?: string;
     beds?: string;
     baths?: string;
+    features?: Partial<Record<FeatureKey, boolean>>;
   };
 };
 
 /**
  * The filter bar on the /search results page. Pure UI ... it builds a query
  * string and navigates to /search, where the server calls the IDX feed. It does
- * not fetch or fabricate listings itself.
+ * not fetch or fabricate listings itself. Location accepts several cities/ZIPs
+ * separated by commas (any match).
  */
 export default function SearchBar({ initial = {} }: SearchBarProps) {
   const router = useRouter();
@@ -29,6 +43,12 @@ export default function SearchBar({ initial = {} }: SearchBarProps) {
   const [maxPrice, setMaxPrice] = useState(initial.maxPrice ?? "");
   const [beds, setBeds] = useState(initial.beds ?? "any");
   const [baths, setBaths] = useState(initial.baths ?? "any");
+  const [features, setFeatures] = useState<Partial<Record<FeatureKey, boolean>>>(
+    initial.features ?? {}
+  );
+
+  const toggle = (key: FeatureKey) =>
+    setFeatures((f) => ({ ...f, [key]: !f[key] }));
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,6 +59,7 @@ export default function SearchBar({ initial = {} }: SearchBarProps) {
     if (maxPrice) params.set("maxPrice", maxPrice);
     if (beds && beds !== "any") params.set("beds", beds);
     if (baths && baths !== "any") params.set("baths", baths);
+    for (const { key } of FEATURES) if (features[key]) params.set(key, "1");
     const qs = params.toString();
     router.push(qs ? `/search?${qs}` : "/search");
   };
@@ -57,8 +78,8 @@ export default function SearchBar({ initial = {} }: SearchBarProps) {
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="City, Neighborhood, ZIP code, or Address"
-            aria-label="Search by city, neighborhood, ZIP code, or address"
+            placeholder="City or ZIP ... add several with commas (e.g. Taylor, Wyandotte)"
+            aria-label="Search by one or more cities or ZIP codes, separated by commas"
             className="w-full rounded-xl border border-dusty/20 bg-plum/50 py-4 pl-11 pr-4 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors duration-300 hover:border-dusty/40 focus:border-auroraMauve/60 sm:text-base"
           />
         </div>
@@ -74,43 +95,43 @@ export default function SearchBar({ initial = {} }: SearchBarProps) {
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3 border-t border-dusty/12 pt-5 sm:grid-cols-3 lg:grid-cols-5">
-        <SearchSelect
-          id="min-price"
-          label="Min Price"
-          value={minPrice}
-          onChange={setMinPrice}
-          options={priceOptions}
-        />
+        <SearchSelect id="min-price" label="Min Price" value={minPrice} onChange={setMinPrice} options={priceOptions} />
         <SearchSelect
           id="max-price"
           label="Max Price"
           value={maxPrice}
           onChange={setMaxPrice}
-          options={priceOptions.map((o) =>
-            o.value === "" ? { value: "", label: "No Max" } : o
-          )}
+          options={priceOptions.map((o) => (o.value === "" ? { value: "", label: "No Max" } : o))}
         />
-        <SearchSelect
-          id="beds"
-          label="Beds"
-          value={beds}
-          onChange={setBeds}
-          options={bedBathOptions}
-        />
-        <SearchSelect
-          id="baths"
-          label="Baths"
-          value={baths}
-          onChange={setBaths}
-          options={bedBathOptions}
-        />
-        <SearchSelect
-          id="property-type"
-          label="Property Type"
-          value={propertyType}
-          onChange={setPropertyType}
-          options={propertyTypes}
-        />
+        <SearchSelect id="beds" label="Beds" value={beds} onChange={setBeds} options={bedBathOptions} />
+        <SearchSelect id="baths" label="Baths" value={baths} onChange={setBaths} options={bedBathOptions} />
+        <SearchSelect id="property-type" label="Property Type" value={propertyType} onChange={setPropertyType} options={propertyTypes} />
+      </div>
+
+      {/* Feature toggles */}
+      <div className="mt-5 border-t border-dusty/12 pt-5">
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-dusty">Must have</p>
+        <div className="flex flex-wrap gap-2">
+          {FEATURES.map(({ key, label }) => {
+            const on = !!features[key];
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={on}
+                onClick={() => toggle(key)}
+                className={[
+                  "rounded-full border px-4 py-2 text-sm font-medium transition-colors",
+                  on
+                    ? "border-transparent bg-gradient-to-br from-gold to-auroraMauve text-plum"
+                    : "border-dusty/25 text-dusty hover:border-dusty/50 hover:text-pearl",
+                ].join(" ")}
+              >
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </form>
   );

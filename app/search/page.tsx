@@ -36,6 +36,12 @@ export default async function SearchPage({
     maxPrice: pick(searchParams, "maxPrice"),
     beds: pick(searchParams, "beds"),
     baths: pick(searchParams, "baths"),
+    garage: pick(searchParams, "garage"),
+    ac: pick(searchParams, "ac"),
+    fireplace: pick(searchParams, "fireplace"),
+    singleStory: pick(searchParams, "singleStory"),
+    waterfront: pick(searchParams, "waterfront"),
+    newConstruction: pick(searchParams, "newConstruction"),
   };
 
   const result = await searchListings(params);
@@ -57,6 +63,14 @@ export default async function SearchPage({
               maxPrice: params.maxPrice,
               beds: params.beds,
               baths: params.baths,
+              features: {
+                garage: params.garage === "1",
+                ac: params.ac === "1",
+                fireplace: params.fireplace === "1",
+                singleStory: params.singleStory === "1",
+                waterfront: params.waterfront === "1",
+                newConstruction: params.newConstruction === "1",
+              },
             }}
           />
 

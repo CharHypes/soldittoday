@@ -82,6 +82,13 @@ export type IdxSearchParams = {
   maxPrice?: string;
   beds?: string;
   baths?: string;
+  // Feature toggles ("1" when on) ... only MichRIC fields that aren't masked.
+  garage?: string;
+  ac?: string;
+  fireplace?: string;
+  singleStory?: string;
+  waterfront?: string;
+  newConstruction?: string;
 };
 
 export type IdxSearchResult = {
@@ -160,6 +167,15 @@ function buildFilter(params: IdxSearchParams): string {
   if (Number.isFinite(beds) && beds > 0) clauses.push(`BedsTotal Ge ${Math.round(beds)}`);
   const baths = Number(params.baths);
   if (Number.isFinite(baths) && baths > 0) clauses.push(`BathsTotal Ge ${Math.round(baths)}`);
+
+  // Feature toggles ... reliable (non-masked) MichRIC boolean/numeric fields.
+  if (params.garage === "1") clauses.push("GarageYN Eq true");
+  if (params.ac === "1") clauses.push("CoolingYN Eq true");
+  if (params.fireplace === "1") clauses.push("FireplaceYN Eq true");
+  if (params.singleStory === "1") clauses.push("Stories Eq 1");
+  if (params.waterfront === "1") clauses.push("WaterFrontYN Eq true");
+  if (params.newConstruction === "1") clauses.push("NewConstructionYN Eq true");
+
   return clauses.join(" And ");
 }
 
