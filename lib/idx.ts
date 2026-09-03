@@ -24,6 +24,10 @@
 /** Brokerage name must be clearly displayed on every IDX display we control. */
 export const BROKERAGE_NAME = "Remerica United Realty";
 
+/** Charlotte's MLS identity (public ids) ... used to feature HER inventory. */
+export const AGENT_MLS_ID = "e344564";
+export const OFFICE_MLS_ID = "oe314367";
+
 /** Required on any result displaying listing data (min 10pt). */
 export const IDX_DISCLAIMER = "Information Deemed Reliable But Not Guaranteed.";
 
@@ -63,6 +67,9 @@ export type Listing = {
   listingBrokerName: string;
   listingBrokerPhone?: string;
   listingBrokerEmail?: string;
+  /** Listing agent identity ... to flag Charlotte's own listings. */
+  listAgentMlsId?: string;
+  listAgentName?: string;
   listDate?: string;
 };
 
@@ -89,6 +96,9 @@ export type IdxSearchParams = {
   singleStory?: string;
   waterfront?: string;
   newConstruction?: string;
+  // Internal sourcing (not user-facing) ... feature a specific agent/office.
+  agentId?: string;
+  officeId?: string;
 };
 
 export type IdxSearchResult = {
@@ -175,6 +185,9 @@ function buildFilter(params: IdxSearchParams): string {
   if (params.waterfront === "1") clauses.push("WaterFrontYN Eq true");
   if (params.newConstruction === "1") clauses.push("NewConstructionYN Eq true");
 
+  if (params.agentId) clauses.push(`ListAgentMlsId Eq '${params.agentId.replace(/'/g, "''")}'`);
+  if (params.officeId) clauses.push(`ListOfficeMlsId Eq '${params.officeId.replace(/'/g, "''")}'`);
+
   return clauses.join(" And ");
 }
 
@@ -216,6 +229,8 @@ function mapRecord(rec: any): Listing | null {
     listingBrokerName: f.ListOfficeName || "",
     listingBrokerPhone: f.ListOfficePhone || undefined,
     listingBrokerEmail: f.ListOfficeEmail || undefined,
+    listAgentMlsId: f.ListAgentMlsId || undefined,
+    listAgentName: f.ListAgentFullName || undefined,
     listDate: f.ListingContractDate || undefined,
   };
 }
@@ -326,43 +341,64 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
  * have a photo so the band always looks full. Empty when the feed is off ...
  * the section then hides itself (never fake data).
  */
-export async function getFeaturedListings(cities: string[], limit = 6): Promise<Listing[]> {
-  if (!IDX_ENABLED) return [];
-  const result = await searchListings({ location: cities.join(", ") });
+/** Photos-first ordering so the band never leads with a photoless card. */
+function preferPhotos(list: Listing[]): Listing[] {
+  return [...list.filter((l) => l.photoUrl), ...list.filter((l) => !l.photoUrl)];
+}
 
-  // Dedup by listing id (guard against the same home appearing twice).
-  const seen = new Set<string>();
-  const unique = result.listings.filter((l) => {
-    if (!l.id || seen.has(l.id)) return false;
-    seen.add(l.id);
-    return true;
-  });
-
-  // Prefer homes that have a photo so the band always looks full.
-  const withPhotos = unique.filter((l) => l.photoUrl);
-  const usable = withPhotos.length >= limit ? withPhotos : unique;
-
-  // Diversify across cities ... round-robin so no single city (e.g. Livonia)
-  // dominates the band.
+/** Round-robin across cities so no single city dominates; returns up to `n`. */
+function diversifyByCity(list: Listing[], n: number): Listing[] {
   const byCity = new Map<string, Listing[]>();
-  for (const l of usable) {
+  for (const l of list) {
     const c = (l.city || "").toLowerCase();
     if (!byCity.has(c)) byCity.set(c, []);
     byCity.get(c)!.push(l);
   }
   const out: Listing[] = [];
   let progressed = true;
-  while (out.length < limit && progressed) {
+  while (out.length < n && progressed) {
     progressed = false;
     for (const arr of byCity.values()) {
       const item = arr.shift();
       if (item) {
         out.push(item);
         progressed = true;
-        if (out.length >= limit) break;
+        if (out.length >= n) break;
       }
     }
   }
+  return out;
+}
+
+export async function getFeaturedListings(fallbackCities: string[], limit = 6): Promise<Listing[]> {
+  if (!IDX_ENABLED) return [];
+  const seen = new Set<string>();
+  const out: Listing[] = [];
+  const push = (arr: Listing[]) => {
+    for (const l of arr) {
+      if (out.length >= limit) break;
+      if (!l.id || seen.has(l.id)) continue;
+      seen.add(l.id);
+      out.push(l);
+    }
+  };
+
+  // 1) Charlotte's own active listings first.
+  const mine = await searchListings({ agentId: AGENT_MLS_ID });
+  push(preferPhotos(mine.listings));
+
+  // 2) Then her Remerica office's active listings.
+  if (out.length < limit) {
+    const office = await searchListings({ officeId: OFFICE_MLS_ID });
+    push(preferPhotos(office.listings));
+  }
+
+  // 3) Fill any remainder with fresh local IDX (deduped + city-diversified).
+  if (out.length < limit) {
+    const local = await searchListings({ location: fallbackCities.join(", ") });
+    push(diversifyByCity(preferPhotos(local.listings), limit - out.length));
+  }
+
   return out;
 }
 

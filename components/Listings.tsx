@@ -5,6 +5,7 @@ import {
   IDX_DISCLAIMER,
   michRicCopyright,
   BROKERAGE_NAME,
+  AGENT_MLS_ID,
   type Listing,
 } from "@/lib/idx";
 
@@ -48,7 +49,7 @@ export default async function Listings() {
           <SectionHeading
             eyebrow="Featured Listings"
             title="A look at recent homes"
-            description="Fresh listings from the Downriver communities we serve. Click any home for photos, details, and a map."
+            description="A selection of our current listings. Click any home for photos, details, and a map."
           />
           <Link href="/search" className="btn-outline group shrink-0">
             Search all homes
@@ -119,7 +120,13 @@ export default async function Listings() {
                   )}
                 </div>
 
-                <p className="mt-3 text-[11px] text-dusty/70">Listing courtesy of {l.listingBrokerName}</p>
+                <p className="mt-3 text-[11px] text-dusty/70">
+                  {l.listAgentMlsId === AGENT_MLS_ID
+                    ? "Listed by Charlotte Hypes"
+                    : /remerica/i.test(l.listingBrokerName)
+                    ? `Presented by ${l.listingBrokerName}`
+                    : `Listing courtesy of ${l.listingBrokerName}`}
+                </p>
               </div>
             </Link>
           ))}
