@@ -95,7 +95,8 @@ export type IdxSearchResult = {
  *   IDX_FEED_TOKEN   = <Spark access token>   (secret ... server-only)
  * The base URL defaults to Spark's public endpoint; override with IDX_FEED_URL.
  */
-const SPARK_BASE = process.env.IDX_FEED_URL || "https://api.sparkplatform.com/v1";
+// MichRIC IDX is delivered via Spark's Replication API host (confirmed live).
+const SPARK_BASE = process.env.IDX_FEED_URL || "https://replication.sparkapi.com/v1";
 
 export const IDX_ENABLED =
   process.env.IDX_FEED_ENABLED === "true" && Boolean(process.env.IDX_FEED_TOKEN);
@@ -185,7 +186,7 @@ export async function searchListings(
   const filter = buildFilter(params);
   const url =
     `${SPARK_BASE}/listings?_filter=${encodeURIComponent(filter)}` +
-    `&_expand=Photos&_limit=${RESULT_LIMIT}&_orderby=-ListPrice`;
+    `&_expand=Photos&_limit=${RESULT_LIMIT}`;
 
   try {
     const res = await fetch(url, {
