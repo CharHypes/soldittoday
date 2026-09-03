@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ComplianceFooter from "@/components/search/ComplianceFooter";
+import PhotoGallery from "@/components/search/PhotoGallery";
 import { getListing, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
 import { contact } from "@/lib/data";
 
@@ -68,25 +69,10 @@ export default async function ListingPage({ params }: { params: { id: string } }
             &larr; Back to search
           </Link>
 
-          {/* Photo gallery */}
-          {listing.photos.length > 0 ? (
-            <div className="mt-5 grid gap-2 sm:grid-cols-2">
-              <div className="overflow-hidden rounded-xl2 border border-dusty/15 sm:col-span-2">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={listing.photos[0]} alt={addr} className="max-h-[540px] w-full object-cover" />
-              </div>
-              {listing.photos.slice(1, 13).map((p, i) => (
-                <div key={i} className="aspect-[4/3] overflow-hidden rounded-xl border border-dusty/12">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={p} alt={`${addr} ... photo ${i + 2}`} className="h-full w-full object-cover" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-5 grid h-64 place-items-center rounded-xl2 border border-dusty/15 bg-wine/20 text-dusty/60">
-              Photos coming soon
-            </div>
-          )}
+          {/* Photo gallery ... mosaic + full-screen lightbox */}
+          <div className="mt-5">
+            <PhotoGallery photos={listing.photos} alt={addr} />
+          </div>
 
           {/* Summary + CTA */}
           <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]">
