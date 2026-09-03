@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import SearchBar from "@/components/search/SearchBar";
-import ListingCard from "@/components/search/ListingCard";
+import ResultsView from "@/components/search/ResultsView";
 import ComplianceFooter from "@/components/search/ComplianceFooter";
 import { searchListings, formatUpdated, IDX_ENABLED, type IdxSearchParams } from "@/lib/idx";
 import { contact } from "@/lib/data";
@@ -110,11 +110,7 @@ export default async function SearchPage({
                   {result.total.toLocaleString("en-US")}{" "}
                   {result.total === 1 ? "home" : "homes"} found
                 </p>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {result.listings.map((listing) => (
-                    <ListingCard key={listing.mlsNumber} listing={listing} />
-                  ))}
-                </div>
+                <ResultsView listings={result.listings} />
               </>
             ) : (
               /* Feed live, but this search returned nothing. */

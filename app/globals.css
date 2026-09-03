@@ -381,3 +381,66 @@
     0 14px 34px -14px rgba(0, 0, 0, 0.6),
     0 0 0 2.5px rgba(224, 176, 160, 0.7);
 }
+
+/* ============ Search map (Leaflet) ============ */
+/* Pins use fixed brand colors so they read on light AND dark basemaps. */
+.sit-pin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 46px;
+  height: 26px;
+  padding: 0 8px;
+  background: #4a2a3c;
+  color: #f5e8e4;
+  border: 1px solid #e0b0a0;
+  border-radius: 999px;
+  font: 600 12px/1 var(--font-poppins), system-ui, sans-serif;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  white-space: nowrap;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.sit-pin:hover {
+  transform: translateY(-1px) scale(1.06);
+  background: #6a3a54;
+  z-index: 500;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 0;
+}
+.leaflet-popup-content {
+  margin: 0;
+  width: 220px !important;
+}
+.sit-map-pop {
+  display: block;
+  text-decoration: none;
+  font-family: var(--font-poppins), system-ui, sans-serif;
+}
+.sit-map-pop img {
+  display: block;
+  width: 100%;
+  height: 128px;
+  object-fit: cover;
+}
+.sit-map-pop-price {
+  display: block;
+  padding: 8px 12px 0;
+  font-weight: 700;
+  font-size: 15px;
+  color: #2a1f28;
+}
+.sit-map-pop-addr {
+  display: block;
+  padding: 2px 12px 0;
+  font-size: 12px;
+  color: #4a3a44;
+}
+.sit-map-pop-meta {
+  display: block;
+  padding: 2px 12px 10px;
+  font-size: 11px;
+  color: #7a6a74;
+}

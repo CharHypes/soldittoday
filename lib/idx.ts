@@ -77,6 +77,9 @@ export type Listing = {
   listAgentMlsId?: string;
   listAgentName?: string;
   county?: string | null;
+  /** Map coordinates for the search map (from the feed's Latitude/Longitude). */
+  lat?: number | null;
+  lng?: number | null;
   listDate?: string;
 };
 
@@ -239,6 +242,8 @@ function mapRecord(rec: any): Listing | null {
     listAgentMlsId: f.ListAgentMlsId || undefined,
     listAgentName: f.ListAgentFullName || undefined,
     county: f.CountyOrParish || null,
+    lat: num(f.Latitude),
+    lng: num(f.Longitude),
     listDate: f.ListingContractDate || undefined,
   };
 }
