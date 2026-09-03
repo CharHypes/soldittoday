@@ -1,40 +1,46 @@
-"use client";
-
-import Image from "next/image";
-import { motion } from "framer-motion";
-import { listings, type ListingStatus } from "@/lib/data";
+import Link from "next/link";
 import SectionHeading from "./ui/SectionHeading";
-
-const ease = [0.22, 1, 0.36, 1] as const;
-
-const statusStyles: Record<ListingStatus, string> = {
-  "Just Listed": "bg-pearl text-plum",
-  "Under Contract": "bg-wine text-pearl border border-pearl/20",
-  Sold: "bg-plum/70 text-dusty border border-dusty/30",
-};
+import {
+  getFeaturedListings,
+  IDX_DISCLAIMER,
+  michRicCopyright,
+  BROKERAGE_NAME,
+  type Listing,
+} from "@/lib/idx";
 
 /**
- * Featured Listings.
- *
- * ┌──────────────────────────────────────────────────────────────────────────┐
- * │  IDX / MLS INTEGRATION POINT                                               │
- * │  Cards render from the `listings` PLACEHOLDER array in lib/data.ts (stock  │
- * │  imagery ... NOT live MLS data). The markup is fully data-driven, so when   │
- * │  the IDX feed (lib/idx.ts) is connected:                                   │
- * │                                                                            │
- * │  DECIDED CONTENT (Aug 2026): feature CHARLOTTE'S OWN active listings first │
- * │  (filter the feed to her agent/office ID ... her own listings need no       │
- * │  "courtesy of" attribution). When she has none, fall back to a curated set │
- * │  of fresh IDX listings in the core service areas (Downriver / Metro        │
- * │  Detroit), which DO require the listing-broker attribution + disclaimer     │
- * │  (see ListingCard). If both are empty, hide the section.                   │
- * │                                                                            │
- * │  Steps: 1) pull from searchListings()/a dedicated "my listings" query.     │
- * │  2) map onto the display shape. 3) remove these placeholders (no fake or   │
- * │  non-MLS data co-mingled with the feed).                                   │
- * └──────────────────────────────────────────────────────────────────────────┘
+ * Featured Listings ... REAL MichRIC IDX data now, scoped to Charlotte's
+ * Downriver focus communities. Cards link to the full listing page and carry
+ * the required brokerage attribution; the section shows the IDX disclaimer +
+ * MichRIC copyright. If the feed is off or returns nothing, the section hides
+ * itself (never placeholder/fake data co-mingled with the feed).
  */
-export default function Listings() {
+const DOWNRIVER_CITIES = [
+  "Allen Park",
+  "Wyandotte",
+  "Southgate",
+  "Taylor",
+  "Garden City",
+  "Westland",
+  "Livonia",
+];
+
+const statusLabel: Record<Listing["status"], string> = {
+  active: "Active",
+  pending: "Pending",
+  sold: "Sold",
+};
+
+function money(n: number): string {
+  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+}
+
+export default async function Listings() {
+  const listings = await getFeaturedListings(DOWNRIVER_CITIES, 6);
+  if (listings.length === 0) return null;
+
+  const year = new Date().getFullYear();
+
   return (
     <section id="listings" className="relative bg-plum py-24 md:py-32">
       <div className="container-lux">
@@ -42,92 +48,88 @@ export default function Listings() {
           <SectionHeading
             eyebrow="Featured Listings"
             title="A look at recent homes"
-            description="A small selection from across Southeast Michigan. New opportunities come on the market often ... reach out for current availability."
+            description="Fresh listings from the Downriver communities we serve. Click any home for photos, details, and a map."
           />
-          <motion.a
-            href="#contact"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease }}
-            className="btn-outline group shrink-0"
-          >
-            Inquire About Listings
+          <Link href="/search" className="btn-outline group shrink-0">
+            Search all homes
             <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
               &rarr;
             </span>
-          </motion.a>
+          </Link>
         </div>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {listings.map((listing, i) => (
-            <motion.article
-              key={listing.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.7, delay: (i % 3) * 0.08, ease }}
-              className="aurora-ring group overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised/40 hover:-translate-y-1.5"
+          {listings.map((l) => (
+            <Link
+              key={l.id}
+              href={`/listing/${l.id}`}
+              className="aurora-ring group block overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised/40 transition-transform duration-300 hover:-translate-y-1.5"
             >
               {/* Photo */}
-              <div className="relative aspect-[16/11] overflow-hidden">
-                <Image
-                  src={listing.image}
-                  alt={`${listing.title} in ${listing.location}`}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover transition-transform duration-700 ease-lux group-hover:scale-105"
-                />
+              <div className="relative aspect-[16/11] overflow-hidden bg-wine/30">
+                {l.photoUrl ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={l.photoUrl}
+                    alt={l.showAddress ? l.address : "Property photo"}
+                    className="h-full w-full object-cover transition-transform duration-700 ease-lux group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="grid h-full w-full place-items-center text-dusty/60">Photo coming soon</div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-plum/60 via-transparent to-transparent opacity-70" />
-
-                {/* Status pill */}
-                <span
-                  className={[
-                    "absolute left-4 top-4 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider",
-                    statusStyles[listing.status],
-                  ].join(" ")}
-                >
-                  {listing.status}
+                <span className="absolute left-4 top-4 rounded-full bg-pearl px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-plum">
+                  {statusLabel[l.status]}
                 </span>
-
-                {/* Price */}
                 <div className="absolute bottom-4 left-4 text-lg font-semibold text-pearl drop-shadow">
-                  {listing.price}
+                  {money(l.price)}
                 </div>
               </div>
 
               {/* Details */}
               <div className="p-5">
                 <h3 className="text-base font-semibold text-pearl">
-                  {listing.title}
+                  {l.showAddress ? l.address : "Address available on request"}
                 </h3>
-                <p className="mt-1 text-sm text-dusty">{listing.location}</p>
+                <p className="mt-1 text-sm text-dusty">
+                  {l.city}, {l.state} {l.zip}
+                </p>
 
                 <div className="mt-4 flex items-center gap-4 border-t border-dusty/12 pt-4 text-xs text-dusty">
-                  <span>
-                    <span className="font-semibold text-pearl/90">
-                      {listing.beds}
-                    </span>{" "}
-                    Beds
-                  </span>
-                  <span className="h-3 w-px bg-dusty/25" />
-                  <span>
-                    <span className="font-semibold text-pearl/90">
-                      {listing.baths}
-                    </span>{" "}
-                    Baths
-                  </span>
-                  <span className="h-3 w-px bg-dusty/25" />
-                  <span>
-                    <span className="font-semibold text-pearl/90">
-                      {listing.sqft}
-                    </span>{" "}
-                    Sq Ft
-                  </span>
+                  {l.beds != null && (
+                    <span>
+                      <span className="font-semibold text-pearl/90">{l.beds}</span> Beds
+                    </span>
+                  )}
+                  {l.baths != null && (
+                    <>
+                      <span className="h-3 w-px bg-dusty/25" />
+                      <span>
+                        <span className="font-semibold text-pearl/90">{l.baths}</span> Baths
+                      </span>
+                    </>
+                  )}
+                  {l.sqft != null && (
+                    <>
+                      <span className="h-3 w-px bg-dusty/25" />
+                      <span>
+                        <span className="font-semibold text-pearl/90">{l.sqft.toLocaleString("en-US")}</span> Sq Ft
+                      </span>
+                    </>
+                  )}
                 </div>
+
+                <p className="mt-3 text-[11px] text-dusty/70">Listing courtesy of {l.listingBrokerName}</p>
               </div>
-            </motion.article>
+            </Link>
           ))}
+        </div>
+
+        {/* IDX compliance for the section */}
+        <div className="mt-8 space-y-1 text-xs leading-relaxed text-dusty/70">
+          <p>Listings displayed through Broker Reciprocity (IDX), brokered by {BROKERAGE_NAME}.</p>
+          <p>{IDX_DISCLAIMER}</p>
+          <p>{michRicCopyright(year)}</p>
         </div>
       </div>
     </section>

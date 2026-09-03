@@ -141,10 +141,16 @@ function mapStatus(mls: string | undefined): ListingStatus {
 /** Build a Spark `_filter` expression from the user's search params. */
 function buildFilter(params: IdxSearchParams): string {
   const clauses: string[] = ["MlsStatus Eq 'Active'"];
+  // Location accepts one OR several comma-separated cities/ZIPs ... any match.
   const loc = params.location?.trim();
   if (loc) {
-    if (/^\d{5}$/.test(loc)) clauses.push(`PostalCode Eq '${loc}'`);
-    else clauses.push(`City Eq '${loc.replace(/'/g, "''")}'`);
+    const locClauses = loc
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((p) => (/^\d{5}$/.test(p) ? `PostalCode Eq '${p}'` : `City Eq '${p.replace(/'/g, "''")}'`));
+    if (locClauses.length === 1) clauses.push(locClauses[0]);
+    else if (locClauses.length > 1) clauses.push(`(${locClauses.join(" Or ")})`);
   }
   const min = Number(params.minPrice);
   if (Number.isFinite(min) && min > 0) clauses.push(`ListPrice Ge ${Math.round(min)}`);
@@ -297,6 +303,20 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * A short set of active listings for the homepage "Featured Listings" band,
+ * scoped to the given cities (Charlotte's Downriver focus). Prefers homes that
+ * have a photo so the band always looks full. Empty when the feed is off ...
+ * the section then hides itself (never fake data).
+ */
+export async function getFeaturedListings(cities: string[], limit = 6): Promise<Listing[]> {
+  if (!IDX_ENABLED) return [];
+  const result = await searchListings({ location: cities.join(", ") });
+  const withPhotos = result.listings.filter((l) => l.photoUrl);
+  const pool = withPhotos.length >= limit ? withPhotos : result.listings;
+  return pool.slice(0, limit);
 }
 
 /** Format an ISO timestamp as the required "mm/dd/yy" last-update display. */
