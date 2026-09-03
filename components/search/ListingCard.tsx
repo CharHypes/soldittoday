@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Listing } from "@/lib/idx";
 import { IDX_DISCLAIMER } from "@/lib/idx";
 
@@ -33,7 +34,10 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const cityLine = `${listing.city}, ${listing.state} ${listing.zip}`.trim();
 
   return (
-    <article className="group overflow-hidden rounded-xl2 border border-dusty/15 bg-plum/60 shadow-aurora transition-colors duration-300 hover:border-auroraMauve/40">
+    <Link
+      href={`/listing/${listing.id}`}
+      className="group block overflow-hidden rounded-xl2 border border-dusty/15 bg-plum/60 shadow-aurora transition-colors duration-300 hover:border-auroraMauve/40"
+    >
       <div className="relative aspect-[4/3] overflow-hidden bg-wine/30">
         {listing.photoUrl ? (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -67,15 +71,16 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           )}
         </div>
 
-        {/* Required attribution for the listing broker (Subscriber). */}
+        {/* Required attribution for the listing broker (Subscriber). Summary
+            cards show the brokerage name only; the phone/email lives on the
+            detail page, where MichRIC requires it for a detailed display. */}
         <div className="mt-4 border-t border-dusty/12 pt-3 text-xs text-dusty">
           <p className="font-medium text-dusty">
             Listing courtesy of {listing.listingBrokerName}
-            {listing.listingBrokerPhone ? ` · ${listing.listingBrokerPhone}` : ""}
           </p>
           <p className="mt-1 text-dusty/70">{IDX_DISCLAIMER}</p>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }

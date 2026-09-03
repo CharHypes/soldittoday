@@ -42,6 +42,8 @@ export type ListingStatus = "active" | "pending" | "sold";
  * type, etc.) must never be mapped here or displayed.
  */
 export type Listing = {
+  /** Spark record id ... stable, used for the listing detail page URL. */
+  id: string;
   mlsNumber: string;
   /** A seller may withhold the address from Internet display. Respect this. */
   showAddress: boolean;
@@ -62,6 +64,15 @@ export type Listing = {
   listingBrokerPhone?: string;
   listingBrokerEmail?: string;
   listDate?: string;
+};
+
+/** Richer shape for the full listing detail page (all photos + extra fields). */
+export type ListingDetail = Listing & {
+  photos: string[];
+  yearBuilt: number | null;
+  lotSize: string | null;
+  subType: string | null;
+  county: string | null;
 };
 
 export type IdxSearchParams = {
@@ -166,6 +177,7 @@ function mapRecord(rec: any): Listing | null {
     : [];
 
   return {
+    id: String(rec.Id || f.ListingKey || ""),
     mlsNumber: String(f.ListingId || f.ListingKey || rec.Id || ""),
     showAddress,
     address: showAddress ? streetAddress : "",
@@ -234,6 +246,55 @@ export async function searchListings(
     // eslint-disable-next-line no-console
     console.error("[idx] Spark request threw:", err);
     return { enabled: true, listings: [], total: 0, lastUpdated: null };
+  }
+}
+
+/**
+ * Fetch a single listing by its Spark record id for the detail page ... returns
+ * all photos plus a few extra display fields. Null if not found or feed off.
+ */
+export async function getListing(id: string): Promise<ListingDetail | null> {
+  if (!IDX_ENABLED || !id) return null;
+  const url = `${SPARK_BASE}/listings/${encodeURIComponent(id)}?_expand=Photos`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${process.env.IDX_FEED_TOKEN}`,
+        Accept: "application/json",
+      },
+      next: { revalidate: 900 },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rec: any = json?.D?.Results?.[0];
+    if (!rec) return null;
+    const base = mapRecord(rec);
+    if (!base) return null;
+
+    const f = rec.StandardFields ?? {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const photos: string[] = Array.isArray(f.Photos)
+      ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        f.Photos.map((p: any) => https(p?.UriLarge || p?.Uri)).filter(Boolean)
+      : [];
+    const lot =
+      num(f.LotSizeArea) != null
+        ? `${num(f.LotSizeArea)} ${f.LotSizeUnits || "sqft"}`
+        : num(f.LotSizeAcres) != null
+        ? `${num(f.LotSizeAcres)} acres`
+        : null;
+
+    return {
+      ...base,
+      photos: photos.length ? photos : base.photoUrl ? [base.photoUrl] : [],
+      yearBuilt: num(f.YearBuilt),
+      lotSize: lot,
+      subType: f.PropertySubType || null,
+      county: f.CountyOrParish || null,
+    };
+  } catch {
+    return null;
   }
 }
 
