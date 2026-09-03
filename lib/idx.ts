@@ -108,6 +108,18 @@ function https(u: string | null | undefined): string | null {
   return u ? u.replace(/^http:\/\//, "https://") : null;
 }
 
+/**
+ * Coerce a feed value to a finite number, else null. The feed masks fields the
+ * license doesn't permit (or that don't apply, e.g. beds on a vacant lot) as
+ * "********"; those must render as "not available", never as literal asterisks.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function num(v: any): number | null {
+  if (v == null) return null;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : null;
+}
+
 function mapStatus(mls: string | undefined): ListingStatus {
   const s = (mls || "").toLowerCase();
   if (s.includes("sold") || s.includes("closed")) return "sold";
@@ -160,10 +172,10 @@ function mapRecord(rec: any): Listing | null {
     city: f.City || "",
     state: f.StateOrProvince || "MI",
     zip: f.PostalCode || "",
-    price: Number(f.ListPrice) || 0,
-    beds: f.BedsTotal ?? null,
-    baths: f.BathsTotal ?? null,
-    sqft: f.BuildingAreaTotal ?? f.LivingArea ?? null,
+    price: num(f.ListPrice) ?? 0,
+    beds: num(f.BedsTotal),
+    baths: num(f.BathsTotal),
+    sqft: num(f.BuildingAreaTotal) ?? num(f.LivingArea),
     propertyType: f.PropertyType || "",
     status: mapStatus(f.MlsStatus),
     photoUrl: photos[0] ?? null,
