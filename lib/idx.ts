@@ -329,9 +329,41 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
 export async function getFeaturedListings(cities: string[], limit = 6): Promise<Listing[]> {
   if (!IDX_ENABLED) return [];
   const result = await searchListings({ location: cities.join(", ") });
-  const withPhotos = result.listings.filter((l) => l.photoUrl);
-  const pool = withPhotos.length >= limit ? withPhotos : result.listings;
-  return pool.slice(0, limit);
+
+  // Dedup by listing id (guard against the same home appearing twice).
+  const seen = new Set<string>();
+  const unique = result.listings.filter((l) => {
+    if (!l.id || seen.has(l.id)) return false;
+    seen.add(l.id);
+    return true;
+  });
+
+  // Prefer homes that have a photo so the band always looks full.
+  const withPhotos = unique.filter((l) => l.photoUrl);
+  const usable = withPhotos.length >= limit ? withPhotos : unique;
+
+  // Diversify across cities ... round-robin so no single city (e.g. Livonia)
+  // dominates the band.
+  const byCity = new Map<string, Listing[]>();
+  for (const l of usable) {
+    const c = (l.city || "").toLowerCase();
+    if (!byCity.has(c)) byCity.set(c, []);
+    byCity.get(c)!.push(l);
+  }
+  const out: Listing[] = [];
+  let progressed = true;
+  while (out.length < limit && progressed) {
+    progressed = false;
+    for (const arr of byCity.values()) {
+      const item = arr.shift();
+      if (item) {
+        out.push(item);
+        progressed = true;
+        if (out.length >= limit) break;
+      }
+    }
+  }
+  return out;
 }
 
 /** Format an ISO timestamp as the required "mm/dd/yy" last-update display. */
