@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { stats } from "@/lib/data";
+import HeroSearch from "./search/HeroSearch";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -76,23 +77,15 @@ export default function Hero() {
             Luxury feel, practical guidance, real results.
           </motion.p>
 
-          <motion.div
-            variants={item}
-            className="mt-10 flex flex-wrap items-center gap-3"
-          >
-            {/* Primary CTA ... strongest action across the whole site */}
-            <a href="#contact" className="btn-aurora group">
-              Schedule a Consultation
-              <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
-                &rarr;
-              </span>
-            </a>
-            {/* Secondary CTA ... jumps to the Home Search section */}
-            <a href="#search" className="btn-outline group">
-              Search Homes
-              <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
-                &rarr;
-              </span>
+          {/* Primary action ... search homes, right here in the hero */}
+          <motion.div variants={item} className="mt-10">
+            <HeroSearch />
+            <a
+              href="#contact"
+              className="mt-4 inline-flex items-center gap-1 text-sm text-dusty transition-colors hover:text-pearl"
+            >
+              or schedule a consultation
+              <span className="transition-transform duration-500 ease-lux hover:translate-x-1">&rarr;</span>
             </a>
           </motion.div>
 
@@ -102,13 +95,13 @@ export default function Hero() {
             className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-dusty"
           >
             <a
-              href="#contact"
+              href="/search"
               className="underline-offset-4 transition-colors hover:text-pearl hover:underline"
             >
               Buying a home &rarr;
             </a>
             <a
-              href="#contact"
+              href="/sellers"
               className="underline-offset-4 transition-colors hover:text-pearl hover:underline"
             >
               Selling a home &rarr;
