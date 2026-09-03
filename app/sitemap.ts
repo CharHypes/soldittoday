@@ -9,6 +9,7 @@ const LAST = "2026-08-16";
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPaths: { p: string; pr: number }[] = [
     { p: "", pr: 1 },
+    { p: "/search", pr: 0.9 },
     { p: "/dpa", pr: 0.9 },
     { p: "/buyers", pr: 0.8 },
     { p: "/sellers", pr: 0.8 },
