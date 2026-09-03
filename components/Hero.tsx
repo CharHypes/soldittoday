@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { stats } from "@/lib/data";
 import HeroSearch from "./search/HeroSearch";
@@ -22,24 +23,36 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative flex min-h-[88vh] items-center overflow-hidden bg-mulberry-radial pt-28 pb-14"
+      className="photo-hero relative flex min-h-[88vh] items-center overflow-hidden pt-28 pb-14"
     >
-      {/* Abstract aurora light bloom (replaces the old template grid) */}
-      <div className="pointer-events-none absolute -left-40 top-16 h-[520px] w-[520px] animate-aurora-pulse rounded-full bg-aurora/45 blur-[150px]" />
-      <div className="pointer-events-none absolute right-[-10rem] top-1/3 h-[460px] w-[460px] animate-aurora-drift rounded-full bg-auroraMauve/28 blur-[160px]" />
-      <div className="pointer-events-none absolute -right-24 bottom-0 h-[420px] w-[420px] rounded-full bg-wine/60 blur-[150px]" />
-      <div className="grain-soft" />
-
-      {/* Oversized SOLD IT TODAY key ... architectural brand signature.
-          Anchored to the right and bled off the bottom edge of the hero so it
-          reads as integrated background artwork, not a placed logo. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        aria-hidden
+      {/* Golden-hour downtown photo behind the headline */}
+      <Image
+        src="/assets/hero/downtown-hero.jpg"
         alt=""
-        src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png"
-        className="key-watermark bottom-[-7rem] right-0 hidden h-[54rem] w-auto md:block lg:right-10"
+        aria-hidden
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover object-center"
       />
+      {/* Plum wash: opaque on the left so the headline + search stay crisp,
+          opening up to the photo's golden glow on the right. Fixed dark tones
+          (not theme tokens) so the hero reads the same in light and dark. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(90deg, rgba(20,16,19,.94) 0%, rgba(24,18,22,.82) 34%, rgba(26,20,26,.42) 62%, rgba(26,20,26,.14) 100%)",
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(20,16,19,.5) 0%, transparent 20%, transparent 66%, rgba(20,16,19,.6) 100%)",
+        }}
+      />
+      <div className="grain-soft" />
 
       <div className="container-lux relative z-10">
         <motion.div

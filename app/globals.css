@@ -444,3 +444,16 @@
   font-size: 11px;
   color: #7a6a74;
 }
+
+/* ============ Photo hero ============ */
+/* The hero sits over a golden-hour photo with a fixed dark plum wash, so its
+   text + frosted chrome stay light/dark regardless of the site theme. */
+.photo-hero .text-pearl { color: #f7ece8; }
+.photo-hero .text-dusty { color: #d9c6cd; }
+.photo-hero .text-auroraMauve { color: #dcb4c2; }
+.photo-hero .bg-plum\/70 { background-color: rgba(20, 16, 19, 0.6); }
+.photo-hero .bg-plum\/60 { background-color: rgba(20, 16, 19, 0.5); }
+.photo-hero .bg-plum\/50 { background-color: rgba(20, 16, 19, 0.42); }
+.photo-hero .bg-plum\/40 { background-color: rgba(26, 20, 26, 0.42); }
+.photo-hero .bg-wine\/30 { background-color: rgba(90, 46, 72, 0.32); }
+.photo-hero .bg-wine\/50 { background-color: rgba(90, 46, 72, 0.5); }
