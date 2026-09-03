@@ -30,7 +30,7 @@ export default function Navbar() {
       initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-x-0 top-0 z-50 border-b border-dusty/10 bg-plum/85 backdrop-blur-xl"
+      className="site-nav fixed inset-x-0 top-0 z-50 border-b border-dusty/10 bg-plum/85 backdrop-blur-xl"
     >
       <nav className="container-lux flex h-[72px] items-center justify-between">
         {/* Brand logo ... SOLD IT TODAY is the primary brand */}

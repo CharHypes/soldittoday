@@ -87,10 +87,10 @@
    * the ivory band inverts to deep mulberry — mirroring how dark mode
    * breaks its darkness with one cream band.
    */
-  --plum: 244 237 234;
+  --plum: 247 237 242;
   --bruised: 255 255 255;
-  --truffle: 236 228 226;
-  --smoked: 206 189 195;
+  --truffle: 242 230 236;
+  --smoked: 208 189 197;
   --pearl: 26 21 24;
   /* Muted tones run darker here than a straight inversion would give, so
      small text clears 4.5:1 against the tinted page and the blush gradient. */
@@ -457,3 +457,15 @@
 .photo-hero .bg-plum\/40 { background-color: rgba(26, 20, 26, 0.42); }
 .photo-hero .bg-wine\/30 { background-color: rgba(90, 46, 72, 0.32); }
 .photo-hero .bg-wine\/50 { background-color: rgba(90, 46, 72, 0.5); }
+
+/* ============ Nav bar ============ */
+/* A frosted dark-mauve bar in BOTH themes: a light logo vanishes on a light
+   nav, so keep the bar dark so the logo + links always stand out. It also adds
+   brand richness floating over the light page. */
+.site-nav { background-color: rgba(34, 24, 31, 0.82) !important; }
+:root[data-theme="light"] .site-nav .text-dusty { color: #cdbac1; }
+:root[data-theme="light"] .site-nav .text-pearl { color: #f7ece8; }
+:root[data-theme="light"] .site-nav .text-pearl\/90 { color: rgba(247, 236, 232, 0.9); }
+:root[data-theme="light"] .site-nav .bg-pearl { background-color: #f2e6e2; }
+:root[data-theme="light"] .site-nav .bg-plum\/95 { background-color: rgba(34, 24, 31, 0.95); }
+:root[data-theme="light"] .site-nav .border-dusty\/10 { border-color: rgba(245, 232, 228, 0.1); }
