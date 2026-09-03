@@ -88,8 +88,91 @@ export type IdxSearchResult = {
  * Flips to true once the signed agreement is approved and MichRIC returns
  * credentials, set through Vercel env vars. Never hardcode credentials.
  */
+/*
+ * Feed = MichRIC IDX data delivered through the Spark API (FBS/flexmls).
+ * Auth is a non-expiring Bearer access token. Only two env vars are required:
+ *   IDX_FEED_ENABLED = "true"
+ *   IDX_FEED_TOKEN   = <Spark access token>   (secret ... server-only)
+ * The base URL defaults to Spark's public endpoint; override with IDX_FEED_URL.
+ */
+const SPARK_BASE = process.env.IDX_FEED_URL || "https://api.sparkplatform.com/v1";
+
 export const IDX_ENABLED =
-  process.env.IDX_FEED_ENABLED === "true" && Boolean(process.env.IDX_FEED_URL);
+  process.env.IDX_FEED_ENABLED === "true" && Boolean(process.env.IDX_FEED_TOKEN);
+
+const RESULT_LIMIT = 24;
+
+/** Spark photo URLs come back as http; force https so they load on our site. */
+function https(u: string | null | undefined): string | null {
+  return u ? u.replace(/^http:\/\//, "https://") : null;
+}
+
+function mapStatus(mls: string | undefined): ListingStatus {
+  const s = (mls || "").toLowerCase();
+  if (s.includes("sold") || s.includes("closed")) return "sold";
+  if (s.includes("pending") || s.includes("contract")) return "pending";
+  return "active";
+}
+
+/** Build a Spark `_filter` expression from the user's search params. */
+function buildFilter(params: IdxSearchParams): string {
+  const clauses: string[] = ["MlsStatus Eq 'Active'"];
+  const loc = params.location?.trim();
+  if (loc) {
+    if (/^\d{5}$/.test(loc)) clauses.push(`PostalCode Eq '${loc}'`);
+    else clauses.push(`City Eq '${loc.replace(/'/g, "''")}'`);
+  }
+  const min = Number(params.minPrice);
+  if (Number.isFinite(min) && min > 0) clauses.push(`ListPrice Ge ${Math.round(min)}`);
+  const max = Number(params.maxPrice);
+  if (Number.isFinite(max) && max > 0) clauses.push(`ListPrice Le ${Math.round(max)}`);
+  const beds = Number(params.beds);
+  if (Number.isFinite(beds) && beds > 0) clauses.push(`BedsTotal Ge ${Math.round(beds)}`);
+  const baths = Number(params.baths);
+  if (Number.isFinite(baths) && baths > 0) clauses.push(`BathsTotal Ge ${Math.round(baths)}`);
+  return clauses.join(" And ");
+}
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/** Map one Spark record to our display-only Listing, excluding confidential fields. */
+function mapRecord(rec: any): Listing | null {
+  const f = rec?.StandardFields ?? {};
+  if (!f) return null;
+
+  // Respect a seller's choice to withhold the address from Internet display.
+  const showAddress = f.InternetAddressDisplayYN !== false;
+  const streetAddress =
+    f.UnparsedAddress ||
+    [f.StreetNumber, f.StreetDirPrefix, f.StreetName, f.StreetSuffix, f.StreetDirSuffix]
+      .filter(Boolean)
+      .join(" ")
+      .trim();
+
+  const photos: string[] = Array.isArray(f.Photos)
+    ? f.Photos.map((p: any) => https(p?.UriLarge || p?.Uri)).filter(Boolean)
+    : [];
+
+  return {
+    mlsNumber: String(f.ListingId || f.ListingKey || rec.Id || ""),
+    showAddress,
+    address: showAddress ? streetAddress : "",
+    city: f.City || "",
+    state: f.StateOrProvince || "MI",
+    zip: f.PostalCode || "",
+    price: Number(f.ListPrice) || 0,
+    beds: f.BedsTotal ?? null,
+    baths: f.BathsTotal ?? null,
+    sqft: f.BuildingAreaTotal ?? f.LivingArea ?? null,
+    propertyType: f.PropertyType || "",
+    status: mapStatus(f.MlsStatus),
+    photoUrl: photos[0] ?? null,
+    description: f.PublicRemarks || "",
+    listingBrokerName: f.ListOfficeName || "",
+    listingBrokerPhone: f.ListOfficePhone || undefined,
+    listDate: f.ListingContractDate || undefined,
+  };
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export async function searchListings(
   params: IdxSearchParams
@@ -99,24 +182,46 @@ export async function searchListings(
     return { enabled: false, listings: [], total: 0, lastUpdated: null };
   }
 
-  /* ┌─ WHEN MichRIC CREDENTIALS ARRIVE, IMPLEMENT THE FETCH HERE ───────────┐
-     │ MichRIC delivers via the format they designate (typically RESO Web    │
-     │ API). Steps:                                                          │
-     │   1. Map `params` to the feed's query (e.g. $filter for price/beds/   │
-     │      baths/propertyType, and a location match for city/ZIP/address).  │
-     │   2. const res = await fetch(process.env.IDX_FEED_URL! + query, {     │
-     │        headers: { Authorization: `Bearer ${process.env.IDX_FEED_TOKEN}` },
-     │        next: { revalidate: 3600 }, // refresh well within the 12h rule │
-     │      });                                                              │
-     │   3. Map provider records -> Listing[], EXCLUDING confidential fields. │
-     │   4. Drop expired/withdrawn; respect showAddress === false.           │
-     │   5. Set lastUpdated from the feed's timestamp.                       │
-     │ Return the mapped result below. Until then, stay empty (no fake data).│
-     └───────────────────────────────────────────────────────────────────────┘ */
+  const filter = buildFilter(params);
+  const url =
+    `${SPARK_BASE}/listings?_filter=${encodeURIComponent(filter)}` +
+    `&_expand=Photos&_limit=${RESULT_LIMIT}&_orderby=-ListPrice`;
 
-  // Placeholder until the mapping above is implemented.
-  void params;
-  return { enabled: false, listings: [], total: 0, lastUpdated: null };
+  try {
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${process.env.IDX_FEED_TOKEN}`,
+        Accept: "application/json",
+      },
+      // Refresh well within the MichRIC 12-hour freshness rule.
+      next: { revalidate: 900 },
+    });
+
+    if (!res.ok) {
+      // eslint-disable-next-line no-console
+      console.error("[idx] Spark request failed:", res.status, (await res.text()).slice(0, 300));
+      return { enabled: true, listings: [], total: 0, lastUpdated: null };
+    }
+
+    const json = await res.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const results: any[] = json?.D?.Results ?? [];
+    const listings = results
+      .map(mapRecord)
+      .filter((l): l is Listing => Boolean(l) && Boolean((l as Listing).mlsNumber));
+    const total = json?.D?.Pagination?.TotalRows ?? listings.length;
+
+    return {
+      enabled: true,
+      listings,
+      total,
+      lastUpdated: new Date().toISOString(),
+    };
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error("[idx] Spark request threw:", err);
+    return { enabled: true, listings: [], total: 0, lastUpdated: null };
+  }
 }
 
 /** Format an ISO timestamp as the required "mm/dd/yy" last-update display. */
