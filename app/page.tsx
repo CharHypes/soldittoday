@@ -20,14 +20,16 @@ export default function Home() {
       <main>
         <Hero />
         <Ticker />
-        <About />
-        <Team />
-        <MeetCharlotte />
-        <Services />
+        {/* Do first: show homes, then how we help, then who we are. */}
         <Listings />
+        <Services />
+        <About />
         <WhyWorkWithUs />
         <Market />
         <Testimonials />
+        {/* The people, near the bottom */}
+        <MeetCharlotte />
+        <Team />
         <PartnersTeaser />
         <Contact />
       </main>
