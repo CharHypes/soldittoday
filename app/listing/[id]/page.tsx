@@ -42,13 +42,12 @@ export default async function ListingPage({ params }: { params: { id: string } }
   const updated = formatUpdated(new Date().toISOString());
   const phoneDigits = contact.phone.replace(/[^0-9]/g, "");
 
+  // MichRIC requires the listing broker's name + a contact on a detailed
+  // display. Prefer their email over the phone (less "call the competitor"),
+  // falling back to phone when the feed gives no email.
+  const brokerContact = listing.listingBrokerEmail || listing.listingBrokerPhone || "";
   const attribution =
-    `Listing courtesy of ${listing.listingBrokerName}` +
-    (listing.listingBrokerPhone
-      ? ` · ${listing.listingBrokerPhone}`
-      : listing.listingBrokerEmail
-      ? ` · ${listing.listingBrokerEmail}`
-      : "");
+    `Listing courtesy of ${listing.listingBrokerName}` + (brokerContact ? ` · ${brokerContact}` : "");
 
   const details: [string, string][] = [];
   if (listing.beds != null) details.push(["Bedrooms", String(listing.beds)]);
@@ -129,6 +128,21 @@ export default async function ListingPage({ params }: { params: { id: string } }
                 </section>
               )}
 
+              {listing.showAddress && (
+                <section className="mt-8">
+                  <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">Location</h2>
+                  <div className="mt-3 overflow-hidden rounded-xl2 border border-dusty/15">
+                    <iframe
+                      title={`Map of ${addr}`}
+                      src={`https://www.google.com/maps?q=${encodeURIComponent(`${listing.address}, ${cityLine}`)}&z=15&output=embed`}
+                      className="h-72 w-full md:h-80"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                    />
+                  </div>
+                </section>
+              )}
+
               {/* Required attribution for a detailed display (name + phone/email). */}
               <div className="mt-8 border-t border-dusty/12 pt-4 text-xs text-dusty">
                 <p className="font-medium">{attribution}</p>
@@ -136,15 +150,15 @@ export default async function ListingPage({ params }: { params: { id: string } }
               </div>
             </div>
 
-            <aside className="h-fit rounded-xl2 border border-auroraMauve/20 bg-wine-sheen p-6 text-center shadow-aurora lg:sticky lg:top-24">
-              <p className="font-medium text-pearl">Interested in this home?</p>
+            <aside className="h-fit rounded-xl2 border border-dusty/15 bg-bruised/60 p-5 text-center shadow-aurora lg:sticky lg:top-24">
+              <p className="font-semibold text-pearl">Interested in this home?</p>
               <p className="mt-1 text-sm text-dusty">
-                Charlotte can set up a private showing and pull the full story on this property.
+                The Sold It Today team can set up a private showing and get you the full details.
               </p>
               <a href="/#contact" className="btn-aurora mt-4 inline-flex w-full justify-center">
-                Ask Charlotte about this home
+                Request a showing
               </a>
-              <a href={`tel:${phoneDigits}`} className="mt-3 block text-sm text-dusty transition-colors hover:text-pearl">
+              <a href={`tel:${phoneDigits}`} className="mt-3 block text-sm font-medium text-dusty transition-colors hover:text-pearl">
                 or call {contact.phone}
               </a>
             </aside>

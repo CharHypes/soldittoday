@@ -194,6 +194,7 @@ function mapRecord(rec: any): Listing | null {
     description: f.PublicRemarks || "",
     listingBrokerName: f.ListOfficeName || "",
     listingBrokerPhone: f.ListOfficePhone || undefined,
+    listingBrokerEmail: f.ListOfficeEmail || undefined,
     listDate: f.ListingContractDate || undefined,
   };
 }
