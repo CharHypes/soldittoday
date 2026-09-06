@@ -12,8 +12,8 @@ export default function WhyWorkWithUs() {
       <div className="container-lux">
         <SectionHeading
           eyebrow="Why Work With Us"
-          title="The difference is in how it feels to work together"
-          description="Experience matters ... but so does the way you're treated along the way. Here's what clients can count on from start to finish."
+          title="Experience you can measure"
+          description="Twenty years, hundreds of closings, and deep Southeast Michigan reach ... the track record behind every transaction."
           align="center"
           light
         />

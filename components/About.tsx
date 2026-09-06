@@ -97,7 +97,7 @@ export default function About() {
               What we&rsquo;re built around
             </h3>
           </Reveal>
-          <div className="mt-8 grid gap-px overflow-hidden rounded-xl2 border border-dusty/12 bg-dusty/10 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-px overflow-hidden rounded-xl2 border border-dusty/12 bg-dusty/10 sm:grid-cols-2 lg:grid-cols-4">
             {brandValues.map((value, i) => (
               <motion.div
                 key={value.title}

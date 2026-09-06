@@ -49,21 +49,25 @@ export default function Market() {
           {/* Area grid */}
           <div className="grid grid-cols-2 gap-px overflow-hidden rounded-xl2 border border-dusty/12 bg-dusty/10">
             {marketAreas.map((area, i) => (
-              <motion.div
+              <motion.a
                 key={area.name}
+                href={area.href ?? "/communities"}
                 initial={{ opacity: 0, scale: 0.96 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true, margin: "-40px" }}
                 transition={{ duration: 0.5, delay: i * 0.05, ease }}
-                className="group bg-plum/60 p-6 backdrop-blur transition-colors duration-500 hover:bg-bruised/70"
+                className="group block bg-plum/60 p-6 backdrop-blur transition-colors duration-500 hover:bg-bruised/70"
               >
-                <div className="text-lg font-semibold text-pearl">
-                  {area.name}
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-lg font-semibold text-pearl">{area.name}</span>
+                  <span aria-hidden className="text-dusty/50 transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-auroraMauve">
+                    &rarr;
+                  </span>
                 </div>
                 <div className="mt-1 text-xs uppercase tracking-wider text-dusty">
                   {area.note}
                 </div>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
         </div>

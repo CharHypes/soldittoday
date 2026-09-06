@@ -290,12 +290,7 @@ export const brandValues: Value[] = [
   {
     title: "Clear Guidance",
     description:
-      "Straight answers and a mapped-out path, so you always know the next step.",
-  },
-  {
-    title: "Honest Education",
-    description:
-      "We help you understand your options fully before any big decision is made.",
+      "Straight answers, a mapped-out path, and every option explained in full ... so each decision is made informed and confident.",
   },
   {
     title: "Strong Negotiation",
@@ -311,11 +306,6 @@ export const brandValues: Value[] = [
     title: "Local Market Knowledge",
     description:
       "Real insight into Metro Detroit and Southeast Michigan pricing and timing.",
-  },
-  {
-    title: "Options Before Decisions",
-    description:
-      "A team that informs first ... so you move forward confident and ready.",
   },
 ];
 
@@ -352,7 +342,7 @@ export const team: TeamMember[] = [
     id: "charlotte-hypes",
     name: "Charlotte Hypes",
     role: "Founder & Team Lead, REALTOR®",
-    bio: "With 20 years of experience and 350+ homes sold, Charlotte founded SOLD IT TODAY to make real estate clear, strategic, and genuinely client-first across Southeast Michigan.",
+    bio: "Founder and team lead, guiding buyers and sellers across Southeast Michigan.",
     specialties: [
       "Listing strategy",
       "Negotiation",
@@ -524,36 +514,38 @@ export const partnerCategories: PartnerCategory[] = [
 
 export type Reason = { title: string; description: string };
 
+// Evidence / capabilities (not values) ... the measurable track record behind
+// the team. Headings deliberately avoid repeating the brandValues pillars.
 export const reasons: Reason[] = [
   {
-    title: "Clear Communication",
+    title: "20 Years of Experience",
     description:
-      "You always know where things stand. No guessing, no chasing ... just steady, honest updates.",
+      "Two decades guiding Southeast Michigan buyers and sellers through every kind of market.",
   },
   {
-    title: "Strong Negotiation",
+    title: "350+ Homes Sold",
     description:
-      "Two decades of deals sharpen one thing: protecting your position when it matters most.",
+      "A track record of closings across Metro Detroit and Downriver ... experience that compounds.",
   },
   {
-    title: "Local Expertise",
+    title: "Southeast Michigan Reach",
     description:
-      "Deep knowledge of Metro Detroit and Southeast Michigan neighborhoods, pricing, and timing.",
+      "From Downriver through Wayne, Oakland, and Washtenaw counties ... one team, wide coverage.",
   },
   {
-    title: "Client-First Strategy",
+    title: "Transaction Strategy",
     description:
-      "Your goals lead every decision. The plan is built around your life, not a sales quota.",
+      "Pricing, positioning, and timing decisions backed by hundreds of real deals.",
   },
   {
-    title: "Step-by-Step Guidance",
+    title: "Buyer & Seller Expertise",
     description:
-      "From first conversation to closing table, every stage is mapped out and explained.",
+      "Fluent on both sides of the table ... first-time buyers, move-up sellers, and investors.",
   },
   {
-    title: "Real, Measurable Results",
+    title: "Measurable Results",
     description:
-      "350+ homes sold across the region ... experience that turns strategy into outcomes.",
+      "Repeat clients and referrals that show up in the numbers, not just the promises.",
   },
 ];
 
@@ -656,17 +648,17 @@ export const reviewThemes: ReviewTheme[] = [
 /*  Service Areas                                                              */
 /* -------------------------------------------------------------------------- */
 
-export type MarketArea = { name: string; note: string };
+export type MarketArea = { name: string; note: string; href?: string };
 
 export const marketAreas: MarketArea[] = [
-  { name: "Metro Detroit", note: "City & suburban expertise" },
-  { name: "Downriver", note: "Local roots" },
-  { name: "Dearborn", note: "Historic neighborhoods" },
-  { name: "Grosse Ile", note: "Waterfront living" },
-  { name: "Trenton", note: "Established communities" },
-  { name: "Wyandotte", note: "Walkable charm" },
-  { name: "Riverview", note: "Family-friendly" },
-  { name: "Southgate", note: "Growing demand" },
+  { name: "Metro Detroit", note: "City & suburban expertise", href: "/communities" },
+  { name: "Downriver", note: "Local roots", href: "/communities" },
+  { name: "Dearborn", note: "Historic neighborhoods", href: "/communities/dearborn-mi" },
+  { name: "Grosse Ile", note: "Waterfront living", href: "/communities/grosse-ile-mi" },
+  { name: "Trenton", note: "Established communities", href: "/communities/trenton-mi" },
+  { name: "Wyandotte", note: "Walkable charm", href: "/communities/wyandotte-mi" },
+  { name: "Riverview", note: "Family-friendly", href: "/communities/riverview-mi" },
+  { name: "Southgate", note: "Growing demand", href: "/communities/southgate-mi" },
 ];
 
 /* -------------------------------------------------------------------------- */
