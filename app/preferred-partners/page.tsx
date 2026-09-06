@@ -84,10 +84,10 @@ export default function PreferredPartnersPage() {
       title="The pros we trust with our clients"
       description="From financing and inspection to the handyman who actually shows up ... the local people we rely on to keep your move smooth. Call any of them and tell them Sold It Today sent you."
     >
-      <section className="relative overflow-hidden bg-plum py-16 md:py-24">
-        {/* Mauve aurora ambiance so the page reads rich, not flat-dark */}
-        <div className="aurora-bloom animate-aurora-drift" />
-        <div className="pointer-events-none absolute left-1/2 top-28 h-[440px] w-[860px] max-w-[92vw] -translate-x-1/2 rounded-full bg-aurora/25 blur-[160px]" />
+      <section className="relative overflow-hidden bg-bruised py-16 md:py-24">
+        {/* Subtle mauve depth ... matches the homepage Services section (soft, not a spotlight) */}
+        <div className="pointer-events-none absolute right-0 top-1/4 h-[400px] w-[400px] rounded-full bg-wine/30 blur-[150px]" />
+        <div className="pointer-events-none absolute left-0 top-2/3 h-[360px] w-[360px] rounded-full bg-aurora/12 blur-[150px]" />
         <div className="container-lux relative z-10 space-y-14">
           {/* Preview notice ... remove when this goes live */}
           <div className="rounded-xl2 border border-auroraMauve/30 bg-wine/20 p-4 text-center text-sm text-pearl">
@@ -105,7 +105,7 @@ export default function PreferredPartnersPage() {
                 <a
                   key={cat.id}
                   href={`#${cat.id}`}
-                  className="group flex items-center gap-3 rounded-xl2 border border-dusty/12 bg-bruised/40 px-4 py-3.5 transition-colors duration-300 hover:border-auroraMauve/60"
+                  className="group flex items-center gap-3 rounded-xl2 border border-dusty/12 bg-plum/50 px-4 py-3.5 transition-colors duration-300 hover:border-auroraMauve/60"
                 >
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-auroraMauve/40 text-auroraMauve transition-transform duration-300 group-hover:-translate-y-0.5">
                     <CategoryIcon id={cat.id} className="h-5 w-5" />
@@ -132,7 +132,7 @@ export default function PreferredPartnersPage() {
                 {cat.partners.map((partner, i) => (
                   <div
                     key={`${cat.id}-${i}`}
-                    className="aurora-ring flex flex-col items-center rounded-xl2 border border-dusty/12 bg-bruised/40 p-5 text-center"
+                    className="aurora-ring flex flex-col items-center rounded-xl2 border border-dusty/12 bg-plum/50 p-5 text-center"
                   >
                     {/* Placeholder avatar ... swaps to a real headshot/logo when live */}
                     <div className="grid h-14 w-14 place-items-center rounded-full border border-auroraMauve/40 bg-wine/30 text-auroraMauve">
