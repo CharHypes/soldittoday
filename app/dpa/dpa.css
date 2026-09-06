@@ -565,3 +565,73 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================================================
+ * LIGHT MODE ... the campaign design is dark by default; these overrides give
+ * it a full light palette so the DPA pages follow the site's theme toggle.
+ * ========================================================================== */
+:root[data-theme="light"] .dpa-root {
+  background-color: #f6eef1;
+  background-image: radial-gradient(120% 120% at 50% 0%, #f3d9e4 0%, #f6eef1 45%, #f6eef1 100%);
+  color: #2a1f25;
+}
+:root[data-theme="light"] .dpa-root .brandbar { border-bottom-color: #e7d8df; }
+:root[data-theme="light"] .dpa-root .team { color: #2a1f25; }
+:root[data-theme="light"] .dpa-root .broker { color: #9c5d78; }
+:root[data-theme="light"] .dpa-root .brandbar .callbtn { color: #fff; background: #9c5d78; }
+:root[data-theme="light"] .dpa-root .backlink,
+:root[data-theme="light"] .dpa-root .kicker { color: #9c5d78; }
+:root[data-theme="light"] .dpa-root h1 em { color: #9c5d78; }
+:root[data-theme="light"] .dpa-root .lede { color: #5c4a54; }
+:root[data-theme="light"] .dpa-root .numbers { background: #e7d8df; border-color: #e7d8df; }
+:root[data-theme="light"] .dpa-root .num { background: #ffffff; }
+:root[data-theme="light"] .dpa-root .num:first-child { background: linear-gradient(155deg, #f0d3e0, #e3bcd0); }
+:root[data-theme="light"] .dpa-root .num .lab { color: #83707c; }
+:root[data-theme="light"] .dpa-root .num:first-child .lab { color: #8c4a63; }
+:root[data-theme="light"] .dpa-root .num .val { color: #2a1f25; }
+:root[data-theme="light"] .dpa-root .num .sub { color: #6e5a64; }
+:root[data-theme="light"] .dpa-root .numnote { color: #83707c; }
+:root[data-theme="light"] .dpa-root section { border-top-color: #e7d8df; }
+:root[data-theme="light"] .dpa-root .h2sub { color: #6e5a64; }
+:root[data-theme="light"] .dpa-root ul.rules li { border-bottom-color: #efe2e8; }
+:root[data-theme="light"] .dpa-root ul.rules li::before { background: #9c5d78; }
+:root[data-theme="light"] .dpa-root ul.rules b { color: #2a1f25; }
+:root[data-theme="light"] .dpa-root ul.rules span { color: #5c4a54; }
+:root[data-theme="light"] .dpa-root th { color: #83707c; border-bottom-color: #e7d8df; }
+:root[data-theme="light"] .dpa-root td { color: #5c4a54; border-bottom-color: #efe2e8; }
+:root[data-theme="light"] .dpa-root td:last-child { color: #2a1f25; }
+:root[data-theme="light"] .dpa-root ol.steps li { border-bottom-color: #efe2e8; }
+:root[data-theme="light"] .dpa-root ol.steps li::before { border-color: #9c5d78; color: #9c5d78; }
+:root[data-theme="light"] .dpa-root ol.steps b { color: #2a1f25; }
+:root[data-theme="light"] .dpa-root ol.steps p { color: #6e5a64; }
+:root[data-theme="light"] .dpa-root .formcard { background: linear-gradient(160deg, rgba(207,155,180,0.22), rgba(255,255,255,0.92)); border-color: #cf9bb4; }
+:root[data-theme="light"] .dpa-root label { color: #8c4a63; }
+:root[data-theme="light"] .dpa-root input[type="text"],
+:root[data-theme="light"] .dpa-root input[type="email"],
+:root[data-theme="light"] .dpa-root input[type="tel"],
+:root[data-theme="light"] .dpa-root select { background: #ffffff; border-color: #e0cdd6; color: #2a1f25; }
+:root[data-theme="light"] .dpa-root input::placeholder { color: #a2909a; }
+:root[data-theme="light"] .dpa-root .toggle button { background: #ffffff; border-color: #e0cdd6; color: #5c4a54; }
+:root[data-theme="light"] .dpa-root .toggle button[aria-pressed="true"] { background: #9c5d78; border-color: #9c5d78; color: #fff; }
+:root[data-theme="light"] .dpa-root .submit { background: #9c5d78; color: #fff; }
+:root[data-theme="light"] .dpa-root .submit:hover { background: #8c4a63; }
+:root[data-theme="light"] .dpa-root .formerror { color: #b0324f; }
+:root[data-theme="light"] .dpa-root .privacy { color: #83707c; }
+:root[data-theme="light"] .dpa-root .thanks .serif { color: #8c4a63; }
+:root[data-theme="light"] .dpa-root .thanks p { color: #5c4a54; }
+:root[data-theme="light"] .dpa-root .banner { background: rgba(207,155,180,0.14); border-color: #cf9bb4; color: #5c4a54; }
+:root[data-theme="light"] .dpa-root .banner span { color: #9c5d78; }
+:root[data-theme="light"] .dpa-root .card { background: #ffffff; border-color: #e7d8df; }
+:root[data-theme="light"] .dpa-root .card:hover { border-color: #cf9bb4; background: #fdf7fa; }
+:root[data-theme="light"] .dpa-root .card .cval { color: #2a1f25; }
+:root[data-theme="light"] .dpa-root .card .ccity { color: #9c5d78; }
+:root[data-theme="light"] .dpa-root .card .carr { color: #83707c; }
+:root[data-theme="light"] .dpa-root footer { border-top-color: #e7d8df; }
+:root[data-theme="light"] .dpa-root .fbroker { color: #2a1f25; }
+:root[data-theme="light"] .dpa-root .fteam { color: #9c5d78; }
+:root[data-theme="light"] .dpa-root .fmeta,
+:root[data-theme="light"] .dpa-root .eho { color: #83707c; }
+:root[data-theme="light"] .dpa-root .ehobox { border-color: #83707c; }
+:root[data-theme="light"] .dpa-root .disclaimer { color: #9a8791; }
+:root[data-theme="light"] .dpa-root a { color: #9c5d78; }
+:root[data-theme="light"] .dpa-root :focus-visible { outline-color: #9c5d78; }

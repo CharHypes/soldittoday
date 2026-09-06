@@ -4,6 +4,7 @@ import {
   DPA_STEPS,
 } from "@/lib/dpaPrograms";
 import DpaForm from "./DpaForm";
+import ThemeToggle from "@/components/ThemeToggle";
 
 /*
  * Shared template for a single DPA city landing page. Renders entirely from a
@@ -50,7 +51,10 @@ export default function DpaLanding({ program }: { program: DpaProgram }) {
               alt="Sold It Today"
             />
           </a>
-          <a className="callbtn" href={`tel:${PHONE_TEL}`}>Call</a>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <ThemeToggle />
+            <a className="callbtn" href={`tel:${PHONE_TEL}`}>Call</a>
+          </div>
         </div>
 
         <div className="hero">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DPA_PROGRAMS } from "@/lib/dpaPrograms";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const PHONE_DISPLAY = "313-529-5750";
 const PHONE_TEL = "3135295750";
@@ -31,7 +32,10 @@ export default function DpaIndexPage() {
             alt="Sold It Today"
           />
         </a>
-        <a className="callbtn" href={`tel:${PHONE_TEL}`}>Call</a>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <ThemeToggle />
+          <a className="callbtn" href={`tel:${PHONE_TEL}`}>Call</a>
+        </div>
       </div>
 
       {/* Hero */}
