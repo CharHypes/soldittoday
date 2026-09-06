@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import MortgageCalculator from "@/components/calculators/MortgageCalculator";
+import FirstTimeBuyerCallout from "@/components/FirstTimeBuyerCallout";
 
 export const metadata: Metadata = {
   title: "Michigan Mortgage Calculator | SOLD IT TODAY",
@@ -18,6 +19,8 @@ export default function MortgageCalculatorPage() {
       <section className="relative bg-plum py-14 md:py-20">
         <div className="container-lux max-w-5xl space-y-10">
           <MortgageCalculator />
+
+          <FirstTimeBuyerCallout />
 
           {/* What's included */}
           <div className="grid gap-6 md:grid-cols-2">
