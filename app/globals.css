@@ -458,6 +458,13 @@
 .photo-hero .bg-wine\/30 { background-color: rgba(90, 46, 72, 0.32); }
 .photo-hero .bg-wine\/50 { background-color: rgba(90, 46, 72, 0.5); }
 
-/* Nav bar is theme-aware (bg-plum/85): dark bar + light logo in dark mode,
-   mauve-blush bar + dark logo in light mode. The theme-swapped logos keep the
-   brand readable on either bar. */
+/* Nav bar: dark bar in dark mode; in light mode a soft mauve tint so the
+   original rose-gold logo pops and the bar reads "purple," not a flat light
+   strip. The primary CTA is softened in the light nav so it doesn't feel heavy. */
+:root[data-theme="light"] .site-nav {
+  background-color: rgba(216, 192, 205, 0.92) !important;
+}
+:root[data-theme="light"] .site-nav .btn-aurora {
+  background-image: none;
+  background-color: #9c5d78;
+}

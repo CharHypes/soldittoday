@@ -33,19 +33,13 @@ export default function Navbar() {
       className="site-nav fixed inset-x-0 top-0 z-50 border-b border-dusty/10 bg-plum/85 backdrop-blur-xl"
     >
       <nav className="container-lux flex h-[72px] items-center justify-between">
-        {/* Brand logo ... light logo on the dark nav, dark logo on the light nav */}
+        {/* Brand logo ... SOLD IT TODAY is the primary brand (original rose-gold) */}
         <a href={resolve("#home")} className="flex items-center" aria-label="SOLD IT TODAY home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
             alt="SOLD IT TODAY"
-            className="theme-dark-only h-[38px] w-auto md:h-[43px]"
-          />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/logos/sold-it-today/Sold-It-Today-dark-wordmark.png"
-            alt="SOLD IT TODAY"
-            className="theme-light-only h-[38px] w-auto md:h-[43px]"
+            className="h-[38px] w-auto md:h-[43px]"
           />
         </a>
 
