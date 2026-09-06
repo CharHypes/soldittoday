@@ -83,6 +83,19 @@ export default function PreferredPartnersPage() {
       eyebrow="Preferred Partners"
       title="The pros we trust with our clients"
       description="From financing and inspection to the handyman who actually shows up ... the local people we rely on to keep your move smooth. Call any of them and tell them Sold It Today sent you."
+      heroVisual={
+        <div className="relative mx-auto grid place-items-center py-4">
+          {/* Soft mauve halo behind the brand key */}
+          <div aria-hidden className="pointer-events-none absolute h-72 w-72 rounded-full bg-aurora/25 blur-[120px]" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png"
+            alt=""
+            aria-hidden
+            className="relative h-72 w-auto opacity-95 drop-shadow-[0_24px_70px_rgba(0,0,0,0.45)] md:h-80"
+          />
+        </div>
+      }
     >
       <section className="relative overflow-hidden bg-bruised py-16 md:py-24">
         {/* Subtle mauve depth ... matches the homepage Services section (soft, not a spotlight) */}
