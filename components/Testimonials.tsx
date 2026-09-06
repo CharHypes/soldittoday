@@ -1,15 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { reviewThemes, reviewsUrl } from "@/lib/data";
+import { testimonials, reviewsUrl } from "@/lib/data";
 import SectionHeading from "./ui/SectionHeading";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
- * Reviews ... focused on the themes clients consistently mention rather than
- * fabricated direct quotes. Verified, real reviews live on Charlotte's Zillow
- * profile (linked via "Read More Reviews"). No invented testimonials here.
+ * Client reviews ... real, verified 5-star Zillow testimonials (see lib/data,
+ * each corresponds to a live review at `reviewsUrl`). Chosen to show distinct
+ * strengths: first-time buying, communication/patience, and selling. Never
+ * invent or embellish a quote here.
  */
 export default function Testimonials() {
   return (
@@ -20,35 +21,32 @@ export default function Testimonials() {
       <div className="container-lux relative z-10">
         <SectionHeading
           eyebrow="Client Reviews"
-          title="What clients consistently say"
-          description="Across years of closings, the same themes come up again and again. Here's what working with SOLD IT TODAY tends to feel like."
+          title="In their words"
+          description="Real, verified 5-star reviews from clients across Southeast Michigan. Read them all on Zillow."
           align="center"
         />
 
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {reviewThemes.map((theme, i) => (
-            <motion.div
-              key={theme.title}
+          {testimonials.map((t, i) => (
+            <motion.figure
+              key={t.id}
               initial={{ opacity: 0, y: 26 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
               transition={{ duration: 0.65, delay: (i % 3) * 0.08, ease }}
-              className="aurora-ring group rounded-xl2 border border-auroraMauve/18 bg-plum/50 p-7"
+              className="aurora-ring group flex flex-col rounded-xl2 border border-auroraMauve/18 bg-plum/50 p-7"
             >
-              <div className="flex items-center gap-3">
-                {/* Quotation glyph accent */}
-                <span className="font-serif text-3xl leading-none text-auroraMauve">
-                  &ldquo;
-                </span>
-                <span className="h-px flex-1 bg-auroraMauve/20 transition-colors duration-500 group-hover:bg-auroraMauve/40" />
+              <div className="flex items-center gap-1 text-sm text-gold" aria-label="5 out of 5 stars">
+                {"★★★★★"}
               </div>
-              <h3 className="mt-4 text-lg font-semibold text-pearl">
-                {theme.title}
-              </h3>
-              <p className="mt-2.5 text-sm leading-relaxed text-dusty">
-                {theme.description}
-              </p>
-            </motion.div>
+              <blockquote className="mt-4 flex-1 text-sm leading-relaxed text-pearl/90">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+              <figcaption className="mt-5 border-t border-dusty/12 pt-4">
+                <div className="text-sm font-semibold text-pearl">{t.name}</div>
+                <div className="mt-0.5 text-xs text-dusty">{t.role}</div>
+              </figcaption>
+            </motion.figure>
           ))}
         </div>
 

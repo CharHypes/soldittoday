@@ -581,11 +581,11 @@ export const testimonials: Testimonial[] = [
     role: "First-Time Buyer ... Westland, MI · May 2022",
   },
   {
-    id: "zillow-winkler-2021",
+    id: "zillow-deloach-2021",
     quote:
-      "Charlotte went above and beyond to help me find a place to live. There were many ups and downs but she hung in there with me. I really appreciate the individual attention she gave me. She was a pleasure to work with.",
-    name: "Jackyewinkler",
-    role: "Bought ... Melvindale, MI · June 2021",
+      "Charlotte and her team are amazing! They went above and beyond to help with the sale of our old home and the purchase of our new one. It was an extremely stressful time to sell and buy, and they made it manageable.",
+    name: "Tori D.",
+    role: "Sold & Bought ... Allen Park, MI · Oct 2021",
   },
 ];
 
