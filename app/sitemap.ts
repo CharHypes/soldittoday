@@ -20,7 +20,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { p: "/meet-charlotte", pr: 0.7 },
     { p: "/relocation", pr: 0.6 },
     { p: "/team", pr: 0.5 },
-    { p: "/preferred-partners", pr: 0.5 },
     { p: "/neighborhood-guides", pr: 0.4 },
     { p: "/privacy-policy", pr: 0.3 },
   ];

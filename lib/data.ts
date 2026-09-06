@@ -404,6 +404,15 @@ export const team: TeamMember[] = [
 export type Partner = {
   name: string;
   detail: string;
+  /** One line on why Charlotte trusts them (client-facing). */
+  whyTrust?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  /** Real headshot/logo path when live; a placeholder avatar shows until then. */
+  photo?: string | null;
+  /** Emoji shown in the placeholder avatar so the trade reads at a glance. */
+  icon?: string;
   placeholder: boolean;
 };
 
@@ -414,55 +423,89 @@ export type PartnerCategory = {
   partners: Partner[];
 };
 
+// PREVIEW DATA ... every entry is a placeholder so Charlotte can see the layout.
+// Replace names/photos/why-trust/contact with her real people, then flip the
+// page live (remove noindex + re-add the homepage teaser). Keep full public
+// company names; never publish a partner she hasn't confirmed.
+const samplePartner = (icon: string): Omit<Partner, "name"> => ({
+  detail: "Company name added when live",
+  whyTrust: "A short note on why Charlotte trusts them goes right here.",
+  icon,
+  placeholder: true,
+});
+
 export const partnerCategories: PartnerCategory[] = [
   {
     id: "lenders",
-    title: "Preferred Lenders",
+    title: "Lenders & Mortgage",
     blurb:
       "Trusted mortgage professionals for pre-approval, down payment assistance, and creative financing.",
     partners: [
-      { name: "Preferred Lender ... Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Lender ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Your Preferred Lender", ...samplePartner("💰") },
+      { name: "Your Preferred Lender", ...samplePartner("💰") },
     ],
   },
   {
-    id: "title",
-    title: "Preferred Title Companies",
-    blurb:
-      "Title and closing partners that keep transactions clean, clear, and on schedule.",
+    id: "insurance",
+    title: "Home Insurance",
+    blurb: "Homeowners insurance partners to protect your investment from day one.",
     partners: [
-      { name: "First Centennial Title ... Example Placeholder", detail: "Confirm before publishing", placeholder: true },
-      { name: "Preferred Title Company ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
+      { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
     ],
   },
   {
     id: "inspectors",
     title: "Home Inspectors",
-    blurb:
-      "Thorough, honest inspectors who help you understand a home before you commit.",
+    blurb: "Thorough, honest inspectors who help you understand a home before you commit.",
     partners: [
-      { name: "Preferred Home Inspector ... Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Home Inspector ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
+      { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
     ],
   },
   {
-    id: "insurance",
-    title: "Insurance Agents",
-    blurb:
-      "Homeowners insurance partners to protect your investment from day one.",
+    id: "title",
+    title: "Title & Closing",
+    blurb: "Title and closing partners that keep transactions clean, clear, and on schedule.",
     partners: [
-      { name: "Preferred Insurance Agency ... Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Insurance Agency ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Your Preferred Title Company", ...samplePartner("📝") },
+      { name: "Your Preferred Title Company", ...samplePartner("📝") },
     ],
   },
   {
-    id: "contractors",
-    title: "Contractors & Tradespeople",
-    blurb:
-      "Vetted contractors and trades for repairs, updates, and getting a home market-ready.",
+    id: "hvac",
+    title: "Heating & Cooling",
+    blurb: "HVAC pros for furnaces, A/C, and keeping a home comfortable year-round.",
     partners: [
-      { name: "Preferred Contractor ... Placeholder", detail: "Company name to be added", placeholder: true },
-      { name: "Preferred Contractor ... Placeholder", detail: "Company name to be added", placeholder: true },
+      { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
+      { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
+    ],
+  },
+  {
+    id: "handyman",
+    title: "Handyman & Contractors",
+    blurb: "Vetted trades for repairs, updates, and getting a home market-ready.",
+    partners: [
+      { name: "Your Preferred Handyman", ...samplePartner("🔨") },
+      { name: "Your Preferred Contractor", ...samplePartner("🧰") },
+    ],
+  },
+  {
+    id: "movers",
+    title: "Movers",
+    blurb: "Reliable moving crews to make the day itself go smoothly.",
+    partners: [
+      { name: "Your Preferred Movers", ...samplePartner("🚚") },
+      { name: "Your Preferred Movers", ...samplePartner("🚚") },
+    ],
+  },
+  {
+    id: "lawn",
+    title: "Lawn & Landscaping",
+    blurb: "Curb-appeal and upkeep pros for sellers prepping and buyers settling in.",
+    partners: [
+      { name: "Your Preferred Lawn Care", ...samplePartner("🌳") },
+      { name: "Your Preferred Landscaper", ...samplePartner("🌳") },
     ],
   },
 ];

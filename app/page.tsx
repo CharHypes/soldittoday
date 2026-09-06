@@ -9,7 +9,6 @@ import Listings from "@/components/Listings";
 import WhyWorkWithUs from "@/components/WhyWorkWithUs";
 import Market from "@/components/Market";
 import Testimonials from "@/components/Testimonials";
-import PartnersTeaser from "@/components/PartnersTeaser";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
@@ -30,7 +29,7 @@ export default function Home() {
         {/* The people, near the bottom */}
         <MeetCharlotte />
         <Team />
-        <PartnersTeaser />
+        {/* PartnersTeaser hidden until the Preferred Partners page is live */}
         <Contact />
       </main>
       <Footer />
