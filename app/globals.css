@@ -468,10 +468,8 @@
 :root[data-theme="light"] .site-nav {
   background-color: rgba(250, 246, 247, 0.97) !important;
 }
-:root[data-theme="light"] .site-nav img {
-  filter: drop-shadow(0 1px 2px rgba(58, 30, 48, 0.45))
-    drop-shadow(0 0 1px rgba(58, 30, 48, 0.4));
-}
+/* No filter on the logo ... it must stay crisp. The neutral near-white bar gives
+   the rose-gold enough contrast on its own. */
 /* Soften the primary CTA on the light bar so it invites rather than shouts. */
 :root[data-theme="light"] .site-nav .btn-aurora {
   background-image: none;
