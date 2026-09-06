@@ -399,6 +399,8 @@ export type Partner = {
   /** One line on why we trust them (client-facing, team voice). */
   whyTrust?: string;
   phone?: string;
+  /** Optional second number (cell), shown as a "Cell" button. */
+  mobile?: string;
   email?: string;
   website?: string;
   /** Direct application / booking link, shown as a highlighted button. */
@@ -456,10 +458,20 @@ export const partnerCategories: PartnerCategory[] = [
   },
   {
     id: "insurance",
-    title: "Home Insurance",
-    blurb: "Homeowners insurance partners to protect your investment from day one.",
+    title: "Insurance",
+    blurb: "Insurance partners to protect your home, your family, and your future.",
     partners: [
-      { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
+      {
+        name: "Sean Terry",
+        detail: "AAA Agent",
+        credential: "Life Insurance, CDs & Annuities · Brighton, MI",
+        whyTrust:
+          "Sean is our go-to for protecting what matters ... straightforward coverage and honest guidance for our clients across Southeast Michigan.",
+        phone: "810-206-3623",
+        mobile: "313-465-9540",
+        email: "spterry@acg.aaa.com",
+        placeholder: false,
+      },
       { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
       { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
     ],

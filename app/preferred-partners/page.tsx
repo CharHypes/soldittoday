@@ -166,20 +166,27 @@ export default function PreferredPartnersPage() {
                     )}
 
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                      {partner.phone ? (
-                        <a href={`tel:${partner.phone.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Call</a>
+                      {partner.placeholder ? (
+                        <>
+                          <span className={`${chip} ${chipDead}`}>Call</span>
+                          <span className={`${chip} ${chipDead}`}>Email</span>
+                          <span className={`${chip} ${chipDead}`}>Website</span>
+                        </>
                       ) : (
-                        <span className={`${chip} ${chipDead}`}>Call</span>
-                      )}
-                      {partner.email ? (
-                        <a href={`mailto:${partner.email}`} className={`${chip} ${chipLive}`}>Email</a>
-                      ) : (
-                        <span className={`${chip} ${chipDead}`}>Email</span>
-                      )}
-                      {partner.website ? (
-                        <a href={partner.website} target="_blank" rel="noopener noreferrer" className={`${chip} ${chipLive}`}>Website</a>
-                      ) : (
-                        <span className={`${chip} ${chipDead}`}>Website</span>
+                        <>
+                          {partner.phone && (
+                            <a href={`tel:${partner.phone.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Call</a>
+                          )}
+                          {partner.mobile && (
+                            <a href={`tel:${partner.mobile.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Cell</a>
+                          )}
+                          {partner.email && (
+                            <a href={`mailto:${partner.email}`} className={`${chip} ${chipLive}`}>Email</a>
+                          )}
+                          {partner.website && (
+                            <a href={partner.website} target="_blank" rel="noopener noreferrer" className={`${chip} ${chipLive}`}>Website</a>
+                          )}
+                        </>
                       )}
                     </div>
 
