@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import RentVsBuyCalculator from "@/components/calculators/RentVsBuyCalculator";
+import FirstTimeBuyerCallout from "@/components/FirstTimeBuyerCallout";
 
 export const metadata: Metadata = {
   title: "Rent vs. Buy Calculator | SOLD IT TODAY",
@@ -18,6 +19,8 @@ export default function RentVsBuyCalculatorPage() {
       <section className="relative bg-plum py-14 md:py-20">
         <div className="container-lux max-w-5xl space-y-10">
           <RentVsBuyCalculator />
+
+          <FirstTimeBuyerCallout />
 
           <div className="grid gap-6 md:grid-cols-2">
             <div className="rounded-xl2 border border-dusty/12 bg-bruised/40 p-6">
