@@ -130,28 +130,70 @@ export default function PreferredPartnersPage() {
               </div>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {cat.partners.map((partner, i) => (
+                {cat.partners.map((partner, i) => {
+                  const chip =
+                    "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors";
+                  const chipLive =
+                    "border-auroraMauve/40 text-pearl hover:border-auroraMauve hover:bg-auroraMauve/10";
+                  const chipDead = "border-dusty/25 text-dusty";
+                  return (
                   <div
                     key={`${cat.id}-${i}`}
                     className="aurora-ring flex flex-col items-center rounded-xl2 border border-dusty/12 bg-plum/50 p-5 text-center"
                   >
-                    {/* Placeholder avatar ... swaps to a real headshot/logo when live */}
-                    <div className="grid h-14 w-14 place-items-center rounded-full border border-auroraMauve/40 bg-wine/30 text-auroraMauve">
-                      <CategoryIcon id={cat.id} className="h-6 w-6" />
-                    </div>
+                    {/* Real headshot/logo when live; category icon for placeholders */}
+                    {partner.photo ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={partner.photo}
+                        alt={partner.name}
+                        className="h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top"
+                      />
+                    ) : (
+                      <div className="grid h-14 w-14 place-items-center rounded-full border border-auroraMauve/40 bg-wine/30 text-auroraMauve">
+                        <CategoryIcon id={cat.id} className="h-6 w-6" />
+                      </div>
+                    )}
 
                     <div className="mt-3 text-base font-semibold text-pearl">{partner.name}</div>
                     <div className="mt-0.5 text-[11px] uppercase tracking-wide text-dusty">{partner.detail}</div>
+                    {partner.credential && (
+                      <div className="mt-1 text-[11px] leading-snug text-dusty/80">{partner.credential}</div>
+                    )}
 
                     {partner.whyTrust && (
                       <p className="mt-2.5 text-sm leading-relaxed text-dusty/90">&ldquo;{partner.whyTrust}&rdquo;</p>
                     )}
 
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-                      <span className="rounded-full border border-dusty/25 px-3 py-1.5 text-xs font-medium text-dusty">Call</span>
-                      <span className="rounded-full border border-dusty/25 px-3 py-1.5 text-xs font-medium text-dusty">Email</span>
-                      <span className="rounded-full border border-dusty/25 px-3 py-1.5 text-xs font-medium text-dusty">Website</span>
+                      {partner.phone ? (
+                        <a href={`tel:${partner.phone.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Call</a>
+                      ) : (
+                        <span className={`${chip} ${chipDead}`}>Call</span>
+                      )}
+                      {partner.email ? (
+                        <a href={`mailto:${partner.email}`} className={`${chip} ${chipLive}`}>Email</a>
+                      ) : (
+                        <span className={`${chip} ${chipDead}`}>Email</span>
+                      )}
+                      {partner.website ? (
+                        <a href={partner.website} target="_blank" rel="noopener noreferrer" className={`${chip} ${chipLive}`}>Website</a>
+                      ) : (
+                        <span className={`${chip} ${chipDead}`}>Website</span>
+                      )}
                     </div>
+
+                    {partner.apply && (
+                      <a
+                        href={partner.apply}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-aurora group mt-4 text-sm"
+                      >
+                        {partner.applyLabel ?? "Apply Now"}
+                        <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">&rarr;</span>
+                      </a>
+                    )}
 
                     {partner.placeholder && (
                       <span className="mt-3 inline-flex rounded-full border border-dusty/25 bg-plum/50 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-dusty">
@@ -159,7 +201,8 @@ export default function PreferredPartnersPage() {
                       </span>
                     )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}

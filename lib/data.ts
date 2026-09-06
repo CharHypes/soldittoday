@@ -394,11 +394,16 @@ export const team: TeamMember[] = [
 export type Partner = {
   name: string;
   detail: string;
-  /** One line on why Charlotte trusts them (client-facing). */
+  /** Small credential/license line under the name (e.g. "NMLS #138773"). */
+  credential?: string;
+  /** One line on why we trust them (client-facing, team voice). */
   whyTrust?: string;
   phone?: string;
   email?: string;
   website?: string;
+  /** Direct application / booking link, shown as a highlighted button. */
+  apply?: string;
+  applyLabel?: string;
   /** Real headshot/logo path when live; a placeholder avatar shows until then. */
   photo?: string | null;
   /** Emoji shown in the placeholder avatar so the trade reads at a glance. */
@@ -431,7 +436,20 @@ export const partnerCategories: PartnerCategory[] = [
     blurb:
       "Trusted mortgage professionals for pre-approval, down payment assistance, and creative financing.",
     partners: [
-      { name: "Your Preferred Lender", ...samplePartner("💰") },
+      {
+        name: "Kelly M. Belcher",
+        detail: "Michigan Mortgage Mom",
+        credential: "Mortgage Broker · Key Mortgage Ink · NMLS #138773",
+        whyTrust:
+          "Kelly has guided our buyers to the closing table for years ... straight answers, fast pre-approvals, and creative financing for everyone from first-time buyers to move-up families.",
+        phone: "734-516-5252",
+        email: "Kelly@KeyMortgageInk.com",
+        website: "https://michiganmortgagemom.com",
+        apply: "https://plus.preapp1003.com/Kelly-Belcher",
+        applyLabel: "Apply Now",
+        photo: "/assets/partners/kelly-belcher.jpg",
+        placeholder: false,
+      },
       { name: "Your Preferred Lender", ...samplePartner("💰") },
       { name: "Your Preferred Lender", ...samplePartner("💰") },
     ],
