@@ -77,6 +77,21 @@ function CategoryIcon({ id, className = "h-6 w-6" }: { id: string; className?: s
   );
 }
 
+/* Header "trusted network" motif ... nodes (trade icons) woven with soft lines. */
+const NET_NODES: { id: string; x: number; y: number }[] = [
+  { id: "lenders", x: 24, y: 18 },
+  { id: "insurance", x: 58, y: 13 },
+  { id: "inspectors", x: 83, y: 31 },
+  { id: "title", x: 41, y: 41 },
+  { id: "hvac", x: 73, y: 52 },
+  { id: "handyman", x: 17, y: 53 },
+  { id: "movers", x: 50, y: 73 },
+  { id: "lawn", x: 81, y: 77 },
+];
+const NET_EDGES: [number, number][] = [
+  [0, 1], [1, 2], [0, 3], [3, 4], [2, 4], [3, 5], [5, 6], [4, 6], [6, 7], [4, 7],
+];
+
 export default function PreferredPartnersPage() {
   return (
     <PageShell
@@ -84,16 +99,33 @@ export default function PreferredPartnersPage() {
       title="The pros we trust with our clients"
       description="From financing and inspection to the handyman who actually shows up ... the local people we rely on to keep your move smooth. Call any of them and tell them Sold It Today sent you."
       heroVisual={
-        <div className="relative mx-auto grid place-items-center py-4">
-          {/* Soft mauve halo behind the brand key */}
-          <div aria-hidden className="pointer-events-none absolute h-72 w-72 rounded-full bg-aurora/25 blur-[120px]" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png"
-            alt=""
-            aria-hidden
-            className="relative h-72 w-auto opacity-95 drop-shadow-[0_24px_70px_rgba(0,0,0,0.45)] md:h-80"
-          />
+        <div className="relative mx-auto aspect-square w-full max-w-sm">
+          {/* soft mauve glow behind the network */}
+          <div aria-hidden className="pointer-events-none absolute inset-8 rounded-full bg-aurora/20 blur-[90px]" />
+          {/* connecting web ... "one trusted network" */}
+          <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="absolute inset-0 h-full w-full" aria-hidden>
+            {NET_EDGES.map(([a, b], i) => (
+              <line
+                key={i}
+                x1={NET_NODES[a].x}
+                y1={NET_NODES[a].y}
+                x2={NET_NODES[b].x}
+                y2={NET_NODES[b].y}
+                className="stroke-auroraMauve/30"
+                strokeWidth={0.5}
+              />
+            ))}
+          </svg>
+          {/* nodes ... each trade */}
+          {NET_NODES.map((n) => (
+            <span
+              key={n.id}
+              className="absolute grid h-12 w-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-auroraMauve/40 bg-plum/70 text-auroraMauve shadow-aurora backdrop-blur"
+              style={{ left: `${n.x}%`, top: `${n.y}%` }}
+            >
+              <CategoryIcon id={n.id} className="h-5 w-5" />
+            </span>
+          ))}
         </div>
       }
     >
