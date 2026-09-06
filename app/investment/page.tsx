@@ -90,6 +90,7 @@ const serviceLd = {
 export default function InvestmentPage() {
   return (
     <PageShell
+      heroBackground="/assets/pages/investment-hero.jpg"
       eyebrow="Investment Properties"
       title="Build long-term wealth through Michigan real estate"
       description="Numbers-first guidance for rental, multi-family, and value-add properties across Southeast Michigan ... so every purchase is a decision, not a gamble."

@@ -106,6 +106,7 @@ const jsonLd = {
 export default function CommunitiesPage() {
   return (
     <PageShell
+      heroBackground="/assets/pages/communities-hero.jpg"
       eyebrow="Communities"
       title="Explore Michigan Communities With Confidence"
       description="Whether you're relocating, buying your first home, upgrading, downsizing, or investing, SOLD IT TODAY helps you discover communities that fit your lifestyle, goals, and budget."

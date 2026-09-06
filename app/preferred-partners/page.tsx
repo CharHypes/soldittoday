@@ -83,7 +83,7 @@ export default function PreferredPartnersPage() {
       eyebrow="Preferred Partners"
       title="The pros we trust with our clients"
       description="From financing and inspection to the handyman who actually shows up ... the local people we rely on to keep your move smooth. Call any of them and tell them Sold It Today sent you."
-      heroBackground="/assets/pages/partners-hero.jpg"
+      heroBackground="/assets/pages/partners-hero-downtown.jpg"
     >
       <section className="relative overflow-hidden bg-bruised py-16 md:py-24">
         {/* Subtle mauve depth ... matches the homepage Services section (soft, not a spotlight) */}

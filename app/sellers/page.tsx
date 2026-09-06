@@ -110,6 +110,7 @@ const serviceLd = {
 export default function SellersPage() {
   return (
     <PageShell
+      heroBackground="/assets/pages/sellers-hero.jpg"
       eyebrow="Sellers"
       title="Sell your home at its strongest"
       description="Pricing, preparation, marketing, and negotiation built to present your Southeast Michigan home at its best ... and maximize what you walk away with, in any market."

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
-import RelocationArt from "@/components/relocation/RelocationArt";
 import Ticker from "@/components/Ticker";
 import Reveal from "@/components/ui/Reveal";
 import {
@@ -46,6 +45,7 @@ const faqLd = {
 export default function RelocationPage() {
   return (
     <PageShell
+      heroBackground="/assets/pages/relocation-hero.jpg"
       eyebrow="Relocation"
       title="Relocating to Southeast Michigan"
       description="Whether you're moving across the state or across the country, SOLD IT TODAY helps individuals, families, and companies land in the right place ... confident and informed."
@@ -57,7 +57,6 @@ export default function RelocationPage() {
           </span>
         </a>
       }
-      heroVisual={<RelocationArt />}
     >
       {/* eslint-disable-next-line react/no-danger */}
       <script

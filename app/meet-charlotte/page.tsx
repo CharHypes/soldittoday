@@ -59,6 +59,7 @@ const personLd = {
 export default function MeetCharlottePage() {
   return (
     <PageShell
+      heroBackground="/assets/pages/meet-charlotte-hero.jpg"
       eyebrow="Meet Charlotte"
       title="Meet Charlotte Hypes"
       description="Founder & Team Lead, SOLD IT TODAY ... your guide to buying and selling in Southeast Michigan with clarity, strategy, and honesty."

@@ -116,6 +116,7 @@ const serviceLd = {
 export default function BuyersPage() {
   return (
     <PageShell
+      heroBackground="/assets/pages/buyers-hero.jpg"
       eyebrow="Buyers"
       title="Buy a home with clarity and confidence"
       description="Whether it's your first home, your next one, or a move across the state, SOLD IT TODAY guides you through every step ... search, financing, negotiation, and closing ... with honest answers the whole way."

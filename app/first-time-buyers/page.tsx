@@ -77,6 +77,7 @@ const serviceLd = {
 export default function FirstTimeBuyersPage() {
   return (
     <PageShell
+      heroBackground="/assets/pages/first-time-buyers-hero.jpg"
       eyebrow="First-Time Buyers"
       title="Your first home, without the guesswork"
       description="Buying your first home should feel exciting, not overwhelming. We demystify the whole process ... mortgage prep, down payment assistance, and the mistakes to avoid ... with a patient guide in your corner the entire way."
