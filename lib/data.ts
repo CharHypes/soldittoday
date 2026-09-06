@@ -466,7 +466,7 @@ export const partnerCategories: PartnerCategory[] = [
         detail: "AAA Agent",
         credential: "Life Insurance, CDs & Annuities · Brighton, MI",
         whyTrust:
-          "Sean is our go-to for protecting what matters ... straightforward coverage and honest guidance for our clients across Southeast Michigan.",
+          "Fast, efficient, and always looking for ways to save our buyers money ... Sean gets it done quickly and has made a lot of our clients happy.",
         phone: "810-206-3623",
         mobile: "313-465-9540",
         email: "spterry@acg.aaa.com",
