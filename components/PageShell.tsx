@@ -10,6 +10,8 @@ type PageShellProps = {
   actions?: ReactNode;
   /** Optional hero illustration/image. When set, the hero becomes two-column. */
   heroVisual?: ReactNode;
+  /** Optional full-bleed image behind the hero band (dimmed for legibility). */
+  heroBackground?: string;
   children: ReactNode;
 };
 
@@ -28,6 +30,7 @@ export default function PageShell({
   description,
   actions,
   heroVisual,
+  heroBackground,
   children,
 }: PageShellProps) {
   return (
@@ -37,6 +40,16 @@ export default function PageShell({
       <main>
         {/* Hero band */}
         <section className="relative overflow-hidden bg-mulberry-radial pb-16 pt-28 md:pb-24 md:pt-36">
+          {heroBackground && (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={heroBackground} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover" />
+              {/* Keep the left-aligned headline crisp; let the image breathe on the right */}
+              <div className="absolute inset-0 bg-gradient-to-r from-plum via-plum/85 to-plum/40" />
+              <div className="absolute inset-0 bg-plum/35" />
+              <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-plum to-transparent" />
+            </>
+          )}
           <div className="aurora-bloom opacity-70" />
           <div className="grain-soft" />
           <div
