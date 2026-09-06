@@ -41,12 +41,14 @@ export default function MortgageCalculator() {
     return { down, loan, ltv, pi, pmi, tax, ins, total };
   }, [price, downPct, rate, term, taxAnnual, insAnnual, hoa]);
 
+  // Fixed, saturated colors so every segment reads on BOTH the dark and the
+  // light (mauve) result panel ... theme tokens washed out in light mode.
   const segments = [
-    { key: "pi", label: "Principal & interest", value: c.pi, color: "bg-auroraMauve" },
-    { key: "tax", label: "Property tax", value: c.tax, color: "bg-gold" },
-    { key: "ins", label: "Home insurance", value: c.ins, color: "bg-wine" },
-    ...(c.pmi > 0 ? [{ key: "pmi", label: "PMI", value: c.pmi, color: "bg-dusty" }] : []),
-    ...(hoa > 0 ? [{ key: "hoa", label: "HOA dues", value: hoa, color: "bg-smoked" }] : []),
+    { key: "pi", label: "Principal & interest", value: c.pi, hex: "#8C3A63" },
+    { key: "tax", label: "Property tax", value: c.tax, hex: "#C0872F" },
+    { key: "ins", label: "Home insurance", value: c.ins, hex: "#C77D97" },
+    ...(c.pmi > 0 ? [{ key: "pmi", label: "PMI", value: c.pmi, hex: "#6E5364" }] : []),
+    ...(hoa > 0 ? [{ key: "hoa", label: "HOA dues", value: hoa, hex: "#5A2E48" }] : []),
   ];
   const totalForBar = segments.reduce((s, x) => s + x.value, 0) || 1;
 
@@ -135,7 +137,7 @@ export default function MortgageCalculator() {
           {/* Stacked bar */}
           <div className="flex h-3 w-full overflow-hidden rounded-full bg-plum/40">
             {segments.map((s) => (
-              <div key={s.key} className={s.color} style={{ width: `${(s.value / totalForBar) * 100}%` }} />
+              <div key={s.key} style={{ width: `${(s.value / totalForBar) * 100}%`, backgroundColor: s.hex }} />
             ))}
           </div>
 
@@ -144,7 +146,7 @@ export default function MortgageCalculator() {
             {segments.map((s) => (
               <li key={s.key} className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2 text-dusty">
-                  <span className={`h-2.5 w-2.5 rounded-full ${s.color}`} />
+                  <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: s.hex }} />
                   {s.label}
                 </span>
                 <span className="font-medium text-pearl">{money(s.value)}/mo</span>

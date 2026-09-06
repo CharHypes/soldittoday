@@ -458,14 +458,6 @@
 .photo-hero .bg-wine\/30 { background-color: rgba(90, 46, 72, 0.32); }
 .photo-hero .bg-wine\/50 { background-color: rgba(90, 46, 72, 0.5); }
 
-/* ============ Nav bar ============ */
-/* A frosted dark-mauve bar in BOTH themes: a light logo vanishes on a light
-   nav, so keep the bar dark so the logo + links always stand out. It also adds
-   brand richness floating over the light page. */
-.site-nav { background-color: rgba(34, 24, 31, 0.82) !important; }
-:root[data-theme="light"] .site-nav .text-dusty { color: #cdbac1; }
-:root[data-theme="light"] .site-nav .text-pearl { color: #f7ece8; }
-:root[data-theme="light"] .site-nav .text-pearl\/90 { color: rgba(247, 236, 232, 0.9); }
-:root[data-theme="light"] .site-nav .bg-pearl { background-color: #f2e6e2; }
-:root[data-theme="light"] .site-nav .bg-plum\/95 { background-color: rgba(34, 24, 31, 0.95); }
-:root[data-theme="light"] .site-nav .border-dusty\/10 { border-color: rgba(245, 232, 228, 0.1); }
+/* Nav bar is theme-aware (bg-plum/85): dark bar + light logo in dark mode,
+   mauve-blush bar + dark logo in light mode. The theme-swapped logos keep the
+   brand readable on either bar. */
