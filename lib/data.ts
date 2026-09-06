@@ -443,6 +443,7 @@ export const partnerCategories: PartnerCategory[] = [
     partners: [
       { name: "Your Preferred Lender", ...samplePartner("💰") },
       { name: "Your Preferred Lender", ...samplePartner("💰") },
+      { name: "Your Preferred Lender", ...samplePartner("💰") },
     ],
   },
   {
@@ -450,6 +451,7 @@ export const partnerCategories: PartnerCategory[] = [
     title: "Home Insurance",
     blurb: "Homeowners insurance partners to protect your investment from day one.",
     partners: [
+      { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
       { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
       { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
     ],
@@ -461,6 +463,7 @@ export const partnerCategories: PartnerCategory[] = [
     partners: [
       { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
       { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
+      { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
     ],
   },
   {
@@ -468,6 +471,7 @@ export const partnerCategories: PartnerCategory[] = [
     title: "Title & Closing",
     blurb: "Title and closing partners that keep transactions clean, clear, and on schedule.",
     partners: [
+      { name: "Your Preferred Title Company", ...samplePartner("📝") },
       { name: "Your Preferred Title Company", ...samplePartner("📝") },
       { name: "Your Preferred Title Company", ...samplePartner("📝") },
     ],
@@ -479,6 +483,7 @@ export const partnerCategories: PartnerCategory[] = [
     partners: [
       { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
       { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
+      { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
     ],
   },
   {
@@ -488,15 +493,17 @@ export const partnerCategories: PartnerCategory[] = [
     partners: [
       { name: "Your Preferred Handyman", ...samplePartner("🔨") },
       { name: "Your Preferred Contractor", ...samplePartner("🧰") },
+      { name: "Your Preferred Electrician", ...samplePartner("⚡") },
     ],
   },
   {
     id: "movers",
-    title: "Movers",
-    blurb: "Reliable moving crews to make the day itself go smoothly.",
+    title: "Movers & Moving Help",
+    blurb: "Full-service movers and moving-help crews to make moving day go smoothly.",
     partners: [
       { name: "Your Preferred Movers", ...samplePartner("🚚") },
       { name: "Your Preferred Movers", ...samplePartner("🚚") },
+      { name: "Your Preferred Moving Help", ...samplePartner("📦") },
     ],
   },
   {
@@ -506,6 +513,7 @@ export const partnerCategories: PartnerCategory[] = [
     partners: [
       { name: "Your Preferred Lawn Care", ...samplePartner("🌳") },
       { name: "Your Preferred Landscaper", ...samplePartner("🌳") },
+      { name: "Your Preferred Lawn Care", ...samplePartner("🌳") },
     ],
   },
 ];
