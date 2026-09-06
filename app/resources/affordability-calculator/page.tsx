@@ -15,6 +15,7 @@ export default function AffordabilityCalculatorPage() {
       eyebrow="Calculators"
       title="How much house can I afford?"
       description="Enter your income, monthly debts, and down payment, and we'll estimate your comfortable price range using the same 28/36 rule lenders start with."
+      heroBackground="/assets/pages/calc-affordability.jpg"
     >
       <section className="relative bg-plum py-14 md:py-20">
         <div className="container-lux max-w-5xl space-y-10">

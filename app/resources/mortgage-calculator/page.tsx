@@ -15,6 +15,7 @@ export default function MortgageCalculatorPage() {
       eyebrow="Calculators"
       title="Michigan mortgage calculator"
       description="See your real monthly payment ... not just principal and interest, but taxes, insurance, and PMI too. Adjust the numbers and watch it update live."
+      heroBackground="/assets/pages/calc-mortgage.jpg"
     >
       <section className="relative bg-plum py-14 md:py-20">
         <div className="container-lux max-w-5xl space-y-10">

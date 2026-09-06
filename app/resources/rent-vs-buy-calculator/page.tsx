@@ -15,6 +15,7 @@ export default function RentVsBuyCalculatorPage() {
       eyebrow="Calculators"
       title="Rent vs. buy"
       description="Renting isn't 'throwing money away,' and buying isn't always cheaper. Put in your numbers and see the year buying actually pulls ahead ... for how long you'll really stay."
+      heroBackground="/assets/pages/calc-rent-vs-buy.jpg"
     >
       <section className="relative bg-plum py-14 md:py-20">
         <div className="container-lux max-w-5xl space-y-10">
