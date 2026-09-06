@@ -146,8 +146,7 @@ export default function Footer() {
             {contact.officeStreet}, {contact.officeCityStateZip}. Equal Housing
             Opportunity. All information is deemed reliable but not guaranteed.
             This site is for informational purposes and is not a solicitation if
-            you are already represented by a real estate professional. [Legal
-            &amp; license disclosures to be finalized.]
+            you are already represented by a real estate professional.
           </p>
           <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
             <p>
