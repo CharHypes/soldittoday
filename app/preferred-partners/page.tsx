@@ -19,8 +19,8 @@ export default function PreferredPartnersPage() {
   return (
     <PageShell
       eyebrow="Preferred Partners"
-      title="The pros I trust with my clients"
-      description="From financing and inspection to the handyman who actually shows up ... the local people I rely on to keep your move smooth. Call any of them and tell them Charlotte sent you."
+      title="The pros we trust with our clients"
+      description="From financing and inspection to the handyman who actually shows up ... the local people we rely on to keep your move smooth. Call any of them and tell them Sold It Today sent you."
     >
       <section className="relative bg-plum py-16 md:py-24">
         <div className="container-lux space-y-14">

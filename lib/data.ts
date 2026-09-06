@@ -429,7 +429,7 @@ export type PartnerCategory = {
 // company names; never publish a partner she hasn't confirmed.
 const samplePartner = (icon: string): Omit<Partner, "name"> => ({
   detail: "Company name added when live",
-  whyTrust: "A short note on why Charlotte trusts them goes right here.",
+  whyTrust: "A short note on why we trust them goes right here.",
   icon,
   placeholder: true,
 });
