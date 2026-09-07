@@ -5,7 +5,39 @@ import Footer from "@/components/Footer";
 import ComplianceFooter from "@/components/search/ComplianceFooter";
 import PhotoGallery from "@/components/search/PhotoGallery";
 import { getListing, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
+import { amenitiesForPoints, type AmenityKey } from "@/lib/amenities";
 import { contact } from "@/lib/data";
+
+/* Fixed icons: hospital = "H" in a box (highway sign), school = schoolhouse
+   (K-12), grocery = cart. Matches the search cards. */
+const NEARBY_ICON: Record<AmenityKey, JSX.Element> = {
+  hospital: (
+    <>
+      <rect x="3.5" y="3.5" width="17" height="17" rx="4" />
+      <path d="M9 8v8M15 8v8M9 12h6" />
+    </>
+  ),
+  school: (
+    <>
+      <path d="M3 21h18" />
+      <path d="M5 21V10l7-3.5L19 10v11" />
+      <path d="M10 21v-4h4v4" />
+      <path d="M12 6.5V3l3 1-3 1" />
+    </>
+  ),
+  grocery: (
+    <>
+      <circle cx="9" cy="20" r="1.3" />
+      <circle cx="18" cy="20" r="1.3" />
+      <path d="M2 3h2l2.2 12.2a1.5 1.5 0 0 0 1.5 1.3H18a1.5 1.5 0 0 0 1.5-1.2L21 7H5.2" />
+    </>
+  ),
+};
+const NEARBY_LABEL: Record<AmenityKey, string> = {
+  hospital: "Nearest hospital",
+  school: "Nearest school",
+  grocery: "Nearest grocery",
+};
 
 export const metadata: Metadata = {
   title: "Home for Sale | SOLD IT TODAY",
@@ -60,6 +92,14 @@ export default async function ListingPage({ params }: { params: { id: string } }
   if (listing.county) details.push(["County", listing.county]);
   if (listing.mlsNumber) details.push(["MLS #", listing.mlsNumber]);
 
+  // Nearby amenities ... computed server-side from the bundled MI dataset (local,
+  // instant). Includes the actual place name for the detail page.
+  const nearby =
+    listing.lat != null && listing.lng != null
+      ? (await amenitiesForPoints([{ id: listing.id, lat: listing.lat, lng: listing.lng }]))[listing.id] ?? {}
+      : {};
+  const nearbyKeys = (["hospital", "school", "grocery"] as AmenityKey[]).filter((k) => nearby[k]);
+
   return (
     <>
       <Navbar />
@@ -111,6 +151,38 @@ export default async function ListingPage({ params }: { params: { id: string } }
                       </div>
                     ))}
                   </dl>
+                </section>
+              )}
+
+              {nearbyKeys.length > 0 && (
+                <section className="mt-8">
+                  <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">What&rsquo;s nearby</h2>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    {nearbyKeys.map((k) => (
+                      <div key={k} className="rounded-xl2 border border-dusty/15 bg-plum/50 p-4">
+                        <div className="flex items-center gap-2">
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={1.7}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-5 w-5 text-gold"
+                            aria-hidden
+                          >
+                            {NEARBY_ICON[k]}
+                          </svg>
+                          <span className="text-xs uppercase tracking-wider text-dusty">{NEARBY_LABEL[k]}</span>
+                        </div>
+                        <div className="mt-2 text-xl font-semibold text-pearl">{nearby[k]!.miles} mi</div>
+                        {nearby[k]!.name && (
+                          <div className="mt-0.5 text-sm text-dusty">{nearby[k]!.name}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs text-dusty/70">Straight-line distance to the nearest, from public map data.</p>
                 </section>
               )}
 
