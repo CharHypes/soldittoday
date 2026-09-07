@@ -43,10 +43,17 @@ const themeScript = `
 (function() {
   try {
     var saved = localStorage.getItem('sit-theme');
-    document.documentElement.setAttribute(
-      'data-theme',
-      saved === 'light' ? 'light' : 'dark'
-    );
+    var theme;
+    if (saved === 'light' || saved === 'dark') {
+      // Visitor has toggled before ... honor their explicit choice.
+      theme = saved;
+    } else {
+      // First visit ... follow their computer's light/dark setting (default dark).
+      theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches)
+        ? 'light'
+        : 'dark';
+    }
+    document.documentElement.setAttribute('data-theme', theme);
   } catch (e) {
     document.documentElement.setAttribute('data-theme', 'dark');
   }
