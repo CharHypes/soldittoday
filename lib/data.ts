@@ -420,6 +420,8 @@ export type Partner = {
   logo?: boolean;
   /** For logos with light/white lettering ... show on a dark background instead of white. */
   logoDark?: boolean;
+  /** For already-circular logos ... fill the whole avatar circle (no padding/white space). */
+  logoFill?: boolean;
   /** Emoji shown in the placeholder avatar so the trade reads at a glance. */
   icon?: string;
   placeholder: boolean;
@@ -587,6 +589,7 @@ export const partnerCategories: PartnerCategory[] = [
         website: "https://www.devontitle.com",
         photo: "/assets/partners/devon-title.png",
         logo: true,
+        logoFill: true,
         priority: 1,
         placeholder: false,
       },
@@ -772,6 +775,7 @@ export const partnerCategories: PartnerCategory[] = [
         website: "https://www.qsoutdoorservicesllc.com",
         photo: "/assets/partners/qs-outdoor.png",
         logo: true,
+        logoFill: true,
         rating: 4.7,
         reviewCount: 61,
         reviewSource: "Google",
@@ -822,6 +826,7 @@ export const partnerCategories: PartnerCategory[] = [
         website: "https://ezdetail.setmore.com",
         photo: "/assets/partners/ez-pristine.png",
         logo: true,
+        logoFill: true,
         rating: 5.0,
         reviewCount: 89,
         reviewSource: "Google",

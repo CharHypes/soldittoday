@@ -190,9 +190,9 @@ export default function PreferredPartnersPage() {
                         src={partner.photo}
                         alt={partner.name}
                         className={
-                          partner.logo
+                          partner.logo && !partner.logoFill
                             ? `h-20 w-20 rounded-full border border-auroraMauve/40 object-contain p-2 ${partner.logoDark ? "bg-bruised" : "bg-white"}`
-                            : "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top"
+                            : `h-20 w-20 rounded-full border border-auroraMauve/40 object-cover ${partner.logo ? "" : "object-top"}`
                         }
                       />
                     ) : (
