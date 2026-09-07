@@ -130,7 +130,14 @@ export default function PreferredPartnersPage() {
               </div>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {cat.partners.map((partner, i) => {
+                {[...cat.partners]
+                  .sort((a, b) => {
+                    // Real partners first, then manual pins, then highest-rated (fair ordering).
+                    if (a.placeholder !== b.placeholder) return a.placeholder ? 1 : -1;
+                    if ((b.priority ?? 0) !== (a.priority ?? 0)) return (b.priority ?? 0) - (a.priority ?? 0);
+                    return (b.rating ?? -1) - (a.rating ?? -1);
+                  })
+                  .map((partner, i) => {
                   const chip =
                     "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors";
                   const chipLive =
@@ -159,6 +166,15 @@ export default function PreferredPartnersPage() {
                     <div className="mt-0.5 text-[11px] uppercase tracking-wide text-dusty">{partner.detail}</div>
                     {partner.credential && (
                       <div className="mt-1 text-[11px] leading-snug text-dusty/80">{partner.credential}</div>
+                    )}
+
+                    {partner.rating != null && (
+                      <div className="mt-1.5 flex items-center gap-1 text-xs text-dusty">
+                        <span className="text-gold">★</span>
+                        <span className="font-semibold text-pearl">{partner.rating.toFixed(1)}</span>
+                        {partner.reviewCount != null && <span>· {partner.reviewCount} reviews</span>}
+                        {partner.reviewSource && <span>· {partner.reviewSource}</span>}
+                      </div>
                     )}
 
                     {partner.whyTrust && (

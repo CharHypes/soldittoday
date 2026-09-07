@@ -403,6 +403,12 @@ export type Partner = {
   mobile?: string;
   email?: string;
   website?: string;
+  /** Public review score, shown as social proof and used to order each category. */
+  rating?: number;
+  reviewCount?: number;
+  reviewSource?: string;
+  /** Manual pin: higher sorts first, overriding the review-based order. */
+  priority?: number;
   /** Direct application / booking link, shown as a highlighted button. */
   apply?: string;
   applyLabel?: string;
@@ -454,8 +460,8 @@ export const partnerCategories: PartnerCategory[] = [
       },
       {
         name: "Mason Miller",
-        detail: "Mortgage 1",
-        credential: "Vice President · NMLS #185193 · Sterling Heights, MI",
+        detail: "National Mortgage Bankers",
+        credential: "Vice President · Mortgage 1 · NMLS #185193 · Sterling Heights, MI",
         whyTrust:
           "Two decades helping our buyers finance the right way ... Mason and his Mortgage 1 team make everything from pre-approval to closing feel simple.",
         phone: "866-644-6910",
@@ -514,7 +520,31 @@ export const partnerCategories: PartnerCategory[] = [
     title: "Title & Closing",
     blurb: "Title and closing partners that keep transactions clean, clear, and on schedule.",
     partners: [
-      { name: "Your Preferred Title Company", ...samplePartner("📝") },
+      {
+        name: "Devon Title",
+        detail: "A Stewart Company · Troy, MI",
+        credential: "Title & Settlement · One of Michigan's largest title agencies",
+        whyTrust:
+          "Full-service title and settlement we count on ... Devon handles residential and commercial closings smoothly, start to finish.",
+        phone: "248-273-4300",
+        website: "https://www.devontitle.com",
+        priority: 1,
+        placeholder: false,
+      },
+      {
+        name: "First Centennial Title Agency",
+        detail: "of Mid-America · Livonia, MI",
+        credential: "Title, Escrow & Closing · Serving Metro Detroit since 1985",
+        whyTrust:
+          "Clean, clear closings every time ... First Centennial keeps our transactions on schedule and makes sure ownership transfers without surprises.",
+        phone: "734-425-1776",
+        email: "info@fctitle.com",
+        website: "https://fctitle.com",
+        rating: 4.3,
+        reviewCount: 146,
+        reviewSource: "Google",
+        placeholder: false,
+      },
       { name: "Your Preferred Title Company", ...samplePartner("📝") },
       { name: "Your Preferred Title Company", ...samplePartner("📝") },
     ],
@@ -524,7 +554,20 @@ export const partnerCategories: PartnerCategory[] = [
     title: "Heating & Cooling",
     blurb: "HVAC pros for furnaces, A/C, and keeping a home comfortable year-round.",
     partners: [
-      { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
+      {
+        name: "Mechanical Heating, Cooling & Electrical",
+        detail: "Dearborn Heights, MI",
+        credential: "HVAC & Electrical · Family-owned, serving Southeast Michigan since 1983",
+        whyTrust:
+          "Honest advice and reliable work ... from furnaces and A/C to duct cleaning and electrical, they take great care of our clients' homes.",
+        phone: "248-465-9089",
+        email: "info@mechanicalheating.com",
+        website: "https://www.mechanicalheating.com",
+        rating: 4.9,
+        reviewCount: 204,
+        reviewSource: "Facebook",
+        placeholder: false,
+      },
       { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
       { name: "Your Preferred HVAC Pro", ...samplePartner("🔥") },
     ],
