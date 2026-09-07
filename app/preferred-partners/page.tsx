@@ -205,6 +205,18 @@ export default function PreferredPartnersPage() {
                       <p className="mt-2.5 text-sm leading-relaxed text-dusty/90">&ldquo;{partner.whyTrust}&rdquo;</p>
                     )}
 
+                    {partner.placeholder && (
+                      <span className="mt-3 inline-flex rounded-full border border-dusty/25 bg-plum/50 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-dusty">
+                        Coming Soon
+                      </span>
+                    )}
+
+                    {partner.resource && !partner.placeholder && (
+                      <span className="mt-3 inline-flex rounded-full border border-auroraMauve/40 bg-wine/20 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-auroraMauve">
+                        Resource
+                      </span>
+                    )}
+
                     <div className="mt-auto flex flex-wrap items-center justify-center gap-2 pt-5">
                       {partner.placeholder ? (
                         <>
@@ -240,18 +252,6 @@ export default function PreferredPartnersPage() {
                         {partner.applyLabel ?? "Apply Now"}
                         <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">&rarr;</span>
                       </a>
-                    )}
-
-                    {partner.placeholder && (
-                      <span className="mt-3 inline-flex rounded-full border border-dusty/25 bg-plum/50 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-dusty">
-                        Coming Soon
-                      </span>
-                    )}
-
-                    {partner.resource && !partner.placeholder && (
-                      <span className="mt-3 inline-flex rounded-full border border-auroraMauve/40 bg-wine/20 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-auroraMauve">
-                        Resource
-                      </span>
                     )}
                   </div>
                   );
