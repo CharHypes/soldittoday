@@ -782,6 +782,41 @@ export const partnerCategories: PartnerCategory[] = [
       { name: "Your Preferred Lawn Care", ...samplePartner("🌳") },
     ],
   },
+  {
+    id: "painters",
+    title: "Painters",
+    blurb: "Interior and exterior painters for listing prep, refreshes, and move-in updates.",
+    partners: [
+      { name: "Your Preferred Painter", ...samplePartner("🎨") },
+      { name: "Your Preferred Painter", ...samplePartner("🎨") },
+      { name: "Your Preferred Painter", ...samplePartner("🎨") },
+    ],
+  },
+  {
+    id: "auto-detailing",
+    title: "Auto & Detailing",
+    blurb: "Trusted auto detailing to keep your vehicle looking its best.",
+    partners: [
+      {
+        name: "Ez Pristine Detail",
+        detail: "Mobile Auto Detailing · Livonia, MI",
+        credential: "Interior & exterior detailing, at your location",
+        whyTrust:
+          "Showroom-clean results without leaving home ... Ez Pristine comes to you and makes a vehicle look pristine inside and out.",
+        phone: "616-535-9470",
+        email: "ez.pristine.detail@gmail.com",
+        website: "https://ezdetail.setmore.com",
+        photo: "/assets/partners/ez-pristine.png",
+        logo: true,
+        rating: 5.0,
+        reviewCount: 89,
+        reviewSource: "Google",
+        placeholder: false,
+      },
+      { name: "Your Preferred Detailer", ...samplePartner("🚗") },
+      { name: "Your Preferred Detailer", ...samplePartner("🚗") },
+    ],
+  },
 ];
 
 /* -------------------------------------------------------------------------- */

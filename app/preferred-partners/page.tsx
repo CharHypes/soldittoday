@@ -78,6 +78,21 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M19 3h-4" />
     </>
   ),
+  painters: (
+    <>
+      <path d="M4 5h11v5H4z" />
+      <path d="M15 7h3a2 2 0 0 1 2 2v2h-6" />
+      <path d="M11 13v3a2 2 0 0 1-2 2h-1v3h3v-3" />
+    </>
+  ),
+  "auto-detailing": (
+    <>
+      <path d="M5 11l1.5-4.5A2 2 0 0 1 8.4 5h7.2a2 2 0 0 1 1.9 1.5L19 11" />
+      <path d="M3 11h18v5H3z" />
+      <circle cx="7.5" cy="16.5" r="1.5" />
+      <circle cx="16.5" cy="16.5" r="1.5" />
+    </>
+  ),
 };
 
 function CategoryIcon({ id, className = "h-6 w-6" }: { id: string; className?: string }) {
