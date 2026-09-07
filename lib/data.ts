@@ -420,6 +420,8 @@ export type Partner = {
   logo?: boolean;
   /** For logos with light/white lettering ... show on a dark background instead of white. */
   logoDark?: boolean;
+  /** Override the logo background with a specific Tailwind class (e.g. "bg-black"). */
+  logoBg?: string;
   /** For already-circular logos ... fill the whole avatar circle (no padding/white space). */
   logoFill?: boolean;
   /** Emoji shown in the placeholder avatar so the trade reads at a glance. */
@@ -776,6 +778,7 @@ export const partnerCategories: PartnerCategory[] = [
         photo: "/assets/partners/qs-outdoor.png",
         logo: true,
         logoDark: true,
+        logoBg: "bg-black",
         rating: 4.7,
         reviewCount: 61,
         reviewSource: "Google",
