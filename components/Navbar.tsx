@@ -46,12 +46,12 @@ export default function Navbar() {
         {/* Desktop links ... full nav only at lg+ (7 items + CTA need the room);
             tablets and below use the hamburger menu. Tighter gap at lg so the
             CTA doesn't wrap; roomier spacing returns at xl. */}
-        <ul className="hidden items-center gap-7 lg:flex xl:gap-10">
+        <ul className="hidden items-center gap-5 lg:flex xl:gap-8">
           {navLinks.map((link) => (
             <li key={link.href} className="group relative">
               <a
                 href={resolve(link.href)}
-                className="relative flex items-center gap-1 text-sm font-medium tracking-wide text-dusty transition-colors duration-300 hover:text-pearl"
+                className="relative flex items-center gap-1 whitespace-nowrap text-sm font-medium tracking-wide text-dusty transition-colors duration-300 hover:text-pearl"
               >
                 {link.label}
                 {link.children && (
@@ -95,8 +95,9 @@ export default function Navbar() {
             ~44px touch target (py-3) to match the site-wide standard. */}
         <div className="hidden shrink-0 items-center gap-3 lg:flex">
           <ThemeToggle />
-          <a href={resolve("#contact")} className="btn-aurora whitespace-nowrap !px-5 !py-3">
-            Schedule a Consultation
+          <a href={resolve("#contact")} className="btn-aurora whitespace-nowrap !px-4 !py-3 xl:!px-5">
+            <span className="xl:hidden">Schedule</span>
+            <span className="hidden xl:inline">Schedule a Consultation</span>
           </a>
         </div>
 
