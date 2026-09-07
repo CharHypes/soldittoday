@@ -191,7 +191,7 @@ export default function PreferredPartnersPage() {
                         alt={partner.name}
                         className={
                           partner.logo
-                            ? "h-20 w-20 rounded-full border border-auroraMauve/40 bg-white object-contain p-2"
+                            ? `h-20 w-20 rounded-full border border-auroraMauve/40 object-contain p-2 ${partner.logoDark ? "bg-bruised" : "bg-white"}`
                             : "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top"
                         }
                       />

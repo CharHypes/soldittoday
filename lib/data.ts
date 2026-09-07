@@ -418,6 +418,8 @@ export type Partner = {
   photo?: string | null;
   /** True when `photo` is a company logo (shown contained on white, not cropped). */
   logo?: boolean;
+  /** For logos with light/white lettering ... show on a dark background instead of white. */
+  logoDark?: boolean;
   /** Emoji shown in the placeholder avatar so the trade reads at a glance. */
   icon?: string;
   placeholder: boolean;
@@ -555,7 +557,18 @@ export const partnerCategories: PartnerCategory[] = [
         photo: "/assets/partners/chris-charow.jpg",
         placeholder: false,
       },
-      { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
+      {
+        name: "Darrul Stocks",
+        detail: "Stocks Home Inspection · Bloomfield Hills, MI",
+        credential: "Certified Professional Inspector (InterNACHI) · Serving Metro Detroit",
+        whyTrust:
+          "Detailed reports our buyers trust ... Darrul photographs and explains every issue, so you know exactly what you're getting.",
+        phone: "313-377-6967",
+        email: "contactus@stockshomeinspection.com",
+        website: "https://stockshomeinspections.com",
+        photo: "/assets/partners/stocks-darryl.jpg",
+        placeholder: false,
+      },
       { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
     ],
   },
@@ -774,6 +787,7 @@ export const partnerCategories: PartnerCategory[] = [
         website: "https://www.gibsonslandscapingmi.com",
         photo: "/assets/partners/gibsons-landscaping.png",
         logo: true,
+        logoDark: true,
         rating: 4.9,
         reviewCount: 62,
         reviewSource: "Google",
