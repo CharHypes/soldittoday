@@ -490,6 +490,7 @@ export const partnerCategories: PartnerCategory[] = [
         website: "https://cfmtg.com/awebb/",
         apply: "https://portal.myhometrac.com/homehub/signup/awebb@cfmtg.com",
         applyLabel: "Apply Now",
+        photo: "/assets/partners/amanda-webb.jpg",
         rating: 5.0,
         reviewCount: 4,
         reviewSource: "Google",
