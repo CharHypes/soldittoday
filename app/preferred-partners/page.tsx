@@ -188,7 +188,7 @@ export default function PreferredPartnersPage() {
                         alt={partner.name}
                         className={
                           partner.logo && !partner.logoFill
-                            ? `h-20 w-20 rounded-full border border-auroraMauve/40 object-contain p-2 ${partner.logoDark ? (partner.logoBg ?? "bg-bruised") : "bg-[#f4efe8]"}`
+                            ? `h-20 w-20 rounded-full border border-auroraMauve/40 object-contain p-2 ${partner.logoDark ? (partner.logoBg ?? "bg-[#2a1f25]") : "bg-[#f4efe8]"}`
                             : `h-20 w-20 rounded-full border border-auroraMauve/40 object-cover ${partner.logo ? "" : "object-top"}`
                         }
                       />
