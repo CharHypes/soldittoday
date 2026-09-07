@@ -105,6 +105,25 @@ export default function ResourcesPage() {
         </div>
       </section>
 
+      {/* Preferred Partners */}
+      <section className="relative bg-mulberry-soft py-16 md:py-24">
+        <div className="container-lux">
+          <div className="aurora-ring overflow-hidden rounded-xl2 border border-auroraMauve/20 bg-plum/50 p-8 text-center md:p-12">
+            <span className="eyebrow text-auroraMauve">Preferred Partners</span>
+            <h2 className="mt-3 text-2xl font-semibold tracking-tightest text-pearl md:text-3xl">
+              The pros we trust with our clients
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-dusty md:text-base">
+              Vetted lenders, insurance agents, inspectors, title companies, and home-service pros across Michigan ... the local people we rely on to keep your move smooth.
+            </p>
+            <a href="/preferred-partners" className="btn-aurora group mt-6">
+              Meet our partners
+              <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">&rarr;</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
       <CrossLinks />
     </PageShell>
   );

@@ -4,16 +4,15 @@ import PageShell from "@/components/PageShell";
 import { partnerCategories } from "@/lib/data";
 
 /**
- * PRIVATE PREVIEW ... noindexed and unlinked from the nav on purpose. Charlotte
- * reviews the layout with placeholders; once she sends her real partners we swap
- * the content, remove `robots.noindex`, add /preferred-partners back to the
- * sitemap, and re-add the homepage teaser.
+ * Public page ... SOLD IT TODAY's vetted local partners across Michigan.
+ * Fully-empty categories (all "Coming Soon") are hidden until they have at least
+ * one real partner, so the public page always looks complete.
  */
 export const metadata: Metadata = {
   title: "Preferred Partners | SOLD IT TODAY ... Southeast Michigan Real Estate",
   description:
     "SOLD IT TODAY's preferred partners: trusted lenders, insurance agents, inspectors, title, HVAC, and home-service pros across Southeast Michigan and Metro Detroit.",
-  robots: { index: false, follow: false },
+  alternates: { canonical: "/preferred-partners" },
 };
 
 /* Minimal line icons (elegant, gold) ... one per category. */
@@ -113,6 +112,10 @@ function CategoryIcon({ id, className = "h-6 w-6" }: { id: string; className?: s
 }
 
 export default function PreferredPartnersPage() {
+  // Only show categories that have at least one real partner (hide all-"Coming Soon").
+  const visibleCategories = partnerCategories.filter((cat) =>
+    cat.partners.some((p) => !p.placeholder)
+  );
   return (
     <PageShell
       eyebrow="Preferred Partners"
@@ -125,19 +128,13 @@ export default function PreferredPartnersPage() {
         <div className="pointer-events-none absolute right-0 top-1/4 h-[400px] w-[400px] rounded-full bg-wine/30 blur-[150px]" />
         <div className="pointer-events-none absolute left-0 top-2/3 h-[360px] w-[360px] rounded-full bg-aurora/12 blur-[150px]" />
         <div className="container-lux relative z-10 space-y-14">
-          {/* Preview notice ... remove when this goes live */}
-          <div className="rounded-xl2 border border-auroraMauve/30 bg-wine/20 p-4 text-center text-sm text-pearl">
-            🔒 <span className="font-semibold">Private preview</span> ... this page isn&rsquo;t public yet. Real partners are filling
-            in; anything marked &ldquo;Coming Soon&rdquo; is a slot we&rsquo;ll add as you send them. Say the word and we go live.
-          </div>
-
           {/* Elegant category index ... one trusted network, jump to any trade */}
           <div>
             <p className="mb-4 text-center text-xs font-semibold uppercase tracking-[0.2em] text-auroraMauve">
               One trusted network for the whole move
             </p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {partnerCategories.map((cat) => (
+              {visibleCategories.map((cat) => (
                 <a
                   key={cat.id}
                   href={`#${cat.id}`}
@@ -152,7 +149,7 @@ export default function PreferredPartnersPage() {
             </div>
           </div>
 
-          {partnerCategories.map((cat) => (
+          {visibleCategories.map((cat) => (
             <div key={cat.id} id={cat.id} className="scroll-mt-28">
               <div className="flex items-center gap-3 border-b border-dusty/12 pb-5">
                 <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-auroraMauve/40 text-auroraMauve">

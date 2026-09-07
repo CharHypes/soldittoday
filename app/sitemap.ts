@@ -17,6 +17,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { p: "/investment", pr: 0.7 },
     { p: "/communities", pr: 0.8 },
     { p: "/resources", pr: 0.8 },
+    { p: "/preferred-partners", pr: 0.7 },
     { p: "/resources/calculators", pr: 0.7 },
     { p: "/resources/mortgage-calculator", pr: 0.7 },
     { p: "/resources/affordability-calculator", pr: 0.7 },
