@@ -470,6 +470,7 @@ export const partnerCategories: PartnerCategory[] = [
         phone: "810-206-3623",
         mobile: "313-465-9540",
         email: "spterry@acg.aaa.com",
+        photo: "/assets/partners/aaa-logo.svg",
         placeholder: false,
       },
       { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
