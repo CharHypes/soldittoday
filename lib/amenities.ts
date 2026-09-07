@@ -1,126 +1,54 @@
 /**
- * Nearby-amenity distances for listings, from free OpenStreetMap data (Overpass).
+ * Nearby-amenity distances for listings, from a bundled Michigan places dataset.
  *
- * For a set of listing coordinates we fetch nearby hospitals, K-12 schools, and
- * grocery stores once for the whole area (bounding box), then compute each
- * listing's straight-line ("as the crow flies") miles to the nearest of each.
- *
- * Straight-line only ... no paid routing API. Results are cached in-process by
- * a rounded bbox key so repeated searches in the same area don't re-hit Overpass
- * (which is free but rate-limited). Everything degrades gracefully: if Overpass
- * is slow or down, callers just get no amenities and the UI hides the row.
+ * We precomputed hospitals, K-12 schools, and grocery stores across Lower
+ * Michigan from OpenStreetMap (see lib/data/mi-pois.json) so that at runtime we
+ * do only fast local math ... no external API calls. That's reliable on Vercel
+ * (public Overpass servers block cloud IPs) and free. Distances are straight-
+ * line ("as the crow flies") miles to the nearest of each. To refresh or widen
+ * the dataset, re-run the fetch and replace mi-pois.json.
  */
 
-export type AmenityKey = "hospital" | "school" | "grocery";
+import raw from "./data/mi-pois.json";
 
+export type AmenityKey = "hospital" | "school" | "grocery";
 export type AmenityDistance = { miles: number; name: string | null };
 export type AmenityDistances = Partial<Record<AmenityKey, AmenityDistance>>;
 
-type Pt = { lat: number; lng: number };
-type Poi = Pt & { name: string | null };
+type Row = [number, number, string | null]; // [lat, lng, name]
+const DATA = raw as Record<AmenityKey, Row[]>;
 
+type Pt = { lat: number; lng: number };
 const EARTH_MI = 3958.8;
 
-function haversineMiles(a: Pt, b: Pt): number {
+function haversineMiles(aLat: number, aLng: number, bLat: number, bLng: number): number {
   const toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
+  const dLat = toRad(bLat - aLat);
+  const dLng = toRad(bLng - aLng);
   const s =
     Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng / 2) ** 2;
+    Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
   return EARTH_MI * 2 * Math.asin(Math.sqrt(s));
 }
 
-/* ----------------------------- Overpass fetch ----------------------------- */
-
-type PoiSet = Record<AmenityKey, Poi[]>;
-
-const cache = new Map<string, { t: number; pois: PoiSet }>();
-const TTL_MS = 1000 * 60 * 60 * 24; // 24h ... POIs barely change
-// Multiple Overpass endpoints ... try the faster mirror first, fall back. Public
-// Overpass can be slow/rate-limited, so we time each out and move on.
-const OVERPASS_ENDPOINTS = [
-  "https://overpass.kumi.systems/api/interpreter",
-  "https://overpass-api.de/api/interpreter",
-  "https://overpass.private.coffee/api/interpreter",
-];
-const PER_TRY_MS = 9000;
-
-function bboxKey(s: number, w: number, n: number, e: number): string {
-  // Round to ~0.1deg tiles so nearby searches share a cache entry.
-  const r = (x: number) => Math.round(x * 10) / 10;
-  return `${r(s)},${r(w)},${r(n)},${r(e)}`;
-}
-
-async function fetchPois(
-  s: number,
-  w: number,
-  n: number,
-  e: number
-): Promise<PoiSet> {
-  const key = bboxKey(s, w, n, e);
-  const hit = cache.get(key);
-  if (hit && Date.now() - hit.t < TTL_MS) return hit.pois;
-
-  // node + way (buildings mapped as areas) with center; hospitals are sparse so
-  // the caller pads the bbox generously before calling.
-  const box = `${s},${w},${n},${e}`;
-  const q =
-    `[out:json][timeout:20];(` +
-    `nwr["amenity"="hospital"](${box});` +
-    `nwr["amenity"="school"](${box});` +
-    `nwr["shop"="supermarket"](${box});` +
-    `nwr["shop"="grocery"](${box});` +
-    `);out center 300;`;
-
-  const pois: PoiSet = { hospital: [], school: [], grocery: [] };
-  for (const endpoint of OVERPASS_ENDPOINTS) {
-    try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "data=" + encodeURIComponent(q),
-        cache: "no-store",
-        signal: AbortSignal.timeout(PER_TRY_MS),
-      });
-      if (!res.ok) throw new Error(`overpass ${res.status}`);
-      const data = (await res.json()) as {
-        elements: Array<{
-          lat?: number;
-          lon?: number;
-          center?: { lat: number; lon: number };
-          tags?: Record<string, string>;
-        }>;
-      };
-      for (const el of data.elements ?? []) {
-        const lat = el.lat ?? el.center?.lat;
-        const lng = el.lon ?? el.center?.lon;
-        if (lat == null || lng == null) continue;
-        const tags = el.tags ?? {};
-        const name = tags.name ?? null;
-        let k: AmenityKey | null = null;
-        if (tags.amenity === "hospital") k = "hospital";
-        else if (tags.amenity === "school") k = "school";
-        else if (tags.shop === "supermarket" || tags.shop === "grocery") k = "grocery";
-        if (k) pois[k].push({ lat, lng, name });
-      }
-      if (pois.hospital.length || pois.school.length || pois.grocery.length) {
-        cache.set(key, { t: Date.now(), pois });
-        return pois;
-      }
-    } catch {
-      // Try the next endpoint.
+function nearest(from: Pt, rows: Row[]): AmenityDistance | undefined {
+  let bestMi = Infinity;
+  let bestName: string | null = null;
+  for (const r of rows) {
+    const mi = haversineMiles(from.lat, from.lng, r[0], r[1]);
+    if (mi < bestMi) {
+      bestMi = mi;
+      bestName = r[2];
     }
   }
-  return pois;
+  if (!Number.isFinite(bestMi)) return undefined;
+  return { miles: Math.round(bestMi * 10) / 10, name: bestName };
 }
-
-/* ------------------------------- Public API ------------------------------- */
 
 /**
  * Given listing points, return each id's nearest hospital/school/grocery miles.
- * One Overpass fetch covers the whole set (bbox), so this scales to a full
- * results page cheaply.
+ * Schools and groceries are pre-filtered to the search area for speed; hospitals
+ * are sparse (~200 statewide) so we scan them all.
  */
 export async function amenitiesForPoints(
   points: Array<{ id: string; lat: number; lng: number }>
@@ -140,25 +68,19 @@ export async function amenitiesForPoints(
     w = Math.min(w, p.lng);
     e = Math.max(e, p.lng);
   }
-  // Pad the bbox ... ~0.35deg (~24mi) so sparse hospitals are found near edges.
-  const pad = 0.35;
-  const pois = await fetchPois(s - pad, w - pad, n + pad, e + pad);
-
-  const nearest = (from: Pt, list: Poi[]): AmenityDistance | undefined => {
-    let best: AmenityDistance | undefined;
-    for (const poi of list) {
-      const miles = haversineMiles(from, poi);
-      if (!best || miles < best.miles) best = { miles, name: poi.name };
-    }
-    return best ? { miles: Math.round(best.miles * 10) / 10, name: best.name } : undefined;
-  };
+  const pad = 0.5; // ~35mi window around the results for schools/groceries
+  const inBox = (r: Row) =>
+    r[0] >= s - pad && r[0] <= n + pad && r[1] >= w - pad && r[1] <= e + pad;
+  const schools = DATA.school.filter(inBox);
+  const groceries = DATA.grocery.filter(inBox);
+  const hospitals = DATA.hospital; // small ... scan all so edges always resolve
 
   const out: Record<string, AmenityDistances> = {};
   for (const p of valid) {
     const d: AmenityDistances = {};
-    const h = nearest(p, pois.hospital);
-    const sc = nearest(p, pois.school);
-    const g = nearest(p, pois.grocery);
+    const h = nearest(p, hospitals);
+    const sc = nearest(p, schools);
+    const g = nearest(p, groceries);
     if (h) d.hospital = h;
     if (sc) d.school = sc;
     if (g) d.grocery = g;
