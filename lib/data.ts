@@ -459,6 +459,7 @@ export const partnerCategories: PartnerCategory[] = [
         apply: "https://plus.preapp1003.com/Kelly-Belcher",
         applyLabel: "Apply Now",
         photo: "/assets/partners/kelly-belcher.jpg",
+        priority: 2,
         placeholder: false,
       },
       {
@@ -474,6 +475,7 @@ export const partnerCategories: PartnerCategory[] = [
         apply: "https://snap.mortgageone.com/app/signup/p/mortgage/MMiller",
         applyLabel: "Apply Now",
         photo: "/assets/partners/mason-miller.jpg",
+        priority: 1,
         placeholder: false,
       },
       {
