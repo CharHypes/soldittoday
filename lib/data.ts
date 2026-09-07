@@ -468,8 +468,7 @@ export const partnerCategories: PartnerCategory[] = [
         credential: "Vice President · NMLS #185193 · Sterling Heights, MI",
         whyTrust:
           "Two decades helping our buyers finance the right way ... Mason and his team make everything from pre-approval to closing feel simple.",
-        phone: "866-644-6910",
-        mobile: "248-891-9022",
+        phone: "248-891-9022",
         email: "mason@firstnationalmb.com",
         website: "https://firstnationalmb.com",
         apply: "https://snap.mortgageone.com/app/signup/p/mortgage/MMiller",
@@ -484,8 +483,7 @@ export const partnerCategories: PartnerCategory[] = [
         credential: "Loan Officer · NMLS #920227 · Serving Southeast Michigan",
         whyTrust:
           "Five-star service our clients rave about ... Amanda makes financing clear and personal, from the first call all the way to closing.",
-        phone: "866-815-1803",
-        mobile: "734-377-0740",
+        phone: "734-377-0740",
         email: "Awebb@cfmtg.com",
         website: "https://cfmtg.com/awebb/",
         apply: "https://portal.myhometrac.com/homehub/signup/awebb@cfmtg.com",
