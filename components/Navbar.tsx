@@ -48,14 +48,45 @@ export default function Navbar() {
             CTA doesn't wrap; roomier spacing returns at xl. */}
         <ul className="hidden items-center gap-6 lg:flex xl:gap-9">
           {navLinks.map((link) => (
-            <li key={link.href}>
+            <li key={link.href} className="group relative">
               <a
                 href={resolve(link.href)}
-                className="group relative text-sm font-medium tracking-wide text-dusty transition-colors duration-300 hover:text-pearl"
+                className="relative flex items-center gap-1 text-sm font-medium tracking-wide text-dusty transition-colors duration-300 hover:text-pearl"
               >
                 {link.label}
+                {link.children && (
+                  <svg
+                    viewBox="0 0 12 12"
+                    className="h-2.5 w-2.5 opacity-70 transition-transform duration-300 group-hover:rotate-180"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden
+                  >
+                    <path d="M2.5 4.5L6 8l3.5-3.5" />
+                  </svg>
+                )}
                 <span className="absolute -bottom-1.5 left-0 h-px w-0 bg-pearl transition-all duration-400 ease-lux group-hover:w-full" />
               </a>
+
+              {link.children && (
+                <div className="invisible absolute left-1/2 top-full z-50 -translate-x-1/2 pt-4 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                  <ul className="min-w-[230px] rounded-xl2 border border-dusty/15 bg-plum/95 p-2 shadow-aurora backdrop-blur-xl">
+                    {link.children.map((child) => (
+                      <li key={child.href}>
+                        <a
+                          href={resolve(child.href)}
+                          className="block rounded-lg px-3.5 py-2.5 text-sm text-dusty transition-colors duration-200 hover:bg-auroraMauve/10 hover:text-pearl"
+                        >
+                          {child.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </li>
           ))}
         </ul>
@@ -123,6 +154,21 @@ export default function Navbar() {
                   >
                     {link.label}
                   </a>
+                  {link.children && (
+                    <ul className="mb-1 ml-2 flex flex-col border-l border-dusty/15 pl-4">
+                      {link.children.map((child) => (
+                        <li key={child.href}>
+                          <a
+                            href={resolve(child.href)}
+                            onClick={() => setOpen(false)}
+                            className="block py-2 text-base text-dusty transition-colors hover:text-pearl"
+                          >
+                            {child.label}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
               <li className="pt-3">

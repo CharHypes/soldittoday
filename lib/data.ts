@@ -1,17 +1,45 @@
 // Centralized placeholder data for SOLD IT TODAY.
 // Swap these arrays for a CMS, API, or IDX feed later ... components read from here.
 
-export type NavLink = { label: string; href: string };
+export type NavLink = { label: string; href: string; children?: NavLink[] };
 
 // Primary site navigation. One-page anchors for the homepage sections.
 // "Search Homes" is a primary nav item per Phase 2 direction.
 export const navLinks: NavLink[] = [
   { label: "Home", href: "#home" },
   { label: "Search Homes", href: "#search" },
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
+  {
+    label: "About",
+    href: "#about",
+    children: [
+      { label: "Meet Charlotte", href: "/meet-charlotte" },
+      { label: "Our Team", href: "/team" },
+      { label: "Communities", href: "/communities" },
+    ],
+  },
+  {
+    label: "Services",
+    href: "#services",
+    children: [
+      { label: "Buyers", href: "/buyers" },
+      { label: "Sellers", href: "/sellers" },
+      { label: "First-Time Buyers", href: "/first-time-buyers" },
+      { label: "Investors", href: "/investment" },
+    ],
+  },
   { label: "Relocation", href: "/relocation" }, // dedicated page (route, not anchor)
-  { label: "Resources", href: "/resources" }, // dedicated content hub (route)
+  {
+    label: "Resources",
+    href: "/resources",
+    children: [
+      { label: "Down Payment Assistance", href: "/dpa" },
+      { label: "First-Time Home Buyer Guide", href: "/resources/first-time-home-buyer-michigan" },
+      { label: "FHA Loans", href: "/resources/fha-loans-michigan" },
+      { label: "Michigan Closing Costs", href: "/resources/michigan-closing-costs" },
+      { label: "Calculators", href: "/resources/calculators" },
+      { label: "Preferred Partners", href: "/preferred-partners" },
+    ],
+  },
   { label: "Contact", href: "#contact" },
 ];
 
