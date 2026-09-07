@@ -37,7 +37,14 @@ type PoiSet = Record<AmenityKey, Poi[]>;
 
 const cache = new Map<string, { t: number; pois: PoiSet }>();
 const TTL_MS = 1000 * 60 * 60 * 24; // 24h ... POIs barely change
-const OVERPASS = "https://overpass-api.de/api/interpreter";
+// Multiple Overpass endpoints ... try the faster mirror first, fall back. Public
+// Overpass can be slow/rate-limited, so we time each out and move on.
+const OVERPASS_ENDPOINTS = [
+  "https://overpass.kumi.systems/api/interpreter",
+  "https://overpass-api.de/api/interpreter",
+  "https://overpass.private.coffee/api/interpreter",
+];
+const PER_TRY_MS = 9000;
 
 function bboxKey(s: number, w: number, n: number, e: number): string {
   // Round to ~0.1deg tiles so nearby searches share a cache entry.
@@ -59,45 +66,51 @@ async function fetchPois(
   // the caller pads the bbox generously before calling.
   const box = `${s},${w},${n},${e}`;
   const q =
-    `[out:json][timeout:25];(` +
+    `[out:json][timeout:20];(` +
     `nwr["amenity"="hospital"](${box});` +
     `nwr["amenity"="school"](${box});` +
     `nwr["shop"="supermarket"](${box});` +
     `nwr["shop"="grocery"](${box});` +
-    `);out center 400;`;
+    `);out center 300;`;
 
   const pois: PoiSet = { hospital: [], school: [], grocery: [] };
-  try {
-    const res = await fetch(OVERPASS, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "data=" + encodeURIComponent(q),
-      cache: "no-store",
-    });
-    if (!res.ok) throw new Error(`overpass ${res.status}`);
-    const data = (await res.json()) as {
-      elements: Array<{
-        lat?: number;
-        lon?: number;
-        center?: { lat: number; lon: number };
-        tags?: Record<string, string>;
-      }>;
-    };
-    for (const el of data.elements ?? []) {
-      const lat = el.lat ?? el.center?.lat;
-      const lng = el.lon ?? el.center?.lon;
-      if (lat == null || lng == null) continue;
-      const tags = el.tags ?? {};
-      const name = tags.name ?? null;
-      let key: AmenityKey | null = null;
-      if (tags.amenity === "hospital") key = "hospital";
-      else if (tags.amenity === "school") key = "school";
-      else if (tags.shop === "supermarket" || tags.shop === "grocery") key = "grocery";
-      if (key) pois[key].push({ lat, lng, name });
+  for (const endpoint of OVERPASS_ENDPOINTS) {
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "data=" + encodeURIComponent(q),
+        cache: "no-store",
+        signal: AbortSignal.timeout(PER_TRY_MS),
+      });
+      if (!res.ok) throw new Error(`overpass ${res.status}`);
+      const data = (await res.json()) as {
+        elements: Array<{
+          lat?: number;
+          lon?: number;
+          center?: { lat: number; lon: number };
+          tags?: Record<string, string>;
+        }>;
+      };
+      for (const el of data.elements ?? []) {
+        const lat = el.lat ?? el.center?.lat;
+        const lng = el.lon ?? el.center?.lon;
+        if (lat == null || lng == null) continue;
+        const tags = el.tags ?? {};
+        const name = tags.name ?? null;
+        let k: AmenityKey | null = null;
+        if (tags.amenity === "hospital") k = "hospital";
+        else if (tags.amenity === "school") k = "school";
+        else if (tags.shop === "supermarket" || tags.shop === "grocery") k = "grocery";
+        if (k) pois[k].push({ lat, lng, name });
+      }
+      if (pois.hospital.length || pois.school.length || pois.grocery.length) {
+        cache.set(key, { t: Date.now(), pois });
+        return pois;
+      }
+    } catch {
+      // Try the next endpoint.
     }
-    cache.set(key, { t: Date.now(), pois });
-  } catch {
-    // Leave pois empty ... callers degrade gracefully.
   }
   return pois;
 }
