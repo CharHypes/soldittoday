@@ -71,6 +71,13 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M11 15v6M9 18h4" />
     </>
   ),
+  plumbing: (
+    <>
+      <path d="M7 3v6a3 3 0 0 0 3 3h1v9" />
+      <path d="M5 3h4M14 12h4a3 3 0 0 0 3-3V6" />
+      <path d="M19 3h-4" />
+    </>
+  ),
 };
 
 function CategoryIcon({ id, className = "h-6 w-6" }: { id: string; className?: string }) {

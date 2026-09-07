@@ -599,6 +599,28 @@ export const partnerCategories: PartnerCategory[] = [
     ],
   },
   {
+    id: "plumbing",
+    title: "Plumbing",
+    blurb: "Licensed plumbers for repairs, replacements, and closing-day surprises.",
+    partners: [
+      {
+        name: "Bennies and Son",
+        detail: "Taylor, MI · Open 24 hours",
+        credential: "Plumbing · Repairs & replacements",
+        whyTrust:
+          "Reliable around the clock ... Bennies and Son takes care of our clients' plumbing, from quick fixes to closing-day surprises.",
+        phone: "313-388-5561",
+        website: "https://benniesplumbingservices.com",
+        rating: 4.3,
+        reviewCount: 121,
+        reviewSource: "Google",
+        placeholder: false,
+      },
+      { name: "Your Preferred Plumber", ...samplePartner("🚰") },
+      { name: "Your Preferred Plumber", ...samplePartner("🚰") },
+    ],
+  },
+  {
     id: "handyman",
     title: "Handyman & Contractors",
     blurb: "Vetted trades for repairs, updates, and getting a home market-ready.",
@@ -688,7 +710,19 @@ export const partnerCategories: PartnerCategory[] = [
     title: "Lawn & Landscaping",
     blurb: "Curb-appeal and upkeep pros for sellers prepping and buyers settling in.",
     partners: [
-      { name: "Your Preferred Lawn Care", ...samplePartner("🌳") },
+      {
+        name: "Q's Outdoor Services",
+        detail: "Dearborn Heights, MI",
+        credential: "Tree & bush service · Cleanups · Gutters · Power washing",
+        whyTrust:
+          "Great for curb appeal and upkeep ... Q's handles tree and bush work, cleanups, gutters, and power washing to get a home looking its best.",
+        phone: "313-410-4298",
+        website: "https://www.qsoutdoorservicesllc.com",
+        rating: 4.7,
+        reviewCount: 61,
+        reviewSource: "Google",
+        placeholder: false,
+      },
       { name: "Your Preferred Landscaper", ...samplePartner("🌳") },
       { name: "Your Preferred Lawn Care", ...samplePartner("🌳") },
     ],
