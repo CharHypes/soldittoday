@@ -94,6 +94,12 @@ export default function Navbar() {
         {/* Primary CTA ... aurora glow, strongest action site-wide.
             ~44px touch target (py-3) to match the site-wide standard. */}
         <div className="hidden shrink-0 items-center gap-3 lg:flex">
+          <a
+            href="/login"
+            className="whitespace-nowrap text-sm font-medium tracking-wide text-dusty transition-colors duration-300 hover:text-pearl"
+          >
+            Log In
+          </a>
           <ThemeToggle />
           <a href={resolve("#contact")} className="btn-aurora whitespace-nowrap !px-4 !py-3 xl:!px-5">
             <span className="xl:hidden">Schedule</span>
@@ -172,6 +178,15 @@ export default function Navbar() {
                   )}
                 </li>
               ))}
+              <li>
+                <a
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="block py-3 text-lg font-medium text-pearl/90 transition-colors hover:text-pearl"
+                >
+                  Log In
+                </a>
+              </li>
               <li className="pt-3">
                 <a
                   href={resolve("#contact")}
