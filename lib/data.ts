@@ -464,7 +464,7 @@ export const partnerCategories: PartnerCategory[] = [
       {
         name: "Sean Terry",
         detail: "AAA Agent",
-        credential: "Life Insurance, CDs & Annuities · Brighton, MI",
+        credential: "Home, Auto & Rental Insurance · Life & Annuities · Brighton, MI",
         whyTrust:
           "Fast, efficient, and always looking for ways to save our buyers money ... Sean gets it done quickly and has made a lot of our clients happy.",
         phone: "810-206-3623",
