@@ -775,7 +775,7 @@ export const partnerCategories: PartnerCategory[] = [
         website: "https://www.qsoutdoorservicesllc.com",
         photo: "/assets/partners/qs-outdoor.png",
         logo: true,
-        logoFill: true,
+        logoDark: true,
         rating: 4.7,
         reviewCount: 61,
         reviewSource: "Google",
