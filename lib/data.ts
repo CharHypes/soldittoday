@@ -414,6 +414,8 @@ export type Partner = {
   applyLabel?: string;
   /** Real headshot/logo path when live; a placeholder avatar shows until then. */
   photo?: string | null;
+  /** True when `photo` is a company logo (shown contained on white, not cropped). */
+  logo?: boolean;
   /** Emoji shown in the placeholder avatar so the trade reads at a glance. */
   icon?: string;
   placeholder: boolean;
@@ -469,6 +471,7 @@ export const partnerCategories: PartnerCategory[] = [
         website: "https://www.mortgageone.com",
         apply: "https://snap.mortgageone.com/app/signup/p/mortgage/MMiller",
         applyLabel: "Apply Now",
+        photo: "/assets/partners/mason-miller.jpg",
         placeholder: false,
       },
       { name: "Your Preferred Lender", ...samplePartner("💰") },
@@ -489,6 +492,7 @@ export const partnerCategories: PartnerCategory[] = [
         mobile: "313-465-9540",
         email: "spterry@acg.aaa.com",
         photo: "/assets/partners/aaa-logo.svg",
+        logo: true,
         placeholder: false,
       },
       { name: "Your Preferred Insurance Agent", ...samplePartner("🛡️") },
@@ -509,6 +513,7 @@ export const partnerCategories: PartnerCategory[] = [
         phone: "586-808-1423",
         email: "ccharow@aapexhomeinspections.com",
         website: "https://www.aapexhomeinspections.com",
+        photo: "/assets/partners/chris-charow.jpg",
         placeholder: false,
       },
       { name: "Your Preferred Home Inspector", ...samplePartner("🔍") },
@@ -528,6 +533,8 @@ export const partnerCategories: PartnerCategory[] = [
           "Full-service title and settlement we count on ... Devon handles residential and commercial closings smoothly, start to finish.",
         phone: "248-273-4300",
         website: "https://www.devontitle.com",
+        photo: "/assets/partners/devon-title.png",
+        logo: true,
         priority: 1,
         placeholder: false,
       },
@@ -545,8 +552,19 @@ export const partnerCategories: PartnerCategory[] = [
         reviewSource: "Google",
         placeholder: false,
       },
-      { name: "Your Preferred Title Company", ...samplePartner("📝") },
-      { name: "Your Preferred Title Company", ...samplePartner("📝") },
+      {
+        name: "Reputation First Title Agency",
+        detail: "Plymouth, MI",
+        credential: "Title, Escrow & Closing · Residential & commercial",
+        whyTrust:
+          "Experienced title pros who close with care ... Reputation First keeps our residential and commercial deals clean and on time.",
+        phone: "734-432-0100",
+        website: "https://www.rftitle.com",
+        rating: 4.8,
+        reviewCount: 17,
+        reviewSource: "Facebook",
+        placeholder: false,
+      },
     ],
   },
   {
@@ -563,6 +581,8 @@ export const partnerCategories: PartnerCategory[] = [
         phone: "248-465-9089",
         email: "info@mechanicalheating.com",
         website: "https://www.mechanicalheating.com",
+        photo: "/assets/partners/mechanical-hvac.png",
+        logo: true,
         rating: 4.9,
         reviewCount: 204,
         reviewSource: "Facebook",

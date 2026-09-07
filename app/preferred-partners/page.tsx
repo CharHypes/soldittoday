@@ -154,7 +154,11 @@ export default function PreferredPartnersPage() {
                       <img
                         src={partner.photo}
                         alt={partner.name}
-                        className="h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top"
+                        className={
+                          partner.logo
+                            ? "h-20 w-20 rounded-full border border-auroraMauve/40 bg-white object-contain p-2"
+                            : "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top"
+                        }
                       />
                     ) : (
                       <div className="grid h-14 w-14 place-items-center rounded-full border border-auroraMauve/40 bg-wine/30 text-auroraMauve">
