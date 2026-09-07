@@ -233,6 +233,12 @@ export default function PreferredPartnersPage() {
                         Placeholder
                       </span>
                     )}
+
+                    {partner.resource && !partner.placeholder && (
+                      <span className="mt-3 inline-flex rounded-full border border-auroraMauve/40 bg-wine/20 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-auroraMauve">
+                        Resource
+                      </span>
+                    )}
                   </div>
                   );
                 })}

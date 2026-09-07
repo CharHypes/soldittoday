@@ -409,6 +409,8 @@ export type Partner = {
   reviewSource?: string;
   /** Manual pin: higher sorts first, overriding the review-based order. */
   priority?: number;
+  /** A recommended tool/resource (not a personal partner) ... shows a "Resource" tag. */
+  resource?: boolean;
   /** Direct application / booking link, shown as a highlighted button. */
   apply?: string;
   applyLabel?: string;
@@ -620,6 +622,8 @@ export const partnerCategories: PartnerCategory[] = [
           "They show up and get it done ... College HUNKS handles moves, junk, and donation pickups so our clients can focus on the next chapter.",
         phone: "734-361-2427",
         website: "https://www.collegehunkshaulingjunk.com/detroit-west/",
+        photo: "/assets/partners/college-hunks.svg",
+        logo: true,
         placeholder: false,
       },
       {
@@ -630,12 +634,25 @@ export const partnerCategories: PartnerCategory[] = [
           "Fast, upfront, and fairly priced ... Haul Yes clears out anything from a single item to a full cleanout, with no surprises.",
         phone: "947-300-4285",
         website: "https://www.callhaulyes.com",
+        photo: "/assets/partners/haul-yes.png",
+        logo: true,
         rating: 5.0,
         reviewCount: 7,
         reviewSource: "Google",
         placeholder: false,
       },
-      { name: "Your Preferred Moving Help", ...samplePartner("📦") },
+      {
+        name: "Moving Help",
+        detail: "MovingHelp.com",
+        credential: "Moving-labor marketplace · Load, unload & more",
+        whyTrust:
+          "A great resource we point clients to ... compare and book vetted local moving-labor crews, read reviews, and get help loading or unloading.",
+        website: "https://www.movinghelp.com",
+        photo: "/assets/partners/moving-help.png",
+        logo: true,
+        resource: true,
+        placeholder: false,
+      },
     ],
   },
   {
