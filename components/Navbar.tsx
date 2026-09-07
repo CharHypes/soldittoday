@@ -39,7 +39,7 @@ export default function Navbar() {
           <img
             src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
             alt="SOLD IT TODAY"
-            className="h-[38px] w-auto md:h-[43px]"
+            className="h-[46px] w-auto -translate-y-[3px] md:h-[54px]"
           />
         </a>
 
