@@ -476,7 +476,19 @@ export const partnerCategories: PartnerCategory[] = [
         photo: "/assets/partners/mason-miller.jpg",
         placeholder: false,
       },
-      { name: "Your Preferred Lender", ...samplePartner("💰") },
+      {
+        name: "Amanda Webb",
+        detail: "Ross Mortgage · Brighton, MI",
+        credential: "Mortgage Lender · Serving Livingston County & beyond",
+        whyTrust:
+          "Five-star service our clients rave about ... Amanda makes financing clear and personal, from the first call all the way to closing.",
+        phone: "734-377-0740",
+        website: "https://www.rossmortgage.com/brighton-michigan/",
+        rating: 5.0,
+        reviewCount: 4,
+        reviewSource: "Google",
+        placeholder: false,
+      },
     ],
   },
   {
