@@ -435,8 +435,7 @@ export type PartnerCategory = {
 // page live (remove noindex + re-add the homepage teaser). Keep full public
 // company names; never publish a partner she hasn't confirmed.
 const samplePartner = (icon: string): Omit<Partner, "name"> => ({
-  detail: "Company name added when live",
-  whyTrust: "A short note on why we trust them goes right here.",
+  detail: "Coming soon",
   icon,
   placeholder: true,
 });
@@ -672,6 +671,16 @@ export const partnerCategories: PartnerCategory[] = [
       },
       { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
       { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
+    ],
+  },
+  {
+    id: "cleaning",
+    title: "Cleaning",
+    blurb: "Cleaning pros for move-in and move-out details, listing prep, and deep cleans.",
+    partners: [
+      { name: "Your Preferred Cleaner", ...samplePartner("🧽") },
+      { name: "Your Preferred Cleaning Company", ...samplePartner("🧽") },
+      { name: "Your Preferred Cleaner", ...samplePartner("🧽") },
     ],
   },
   {

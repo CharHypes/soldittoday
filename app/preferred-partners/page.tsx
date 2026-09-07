@@ -64,6 +64,13 @@ const ICONS: Record<string, ReactNode> = {
       <circle cx="8.5" cy="8.5" r="1.2" />
     </>
   ),
+  cleaning: (
+    <>
+      <path d="M9 3l3 1 1 5H8l1-5z" />
+      <path d="M8 9h5v4a2.5 2.5 0 0 1-5 0z" />
+      <path d="M11 15v6M9 18h4" />
+    </>
+  ),
 };
 
 function CategoryIcon({ id, className = "h-6 w-6" }: { id: string; className?: string }) {
@@ -98,8 +105,8 @@ export default function PreferredPartnersPage() {
         <div className="container-lux relative z-10 space-y-14">
           {/* Preview notice ... remove when this goes live */}
           <div className="rounded-xl2 border border-auroraMauve/30 bg-wine/20 p-4 text-center text-sm text-pearl">
-            🔒 <span className="font-semibold">Private preview</span> ... this page isn&rsquo;t public yet. Everything below is a
-            placeholder so you can see the layout. Send me your real partners and I&rsquo;ll fill it in, then we go live.
+            🔒 <span className="font-semibold">Private preview</span> ... this page isn&rsquo;t public yet. Real partners are filling
+            in; anything marked &ldquo;Coming Soon&rdquo; is a slot we&rsquo;ll add as you send them. Say the word and we go live.
           </div>
 
           {/* Elegant category index ... one trusted network, jump to any trade */}
@@ -230,7 +237,7 @@ export default function PreferredPartnersPage() {
 
                     {partner.placeholder && (
                       <span className="mt-3 inline-flex rounded-full border border-dusty/25 bg-plum/50 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-dusty">
-                        Placeholder
+                        Coming Soon
                       </span>
                     )}
 
