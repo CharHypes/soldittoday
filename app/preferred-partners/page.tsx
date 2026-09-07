@@ -205,7 +205,7 @@ export default function PreferredPartnersPage() {
                       <p className="mt-2.5 text-sm leading-relaxed text-dusty/90">&ldquo;{partner.whyTrust}&rdquo;</p>
                     )}
 
-                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                    <div className="mt-auto flex flex-wrap items-center justify-center gap-2 pt-5">
                       {partner.placeholder ? (
                         <>
                           <span className={`${chip} ${chipDead}`}>Call</span>
