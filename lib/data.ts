@@ -650,6 +650,7 @@ export const partnerCategories: PartnerCategory[] = [
         whyTrust:
           "Honest, organized, and respectful of the moment ... Renee runs estate sales that treat every home and family with care.",
         phone: "248-895-1694",
+        email: "radadash@gmail.com",
         placeholder: false,
       },
       { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
