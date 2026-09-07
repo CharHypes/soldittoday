@@ -488,7 +488,7 @@ export const partnerCategories: PartnerCategory[] = [
         mobile: "734-377-0740",
         email: "Awebb@cfmtg.com",
         website: "https://cfmtg.com/awebb/",
-        apply: "https://portal.myhometrac.com/borrower/signup/awebb@cfmtg.com",
+        apply: "https://portal.myhometrac.com/homehub/signup/awebb@cfmtg.com",
         applyLabel: "Apply Now",
         rating: 5.0,
         reviewCount: 4,
