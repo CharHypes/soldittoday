@@ -20,7 +20,7 @@ export default function HeroSearch() {
   return (
     <form
       onSubmit={submit}
-      className="aurora-ring flex w-full max-w-xl items-center gap-2 rounded-xl2 border border-auroraMauve/30 bg-plum/70 p-2 shadow-aurora backdrop-blur-xl"
+      className="hero-search aurora-ring flex w-full max-w-xl items-center gap-2 rounded-xl2 border border-auroraMauve/30 bg-plum/70 p-2 shadow-aurora backdrop-blur-xl"
     >
       <div className="relative flex-1">
         <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-dusty">

@@ -47,13 +47,9 @@ export default function ResultsMap({ listings }: { listings: Listing[] }) {
     [pts]
   );
 
-  // Theme-aware Carto basemap (clean + luxe): light in light mode, dark in dark.
-  const isDark =
-    typeof document !== "undefined" &&
-    document.documentElement.getAttribute("data-theme") === "dark";
-  const tileUrl = isDark
-    ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-    : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+  // Keyless OpenStreetMap tiles (no API key, no watermark). A styled/dark basemap
+  // would need a provider key (MapTiler/Stadia) ... swap the URL in when we have one.
+  const tileUrl = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 
   const center: [number, number] = positions[0] ?? [42.33, -83.05]; // Metro Detroit
 
@@ -67,7 +63,7 @@ export default function ResultsMap({ listings }: { listings: Listing[] }) {
     >
       <TileLayer
         url={tileUrl}
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
       />
       {pts.map((l) => (
         <Marker key={l.id} position={[l.lat as number, l.lng as number]} icon={pinIcon(l)}>

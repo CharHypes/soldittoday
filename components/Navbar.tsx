@@ -46,7 +46,7 @@ export default function Navbar() {
         {/* Desktop links ... full nav only at lg+ (7 items + CTA need the room);
             tablets and below use the hamburger menu. Tighter gap at lg so the
             CTA doesn't wrap; roomier spacing returns at xl. */}
-        <ul className="hidden items-center gap-6 lg:flex xl:gap-9">
+        <ul className="hidden items-center gap-7 lg:flex xl:gap-10">
           {navLinks.map((link) => (
             <li key={link.href} className="group relative">
               <a
