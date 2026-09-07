@@ -643,7 +643,15 @@ export const partnerCategories: PartnerCategory[] = [
     title: "Estate Sales",
     blurb: "Estate sale professionals to help downsize, settle an estate, or clear a home with care.",
     partners: [
-      { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
+      {
+        name: "Honest Estate Sales",
+        detail: "Renee Dash-Van Horn · Milford, MI",
+        credential: "Estate Sales & Liquidation · Serving Southeast Michigan",
+        whyTrust:
+          "Honest, organized, and respectful of the moment ... Renee runs estate sales that treat every home and family with care.",
+        phone: "248-895-1694",
+        placeholder: false,
+      },
       { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
       { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
     ],
