@@ -58,6 +58,12 @@ const ICONS: Record<string, ReactNode> = {
       <path d="M4 20c5-5 9-8 13-9" />
     </>
   ),
+  "estate-sales": (
+    <>
+      <path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0l-6.2-6.2a2 2 0 0 1-.6-1.4V5a2 2 0 0 1 2-2h7.6a2 2 0 0 1 1.4.6l5.8 5.8a2 2 0 0 1 0 2.8z" />
+      <circle cx="8.5" cy="8.5" r="1.2" />
+    </>
+  ),
 };
 
 function CategoryIcon({ id, className = "h-6 w-6" }: { id: string; className?: string }) {

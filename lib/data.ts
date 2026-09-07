@@ -609,12 +609,43 @@ export const partnerCategories: PartnerCategory[] = [
   },
   {
     id: "movers",
-    title: "Movers & Moving Help",
-    blurb: "Full-service movers and moving-help crews to make moving day go smoothly.",
+    title: "Moving & Junk Removal",
+    blurb: "Movers, moving-help crews, and junk-removal pros to make moving day go smoothly.",
     partners: [
-      { name: "Your Preferred Movers", ...samplePartner("🚚") },
-      { name: "Your Preferred Movers", ...samplePartner("🚚") },
+      {
+        name: "College HUNKS Hauling Junk & Moving",
+        detail: "Detroit-West",
+        credential: "Moving · Junk Removal · Donation Pickups",
+        whyTrust:
+          "They show up and get it done ... College HUNKS handles moves, junk, and donation pickups so our clients can focus on the next chapter.",
+        phone: "734-361-2427",
+        website: "https://www.collegehunkshaulingjunk.com/detroit-west/",
+        placeholder: false,
+      },
+      {
+        name: "Haul Yes",
+        detail: "Southeast Michigan",
+        credential: "Junk Removal · Flat-rate, same/next-day · Estate cleanouts",
+        whyTrust:
+          "Fast, upfront, and fairly priced ... Haul Yes clears out anything from a single item to a full cleanout, with no surprises.",
+        phone: "947-300-4285",
+        website: "https://www.callhaulyes.com",
+        rating: 5.0,
+        reviewCount: 7,
+        reviewSource: "Google",
+        placeholder: false,
+      },
       { name: "Your Preferred Moving Help", ...samplePartner("📦") },
+    ],
+  },
+  {
+    id: "estate-sales",
+    title: "Estate Sales",
+    blurb: "Estate sale professionals to help downsize, settle an estate, or clear a home with care.",
+    partners: [
+      { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
+      { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
+      { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
     ],
   },
   {
