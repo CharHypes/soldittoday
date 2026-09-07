@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ComplianceFooter from "@/components/search/ComplianceFooter";
 import PhotoGallery from "@/components/search/PhotoGallery";
+import FavoriteButton from "@/components/search/FavoriteButton";
 import { getListing, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
 import { amenitiesForPoints, type AmenityKey } from "@/lib/amenities";
 import { contact } from "@/lib/data";
@@ -117,11 +118,14 @@ export default async function ListingPage({ params }: { params: { id: string } }
           {/* Summary + CTA */}
           <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_320px]">
             <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full bg-wine/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-pearl">
-                  {listing.status}
-                </span>
-                {updated && <span className="text-xs text-dusty">Updated {updated}</span>}
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="rounded-full bg-wine/40 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-pearl">
+                    {listing.status}
+                  </span>
+                  {updated && <span className="text-xs text-dusty">Updated {updated}</span>}
+                </div>
+                <FavoriteButton listingId={listing.id} />
               </div>
               <p className="mt-3 text-3xl font-semibold text-pearl md:text-4xl">{money(listing.price)}</p>
               <p className="mt-1 text-lg text-pearl/90">{addr}</p>
