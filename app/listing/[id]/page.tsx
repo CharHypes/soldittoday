@@ -6,7 +6,8 @@ import ComplianceFooter from "@/components/search/ComplianceFooter";
 import PhotoGallery from "@/components/search/PhotoGallery";
 import FavoriteButton from "@/components/search/FavoriteButton";
 import ShareButton from "@/components/search/ShareButton";
-import { getListing, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
+import { getListing, getSimilarListings, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
+import ListingCard from "@/components/search/ListingCard";
 import { amenitiesForPoints, type AmenityKey } from "@/lib/amenities";
 import { contact } from "@/lib/data";
 
@@ -101,6 +102,12 @@ export default async function ListingPage({ params }: { params: { id: string } }
       ? (await amenitiesForPoints([{ id: listing.id, lat: listing.lat, lng: listing.lng }]))[listing.id] ?? {}
       : {};
   const nearbyKeys = (["hospital", "school", "grocery"] as AmenityKey[]).filter((k) => nearby[k]);
+
+  // "Similar homes" ... nearby comparable active listings (excludes this one).
+  const similar = await getSimilarListings(
+    { id: listing.id, city: listing.city, price: listing.price },
+    6
+  );
 
   return (
     <>
@@ -272,6 +279,25 @@ export default async function ListingPage({ params }: { params: { id: string } }
               </a>
             </aside>
           </div>
+
+          {similar.length > 0 && (
+            <section className="mt-14 border-t border-dusty/12 pt-10">
+              <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">
+                Similar homes you may like
+              </h2>
+              <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {similar.map((l) => (
+                  <ListingCard key={l.id} listing={l} />
+                ))}
+              </div>
+              <div className="mt-8">
+                <Link href="/search" className="btn-outline group">
+                  See more homes
+                  <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">&rarr;</span>
+                </Link>
+              </div>
+            </section>
+          )}
 
           <ComplianceFooter lastUpdated={updated} />
         </div>

@@ -359,6 +359,32 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
 }
 
 /**
+ * "Similar homes / You may also like" for the listing detail page. Active
+ * listings in the same city within a price band, excluding the current home.
+ * Widens to any price in the city if the band is too thin. Photos first.
+ */
+export async function getSimilarListings(
+  current: { id: string; city: string; price: number },
+  limit = 6
+): Promise<Listing[]> {
+  if (!IDX_ENABLED || !current.city) return [];
+  const band = 0.3;
+  const minPrice = current.price ? String(Math.round(current.price * (1 - band))) : undefined;
+  const maxPrice = current.price ? String(Math.round(current.price * (1 + band))) : undefined;
+  try {
+    const res = await searchListings({ location: current.city, minPrice, maxPrice });
+    let pool = res.listings.filter((l) => l.id !== current.id);
+    if (pool.length < 3) {
+      const wide = await searchListings({ location: current.city });
+      pool = wide.listings.filter((l) => l.id !== current.id);
+    }
+    return preferPhotos(pool).slice(0, limit);
+  } catch {
+    return [];
+  }
+}
+
+/**
  * A short set of active listings for the homepage "Featured Listings" band,
  * scoped to the given cities (Charlotte's Downriver focus). Prefers homes that
  * have a photo so the band always looks full. Empty when the feed is off ...
