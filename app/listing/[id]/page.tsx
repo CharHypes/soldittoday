@@ -86,16 +86,6 @@ export default async function ListingPage({ params }: { params: { id: string } }
   const attribution =
     `Listing courtesy of ${listing.listingBrokerName}` + (brokerContact ? ` · ${brokerContact}` : "");
 
-  const details: [string, string][] = [];
-  if (listing.beds != null) details.push(["Bedrooms", String(listing.beds)]);
-  if (listing.baths != null) details.push(["Bathrooms", String(listing.baths)]);
-  if (listing.sqft != null) details.push(["Square feet", listing.sqft.toLocaleString("en-US")]);
-  if (listing.yearBuilt != null) details.push(["Year built", String(listing.yearBuilt)]);
-  if (listing.lotSize) details.push(["Lot size", listing.lotSize]);
-  if (listing.subType) details.push(["Property type", listing.subType]);
-  if (listing.county) details.push(["County", listing.county]);
-  if (listing.mlsNumber) details.push(["MLS #", listing.mlsNumber]);
-
   // Nearby amenities ... computed server-side from the bundled MI dataset (local,
   // instant). Includes the actual place name for the detail page.
   const nearby =
@@ -199,17 +189,45 @@ export default async function ListingPage({ params }: { params: { id: string } }
                 </section>
               )}
 
-              {details.length > 0 && (
+              {listing.sections.length > 0 && (
                 <section className="mt-8">
-                  <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">Details</h2>
-                  <dl className="mt-3 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
-                    {details.map(([k, v]) => (
-                      <div key={k} className="border-b border-dusty/10 pb-2">
-                        <dt className="text-xs text-dusty">{k}</dt>
-                        <dd className="text-pearl/90">{v}</dd>
-                      </div>
+                  <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">Property details</h2>
+                  <div className="mt-3 overflow-hidden rounded-xl2 border border-dusty/15">
+                    {listing.sections.map((sec, i) => (
+                      <details
+                        key={sec.title}
+                        open={i === 0}
+                        className="group border-t border-dusty/12 bg-plum/40 first:border-t-0"
+                      >
+                        <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 marker:content-none [&::-webkit-details-marker]:hidden">
+                          <span className="text-sm font-semibold text-pearl">{sec.title}</span>
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="h-4 w-4 text-dusty transition-transform duration-300 group-open:rotate-180"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden
+                          >
+                            <path d="M6 9l6 6 6-6" />
+                          </svg>
+                        </summary>
+                        <dl className="grid gap-x-8 px-5 pb-5 sm:grid-cols-2">
+                          {sec.rows.map((r) => (
+                            <div
+                              key={r.label}
+                              className="flex justify-between gap-4 border-b border-dusty/10 py-2"
+                            >
+                              <dt className="text-sm text-dusty">{r.label}</dt>
+                              <dd className="text-right text-sm text-pearl/90">{r.value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      </details>
                     ))}
-                  </dl>
+                  </div>
                 </section>
               )}
 

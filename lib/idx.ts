@@ -2,6 +2,7 @@
 /*  IDX (Broker Reciprocity) data layer for SOLD IT TODAY                       */
 /* -------------------------------------------------------------------------- */
 import { deriveHighlights } from "./listingHighlights";
+import { buildDetailSections, type DetailSection } from "./listingDetails";
 /**
  * How this works
  * --------------
@@ -94,6 +95,8 @@ export type ListingDetail = Listing & {
   /** "At a Glance" ... fact-derived Home Match tags + standout highlights. */
   homeTags: string[];
   standouts: string[];
+  /** Collapsible property-detail sections (only those with real data). */
+  sections: DetailSection[];
 };
 
 export type IdxSearchParams = {
@@ -352,6 +355,7 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
       county: f.CountyOrParish || null,
       homeTags: tags,
       standouts,
+      sections: buildDetailSections(f),
     };
   } catch {
     return null;
