@@ -174,19 +174,61 @@ function mapStatus(mls: string | undefined): ListingStatus {
   return "active";
 }
 
+/**
+ * Parse a location string into structured pieces. Supports plain cities/ZIPs
+ * ("Taylor, 48180, Wyandotte") AND a specific street address ("8879 Indigo,
+ * Ypsilanti, MI"). A part that starts with a house number is treated as a street
+ * address; "MI"/"Michigan" is recognized as the state and ignored for filtering.
+ */
+function parseLocation(loc: string) {
+  const parts = loc.split(",").map((s) => s.trim()).filter(Boolean);
+  const zips: string[] = [];
+  const cities: string[] = [];
+  let streetNumber: string | undefined;
+  let streetName: string | undefined;
+  for (const p of parts) {
+    if (/^\d{5}$/.test(p)) { zips.push(p); continue; }
+    if (/^(mi|mich|michigan)$/i.test(p)) continue; // state ... not a city
+    const m = p.match(/^(\d+)\s+(.+)$/);
+    if (m && !streetNumber) { streetNumber = m[1]; streetName = m[2]; continue; }
+    cities.push(p);
+  }
+  return { zips, cities, streetNumber, streetName };
+}
+
+/** The street-name keyword we match in code (suffix/direction stripped). */
+function streetKey(streetName: string): string {
+  const words = streetName
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(
+      (w) =>
+        w.length >= 3 &&
+        !["north", "south", "east", "west", "northeast", "northwest", "southeast", "southwest"].includes(w)
+    );
+  return words[0] ?? streetName.toLowerCase().split(/\s+/)[0] ?? "";
+}
+
 /** Build a Spark `_filter` expression from the user's search params. */
 function buildFilter(params: IdxSearchParams): string {
   const clauses: string[] = ["MlsStatus Eq 'Active'"];
-  // Location accepts one OR several comma-separated cities/ZIPs ... any match.
   const loc = params.location?.trim();
   if (loc) {
-    const locClauses = loc
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean)
-      .map((p) => (/^\d{5}$/.test(p) ? `PostalCode Eq '${p}'` : `City Eq '${p.replace(/'/g, "''")}'`));
-    if (locClauses.length === 1) clauses.push(locClauses[0]);
-    else if (locClauses.length > 1) clauses.push(`(${locClauses.join(" Or ")})`);
+    const { zips, cities, streetNumber } = parseLocation(loc);
+    if (streetNumber) {
+      // Specific street-address search ... narrow by house number here; the
+      // street name is matched in code afterward (feed street-name filtering is
+      // inconsistent). We intentionally do NOT constrain city to avoid
+      // "Ypsilanti" vs "Ypsilanti Twp" style mismatches.
+      clauses.push(`StreetNumber Eq '${streetNumber.replace(/'/g, "''")}'`);
+    } else {
+      const locClauses = [
+        ...zips.map((z) => `PostalCode Eq '${z}'`),
+        ...cities.map((c) => `City Eq '${c.replace(/'/g, "''")}'`),
+      ];
+      if (locClauses.length === 1) clauses.push(locClauses[0]);
+      else if (locClauses.length > 1) clauses.push(`(${locClauses.join(" Or ")})`);
+    }
   }
   const min = Number(params.minPrice);
   if (Number.isFinite(min) && min > 0) clauses.push(`ListPrice Ge ${Math.round(min)}`);
@@ -290,10 +332,22 @@ export async function searchListings(
     const json = await res.json();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const results: any[] = json?.D?.Results ?? [];
-    const listings = results
+    let listings = results
       .map(mapRecord)
       .filter((l): l is Listing => Boolean(l) && Boolean((l as Listing).mlsNumber));
-    const total = json?.D?.Pagination?.TotalRows ?? listings.length;
+
+    // Street-address search: the feed was narrowed by house number; now keep
+    // only the listing(s) whose address actually contains the street name.
+    const parsed = params.location ? parseLocation(params.location) : null;
+    const addressSearch = Boolean(parsed?.streetNumber && parsed?.streetName);
+    if (addressSearch) {
+      const key = streetKey(parsed!.streetName as string);
+      if (key) listings = listings.filter((l) => l.address.toLowerCase().includes(key));
+    }
+
+    const total = addressSearch
+      ? listings.length
+      : json?.D?.Pagination?.TotalRows ?? listings.length;
 
     return {
       enabled: true,

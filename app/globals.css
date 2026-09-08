@@ -480,9 +480,18 @@
 /* Hero search bar ... in light mode the hero photo is still dark behind it, so a
    translucent (bg-plum/70) bar reads muddy. Make it opaque and light so it pops
    as the primary action. Dark mode keeps its glass look untouched. */
-:root[data-theme="light"] .hero-search {
-  background-color: rgba(250, 246, 247, 0.97) !important;
-  border-color: rgba(138, 74, 99, 0.4) !important;
+/* The hero is an ALWAYS-DARK photo hero (.photo-hero fixes its tones), so its
+   search form stays dark with light text in BOTH themes. A previous light-mode
+   override turned the box light while the text stayed light ... which made typed
+   text invisible in light mode. We keep the form dark; just make the placeholder
+   a soft light grey so it reads on the dark field. */
+.photo-hero .hero-search input {
+  color: #f7ece8;
+  -webkit-text-fill-color: #f7ece8;
+}
+.photo-hero .hero-search input::placeholder {
+  color: rgba(217, 198, 205, 0.55);
+  -webkit-text-fill-color: rgba(217, 198, 205, 0.55);
 }
 
 /* Preferred Partners avatar circle behind transparent headshots/logos.
