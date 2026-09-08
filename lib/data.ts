@@ -6,7 +6,7 @@ export type NavLink = { label: string; href: string; children?: NavLink[] };
 // Primary site navigation. One-page anchors for the homepage sections.
 // "Search Homes" is a primary nav item per Phase 2 direction.
 export const navLinks: NavLink[] = [
-  { label: "Home", href: "#home" },
+  { label: "Home", href: "/" },
   { label: "Search Homes", href: "/search" },
   {
     label: "About",

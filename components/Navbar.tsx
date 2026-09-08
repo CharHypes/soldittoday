@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { navLinks } from "@/lib/data";
@@ -17,6 +17,17 @@ export default function Navbar() {
   const resolve = (href: string) =>
     href.startsWith("#") ? (onHome ? href : `/${href}`) : href;
 
+  // Home: navigate to "/". If already on the homepage, jump to the top
+  // instantly (no reload, no scroll glide) and drop any #hash from the URL.
+  const goTop = (e: MouseEvent) => {
+    setOpen(false);
+    if (onHome) {
+      e.preventDefault();
+      window.scrollTo(0, 0);
+      window.history.replaceState(null, "", "/");
+    }
+  };
+
   // Lock body scroll when the mobile menu is open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -26,15 +37,10 @@ export default function Navbar() {
   }, [open]);
 
   return (
-    <motion.header
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="site-nav fixed inset-x-0 top-0 z-50 border-b border-dusty/10 bg-plum/85 backdrop-blur-xl"
-    >
+    <header className="site-nav fixed inset-x-0 top-0 z-50 border-b border-dusty/10 bg-plum/85 backdrop-blur-xl">
       <nav className="container-lux flex h-[72px] items-center justify-between gap-3 xl:gap-8">
         {/* Brand logo ... SOLD IT TODAY is the primary brand (original rose-gold) */}
-        <a href={resolve("#home")} className="flex shrink-0 items-center" aria-label="SOLD IT TODAY home">
+        <a href="/" onClick={goTop} className="flex shrink-0 items-center" aria-label="SOLD IT TODAY home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
@@ -51,6 +57,7 @@ export default function Navbar() {
             <li key={link.href} className="group relative">
               <a
                 href={resolve(link.href)}
+                onClick={link.href === "/" ? goTop : undefined}
                 className="relative flex items-center gap-1 whitespace-nowrap text-sm font-medium tracking-wide text-dusty transition-colors duration-300 hover:text-pearl"
               >
                 {link.label}
@@ -166,7 +173,7 @@ export default function Navbar() {
                 <li key={link.href}>
                   <a
                     href={resolve(link.href)}
-                    onClick={() => setOpen(false)}
+                    onClick={link.href === "/" ? goTop : () => setOpen(false)}
                     className="block py-3 text-lg font-medium text-pearl/90 transition-colors hover:text-pearl"
                   >
                     {link.label}
@@ -228,6 +235,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 }

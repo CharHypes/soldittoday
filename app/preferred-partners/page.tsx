@@ -225,9 +225,9 @@ export default function PreferredPartnersPage() {
                   .map((partner, i) => (
                     <div
                       key={`${cat.id}-${i}`}
-                      className="aurora-ring flex flex-col items-center rounded-xl2 border border-dusty/12 bg-plum/50 p-5 text-center"
+                      className="group aurora-ring flex flex-col items-center rounded-xl2 border border-dusty/12 bg-plum/50 p-5 text-center"
                     >
-                      {/* Real headshot/logo */}
+                      {/* Real headshot/logo ... thin rose-gold ring (partner-ring); image itself untouched */}
                       {partner.photo ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
@@ -235,14 +235,14 @@ export default function PreferredPartnersPage() {
                           alt={partner.name}
                           className={
                             partner.logo && !partner.logoFill
-                              ? `h-20 w-20 rounded-full border border-auroraMauve/40 object-contain p-2 ${partner.logoDark ? (partner.logoBg ?? "bg-[#2a1f25]") : "partner-avatar-bg"}`
+                              ? `partner-ring h-20 w-20 rounded-full border object-contain p-2 ${partner.logoDark ? (partner.logoBg ?? "bg-[#2a1f25]") : "partner-avatar-bg"}`
                               : partner.logo
-                                ? "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover"
-                                : "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top partner-avatar-bg"
+                                ? "partner-ring h-20 w-20 rounded-full border object-cover"
+                                : "partner-ring h-20 w-20 rounded-full border object-cover object-top partner-avatar-bg"
                           }
                         />
                       ) : (
-                        <div className="grid h-14 w-14 place-items-center rounded-full border border-auroraMauve/40 bg-wine/30 text-auroraMauve">
+                        <div className="partner-ring grid h-14 w-14 place-items-center rounded-full border bg-wine/30 text-auroraMauve">
                           <CategoryIcon id={cat.id} className="h-6 w-6" />
                         </div>
                       )}

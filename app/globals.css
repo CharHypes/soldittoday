@@ -159,7 +159,8 @@
 
 @layer base {
   html {
-    scroll-behavior: smooth;
+    /* Instant anchor jumps (no visible glide) for Home / Contact Us nav. */
+    scroll-behavior: auto;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
@@ -493,4 +494,28 @@
 }
 :root[data-theme="light"] .partner-avatar-bg {
   background-color: #ffffff;
+}
+
+/*
+ * Preferred Partners: a thin, muted rose-gold ring around real partner photos /
+ * logos (uses the brand --gold token). Dark mode gets a very soft glow; light
+ * mode stays flat and clean. The ring strengthens slightly on card hover. The
+ * partner image itself is never altered. NOT used on the recruitment cards.
+ */
+.partner-ring {
+  border-color: rgb(var(--gold) / 0.55);
+  box-shadow: 0 0 0 1px rgb(var(--gold) / 0.28), 0 4px 14px -4px rgb(var(--gold) / 0.32);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.group:hover .partner-ring {
+  border-color: rgb(var(--gold) / 0.8);
+  box-shadow: 0 0 0 1px rgb(var(--gold) / 0.42), 0 5px 18px -4px rgb(var(--gold) / 0.45);
+}
+:root[data-theme="light"] .partner-ring {
+  border-color: rgb(var(--gold) / 0.7);
+  box-shadow: none;
+}
+:root[data-theme="light"] .group:hover .partner-ring {
+  border-color: rgb(var(--gold) / 0.9);
+  box-shadow: 0 0 0 1px rgb(var(--gold) / 0.3);
 }
