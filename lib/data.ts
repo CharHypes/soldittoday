@@ -114,7 +114,7 @@ export type Stat = { value: string; label: string };
 
 // Charlotte was licensed 19 July 2006 ... twenty years as of 19 July 2026.
 export const stats: Stat[] = [
-  { value: "20", label: "Years licensed" },
+  { value: "20+", label: "Years licensed" },
   { value: "350+", label: "Homes sold" },
   { value: "5★", label: "Zillow rated" },
   // "SE MI" read as an abbreviation nobody outside the office knows.
@@ -895,7 +895,7 @@ export type Reason = { title: string; description: string };
 // the team. Headings deliberately avoid repeating the brandValues pillars.
 export const reasons: Reason[] = [
   {
-    title: "20 Years of Experience",
+    title: "20+ Years of Experience",
     description:
       "Two decades guiding Southeast Michigan buyers and sellers through every kind of market.",
   },
@@ -971,7 +971,7 @@ export const testimonials: Testimonial[] = [
 /* -------------------------------------------------------------------------- */
 
 export const charlotteStats: Stat[] = [
-  { value: "20", label: "Years Licensed" },
+  { value: "20+", label: "Years Licensed" },
   { value: "Southeast Michigan", label: "Market Expert" },
   { value: "350+", label: "Homes Sold" },
   { value: "Circle of Excellence", label: "Recipient" },
