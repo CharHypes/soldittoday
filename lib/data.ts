@@ -804,6 +804,11 @@ export const partnerCategories: PartnerCategory[] = [
           "Honest, organized, and respectful of the moment ... Renee runs estate sales that treat every home and family with care.",
         phone: "248-895-1694",
         email: "radadash@gmail.com",
+        // Owner-approved logo ("Logo 2 ... the one to use"); kept as-is on its
+        // cream background and set to fill the avatar circle. Other versions in
+        // Downloads were marked DNU / watermarked ... do not use those.
+        photo: "/assets/partners/honest-estate-sales.png",
+        logoFill: true,
         placeholder: false,
       },
       { name: "Your Preferred Estate Sale Pro", ...samplePartner("🏷️") },
