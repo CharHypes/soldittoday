@@ -92,9 +92,9 @@ export type ListingDetail = Listing & {
   lotSize: string | null;
   subType: string | null;
   county: string | null;
-  /** "At a Glance" ... fact-derived Home Match tags + standout highlights. */
+  /** "At a Glance" tags + curated "Why this home works" benefit lines. */
   homeTags: string[];
-  standouts: string[];
+  whyItWorks: string[];
   /** Collapsible property-detail sections (only those with real data). */
   sections: DetailSection[];
 };
@@ -344,7 +344,7 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
         ? `${lotAcres} acres`
         : null;
 
-    const { tags, standouts } = deriveHighlights(f);
+    const { tags, whyItWorks } = deriveHighlights(f);
 
     return {
       ...base,
@@ -354,7 +354,7 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
       subType: f.PropertySubType || null,
       county: f.CountyOrParish || null,
       homeTags: tags,
-      standouts,
+      whyItWorks,
       sections: buildDetailSections(f),
     };
   } catch {
