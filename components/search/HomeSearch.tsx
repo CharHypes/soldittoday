@@ -13,22 +13,10 @@ import SearchSelect from "./SearchSelect";
 const ease = [0.22, 1, 0.36, 1] as const;
 
 /**
- * HomeSearch ... premium, Zillow/Redfin-style search experience for the homepage.
+ * HomeSearch ... premium, Zillow/Redfin-style search entry point for the homepage.
  *
- * ┌──────────────────────────────────────────────────────────────────────────┐
- * │  IDX INTEGRATION POINT                                                     │
- * │                                                                            │
- * │  This is a FRONTEND PLACEHOLDER. It is NOT connected to MLS/IDX and        │
- * │  intentionally renders no listing data.                                    │
- * │                                                                            │
- * │  When an IDX provider is selected (e.g. iHomefinder, IDX Broker, RealGeeks,│
- * │  Spark/FlexMLS, or a brokerage-provided feed):                            │
- * │    1. Replace `handleSubmit` below with a redirect/query to the IDX search │
- * │       results route, passing the `query` object built here.                │
- * │    2. Or POST `query` to an internal /api/search route that proxies IDX.   │
- * │    3. The `query` shape (location + filters) is already assembled ... map it │
- * │       to the provider's expected params.                                   │
- * └──────────────────────────────────────────────────────────────────────────┘
+ * It does not query the feed itself: it assembles the criteria and routes to
+ * /search, which calls the live MichRIC/Spark IDX feed and renders results.
  */
 export default function HomeSearch() {
   const router = useRouter();
@@ -83,7 +71,7 @@ export default function HomeSearch() {
             transition={{ duration: 0.7, delay: 0.06, ease }}
             className="mt-4 text-balance text-3xl font-semibold tracking-tightest text-pearl sm:text-4xl"
           >
-            Find your place in Southeast Michigan
+            Find your place in Michigan
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -177,7 +165,7 @@ export default function HomeSearch() {
         </motion.form>
 
         <p className="mx-auto mt-4 max-w-5xl px-1 text-center text-xs text-dusty/70">
-          Live MLS listings are coming soon to SOLD IT TODAY.
+          Search live MLS listings across Michigan.
         </p>
       </div>
     </section>

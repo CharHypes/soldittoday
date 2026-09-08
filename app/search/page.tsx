@@ -11,9 +11,9 @@ import { contact, popularAreas } from "@/lib/data";
 /*  SEO ... noindex until the live feed is connected (avoids thin content).     */
 /* -------------------------------------------------------------------------- */
 export const metadata: Metadata = {
-  title: "Search Homes in Southeast Michigan | SOLD IT TODAY",
+  title: "Search Homes in Michigan | SOLD IT TODAY",
   description:
-    "Search homes for sale across Southeast Michigan and Metro Detroit with SOLD IT TODAY. Filter by city, price, beds, baths, and property type.",
+    "Search homes for sale across Michigan with SOLD IT TODAY. Filter by city, price, beds, baths, and property type.",
   alternates: { canonical: "/search" },
   robots: IDX_ENABLED ? undefined : { index: false, follow: true },
 };
@@ -69,8 +69,8 @@ export default async function SearchPage({
   return (
     <PageShell
       eyebrow="Search Homes"
-      title="Find your place in Southeast Michigan"
-      description="Search homes across Metro Detroit and Downriver, then refine by price, beds, baths, and property type."
+      title="Find your place in Michigan"
+      description="Search homes across Michigan, then refine by price, beds, baths, and property type."
     >
       <section className="relative bg-plum py-14 md:py-20">
         <div className="container-lux">

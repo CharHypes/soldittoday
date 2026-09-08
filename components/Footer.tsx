@@ -137,11 +137,9 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Legal / disclaimer area ... placeholder copy until reviewed */}
+        {/* Legal / disclaimer area */}
         <div className="space-y-4 border-t border-dusty/10 pt-8 text-xs leading-relaxed text-dusty/70">
           <p>
-            {/* DISCLAIMER PLACEHOLDER ... replace with brokerage-approved legal text,
-                Equal Housing Opportunity, and license disclosures before launch. */}
             SOLD IT TODAY is a real estate team at {contact.brokerage},{" "}
             {contact.officeStreet}, {contact.officeCityStateZip}. Equal Housing
             Opportunity. All information is deemed reliable but not guaranteed.

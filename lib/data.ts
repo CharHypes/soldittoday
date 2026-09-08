@@ -7,7 +7,7 @@ export type NavLink = { label: string; href: string; children?: NavLink[] };
 // "Search Homes" is a primary nav item per Phase 2 direction.
 export const navLinks: NavLink[] = [
   { label: "Home", href: "#home" },
-  { label: "Search Homes", href: "#search" },
+  { label: "Search Homes", href: "/search" },
   {
     label: "About",
     href: "#about",
