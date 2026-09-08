@@ -57,6 +57,7 @@ export const futurePages: NavLink[] = [
   { label: "Down Payment Assistance", href: "/dpa" },
   { label: "Preferred Partners", href: "/preferred-partners" },
   { label: "Saved Homes", href: "/saved" },
+  { label: "Saved Searches", href: "/saved-searches" },
 ];
 
 /* -------------------------------------------------------------------------- */

@@ -199,6 +199,15 @@ export default function Navbar() {
               </li>
               <li>
                 <a
+                  href="/saved-searches"
+                  onClick={() => setOpen(false)}
+                  className="block py-3 text-lg font-medium text-pearl/90 transition-colors hover:text-pearl"
+                >
+                  Saved Searches
+                </a>
+              </li>
+              <li>
+                <a
                   href="/login"
                   onClick={() => setOpen(false)}
                   className="block py-3 text-lg font-medium text-pearl/90 transition-colors hover:text-pearl"

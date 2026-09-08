@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import PageShell from "@/components/PageShell";
 import SearchBar from "@/components/search/SearchBar";
+import SaveSearchButton from "@/components/search/SaveSearchButton";
 import ResultsView from "@/components/search/ResultsView";
 import ComplianceFooter from "@/components/search/ComplianceFooter";
 import { searchListings, formatUpdated, IDX_ENABLED, type IdxSearchParams } from "@/lib/idx";
@@ -106,10 +107,13 @@ export default async function SearchPage({
               </div>
             ) : result.listings.length > 0 ? (
               <>
-                <p className="mb-6 text-sm text-dusty">
-                  {result.total.toLocaleString("en-US")}{" "}
-                  {result.total === 1 ? "home" : "homes"} found
-                </p>
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm text-dusty">
+                    {result.total.toLocaleString("en-US")}{" "}
+                    {result.total === 1 ? "home" : "homes"} found
+                  </p>
+                  <SaveSearchButton />
+                </div>
                 <ResultsView listings={result.listings} />
               </>
             ) : (
