@@ -366,6 +366,35 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
 }
 
 /**
+ * Fetch summaries for a set of listing ids (the Saved Homes page). Fetches each
+ * by id and drops any that are gone/inactive, so removed listings vanish
+ * gracefully rather than breaking the page.
+ */
+export async function getListingsByIds(ids: string[]): Promise<Listing[]> {
+  if (!IDX_ENABLED || !ids.length) return [];
+  const token = process.env.IDX_FEED_TOKEN;
+  const results = await Promise.all(
+    ids.slice(0, 50).map(async (id) => {
+      try {
+        const res = await fetch(
+          `${SPARK_BASE}/listings/${encodeURIComponent(id)}?_expand=Photos`,
+          { headers: { Authorization: `Bearer ${token}`, Accept: "application/json" }, next: { revalidate: 900 } }
+        );
+        if (!res.ok) return null;
+        const json = await res.json();
+        const rec = json?.D?.Results?.[0];
+        return rec ? mapRecord(rec) : null;
+      } catch {
+        return null;
+      }
+    })
+  );
+  // Preserve the caller's order (most-recently-saved first is set client-side).
+  const byId = new Map(results.filter((l): l is Listing => Boolean(l) && Boolean(l.mlsNumber)).map((l) => [l.id, l]));
+  return ids.map((id) => byId.get(id)).filter((l): l is Listing => Boolean(l));
+}
+
+/**
  * "Similar homes / You may also like" for the listing detail page. Active
  * listings in the same city within a price band, excluding the current home.
  * Widens to any price in the city if the band is too thin. Photos first.
