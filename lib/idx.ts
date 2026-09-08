@@ -1,6 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*  IDX (Broker Reciprocity) data layer for SOLD IT TODAY                       */
 /* -------------------------------------------------------------------------- */
+import { deriveHighlights } from "./listingHighlights";
 /**
  * How this works
  * --------------
@@ -90,6 +91,9 @@ export type ListingDetail = Listing & {
   lotSize: string | null;
   subType: string | null;
   county: string | null;
+  /** "At a Glance" ... fact-derived Home Match tags + standout highlights. */
+  homeTags: string[];
+  standouts: string[];
 };
 
 export type IdxSearchParams = {
@@ -335,6 +339,8 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
         ? `${num(f.LotSizeAcres)} acres`
         : null;
 
+    const { tags, standouts } = deriveHighlights(f);
+
     return {
       ...base,
       photos: photos.length ? photos : base.photoUrl ? [base.photoUrl] : [],
@@ -342,6 +348,8 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
       lotSize: lot,
       subType: f.PropertySubType || null,
       county: f.CountyOrParish || null,
+      homeTags: tags,
+      standouts,
     };
   } catch {
     return null;

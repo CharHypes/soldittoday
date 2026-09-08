@@ -145,6 +145,45 @@ export default async function ListingPage({ params }: { params: { id: string } }
                 <ShareButton title={`${addr} ... ${money(listing.price)}`} />
               </div>
 
+              {(listing.homeTags.length > 0 || listing.standouts.length > 0) && (
+                <section className="mt-8 rounded-xl2 border border-auroraMauve/20 bg-plum/40 p-5 md:p-6">
+                  <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">At a glance</h2>
+                  {listing.homeTags.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {listing.homeTags.map((t) => (
+                        <span
+                          key={t}
+                          className="inline-flex items-center rounded-full border border-auroraMauve/30 bg-wine/25 px-3 py-1.5 text-xs font-medium text-pearl"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {listing.standouts.length > 0 && (
+                    <ul className="mt-4 grid gap-2 sm:grid-cols-2">
+                      {listing.standouts.map((sOut) => (
+                        <li key={sOut} className="flex items-start gap-2 text-sm text-pearl/90">
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="mt-0.5 h-4 w-4 shrink-0 text-gold"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            aria-hidden
+                          >
+                            <path d="M5 12l4 4 10-11" />
+                          </svg>
+                          {sOut}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              )}
+
               {listing.description && (
                 <section className="mt-8">
                   <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">About this home</h2>
