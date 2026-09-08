@@ -5,13 +5,21 @@ import { partnerCategories } from "@/lib/data";
 
 /**
  * Public page ... SOLD IT TODAY's vetted local partners across Michigan.
- * Fully-empty categories (all "Coming Soon") are hidden until they have at least
- * one real partner, so the public page always looks complete.
+ *
+ * Empty "Coming Soon" placeholder cards are hidden ... only real partners render,
+ * plus one elegant recruitment card per category. Fully-empty categories (no real
+ * partner yet) are hidden entirely, so the page always looks complete.
+ *
+ * MARKET-READY: partners carry city / county / region / state / serviceArea in the
+ * data model (see lib/data.ts partnerMarkets + Partner). Phase 1 is Michigan
+ * statewide. A future "Choose your market" filter would sit above the category
+ * index and filter each category's partners by `region` ... no rebuild needed,
+ * and no filter UI is added yet (by design).
  */
 export const metadata: Metadata = {
-  title: "Preferred Partners | SOLD IT TODAY ... Southeast Michigan Real Estate",
+  title: "Preferred Partners | SOLD IT TODAY ... Michigan Real Estate",
   description:
-    "SOLD IT TODAY's preferred partners: trusted lenders, insurance agents, inspectors, title, HVAC, and home-service pros across Southeast Michigan and Metro Detroit.",
+    "SOLD IT TODAY's preferred partners: trusted lenders, insurance agents, inspectors, title, HVAC, and home-service pros across Michigan.",
   alternates: { canonical: "/preferred-partners" },
 };
 
@@ -111,11 +119,55 @@ function CategoryIcon({ id, className = "h-6 w-6" }: { id: string; className?: s
   );
 }
 
+/**
+ * One recruitment card per category ... visually consistent with the partner
+ * cards but clearly NOT a partner listing (dashed border, no photo/rating/contact
+ * chips). Not a paid ad ... an open invitation to be considered.
+ */
+function RecruitCard() {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-xl2 border border-dashed border-auroraMauve/40 bg-plum/30 p-6 text-center">
+      <div className="grid h-14 w-14 place-items-center rounded-full border border-dashed border-auroraMauve/50 text-auroraMauve">
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={1.6}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="h-6 w-6"
+          aria-hidden
+        >
+          <circle cx="9" cy="8" r="3.2" />
+          <path d="M3.5 20c0-3.1 2.5-5.5 5.5-5.5s5.5 2.4 5.5 5.5" />
+          <path d="M18 7.5v5M15.5 10h5" />
+        </svg>
+      </div>
+      <div className="mt-3 text-base font-semibold text-pearl">Want to be considered?</div>
+      <p className="mt-2 max-w-xs text-sm leading-relaxed text-dusty/90">
+        We&rsquo;re always looking to connect our clients with dependable local
+        professionals.
+      </p>
+      <a href="/#contact" className="btn-outline group mt-5 text-sm">
+        Apply to Become a Preferred Partner
+        <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
+          &rarr;
+        </span>
+      </a>
+    </div>
+  );
+}
+
 export default function PreferredPartnersPage() {
-  // Only show categories that have at least one real partner (hide all-"Coming Soon").
+  // Only show categories that have at least one real partner (hide all-placeholder).
   const visibleCategories = partnerCategories.filter((cat) =>
     cat.partners.some((p) => !p.placeholder)
   );
+
+  const chip = "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors";
+  const chipLive =
+    "border-auroraMauve/40 text-pearl hover:border-auroraMauve hover:bg-auroraMauve/10";
+
   return (
     <PageShell
       eyebrow="Preferred Partners"
@@ -163,116 +215,111 @@ export default function PreferredPartnersPage() {
 
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {[...cat.partners]
+                  .filter((p) => !p.placeholder)
                   .sort((a, b) => {
-                    // Real partners first, then manual pins, then highest-rated (fair ordering).
-                    if (a.placeholder !== b.placeholder) return a.placeholder ? 1 : -1;
+                    // Featured pins first, then manual priority, then highest-rated.
+                    if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
                     if ((b.priority ?? 0) !== (a.priority ?? 0)) return (b.priority ?? 0) - (a.priority ?? 0);
                     return (b.rating ?? -1) - (a.rating ?? -1);
                   })
-                  .map((partner, i) => {
-                  const chip =
-                    "rounded-full border px-3 py-1.5 text-xs font-medium transition-colors";
-                  const chipLive =
-                    "border-auroraMauve/40 text-pearl hover:border-auroraMauve hover:bg-auroraMauve/10";
-                  const chipDead = "border-dusty/25 text-dusty";
-                  return (
-                  <div
-                    key={`${cat.id}-${i}`}
-                    className="aurora-ring flex flex-col items-center rounded-xl2 border border-dusty/12 bg-plum/50 p-5 text-center"
-                  >
-                    {/* Real headshot/logo when live; category icon for placeholders */}
-                    {partner.photo ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={partner.photo}
-                        alt={partner.name}
-                        className={
-                          partner.logo && !partner.logoFill
-                            ? `h-20 w-20 rounded-full border border-auroraMauve/40 object-contain p-2 ${partner.logoDark ? (partner.logoBg ?? "bg-[#2a1f25]") : "partner-avatar-bg"}`
-                            : partner.logo
-                              ? "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover"
-                              : "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top partner-avatar-bg"
-                        }
-                      />
-                    ) : (
-                      <div className="grid h-14 w-14 place-items-center rounded-full border border-auroraMauve/40 bg-wine/30 text-auroraMauve">
-                        <CategoryIcon id={cat.id} className="h-6 w-6" />
-                      </div>
-                    )}
-
-                    <div className="mt-3 text-base font-semibold text-pearl">{partner.name}</div>
-                    <div className="mt-0.5 text-[11px] uppercase tracking-wide text-dusty">{partner.detail}</div>
-                    {partner.credential && (
-                      <div className="mt-1 text-[11px] leading-snug text-dusty/80">{partner.credential}</div>
-                    )}
-
-                    {partner.rating != null && (
-                      <div className="mt-1.5 flex items-center gap-1 text-xs text-dusty">
-                        <span className="text-gold">★</span>
-                        <span className="font-semibold text-pearl">{partner.rating.toFixed(1)}</span>
-                        {partner.reviewCount != null && <span>· {partner.reviewCount} reviews</span>}
-                        {partner.reviewSource && <span>· {partner.reviewSource}</span>}
-                      </div>
-                    )}
-
-                    {partner.whyTrust && (
-                      <p className="mt-2.5 text-sm leading-relaxed text-dusty/90">&ldquo;{partner.whyTrust}&rdquo;</p>
-                    )}
-
-                    {partner.placeholder && (
-                      <span className="mt-3 inline-flex rounded-full border border-dusty/25 bg-plum/50 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-dusty">
-                        Coming Soon
-                      </span>
-                    )}
-
-                    {partner.resource && !partner.placeholder && (
-                      <span className="mt-3 inline-flex rounded-full border border-auroraMauve/40 bg-wine/20 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-auroraMauve">
-                        Resource
-                      </span>
-                    )}
-
-                    <div className="mt-auto flex flex-wrap items-center justify-center gap-2 pt-5">
-                      {partner.placeholder ? (
-                        <>
-                          <span className={`${chip} ${chipDead}`}>Call</span>
-                          <span className={`${chip} ${chipDead}`}>Email</span>
-                          <span className={`${chip} ${chipDead}`}>Website</span>
-                        </>
+                  .map((partner, i) => (
+                    <div
+                      key={`${cat.id}-${i}`}
+                      className="aurora-ring flex flex-col items-center rounded-xl2 border border-dusty/12 bg-plum/50 p-5 text-center"
+                    >
+                      {/* Real headshot/logo */}
+                      {partner.photo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={partner.photo}
+                          alt={partner.name}
+                          className={
+                            partner.logo && !partner.logoFill
+                              ? `h-20 w-20 rounded-full border border-auroraMauve/40 object-contain p-2 ${partner.logoDark ? (partner.logoBg ?? "bg-[#2a1f25]") : "partner-avatar-bg"}`
+                              : partner.logo
+                                ? "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover"
+                                : "h-20 w-20 rounded-full border border-auroraMauve/40 object-cover object-top partner-avatar-bg"
+                          }
+                        />
                       ) : (
-                        <>
-                          {partner.phone && (
-                            <a href={`tel:${partner.phone.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Call</a>
-                          )}
-                          {partner.mobile && (
-                            <a href={`tel:${partner.mobile.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Cell</a>
-                          )}
-                          {partner.email && (
-                            <a href={`mailto:${partner.email}`} className={`${chip} ${chipLive}`}>Email</a>
-                          )}
-                          {partner.website && (
-                            <a href={partner.website} target="_blank" rel="noopener noreferrer" className={`${chip} ${chipLive}`}>Website</a>
-                          )}
-                        </>
+                        <div className="grid h-14 w-14 place-items-center rounded-full border border-auroraMauve/40 bg-wine/30 text-auroraMauve">
+                          <CategoryIcon id={cat.id} className="h-6 w-6" />
+                        </div>
+                      )}
+
+                      <div className="mt-3 text-base font-semibold text-pearl">{partner.name}</div>
+                      <div className="mt-0.5 text-[11px] uppercase tracking-wide text-dusty">{partner.detail}</div>
+                      {partner.credential && (
+                        <div className="mt-1 text-[11px] leading-snug text-dusty/80">{partner.credential}</div>
+                      )}
+
+                      {partner.rating != null && (
+                        <div className="mt-1.5 flex items-center gap-1 text-xs text-dusty">
+                          <span className="text-gold">★</span>
+                          <span className="font-semibold text-pearl">{partner.rating.toFixed(1)}</span>
+                          {partner.reviewCount != null && <span>· {partner.reviewCount} reviews</span>}
+                          {partner.reviewSource && <span>· {partner.reviewSource}</span>}
+                        </div>
+                      )}
+
+                      {partner.whyTrust && (
+                        <p className="mt-2.5 text-sm leading-relaxed text-dusty/90">&ldquo;{partner.whyTrust}&rdquo;</p>
+                      )}
+
+                      {partner.resource && (
+                        <span className="mt-3 inline-flex rounded-full border border-auroraMauve/40 bg-wine/20 px-2.5 py-0.5 text-[10px] uppercase tracking-widest text-auroraMauve">
+                          Resource
+                        </span>
+                      )}
+
+                      <div className="mt-auto flex flex-wrap items-center justify-center gap-2 pt-5">
+                        {partner.phone && (
+                          <a href={`tel:${partner.phone.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Call</a>
+                        )}
+                        {partner.mobile && (
+                          <a href={`tel:${partner.mobile.replace(/[^\d+]/g, "")}`} className={`${chip} ${chipLive}`}>Cell</a>
+                        )}
+                        {partner.email && (
+                          <a href={`mailto:${partner.email}`} className={`${chip} ${chipLive}`}>Email</a>
+                        )}
+                        {partner.website && (
+                          <a href={partner.website} target="_blank" rel="noopener noreferrer" className={`${chip} ${chipLive}`}>Website</a>
+                        )}
+                      </div>
+
+                      {partner.apply && (
+                        <a
+                          href={partner.apply}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-aurora group mt-4 text-sm"
+                        >
+                          {partner.applyLabel ?? "Apply Now"}
+                          <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">&rarr;</span>
+                        </a>
                       )}
                     </div>
+                  ))}
 
-                    {partner.apply && (
-                      <a
-                        href={partner.apply}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-aurora group mt-4 text-sm"
-                      >
-                        {partner.applyLabel ?? "Apply Now"}
-                        <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">&rarr;</span>
-                      </a>
-                    )}
-                  </div>
-                  );
-                })}
+                {/* One elegant recruitment card per category ... clearly not a partner listing. */}
+                <RecruitCard />
               </div>
             </div>
           ))}
+
+          {/* How partners are chosen ... warm, transparent trust note. */}
+          <div className="mx-auto max-w-3xl rounded-xl2 border border-dusty/12 bg-plum/40 p-7 text-center md:p-9">
+            <h2 className="text-xl font-semibold tracking-tightest text-pearl">
+              How We Choose Preferred Partners
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-dusty md:text-base">
+              We recommend professionals based on our experience, reputation,
+              responsiveness, client feedback, and the level of service they
+              provide. Inclusion as a Preferred Partner is not a guarantee of
+              performance, and clients are always encouraged to evaluate any
+              provider independently.
+            </p>
+          </div>
         </div>
       </section>
     </PageShell>

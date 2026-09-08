@@ -449,8 +449,48 @@ export const team: TeamMember[] = [
 /*  partners. Do not invent companies ... use the labeled placeholders.         */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Partner markets ... Phase 1 is Michigan statewide. This list + the market
+ * fields on Partner are the foundation for future "Choose your market" filtering
+ * and eventual multi-state / national expansion. Add markets here as the network
+ * grows and tag a partner with `region` to place it. NO filter UI is built yet
+ * (by design) ... this is only the data model so the page never needs a rebuild.
+ */
+export type PartnerMarket =
+  | "all-michigan"
+  | "metro-detroit"
+  | "grand-rapids"
+  | "traverse-city"
+  | "mount-pleasant"
+  | "lansing"
+  | "ann-arbor"
+  | "kalamazoo"
+  | "flint"
+  | "saginaw"
+  | "bay-city"
+  | "northern-michigan"
+  | "upper-peninsula";
+
+export const partnerMarkets: { key: PartnerMarket; label: string; state: string }[] = [
+  { key: "all-michigan", label: "All Michigan", state: "MI" },
+  { key: "metro-detroit", label: "Metro Detroit / Downriver", state: "MI" },
+  { key: "grand-rapids", label: "Grand Rapids", state: "MI" },
+  { key: "traverse-city", label: "Traverse City", state: "MI" },
+  { key: "mount-pleasant", label: "Mount Pleasant", state: "MI" },
+  { key: "lansing", label: "Lansing", state: "MI" },
+  { key: "ann-arbor", label: "Ann Arbor", state: "MI" },
+  { key: "kalamazoo", label: "Kalamazoo", state: "MI" },
+  { key: "flint", label: "Flint", state: "MI" },
+  { key: "saginaw", label: "Saginaw", state: "MI" },
+  { key: "bay-city", label: "Bay City", state: "MI" },
+  { key: "northern-michigan", label: "Northern Michigan", state: "MI" },
+  { key: "upper-peninsula", label: "Upper Peninsula / Iron Mountain", state: "MI" },
+];
+
 export type Partner = {
   name: string;
+  /** Public business name when different from the person's name. */
+  businessName?: string;
   detail: string;
   /** Small credential/license line under the name (e.g. "NMLS #138773"). */
   credential?: string;
@@ -484,6 +524,19 @@ export type Partner = {
   logoFill?: boolean;
   /** Emoji shown in the placeholder avatar so the trade reads at a glance. */
   icon?: string;
+  /* --- Market / location metadata (for statewide + future national scaling) --- */
+  /** City the partner is based in (e.g. "Milford"). */
+  city?: string;
+  /** County (e.g. "Oakland"). */
+  county?: string;
+  /** Market/region key ... see partnerMarkets (e.g. "metro-detroit"). */
+  region?: PartnerMarket;
+  /** Two-letter state; defaults to "MI". Ready for future multi-state expansion. */
+  state?: string;
+  /** Free-text service area (e.g. "Metro Detroit & Southeast Michigan", "Statewide"). */
+  serviceArea?: string;
+  /** Featured/preferred pin (sorts above others; distinct from numeric `priority`). */
+  featured?: boolean;
   placeholder: boolean;
 };
 
@@ -798,8 +851,14 @@ export const partnerCategories: PartnerCategory[] = [
     partners: [
       {
         name: "Honest Estate Sales",
+        businessName: "Honest Estate Sales",
         detail: "Renee Dash-Van Horn · Milford, MI",
         credential: "Estate Sales & Liquidation · Serving Southeast Michigan",
+        city: "Milford",
+        county: "Oakland",
+        region: "metro-detroit",
+        state: "MI",
+        serviceArea: "Metro Detroit & Southeast Michigan",
         whyTrust:
           "Honest, organized, and respectful of the moment ... Renee runs estate sales that treat every home and family with care.",
         phone: "248-895-1694",
