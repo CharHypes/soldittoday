@@ -332,11 +332,13 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
       ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
         f.Photos.map((p: any) => https(p?.UriLarge || p?.Uri)).filter(Boolean)
       : [];
+    const lotArea = num(f.LotSizeArea);
+    const lotAcres = num(f.LotSizeAcres);
     const lot =
-      num(f.LotSizeArea) != null
-        ? `${num(f.LotSizeArea)} ${f.LotSizeUnits || "sqft"}`
-        : num(f.LotSizeAcres) != null
-        ? `${num(f.LotSizeAcres)} acres`
+      lotArea != null && lotArea > 0
+        ? `${lotArea.toLocaleString("en-US")} ${f.LotSizeUnits || "sqft"}`
+        : lotAcres != null && lotAcres > 0
+        ? `${lotAcres} acres`
         : null;
 
     const { tags, standouts } = deriveHighlights(f);
