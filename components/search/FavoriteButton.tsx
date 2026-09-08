@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 
 /**
  * Save / Favorite ... icon-only heart (Option C). Outline when unsaved, soft
- * rose/plum fill when saved. Theme-aware: the outline uses `text-pearl` (light
- * cream in dark mode, dark plum in light mode) and the circle uses brand tokens,
- * while the saved fill stays a consistent brand rose/plum in both themes.
+ * rose/plum fill when saved. Two looks:
+ *  - "default": on a page surface (detail header) ... theme-token circle.
+ *  - "overlay": on top of a photo (search cards) ... glassy dark circle so it
+ *    stays visible on any image, in both themes.
+ * The saved fill stays a consistent brand rose/plum in both themes.
  *
- * Until real client accounts exist, favorites live in localStorage (per-device)
- * so the feature works today; on save we nudge the user to log in / create an
- * account (which will sync favorites once auth ships). Logged-in behavior will
- * hang off the same toggle when accounts land.
+ * Favorites live in localStorage (per-device) until real accounts exist; saving
+ * nudges the user to log in / create an account (which will sync later).
  */
 const KEY = "sit-favorites";
 const SAVED_FILL = "#c07a9c"; // soft rose/plum ... consistent in both themes
@@ -35,9 +35,13 @@ function writeFavs(ids: string[]) {
 export default function FavoriteButton({
   listingId,
   className = "",
+  variant = "default",
+  showHint = true,
 }: {
   listingId: string;
   className?: string;
+  variant?: "default" | "overlay";
+  showHint?: boolean;
 }) {
   const [saved, setSaved] = useState(false);
   const [hint, setHint] = useState(false);
@@ -46,7 +50,10 @@ export default function FavoriteButton({
     setSaved(readFavs().includes(listingId));
   }, [listingId]);
 
-  const toggle = () => {
+  const toggle = (e: MouseEvent) => {
+    // On the cards the heart sits over the card link ... never navigate.
+    e.preventDefault();
+    e.stopPropagation();
     const favs = readFavs();
     let next: string[];
     if (favs.includes(listingId)) {
@@ -56,12 +63,21 @@ export default function FavoriteButton({
     } else {
       next = [...favs, listingId];
       setSaved(true);
-      setHint(true);
-      window.setTimeout(() => setHint(false), 4500);
+      if (showHint) {
+        setHint(true);
+        window.setTimeout(() => setHint(false), 4500);
+      }
     }
     writeFavs(next);
     window.dispatchEvent(new Event("sit-favorites-change"));
   };
+
+  const overlay = variant === "overlay";
+  const btnBase = "group grid place-items-center rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-auroraMauve/60";
+  const btnLook = overlay
+    ? "h-9 w-9 border border-white/40 bg-black/40 text-white backdrop-blur-sm hover:bg-black/55"
+    : "h-11 w-11 border border-dusty/30 bg-plum/50 text-pearl hover:border-auroraMauve/60 hover:bg-plum/70";
+  const svgSize = overlay ? "h-[18px] w-[18px]" : "h-[22px] w-[22px]";
 
   return (
     <div className={`relative ${className}`}>
@@ -71,11 +87,11 @@ export default function FavoriteButton({
         aria-pressed={saved}
         aria-label={saved ? "Remove from saved homes" : "Save this home"}
         title={saved ? "Saved" : "Save this home"}
-        className="group grid h-11 w-11 place-items-center rounded-full border border-dusty/30 bg-plum/50 text-pearl transition-all duration-300 hover:border-auroraMauve/60 hover:bg-plum/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-auroraMauve/50"
+        className={`${btnBase} ${btnLook}`}
       >
         <svg
           viewBox="0 0 24 24"
-          className={`h-[22px] w-[22px] transition-transform duration-300 ${saved ? "scale-110" : "group-hover:scale-110"}`}
+          className={`${svgSize} transition-transform duration-300 ${saved ? "scale-110" : "group-hover:scale-110"}`}
           fill={saved ? SAVED_FILL : "none"}
           stroke={saved ? SAVED_FILL : "currentColor"}
           strokeWidth={1.8}

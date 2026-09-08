@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Listing } from "@/lib/idx";
 import { IDX_DISCLAIMER } from "@/lib/idx";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
+import FavoriteButton from "./FavoriteButton";
 
 /* Fixed icons per Charlotte: hospital = "H" in a box (highway sign), school =
    little schoolhouse (K-12, not a grad cap), grocery = cart. */
@@ -107,10 +108,13 @@ export default function ListingCard({
   const cityLine = `${listing.city}, ${listing.state} ${listing.zip}`.trim();
 
   return (
-    <Link
-      href={`/listing/${listing.id}`}
-      className="group block overflow-hidden rounded-xl2 border border-dusty/15 bg-plum/60 shadow-aurora transition-colors duration-300 hover:border-auroraMauve/40"
-    >
+    <div className="group relative overflow-hidden rounded-xl2 border border-dusty/15 bg-plum/60 shadow-aurora transition-colors duration-300 hover:border-auroraMauve/40">
+      {/* Save heart ... sibling of the link (not nested in the anchor) so it's
+          valid HTML and its click won't navigate the card. */}
+      <div className="absolute right-3 top-3 z-10">
+        <FavoriteButton listingId={listing.id} variant="overlay" showHint={false} />
+      </div>
+      <Link href={`/listing/${listing.id}`} className="block">
       <div className="relative aspect-[4/3] overflow-hidden bg-wine/30">
         {listing.photoUrl ? (
           /* eslint-disable-next-line @next/next/no-img-element */
@@ -156,6 +160,7 @@ export default function ListingCard({
           <p className="mt-1 text-dusty/70">{IDX_DISCLAIMER}</p>
         </div>
       </div>
-    </Link>
+      </Link>
+    </div>
   );
 }
