@@ -2,33 +2,8 @@ import Link from "next/link";
 import type { Listing } from "@/lib/idx";
 import { IDX_DISCLAIMER } from "@/lib/idx";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
+import { formatInt } from "@/lib/format";
 import FavoriteButton from "./FavoriteButton";
-
-/* Fixed icons per Charlotte: hospital = "H" in a box (highway sign), school =
-   little schoolhouse (K-12, not a grad cap), grocery = cart. */
-const AMENITY_ICON: Record<AmenityKey, JSX.Element> = {
-  hospital: (
-    <>
-      <rect x="3.5" y="3.5" width="17" height="17" rx="4" />
-      <path d="M9 8v8M15 8v8M9 12h6" />
-    </>
-  ),
-  school: (
-    <>
-      <path d="M3 21h18" />
-      <path d="M5 21V10l7-3.5L19 10v11" />
-      <path d="M10 21v-4h4v4" />
-      <path d="M12 6.5V3l3 1-3 1" />
-    </>
-  ),
-  grocery: (
-    <>
-      <circle cx="9" cy="20" r="1.3" />
-      <circle cx="18" cy="20" r="1.3" />
-      <path d="M2 3h2l2.2 12.2a1.5 1.5 0 0 0 1.5 1.3H18a1.5 1.5 0 0 0 1.5-1.2L21 7H5.2" />
-    </>
-  ),
-};
 
 const AMENITY_LABEL: Record<AmenityKey, string> = {
   hospital: "Hospital",
@@ -36,50 +11,43 @@ const AMENITY_LABEL: Record<AmenityKey, string> = {
   grocery: "Grocery",
 };
 
-function AmenityTiles({ amenities }: { amenities: AmenityDistances }) {
-  const order: AmenityKey[] = ["hospital", "school", "grocery"];
-  const items = order.filter((k) => amenities[k]);
-  if (items.length === 0) return null;
+/**
+ * Compact QWOME™ proximity line ... shown ONLY for the categories the viewer has
+ * chosen in their QWOME preferences (e.g. "Hospital 3.4 mi · Grocery 1.1 mi").
+ * No preferences => no line, so cards stay clean and we never dump distance data
+ * that isn't relevant to this viewer.
+ */
+function QwomeLine({
+  amenities,
+  categories,
+}: {
+  amenities?: AmenityDistances;
+  categories: AmenityKey[];
+}) {
+  if (!amenities || categories.length === 0) return null;
+  const parts = categories
+    .filter((k) => amenities[k])
+    .map((k) => `${AMENITY_LABEL[k]} ${formatMiles(amenities[k]!.miles)}`);
+  if (parts.length === 0) return null;
   return (
-    <div className="mt-4">
-      <p className="mb-2 text-[11px] uppercase tracking-[0.16em] text-auroraMauve">Nearby</p>
-      <div className="flex gap-2">
-        {items.map((k) => (
-          <div
-            key={k}
-            className="flex flex-1 flex-col items-center gap-1 rounded-xl border border-dusty/16 bg-wine/20 px-1 py-2 text-center"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.7}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-[18px] w-[18px] text-gold"
-              aria-hidden
-            >
-              {AMENITY_ICON[k]}
-            </svg>
-            <span className="text-sm font-semibold text-pearl">{formatMiles(amenities[k]!.miles)}</span>
-            <span className="text-[11px] text-dusty">{AMENITY_LABEL[k]}</span>
-          </div>
-        ))}
-      </div>
+    <div className="mt-3 flex items-center gap-2 border-t border-dusty/12 pt-3">
+      <span className="rounded-full bg-wine/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-auroraMauve">
+        QWOME&trade;
+      </span>
+      <span className="text-xs text-dusty">{parts.join(" · ")}</span>
     </div>
   );
 }
 
 /**
  * A single IDX listing card. Built to satisfy the MichRIC IDX display rules:
- *  - The listing broker's (Subscriber's) name and phone/email are shown
- *    prominently for another broker's listing (Rule l).
+ *  - The listing broker's (Subscriber's) name is shown for another broker's
+ *    listing (Rule l); the phone/email lives on the detail page.
  *  - The "Information Deemed Reliable But Not Guaranteed" disclaimer is present.
  *  - Address is hidden when the seller has withheld it (showAddress === false).
- *  - No confidential fields are rendered.
  *
- * Unused until the live feed returns listings; wired and ready so go-live is a
- * data change, not a build.
+ * Clean scan order: photo (status + save overlays) -> price -> address ->
+ * beds/baths/sqft -> optional QWOME proximity line -> attribution.
  */
 function formatPrice(n: number): string {
   return n.toLocaleString("en-US", {
@@ -98,9 +66,12 @@ const statusLabel: Record<Listing["status"], string> = {
 export default function ListingCard({
   listing,
   amenities,
+  qwomeCategories = [],
 }: {
   listing: Listing;
   amenities?: AmenityDistances;
+  /** Viewer's active QWOME preference categories ... drives the compact line. */
+  qwomeCategories?: AmenityKey[];
 }) {
   const addressLine = listing.showAddress
     ? listing.address
@@ -143,16 +114,12 @@ export default function ListingCard({
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-dusty">
           {listing.beds != null && <span>{listing.beds} bd</span>}
           {listing.baths != null && <span>{listing.baths} ba</span>}
-          {listing.sqft != null && (
-            <span>{listing.sqft.toLocaleString("en-US")} sqft</span>
-          )}
+          {listing.sqft != null && <span>{formatInt(listing.sqft)} sqft</span>}
         </div>
 
-        {amenities && <AmenityTiles amenities={amenities} />}
+        <QwomeLine amenities={amenities} categories={qwomeCategories} />
 
-        {/* Required attribution for the listing broker (Subscriber). Summary
-            cards show the brokerage name only; the phone/email lives on the
-            detail page, where MichRIC requires it for a detailed display. */}
+        {/* Required attribution for the listing broker (Subscriber). */}
         <div className="mt-4 border-t border-dusty/12 pt-3 text-xs text-dusty">
           <p className="font-medium text-dusty">
             Listing courtesy of {listing.listingBrokerName}

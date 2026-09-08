@@ -5,7 +5,7 @@ import SaveSearchButton from "@/components/search/SaveSearchButton";
 import ResultsView from "@/components/search/ResultsView";
 import ComplianceFooter from "@/components/search/ComplianceFooter";
 import { searchListings, formatUpdated, IDX_ENABLED, type IdxSearchParams } from "@/lib/idx";
-import { contact } from "@/lib/data";
+import { contact, popularAreas } from "@/lib/data";
 
 /* -------------------------------------------------------------------------- */
 /*  SEO ... noindex until the live feed is connected (avoids thin content).     */
@@ -45,8 +45,26 @@ export default async function SearchPage({
     newConstruction: pick(searchParams, "newConstruction"),
   };
 
-  const result = await searchListings(params);
-  const updated = formatUpdated(result.lastUpdated);
+  // Has the visitor actually asked for something? If not, we show a curated
+  // "popular areas" state instead of a random statewide dump ... the default
+  // should feel designed, not like a fallback query.
+  const hasQuery = [
+    params.location,
+    params.propertyType,
+    params.minPrice,
+    params.maxPrice,
+    params.beds,
+    params.baths,
+    params.garage,
+    params.ac,
+    params.fireplace,
+    params.singleStory,
+    params.waterfront,
+    params.newConstruction,
+  ].some((v) => v != null && v !== "");
+
+  const result = hasQuery ? await searchListings(params) : null;
+  const updated = result ? formatUpdated(result.lastUpdated) : null;
 
   return (
     <PageShell
@@ -75,7 +93,7 @@ export default async function SearchPage({
           />
 
           <div className="mt-10">
-            {!result.enabled ? (
+            {!IDX_ENABLED ? (
               /* Honest activation state ... no fabricated listings. */
               <div className="aurora-ring mx-auto max-w-3xl rounded-xl2 border border-dusty/15 bg-bruised/40 p-8 text-center shadow-aurora md:p-10">
                 <div className="inline-flex items-center gap-2 rounded-full border border-auroraMauve/25 bg-wine/30 px-3 py-1 text-[11px] uppercase tracking-widest text-pearl/90">
@@ -105,16 +123,51 @@ export default async function SearchPage({
                   </a>
                 </div>
               </div>
-            ) : result.listings.length > 0 ? (
+            ) : !hasQuery ? (
+              /* Curated default ... before the visitor searches. Feels designed,
+                 not a random statewide mix. */
+              <div className="mx-auto max-w-3xl text-center">
+                <h2 className="text-2xl font-semibold text-pearl">
+                  Start with a place
+                </h2>
+                <p className="mx-auto mt-3 max-w-xl leading-relaxed text-dusty">
+                  Search a city, ZIP, or neighborhood above ... or jump into one of
+                  our most-searched Michigan areas.
+                </p>
+                <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {popularAreas.map((area) => (
+                    <a
+                      key={area.value}
+                      href={`/search?location=${encodeURIComponent(area.value)}`}
+                      className="group rounded-xl2 border border-dusty/15 bg-plum/50 px-4 py-5 text-center shadow-aurora transition-colors duration-300 hover:border-auroraMauve/40"
+                    >
+                      <span className="block text-base font-semibold text-pearl">
+                        {area.label}
+                      </span>
+                      <span className="mt-1 block text-xs text-dusty transition-colors group-hover:text-pearl/80">
+                        View homes &rarr;
+                      </span>
+                    </a>
+                  ))}
+                </div>
+                <p className="mt-8 text-sm text-dusty">
+                  Not sure where to look?{" "}
+                  <a href="/#contact" className="font-medium text-auroraMauve/90 underline-offset-2 hover:underline">
+                    Tell us what you need
+                  </a>{" "}
+                  and we&rsquo;ll guide you.
+                </p>
+              </div>
+            ) : result!.listings.length > 0 ? (
               <>
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                   <p className="text-sm text-dusty">
-                    {result.total.toLocaleString("en-US")}{" "}
-                    {result.total === 1 ? "home" : "homes"} found
+                    {result!.total.toLocaleString("en-US")}{" "}
+                    {result!.total === 1 ? "home" : "homes"} found
                   </p>
                   <SaveSearchButton />
                 </div>
-                <ResultsView listings={result.listings} />
+                <ResultsView listings={result!.listings} />
               </>
             ) : (
               /* Feed live, but this search returned nothing. */

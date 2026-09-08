@@ -9,6 +9,7 @@ import ShareButton from "@/components/search/ShareButton";
 import { getListing, getSimilarListings, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
 import ListingCard from "@/components/search/ListingCard";
 import ListingPaymentCalculator from "@/components/search/ListingPaymentCalculator";
+import WhyThisHomeWorks from "@/components/search/WhyThisHomeWorks";
 import { amenitiesForPoints, formatMiles, type AmenityKey } from "@/lib/amenities";
 import { contact } from "@/lib/data";
 
@@ -94,17 +95,6 @@ export default async function ListingPage({ params }: { params: { id: string } }
       : {};
   const nearbyKeys = (["hospital", "school", "grocery"] as AmenityKey[]).filter((k) => nearby[k]);
 
-  // "Why this home works" ... curated benefit lines + a nearby "close to" line.
-  const closeParts = [
-    nearby.hospital ? `a hospital (${formatMiles(nearby.hospital.miles)})` : null,
-    nearby.school ? `a school (${formatMiles(nearby.school.miles)})` : null,
-    nearby.grocery ? `groceries (${formatMiles(nearby.grocery.miles)})` : null,
-  ].filter((x): x is string => x !== null);
-  const whyList = [
-    ...listing.whyItWorks,
-    ...(closeParts.length ? [`Close to ${closeParts.join(", ")}`] : []),
-  ].slice(0, 5);
-
   // "Similar homes" ... nearby comparable active listings (excludes this one).
   const similar = await getSimilarListings(
     { id: listing.id, city: listing.city, price: listing.price },
@@ -170,30 +160,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
                 </section>
               )}
 
-              {whyList.length >= 3 && (
-                <section className="mt-8">
-                  <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">Why this home works</h2>
-                  <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
-                    {whyList.map((w) => (
-                      <li key={w} className="flex items-start gap-2.5 text-sm leading-relaxed text-pearl/90">
-                        <svg
-                          viewBox="0 0 24 24"
-                          className="mt-0.5 h-4 w-4 shrink-0 text-gold"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          aria-hidden
-                        >
-                          <path d="M5 12l4 4 10-11" />
-                        </svg>
-                        {w}
-                      </li>
-                    ))}
-                  </ul>
-                </section>
-              )}
+              <WhyThisHomeWorks facts={listing.whyItWorks} nearby={nearby} />
 
               {listing.description && (
                 <section className="mt-8">

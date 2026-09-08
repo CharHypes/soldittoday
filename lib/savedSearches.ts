@@ -57,9 +57,24 @@ export function describeSearch(qs: string): string {
   if (baths && baths !== "any") parts.push(`${baths}+ ba`);
   const pt = p.get("propertyType");
   if (pt) parts.push(pt);
-  const rmi = p.get("radiusMi");
-  const rof = p.get("radiusOf");
-  if (rmi && rof) parts.push(`≤${rmi}mi ${rof}`);
+  // QWOME proximity preferences: "near=hospital:10,grocery:3".
+  const near = p.get("near");
+  if (near) {
+    const labels: Record<string, string> = { hospital: "hospital", school: "school", grocery: "grocery" };
+    const bits = near
+      .split(",")
+      .map((c) => {
+        const [cat, mi] = c.split(":");
+        return labels[cat] && mi ? `≤${mi}mi ${labels[cat]}` : "";
+      })
+      .filter(Boolean);
+    parts.push(...bits);
+  } else {
+    // Back-compat with the old single-radius param.
+    const rmi = p.get("radiusMi");
+    const rof = p.get("radiusOf");
+    if (rmi && rof) parts.push(`≤${rmi}mi ${rof}`);
+  }
   const featureKeys = ["garage", "fireplace", "singleStory", "waterfront", "newConstruction"];
   const feats = featureKeys.filter((f) => p.get(f) === "1");
   if (feats.length) parts.push(feats.length === 1 ? feats[0] : `${feats.length} features`);

@@ -5,6 +5,7 @@
  * sections. Structured objects (e.g. {"Central Air":true}) become "Central Air".
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { toNumber, formatInt, formatYear, money as fmtMoney } from "./format";
 
 export type DetailRow = { label: string; value: string };
 export type DetailSection = { title: string; rows: DetailRow[] };
@@ -14,7 +15,7 @@ const MASK = "********";
 
 function text(v: any): string | undefined {
   if (v == null || v === "" || v === MASK) return undefined;
-  if (typeof v === "number") return v.toLocaleString("en-US");
+  if (typeof v === "number") return formatInt(v);
   if (typeof v === "boolean") return v ? "Yes" : "No";
   if (typeof v === "string") {
     if (v === "True") return "Yes";
@@ -38,29 +39,19 @@ function list(v: any): string | undefined {
   return text(v);
 }
 function num(v: any): number | undefined {
-  if (v == null || v === "" || v === MASK) return undefined;
-  const n = typeof v === "number" ? v : Number(String(v).replace(/[^0-9.]/g, ""));
-  return Number.isFinite(n) ? n : undefined;
+  return toNumber(v);
 }
 function pos(v: any): string | undefined {
   const n = num(v);
-  return n != null && n > 0 ? n.toLocaleString("en-US") : undefined;
+  return n != null && n > 0 ? formatInt(n) : undefined;
 }
-/** Years must never be comma-formatted (1930, not 1,930). */
-function year(v: any): string | undefined {
-  const n = num(v);
-  return n != null && n > 1000 ? String(Math.round(n)) : undefined;
-}
+/** Years must never be comma-formatted (1993, not 1,993) ... see lib/format. */
+const year = formatYear;
 function sqft(v: any): string | undefined {
   const s = pos(v);
   return s ? `${s} sq ft` : undefined;
 }
-function money(v: any): string | undefined {
-  const n = num(v);
-  return n != null && n > 0
-    ? n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })
-    : undefined;
-}
+const money = fmtMoney;
 function yes(v: any): string | undefined {
   return v === true || v === "True" || v === "Yes" ? "Yes" : undefined;
 }
@@ -88,7 +79,7 @@ export function buildDetailSections(f: SF): DetailSection[] {
     section("Living area", [
       ["Above-grade living area", sqft(f.AboveGradeFinishedArea)],
       ["Finished lower level", sqft(f.BelowGradeFinishedArea)],
-      ["Total finished", totalFinished != null ? `${totalFinished.toLocaleString("en-US")} sq ft` : undefined],
+      ["Total finished", totalFinished != null ? `${formatInt(totalFinished)} sq ft` : undefined],
       ["Living area", sqft(f.AboveGradeFinishedArea) ? undefined : sqft(f.LivingArea) ?? sqft(f.BuildingAreaTotal)],
     ]),
     section("Interior", [

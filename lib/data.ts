@@ -156,6 +156,20 @@ export const bedBathOptions: SearchOption[] = [
   { value: "5", label: "5+" },
 ];
 
+/**
+ * Curated "popular areas" shown on the search page before the visitor has
+ * searched, so the default state feels designed ... not a random statewide dump.
+ * `value` is what we pass to the IDX location filter (city name).
+ */
+export const popularAreas: SearchOption[] = [
+  { value: "Taylor", label: "Taylor" },
+  { value: "Wyandotte", label: "Wyandotte" },
+  { value: "Dearborn", label: "Dearborn" },
+  { value: "Northville", label: "Northville" },
+  { value: "Novi", label: "Novi" },
+  { value: "Milford", label: "Milford" },
+];
+
 /* -------------------------------------------------------------------------- */
 /*  Services                                                                   */
 /* -------------------------------------------------------------------------- */
