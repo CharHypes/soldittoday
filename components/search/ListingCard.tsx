@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Listing } from "@/lib/idx";
 import { IDX_DISCLAIMER } from "@/lib/idx";
-import type { AmenityDistances, AmenityKey } from "@/lib/amenities";
+import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
 
 /* Fixed icons per Charlotte: hospital = "H" in a box (highway sign), school =
    little schoolhouse (K-12, not a grad cap), grocery = cart. */
@@ -60,7 +60,7 @@ function AmenityTiles({ amenities }: { amenities: AmenityDistances }) {
             >
               {AMENITY_ICON[k]}
             </svg>
-            <span className="text-sm font-semibold text-pearl">{amenities[k]!.miles} mi</span>
+            <span className="text-sm font-semibold text-pearl">{formatMiles(amenities[k]!.miles)}</span>
             <span className="text-[11px] text-dusty">{AMENITY_LABEL[k]}</span>
           </div>
         ))}

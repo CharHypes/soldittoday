@@ -97,6 +97,8 @@ export type ListingDetail = Listing & {
   whyItWorks: string[];
   /** Collapsible property-detail sections (only those with real data). */
   sections: DetailSection[];
+  /** Annual property tax from the feed (for the payment calculator), when present. */
+  taxAnnual: number | null;
 };
 
 export type IdxSearchParams = {
@@ -356,6 +358,7 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
       homeTags: tags,
       whyItWorks,
       sections: buildDetailSections(f),
+      taxAnnual: num(f.TaxAmount) ?? num(f.TaxAnnualAmount) ?? null,
     };
   } catch {
     return null;
@@ -382,7 +385,10 @@ export async function getSimilarListings(
       const wide = await searchListings({ location: current.city });
       pool = wide.listings.filter((l) => l.id !== current.id);
     }
-    return preferPhotos(pool).slice(0, limit);
+    // Dedupe by id (safety) before ordering photos-first.
+    const seen = new Set<string>();
+    const unique = pool.filter((l) => (seen.has(l.id) ? false : (seen.add(l.id), true)));
+    return preferPhotos(unique).slice(0, limit);
   } catch {
     return [];
   }

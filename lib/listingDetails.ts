@@ -46,6 +46,15 @@ function pos(v: any): string | undefined {
   const n = num(v);
   return n != null && n > 0 ? n.toLocaleString("en-US") : undefined;
 }
+/** Years must never be comma-formatted (1930, not 1,930). */
+function year(v: any): string | undefined {
+  const n = num(v);
+  return n != null && n > 1000 ? String(Math.round(n)) : undefined;
+}
+function sqft(v: any): string | undefined {
+  const s = pos(v);
+  return s ? `${s} sq ft` : undefined;
+}
 function money(v: any): string | undefined {
   const n = num(v);
   return n != null && n > 0
@@ -70,7 +79,18 @@ export function buildDetailSections(f: SF): DetailSection[] {
   const bathsHalf = num(f.BathsHalf);
   const mainBeds = num(f.MainLevelBedrooms);
 
+  const aboveN = num(f.AboveGradeFinishedArea);
+  const belowN = num(f.BelowGradeFinishedArea);
+  const totalFinished =
+    aboveN != null && aboveN > 0 && belowN != null && belowN > 0 ? aboveN + belowN : undefined;
+
   const candidates: Array<DetailSection | null> = [
+    section("Living area", [
+      ["Above-grade living area", sqft(f.AboveGradeFinishedArea)],
+      ["Finished lower level", sqft(f.BelowGradeFinishedArea)],
+      ["Total finished", totalFinished != null ? `${totalFinished.toLocaleString("en-US")} sq ft` : undefined],
+      ["Living area", sqft(f.AboveGradeFinishedArea) ? undefined : sqft(f.LivingArea) ?? sqft(f.BuildingAreaTotal)],
+    ]),
     section("Interior", [
       ["Features", list(f.InteriorFeatures)],
       ["Flooring", list(f.Flooring)],
@@ -117,7 +137,7 @@ export function buildDetailSections(f: SF): DetailSection[] {
       ["Lot size", pos(f.LotSizeAcres) ? `${pos(f.LotSizeAcres)} acres` : pos(f.LotSizeSquareFeet) ? `${pos(f.LotSizeSquareFeet)} sqft` : undefined],
       ["Lot dimensions", text(f.LotSizeDimensions)],
       ["Lot features", list(f.LotFeatures)],
-      ["Year built", pos(f.YearBuilt)],
+      ["Year built", year(f.YearBuilt)],
       ["Property type", text(f.PropertySubType)],
       ["Stories", pos(f.StoriesTotal) ?? pos(f.Stories)],
       ["View", list(f.View)],
@@ -133,7 +153,7 @@ export function buildDetailSections(f: SF): DetailSection[] {
     section("Financial & taxes", [
       ["Annual taxes", money(f.TaxAmount) ?? money(f.TaxAnnualAmount)],
       ["Assessed value", money(f.TaxAssessedValue)],
-      ["Tax year", pos(f.TaxYear)],
+      ["Tax year", year(f.TaxYear)],
       ["HOA", yes(f.AssociationYN)],
       ["HOA fee", money(f.AssociationFee)],
       ["HOA includes", list(f.AssociationFeeIncludes)],

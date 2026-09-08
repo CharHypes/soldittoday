@@ -3,12 +3,18 @@
 import { useEffect, useState } from "react";
 
 /**
- * Save / Favorite (heart). Until real client accounts exist, favorites live in
- * localStorage (per-device) so the feature works today; when auth ships we sync
- * these to the logged-in account. Tapping save shows a gentle "log in to save to
- * your account" nudge (Charlotte's lead goal), without blocking the local save.
+ * Save / Favorite ... icon-only heart (Option C). Outline when unsaved, soft
+ * rose/plum fill when saved. Theme-aware: the outline uses `text-pearl` (light
+ * cream in dark mode, dark plum in light mode) and the circle uses brand tokens,
+ * while the saved fill stays a consistent brand rose/plum in both themes.
+ *
+ * Until real client accounts exist, favorites live in localStorage (per-device)
+ * so the feature works today; on save we nudge the user to log in / create an
+ * account (which will sync favorites once auth ships). Logged-in behavior will
+ * hang off the same toggle when accounts land.
  */
 const KEY = "sit-favorites";
+const SAVED_FILL = "#c07a9c"; // soft rose/plum ... consistent in both themes
 
 function readFavs(): string[] {
   try {
@@ -64,21 +70,21 @@ export default function FavoriteButton({
         onClick={toggle}
         aria-pressed={saved}
         aria-label={saved ? "Remove from saved homes" : "Save this home"}
-        className="group inline-flex items-center gap-2 rounded-full border border-dusty/25 bg-plum/50 px-4 py-2 text-sm font-medium text-pearl transition-colors duration-300 hover:border-auroraMauve/50"
+        title={saved ? "Saved" : "Save this home"}
+        className="group grid h-11 w-11 place-items-center rounded-full border border-dusty/30 bg-plum/50 text-pearl transition-all duration-300 hover:border-auroraMauve/60 hover:bg-plum/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-auroraMauve/50"
       >
         <svg
           viewBox="0 0 24 24"
-          className={`h-5 w-5 transition-all duration-300 ${saved ? "scale-110 text-auroraMauve" : "text-pearl"}`}
-          fill={saved ? "currentColor" : "none"}
-          stroke="currentColor"
-          strokeWidth={1.7}
+          className={`h-[22px] w-[22px] transition-transform duration-300 ${saved ? "scale-110" : "group-hover:scale-110"}`}
+          fill={saved ? SAVED_FILL : "none"}
+          stroke={saved ? SAVED_FILL : "currentColor"}
+          strokeWidth={1.8}
           strokeLinecap="round"
           strokeLinejoin="round"
           aria-hidden
         >
-          <path d="M12 21s-7.5-4.7-10-9.3C.6 8.9 2 5.5 5.2 5.1 7 4.9 8.6 5.9 12 8.5c3.4-2.6 5-3.6 6.8-3.4C22 5.5 23.4 8.9 22 11.7 19.5 16.3 12 21 12 21z" />
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
         </svg>
-        {saved ? "Saved" : "Save"}
       </button>
 
       {hint && (

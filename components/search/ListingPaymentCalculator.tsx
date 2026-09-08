@@ -19,13 +19,22 @@ const field =
   "w-full rounded-lg border border-dusty/25 bg-plum/40 px-3 py-2 text-sm text-pearl outline-none transition-colors focus:border-auroraMauve/60";
 const lbl = "text-xs font-medium text-dusty";
 
-export default function ListingPaymentCalculator({ price: initialPrice }: { price: number }) {
+export default function ListingPaymentCalculator({
+  price: initialPrice,
+  taxAnnual: taxFromFeed,
+}: {
+  price: number;
+  taxAnnual?: number;
+}) {
   const base = initialPrice > 0 ? initialPrice : 300000;
   const [price, setPrice] = useState(base);
   const [downPct, setDownPct] = useState(10);
   const [rate, setRate] = useState(6.5);
   const [term, setTerm] = useState(30);
-  const [taxAnnual, setTaxAnnual] = useState(Math.round(base * 0.0135));
+  // Use the listing's real annual tax when the feed provides it; else estimate.
+  const [taxAnnual, setTaxAnnual] = useState(
+    taxFromFeed && taxFromFeed > 0 ? Math.round(taxFromFeed) : Math.round(base * 0.0135)
+  );
   const [insAnnual, setInsAnnual] = useState(1400);
 
   const c = useMemo(() => {

@@ -21,6 +21,12 @@ const DATA = raw as Record<AmenityKey, Row[]>;
 type Pt = { lat: number; lng: number };
 const EARTH_MI = 3958.8;
 
+/** Display miles ... very-close results read "<0.1 mi" instead of "0 mi". */
+export function formatMiles(mi: number): string {
+  if (!Number.isFinite(mi)) return "";
+  return mi < 0.1 ? "<0.1 mi" : `${mi} mi`;
+}
+
 function haversineMiles(aLat: number, aLng: number, bLat: number, bLng: number): number {
   const toRad = (d: number) => (d * Math.PI) / 180;
   const dLat = toRad(bLat - aLat);

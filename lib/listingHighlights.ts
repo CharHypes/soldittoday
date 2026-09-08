@@ -105,21 +105,17 @@ export function deriveHighlights(f: SF): { tags: string[]; whyItWorks: string[] 
   if (waterfront === true || waterfrontFeat.length) {
     addWhy(waterfrontFeat.length ? `Waterfront setting (${waterfrontFeat.join(", ")})` : "Waterfront setting");
   }
-  if (garageSpaces != null && garageSpaces >= 1) {
-    addWhy(`${attachedGarage ? "Attached " : ""}${garageSpaces}-car garage`);
-  } else if (attachedGarage === true) addWhy("Attached garage");
-
-  if (pool === true) addWhy(poolFeat.length ? `Pool (${poolFeat.join(", ")})` : "Pool for summer");
-  if (fencing) addWhy("Fenced yard");
-  if (patio.length) addWhy(`Outdoor living space (${patio.slice(0, 2).join(", ")})`);
-  if (fireplaceYN === true || (fireplaces != null && fireplaces > 0)) {
-    addWhy(fireplaces && fireplaces > 1 ? `${fireplaces} fireplaces` : "Fireplace");
+  // Garage as a benefit line (the tag is bare; this explains the perk).
+  if (garageSpaces != null && garageSpaces >= 2) {
+    addWhy(`${attachedGarage ? "Attached " : ""}${garageSpaces}-car garage for parking and storage`);
   }
-  if (cooling.some((c) => c.toLowerCase().includes("central"))) addWhy("Central air for summer comfort");
-  if (newConstruction === true) addWhy("Brand-new construction");
+  if (pool === true) addWhy(poolFeat.length ? `Pool (${poolFeat.join(", ")})` : "Pool for summer");
+  if (patio.length) addWhy(`Outdoor living space (${patio.slice(0, 2).join(", ")})`);
+  if (newConstruction === true) addWhy("Brand-new construction, never lived in");
 
   // Notable named features straight from the MLS (e.g. outdoor speakers, wet bar)
-  for (const feat of [...exterior, ...interior].slice(0, 3)) addWhy(feat);
+  for (const feat of [...exterior, ...interior].slice(0, 2)) addWhy(feat);
 
-  return { tags: tags.slice(0, 8), whyItWorks: why.slice(0, 7) };
+  // Curated: cap at 5 strong benefit lines (the page may append a nearby line).
+  return { tags: tags.slice(0, 8), whyItWorks: why.slice(0, 5) };
 }

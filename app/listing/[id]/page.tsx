@@ -9,7 +9,7 @@ import ShareButton from "@/components/search/ShareButton";
 import { getListing, getSimilarListings, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
 import ListingCard from "@/components/search/ListingCard";
 import ListingPaymentCalculator from "@/components/search/ListingPaymentCalculator";
-import { amenitiesForPoints, type AmenityKey } from "@/lib/amenities";
+import { amenitiesForPoints, formatMiles, type AmenityKey } from "@/lib/amenities";
 import { contact } from "@/lib/data";
 
 /* Fixed icons: hospital = "H" in a box (highway sign), school = schoolhouse
@@ -96,14 +96,14 @@ export default async function ListingPage({ params }: { params: { id: string } }
 
   // "Why this home works" ... curated benefit lines + a nearby "close to" line.
   const closeParts = [
-    nearby.hospital ? `a hospital (${nearby.hospital.miles} mi)` : null,
-    nearby.school ? `schools (${nearby.school.miles} mi)` : null,
-    nearby.grocery ? `groceries (${nearby.grocery.miles} mi)` : null,
+    nearby.hospital ? `a hospital (${formatMiles(nearby.hospital.miles)})` : null,
+    nearby.school ? `a school (${formatMiles(nearby.school.miles)})` : null,
+    nearby.grocery ? `groceries (${formatMiles(nearby.grocery.miles)})` : null,
   ].filter((x): x is string => x !== null);
   const whyList = [
     ...listing.whyItWorks,
     ...(closeParts.length ? [`Close to ${closeParts.join(", ")}`] : []),
-  ];
+  ].slice(0, 5);
 
   // "Similar homes" ... nearby comparable active listings (excludes this one).
   const similar = await getSimilarListings(
@@ -170,7 +170,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
                 </section>
               )}
 
-              {whyList.length > 0 && (
+              {whyList.length >= 3 && (
                 <section className="mt-8">
                   <h2 className="text-sm font-semibold uppercase tracking-widest text-auroraMauve">Why this home works</h2>
                   <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
@@ -245,7 +245,9 @@ export default async function ListingPage({ params }: { params: { id: string } }
               )}
 
               {/* Payment estimator ... skip on rentals/low-price (not a purchase). */}
-              {listing.price >= 25000 && <ListingPaymentCalculator price={listing.price} />}
+              {listing.price >= 25000 && (
+                <ListingPaymentCalculator price={listing.price} taxAnnual={listing.taxAnnual ?? undefined} />
+              )}
 
               {nearbyKeys.length > 0 && (
                 <section className="mt-8">
@@ -268,7 +270,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
                           </svg>
                           <span className="text-xs uppercase tracking-wider text-dusty">{NEARBY_LABEL[k]}</span>
                         </div>
-                        <div className="mt-2 text-xl font-semibold text-pearl">{nearby[k]!.miles} mi</div>
+                        <div className="mt-2 text-xl font-semibold text-pearl">{formatMiles(nearby[k]!.miles)}</div>
                         {nearby[k]!.name && (
                           <div className="mt-0.5 text-sm text-dusty">{nearby[k]!.name}</div>
                         )}
