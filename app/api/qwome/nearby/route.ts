@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
-import { amenitiesForPoints } from "@/lib/amenities";
+import { qwomeNearby, type QwomeCategoryKey } from "@/lib/qwome/engine";
 
 /**
- * POST { points: [{ id, lat, lng }] } -> { [id]: { hospital?, school?, grocery? } }
- * Powers the "Nearby" distance tiles on listing cards / detail pages. Straight-
- * line miles from free OpenStreetMap data, computed server-side + cached.
+ * QWOME™ proximity service endpoint (brand-agnostic; the future standalone
+ * QWOME API would expose this same shape).
+ *   POST { points:[{id,lat,lng}], categories?: string[] }
+ *   -> { [id]: { hospital?, school?, grocery? } }  (straight-line miles + name)
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 30;
+export const maxDuration = 15;
 
 export async function POST(req: Request) {
   try {
     const body = (await req.json()) as {
       points?: Array<{ id: string; lat: number; lng: number }>;
+      categories?: QwomeCategoryKey[];
     };
     const points = (body.points ?? [])
       .filter(
@@ -23,9 +25,9 @@ export async function POST(req: Request) {
           Number.isFinite(p.lat) &&
           Number.isFinite(p.lng)
       )
-      .slice(0, 60); // cap per request
+      .slice(0, 60);
     if (points.length === 0) return NextResponse.json({});
-    const result = await amenitiesForPoints(points);
+    const result = await qwomeNearby(points, body.categories);
     return NextResponse.json(result);
   } catch {
     return NextResponse.json({});

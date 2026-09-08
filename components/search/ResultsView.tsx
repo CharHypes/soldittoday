@@ -45,7 +45,7 @@ export default function ResultsView({ listings }: { listings: Listing[] }) {
       .map((l) => ({ id: l.id, lat: l.lat as number, lng: l.lng as number }));
     if (points.length === 0) return;
     let cancelled = false;
-    fetch("/api/amenities", {
+    fetch("/api/qwome/nearby", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ points }),
@@ -147,6 +147,12 @@ export default function ResultsView({ listings }: { listings: Listing[] }) {
               : `${listings.length} ${listings.length === 1 ? "home" : "homes"}`}
           </span>
         </div>
+      )}
+      {hasCoords && (
+        <p className="mb-5 -mt-3 pr-1 text-right text-[11px] text-dusty/60">
+          Nearby matching powered by{" "}
+          <span className="font-medium tracking-wide text-auroraMauve/90">QWOME&trade;</span>
+        </p>
       )}
 
       {/* Mobile List / Map toggle */}

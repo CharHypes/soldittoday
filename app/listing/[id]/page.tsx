@@ -277,7 +277,10 @@ export default async function ListingPage({ params }: { params: { id: string } }
                       </div>
                     ))}
                   </div>
-                  <p className="mt-2 text-xs text-dusty/70">Straight-line distance to the nearest, from public map data.</p>
+                  <p className="mt-2 flex flex-wrap items-center gap-x-2 text-xs text-dusty/70">
+                    <span>Straight-line distance to the nearest.</span>
+                    <span className="font-medium tracking-wide text-auroraMauve/90">Powered by QWOME&trade;</span>
+                  </p>
                 </section>
               )}
 
