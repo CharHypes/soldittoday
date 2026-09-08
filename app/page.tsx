@@ -2,16 +2,20 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Ticker from "@/components/Ticker";
 import About from "@/components/About";
-import Team from "@/components/Team";
-import MeetCharlotte from "@/components/MeetCharlotte";
 import Services from "@/components/Services";
 import Listings from "@/components/Listings";
-import WhyWorkWithUs from "@/components/WhyWorkWithUs";
-import Market from "@/components/Market";
 import Testimonials from "@/components/Testimonials";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 
+/**
+ * Homepage ... intentionally focused on search, trust, current listings, and
+ * conversion. Deeper content lives on its dedicated pages:
+ *   - fuller company/team + "why us" -> /why-sold-it-today, /team, /meet-charlotte (About nav)
+ *   - detailed services -> /buyers, /sellers, /first-time-buyers, /investment, /relocation, /fsbo (Services nav)
+ *   - communities / area content -> /communities, /neighborhood-guides (Communities nav)
+ * The homepage keeps only concise teasers (Services "What we do", About intro).
+ */
 export default function Home() {
   return (
     <>
@@ -19,17 +23,11 @@ export default function Home() {
       <main>
         <Hero />
         <Ticker />
-        {/* Do first: show homes, then how we help, then who we are. */}
+        {/* Show homes, then how we help, then a concise who-we-are teaser. */}
         <Listings />
         <Services />
         <About />
-        <WhyWorkWithUs />
-        <Market />
         <Testimonials />
-        {/* The people, near the bottom */}
-        <MeetCharlotte />
-        <Team />
-        {/* PartnersTeaser hidden until the Preferred Partners page is live */}
         <Contact />
       </main>
       <Footer />

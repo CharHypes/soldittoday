@@ -16,6 +16,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { p: "/sellers", pr: 0.8 },
     { p: "/first-time-buyers", pr: 0.8 },
     { p: "/investment", pr: 0.7 },
+    { p: "/fsbo", pr: 0.6 },
+    { p: "/why-sold-it-today", pr: 0.6 },
     { p: "/communities", pr: 0.8 },
     { p: "/resources", pr: 0.8 },
     { p: "/blog", pr: 0.7 },

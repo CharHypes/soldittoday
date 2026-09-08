@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { brandValues, contact } from "@/lib/data";
+import { contact } from "@/lib/data";
 import Reveal from "./ui/Reveal";
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -85,42 +85,11 @@ export default function About() {
                 <a href="/team" className="btn-outline">
                   Meet the Full Team
                 </a>
+                <a href="/why-sold-it-today" className="btn-outline">
+                  Why Sold It Today
+                </a>
               </div>
             </Reveal>
-          </div>
-        </div>
-
-        {/* What the team is built around */}
-        <div className="mt-20">
-          <Reveal>
-            <h3 className="text-center text-sm font-medium uppercase tracking-widest text-dusty">
-              What we&rsquo;re built around
-            </h3>
-          </Reveal>
-          <div className="mt-8 grid gap-px overflow-hidden rounded-xl2 border border-dusty/12 bg-dusty/10 sm:grid-cols-2 lg:grid-cols-4">
-            {brandValues.map((value, i) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 22 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.6, delay: (i % 3) * 0.07, ease }}
-                className="aurora-ring group bg-plum/60 p-7 backdrop-blur"
-              >
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold tracking-widest text-auroraMauve/70">
-                    0{i + 1}
-                  </span>
-                  <span className="h-px flex-1 bg-dusty/15 transition-colors duration-500 group-hover:bg-auroraMauve/40" />
-                </div>
-                <h4 className="mt-5 text-lg font-semibold text-pearl">
-                  {value.title}
-                </h4>
-                <p className="mt-2.5 text-sm leading-relaxed text-dusty">
-                  {value.description}
-                </p>
-              </motion.div>
-            ))}
           </div>
         </div>
       </div>

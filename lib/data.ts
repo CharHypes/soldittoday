@@ -14,7 +14,7 @@ export const navLinks: NavLink[] = [
     children: [
       { label: "Meet Charlotte", href: "/meet-charlotte" },
       { label: "Our Team", href: "/team" },
-      { label: "Communities", href: "/communities" },
+      { label: "Why Sold It Today", href: "/why-sold-it-today" },
     ],
   },
   {
@@ -25,9 +25,18 @@ export const navLinks: NavLink[] = [
       { label: "Sellers", href: "/sellers" },
       { label: "First-Time Buyers", href: "/first-time-buyers" },
       { label: "Investors", href: "/investment" },
+      { label: "Relocation", href: "/relocation" },
+      { label: "FSBO + MLS Listing", href: "/fsbo" },
     ],
   },
-  { label: "Relocation", href: "/relocation" }, // dedicated page (route, not anchor)
+  {
+    label: "Communities",
+    href: "/communities",
+    children: [
+      { label: "Michigan Communities", href: "/communities" },
+      { label: "Neighborhood Guides", href: "/neighborhood-guides" },
+    ],
+  },
   {
     label: "Resources",
     href: "/resources",
@@ -51,9 +60,12 @@ export const navLinks: NavLink[] = [
 export const futurePages: NavLink[] = [
   { label: "Meet Charlotte", href: "/meet-charlotte" },
   { label: "Team", href: "/team" },
+  { label: "Why Sold It Today", href: "/why-sold-it-today" },
   // Communities is the canonical hub (replaces the retired /service-areas).
   { label: "Communities", href: "/communities" },
   { label: "Neighborhood Guides", href: "/neighborhood-guides" },
+  { label: "Relocation", href: "/relocation" },
+  { label: "FSBO + MLS Listing", href: "/fsbo" },
   { label: "Resources", href: "/resources" },
   { label: "Articles & Insights", href: "/blog" },
   { label: "Down Payment Assistance", href: "/dpa" },
