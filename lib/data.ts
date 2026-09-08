@@ -547,6 +547,44 @@ export type PartnerCategory = {
   partners: Partner[];
 };
 
+/**
+ * Curated maximum shown per category, PER MARKET. Keeps the network selective
+ * (not an open vendor directory). Because the cap is per market, Metro Detroit
+ * can have its own 3 lenders, Grand Rapids its own 3, etc. as we expand.
+ */
+export const MAX_PARTNERS_PER_CATEGORY = 3;
+
+/**
+ * Real partners for a category, optionally scoped to a market/region, sorted
+ * (featured -> priority -> rating) and capped at MAX_PARTNERS_PER_CATEGORY.
+ * When no market is passed, it caps the category overall (Phase 1, statewide).
+ */
+export function curatedPartners(cat: PartnerCategory, market?: PartnerMarket): Partner[] {
+  let list = cat.partners.filter((p) => !p.placeholder);
+  if (market) list = list.filter((p) => p.region === market);
+  list = list.slice().sort((a, b) => {
+    if (!!b.featured !== !!a.featured) return b.featured ? 1 : -1;
+    if ((b.priority ?? 0) !== (a.priority ?? 0)) return (b.priority ?? 0) - (a.priority ?? 0);
+    return (b.rating ?? -1) - (a.rating ?? -1);
+  });
+  return list.slice(0, MAX_PARTNERS_PER_CATEGORY);
+}
+
+/**
+ * Preferred Partner expansion ticker ... DATA-DRIVEN so current needs can be
+ * updated any time without touching the page. Add/remove/edit openings here.
+ */
+export const partnerOpeningsLead =
+  "Now expanding our Preferred Partner network across Michigan";
+export const partnerOpenings: string[] = [
+  "Seeking a trusted home inspector in Grand Rapids",
+  "Looking for a reliable estate-sale company in Traverse City",
+  "Seeking a title partner in Kalamazoo",
+  "Looking for a trusted auto detailer in Metro Detroit",
+  "Expanding our contractor network in Lansing",
+  "Accepting partner applications for select Michigan markets",
+];
+
 // PREVIEW DATA ... every entry is a placeholder so Charlotte can see the layout.
 // Replace names/photos/why-trust/contact with her real people, then flip the
 // page live (remove noindex + re-add the homepage teaser). Keep full public

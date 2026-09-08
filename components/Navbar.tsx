@@ -40,7 +40,7 @@ export default function Navbar() {
     <header className="site-nav fixed inset-x-0 top-0 z-50 border-b border-dusty/10 bg-plum/85 backdrop-blur-xl">
       <nav className="container-lux flex h-[72px] items-center justify-between gap-3 xl:gap-8">
         {/* Brand logo ... SOLD IT TODAY is the primary brand (original rose-gold) */}
-        <a href="/" onClick={goTop} className="flex shrink-0 items-center" aria-label="SOLD IT TODAY home">
+        <a href="/" onClick={goTop} className="flex shrink-0 items-center lg:-ml-3 xl:-ml-4" aria-label="SOLD IT TODAY home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/assets/logos/sold-it-today/Sold-It-Today-high-contrast-fixed-transparent.svg"
@@ -52,7 +52,7 @@ export default function Navbar() {
         {/* Desktop links ... full nav only at lg+ (7 items + CTA need the room);
             tablets and below use the hamburger menu. Tighter gap at lg so the
             CTA doesn't wrap; roomier spacing returns at xl. */}
-        <ul className="hidden items-center gap-5 lg:flex xl:gap-8">
+        <ul className="hidden items-center gap-4 lg:flex xl:gap-6">
           {navLinks.map((link) => (
             <li key={link.href} className="group relative">
               <a
