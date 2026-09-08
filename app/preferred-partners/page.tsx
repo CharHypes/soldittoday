@@ -361,16 +361,17 @@ export default function PreferredPartnersPage() {
             </p>
           </div>
 
-          {/* General evergreen application CTA ... selective, curated tone. */}
-          <div className="mx-auto max-w-3xl rounded-xl2 border border-auroraMauve/25 bg-bruised/60 p-8 text-center shadow-aurora md:p-10">
-            <h2 className="text-xl font-semibold tracking-tightest text-pearl md:text-2xl">
+          {/* General evergreen application CTA ... SECONDARY to the trust note:
+              smaller, narrower, restrained rose-gold outline (no strong glow). */}
+          <div className="mx-auto max-w-xl rounded-xl2 border border-auroraMauve/20 bg-bruised/50 p-5 text-center md:p-6">
+            <h2 className="text-base font-semibold tracking-tightest text-pearl md:text-lg">
               Interested in joining the network?
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-dusty md:text-base">
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-dusty">
               We selectively add professionals by market and category as openings
               become available.
             </p>
-            <a href="/#contact" className="btn-aurora group mt-6">
+            <a href="/#contact" className="btn-aurora group mt-4 !px-5 !py-2.5 text-sm">
               Apply to Be Considered
               <span className="transition-transform duration-500 ease-lux group-hover:translate-x-1">
                 &rarr;
