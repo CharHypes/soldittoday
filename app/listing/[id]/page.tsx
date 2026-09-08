@@ -8,6 +8,7 @@ import FavoriteButton from "@/components/search/FavoriteButton";
 import ShareButton from "@/components/search/ShareButton";
 import { getListing, getSimilarListings, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
 import ListingCard from "@/components/search/ListingCard";
+import ListingPaymentCalculator from "@/components/search/ListingPaymentCalculator";
 import { amenitiesForPoints, type AmenityKey } from "@/lib/amenities";
 import { contact } from "@/lib/data";
 
@@ -211,6 +212,9 @@ export default async function ListingPage({ params }: { params: { id: string } }
                   </dl>
                 </section>
               )}
+
+              {/* Payment estimator ... skip on rentals/low-price (not a purchase). */}
+              {listing.price >= 25000 && <ListingPaymentCalculator price={listing.price} />}
 
               {nearbyKeys.length > 0 && (
                 <section className="mt-8">
