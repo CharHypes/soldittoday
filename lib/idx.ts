@@ -390,7 +390,9 @@ export async function getListingsByIds(ids: string[]): Promise<Listing[]> {
     })
   );
   // Preserve the caller's order (most-recently-saved first is set client-side).
-  const byId = new Map(results.filter((l): l is Listing => Boolean(l) && Boolean(l.mlsNumber)).map((l) => [l.id, l]));
+  const byId = new Map(
+    results.filter((l): l is Listing => l != null && Boolean(l.mlsNumber)).map((l) => [l.id, l])
+  );
   return ids.map((id) => byId.get(id)).filter((l): l is Listing => Boolean(l));
 }
 
