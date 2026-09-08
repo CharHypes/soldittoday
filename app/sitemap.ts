@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { cityPages } from "@/lib/data";
 import { publishedResources } from "@/lib/resources";
+import { publishedPosts } from "@/lib/blog";
 import { DPA_PROGRAMS } from "@/lib/dpaPrograms";
 
 const SITE = "https://www.soldittoday.com";
@@ -17,6 +18,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { p: "/investment", pr: 0.7 },
     { p: "/communities", pr: 0.8 },
     { p: "/resources", pr: 0.8 },
+    { p: "/blog", pr: 0.7 },
     { p: "/preferred-partners", pr: 0.7 },
     { p: "/resources/calculators", pr: 0.7 },
     { p: "/resources/mortgage-calculator", pr: 0.7 },
@@ -38,8 +40,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     p: `/resources/${r.slug}`,
     pr: 0.7,
   }));
+  // Only published (non-draft) posts are sitemapped.
+  const blog = publishedPosts.map((p) => ({ p: `/blog/${p.slug}`, pr: 0.6 }));
 
-  return [...staticPaths, ...cities, ...dpa, ...res].map(({ p, pr }) => ({
+  return [...staticPaths, ...cities, ...dpa, ...res, ...blog].map(({ p, pr }) => ({
     url: `${SITE}${p}`,
     lastModified: LAST,
     changeFrequency: "weekly" as const,

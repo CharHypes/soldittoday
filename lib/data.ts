@@ -32,6 +32,7 @@ export const navLinks: NavLink[] = [
     label: "Resources",
     href: "/resources",
     children: [
+      { label: "Articles & Insights", href: "/blog" },
       { label: "Down Payment Assistance", href: "/dpa" },
       { label: "First-Time Home Buyer Guide", href: "/resources/first-time-home-buyer-michigan" },
       { label: "FHA Loans", href: "/resources/fha-loans-michigan" },
@@ -54,6 +55,7 @@ export const futurePages: NavLink[] = [
   { label: "Communities", href: "/communities" },
   { label: "Neighborhood Guides", href: "/neighborhood-guides" },
   { label: "Resources", href: "/resources" },
+  { label: "Articles & Insights", href: "/blog" },
   { label: "Down Payment Assistance", href: "/dpa" },
   { label: "Preferred Partners", href: "/preferred-partners" },
   { label: "Saved Homes", href: "/saved" },
