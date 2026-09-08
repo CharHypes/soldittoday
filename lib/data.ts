@@ -50,7 +50,7 @@ export const navLinks: NavLink[] = [
       { label: "Preferred Partners", href: "/preferred-partners" },
     ],
   },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact Us", href: "#contact" },
 ];
 
 // Future content routes ... scaffolded for AI/SEO discoverability. These pages
