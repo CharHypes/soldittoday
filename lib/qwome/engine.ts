@@ -25,7 +25,7 @@ export type QwomePoint = { id: string; lat: number; lng: number };
 
 type Row = [number, number, string | null]; // [lat, lng, name]
 type Dataset = Record<string, Row[]>;
-const DATA = raw as Dataset;
+const DATA = raw as unknown as Dataset;
 
 /**
  * Category registry. `datasetKey` maps to the bundled dataset; `scanAll` skips
