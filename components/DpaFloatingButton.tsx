@@ -19,21 +19,24 @@ export default function DpaFloatingButton() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    // Hide on the DPA pages themselves and on private app surfaces
-    // (client seller portals, the agent dashboard, and auth screens).
+    // Hide only on the DPA pages themselves and the PRIVATE app surfaces ... the
+    // portal paths use a trailing slash (/seller/<token>, /buyer/<token>) so we
+    // must NOT match the public /sellers and /buyers marketing pages.
     if (
       pathname?.startsWith("/dpa") ||
-      pathname?.startsWith("/seller") ||
-      pathname?.startsWith("/buyer") ||
+      pathname?.startsWith("/seller/") ||
+      pathname?.startsWith("/buyer/") ||
       pathname?.startsWith("/dashboard") ||
       pathname?.startsWith("/auth")
     ) {
       setShow(false);
       return;
     }
+    // Dismiss is per browser SESSION (reappears on the next visit) so the CTA
+    // stays discoverable rather than vanishing site-wide forever after one close.
     let dismissed = false;
     try {
-      dismissed = localStorage.getItem(DISMISS_KEY) === "1";
+      dismissed = sessionStorage.getItem(DISMISS_KEY) === "1";
     } catch {
       dismissed = false;
     }
@@ -44,7 +47,7 @@ export default function DpaFloatingButton() {
 
   const dismiss = () => {
     try {
-      localStorage.setItem(DISMISS_KEY, "1");
+      sessionStorage.setItem(DISMISS_KEY, "1");
     } catch {
       /* ignore */
     }

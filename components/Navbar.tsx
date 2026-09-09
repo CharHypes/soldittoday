@@ -162,13 +162,18 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-dusty/10 bg-plum/95 backdrop-blur-xl lg:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            /* Scrollable so the full menu is reachable on short screens (the
+               header is 72px = 4.5rem tall; cap the panel to the rest of the
+               viewport and let it scroll). overscroll-contain keeps the scroll
+               inside the menu. */
+            className="max-h-[calc(100dvh-4.5rem)] overflow-y-auto overscroll-contain border-t border-dusty/10 bg-plum/95 backdrop-blur-xl lg:hidden"
           >
-            <ul className="container-lux flex flex-col gap-1 py-6">
+            {/* Extra bottom padding so the last item clears the floating DPA pill. */}
+            <ul className="container-lux flex flex-col gap-1 py-6 pb-28">
               {navLinks.map((link) => (
                 <li key={link.href}>
                   <a
