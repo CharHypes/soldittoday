@@ -192,7 +192,7 @@ function classifySchools(elements) {
 // Names that are NOT a full-service weekly-grocery supermarket even when OSM
 // tags them shop=supermarket: dollar stores, Target, food-service/bulk
 // warehouses, convenience/party/liquor/gas, pharmacies, specialty-only shops.
-const NON_SUPERMARKET = /\b(dollar (general|tree)|family dollar|dollar\b|target|gordon food|gfs|bulk barn|liquor|party store|convenience|smoke shop|vape|marathon|speedway|\bbp\b|shell|mobil|sunoco|citgo|7-eleven|circle k|quik|quick stop|corner (store|market)|cvs|walgreens|rite aid|pharmacy|greenhouse|farm stand|butcher|bakery|meat market|spice|candy|nutrition|vitamin)\b/i;
+const NON_SUPERMARKET = /\b(dollar (general|tree)|family dollar|dollar\b|target|costco|sam.s club|bj.s wholesale|wholesale club|warehouse club|gordon food|gfs|bulk barn|liquor|party store|convenience|smoke shop|vape|marathon|speedway|\bbp\b|shell|mobil|sunoco|citgo|7-eleven|circle k|quik|quick stop|corner (store|market)|cvs|walgreens|rite aid|pharmacy|greenhouse|farm stand|butcher|bakery|meat market|spice|candy|nutrition|vitamin)\b/i;
 // Department-store rows qualify only as full-grocery supercenters.
 const SUPERCENTER = /meijer|walmart supercent/i;
 
