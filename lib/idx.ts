@@ -148,11 +148,12 @@ const SPARK_BASE = process.env.IDX_FEED_URL || "https://replication.sparkapi.com
 export const IDX_ENABLED =
   process.env.IDX_FEED_ENABLED === "true" && Boolean(process.env.IDX_FEED_TOKEN);
 
-// How many listings a single search returns. Raised from 24 so real city
-// searches don't silently drop homes past the first page. The Spark replication
-// API honors this; big-market searches show a "showing X of Y, refine to see
-// more" note (see app/search/page.tsx) rather than pretending 24 is everything.
-const RESULT_LIMIT = 100;
+// How many listings a single search returns. Set high so real city searches
+// don't silently drop homes ... this covers even the largest Michigan markets
+// (e.g. Detroit ~400) on one page. The Spark replication API honors it. Anything
+// beyond this still shows a "showing X of Y, refine to see more" note
+// (app/search/page.tsx) rather than pretending the first page is everything.
+const RESULT_LIMIT = 500;
 
 /** Spark photo URLs come back as http; force https so they load on our site. */
 function https(u: string | null | undefined): string | null {
