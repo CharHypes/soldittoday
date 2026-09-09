@@ -168,6 +168,104 @@ function QwomeModal({
 
   const count = prefs.length;
 
+  // Expandable sub-sections (e.g. "International & Specialty Markets"). Start
+  // open when the viewer already has a selection inside, so their picks are
+  // visible; otherwise collapsed to keep the list short.
+  const [openSubs, setOpenSubs] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    for (const entry of QWOME_CATALOG) {
+      if (entry.subgroup && active.has(entry.id)) init[entry.subgroup] = true;
+    }
+    return init;
+  });
+
+  // One catalog row (toggle + reveal). Reused for direct and sub-section rows.
+  const renderRow = (entry: (typeof QWOME_CATALOG)[number]) => {
+    const on = active.has(entry.id);
+    const pref = active.get(entry.id);
+    return (
+      <li
+        key={entry.id}
+        className={[
+          "rounded-xl border transition-colors",
+          on ? "border-auroraMauve/45 bg-wine/20" : "border-dusty/15 bg-plum/40",
+        ].join(" ")}
+      >
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={on}
+          onClick={() => toggle(entry.id)}
+          className="flex w-full items-center gap-3 px-4 py-3 text-left"
+        >
+          <span aria-hidden className="text-xl leading-none">{entry.icon}</span>
+          <span className={on ? "flex-1 text-sm font-medium text-pearl" : "flex-1 text-sm text-dusty"}>
+            {entry.label}
+          </span>
+          <span
+            className={[
+              "grid h-6 w-6 shrink-0 place-items-center rounded-md border transition-colors",
+              on ? "border-auroraMauve bg-gradient-to-br from-gold to-auroraMauve" : "border-dusty/40 bg-transparent",
+            ].join(" ")}
+          >
+            {on && (
+              <svg viewBox="0 0 16 16" className="h-4 w-4 text-plum" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M3.5 8.5l3 3 6-7" />
+              </svg>
+            )}
+          </span>
+        </button>
+
+        {/* Distance control + accuracy note ... measurable only. */}
+        {on && isMeasurable(entry.id) && (
+          <div className="flex flex-col gap-2 border-t border-dusty/12 px-4 py-2.5">
+            <div className="flex items-center gap-2 text-sm text-dusty">
+              <span>within</span>
+              <select
+                aria-label={`${entry.label} distance in miles`}
+                className={selectCls}
+                value={pref?.maxMiles ?? defaultMilesFor(entry.id)}
+                onChange={(e) => patch(entry.id, { maxMiles: Number(e.target.value) })}
+              >
+                {QWOME_MILE_OPTIONS.map((m) => (
+                  <option key={m} value={m}>{m} mi</option>
+                ))}
+              </select>
+            </div>
+            {entry.note && (
+              <p className="text-xs leading-snug text-dusty/70">{entry.note}</p>
+            )}
+          </div>
+        )}
+
+        {/* Address entry ... structure for the future address-based matching
+            step. Captured toward the QWOME data model now; distance from these
+            places is computed once geocoding ships. Optional, so it never blocks
+            a selection. */}
+        {on && entry.addressBased && (
+          <div className="flex flex-col gap-2 border-t border-dusty/12 px-4 py-2.5">
+            {entry.id === "custom" && (
+              <input
+                type="text"
+                value={pref?.label ?? ""}
+                onChange={(e) => patch(entry.id, { label: e.target.value })}
+                placeholder="Name this place (e.g. Mom's house)"
+                className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
+              />
+            )}
+            <input
+              type="text"
+              value={pref?.address?.formatted ?? ""}
+              onChange={(e) => patch(entry.id, { address: { ...pref?.address, formatted: e.target.value } })}
+              placeholder="Address or place (optional)"
+              className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
+            />
+          </div>
+        )}
+      </li>
+    );
+  };
+
   return (
     <>
       {/* Backdrop */}
@@ -221,99 +319,56 @@ function QwomeModal({
             {QWOME_GROUPS.map((group) => {
               const entries = QWOME_CATALOG.filter((c) => c.group === group);
               if (entries.length === 0) return null;
+              const direct = entries.filter((e) => !e.subgroup);
+              // Preserve catalog order of subgroups within the group.
+              const subNames = entries
+                .filter((e) => e.subgroup)
+                .map((e) => e.subgroup as string)
+                .filter((name, i, arr) => arr.indexOf(name) === i);
               return (
                 <section key={group}>
                   <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-auroraMauve/80">
                     {group}
                   </p>
                   <ul className="flex flex-col gap-2">
-                    {entries.map((entry) => {
-                      const on = active.has(entry.id);
-                      const pref = active.get(entry.id);
-                      return (
-                        <li
-                          key={entry.id}
-                          className={[
-                            "rounded-xl border transition-colors",
-                            on ? "border-auroraMauve/45 bg-wine/20" : "border-dusty/15 bg-plum/40",
-                          ].join(" ")}
-                        >
-                          <button
-                            type="button"
-                            role="checkbox"
-                            aria-checked={on}
-                            onClick={() => toggle(entry.id)}
-                            className="flex w-full items-center gap-3 px-4 py-3 text-left"
-                          >
-                            <span aria-hidden className="text-xl leading-none">{entry.icon}</span>
-                            <span className={on ? "flex-1 text-sm font-medium text-pearl" : "flex-1 text-sm text-dusty"}>
-                              {entry.label}
-                            </span>
-                            <span
-                              className={[
-                                "grid h-6 w-6 shrink-0 place-items-center rounded-md border transition-colors",
-                                on ? "border-auroraMauve bg-gradient-to-br from-gold to-auroraMauve" : "border-dusty/40 bg-transparent",
-                              ].join(" ")}
-                            >
-                              {on && (
-                                <svg viewBox="0 0 16 16" className="h-4 w-4 text-plum" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                                  <path d="M3.5 8.5l3 3 6-7" />
-                                </svg>
-                              )}
-                            </span>
-                          </button>
-
-                          {/* Distance control + accuracy note ... measurable only. */}
-                          {on && isMeasurable(entry.id) && (
-                            <div className="flex flex-col gap-2 border-t border-dusty/12 px-4 py-2.5">
-                              <div className="flex items-center gap-2 text-sm text-dusty">
-                                <span>within</span>
-                                <select
-                                  aria-label={`${entry.label} distance in miles`}
-                                  className={selectCls}
-                                  value={pref?.maxMiles ?? defaultMilesFor(entry.id)}
-                                  onChange={(e) => patch(entry.id, { maxMiles: Number(e.target.value) })}
-                                >
-                                  {QWOME_MILE_OPTIONS.map((m) => (
-                                    <option key={m} value={m}>{m} mi</option>
-                                  ))}
-                                </select>
-                              </div>
-                              {entry.note && (
-                                <p className="text-xs leading-snug text-dusty/70">{entry.note}</p>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Address entry ... structure for the future
-                              address-based matching step. Captured toward the
-                              QWOME data model now; distance from these places is
-                              computed once geocoding ships. Optional, so it never
-                              blocks a selection. */}
-                          {on && entry.addressBased && (
-                            <div className="flex flex-col gap-2 border-t border-dusty/12 px-4 py-2.5">
-                              {entry.id === "custom" && (
-                                <input
-                                  type="text"
-                                  value={pref?.label ?? ""}
-                                  onChange={(e) => patch(entry.id, { label: e.target.value })}
-                                  placeholder="Name this place (e.g. Mom's house)"
-                                  className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
-                                />
-                              )}
-                              <input
-                                type="text"
-                                value={pref?.address?.formatted ?? ""}
-                                onChange={(e) => patch(entry.id, { address: { ...pref?.address, formatted: e.target.value } })}
-                                placeholder="Address or place (optional)"
-                                className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
-                              />
-                            </div>
-                          )}
-                        </li>
-                      );
-                    })}
+                    {direct.map(renderRow)}
                   </ul>
+
+                  {subNames.map((subName) => {
+                    const subEntries = entries.filter((e) => e.subgroup === subName);
+                    const selectedInSub = subEntries.filter((e) => active.has(e.id)).length;
+                    const isOpen = openSubs[subName] ?? false;
+                    return (
+                      <div key={subName} className="mt-2 overflow-hidden rounded-xl border border-dusty/15 bg-plum/30">
+                        <button
+                          type="button"
+                          aria-expanded={isOpen}
+                          onClick={() => setOpenSubs((s) => ({ ...s, [subName]: !isOpen }))}
+                          className="flex w-full items-center gap-3 px-4 py-3 text-left"
+                        >
+                          <span aria-hidden className="text-lg leading-none">🌍</span>
+                          <span className="flex-1 text-sm font-medium text-pearl">{subName}</span>
+                          {selectedInSub > 0 && (
+                            <span className="rounded-full bg-wine/40 px-2 py-0.5 text-[11px] font-semibold text-pearl">
+                              {selectedInSub}
+                            </span>
+                          )}
+                          <svg
+                            viewBox="0 0 16 16"
+                            className={`h-4 w-4 text-dusty transition-transform ${isOpen ? "rotate-180" : ""}`}
+                            fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden
+                          >
+                            <path d="M4 6l4 4 4-4" />
+                          </svg>
+                        </button>
+                        {isOpen && (
+                          <ul className="flex flex-col gap-2 border-t border-dusty/12 p-2">
+                            {subEntries.map(renderRow)}
+                          </ul>
+                        )}
+                      </div>
+                    );
+                  })}
                 </section>
               );
             })}

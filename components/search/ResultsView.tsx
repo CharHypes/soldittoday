@@ -109,16 +109,27 @@ export default function ResultsView({ listings }: { listings: Listing[] }) {
     [measurablePrefs]
   );
 
-  // A home "fits" when it satisfies EVERY measurable preference (AND).
+  // Categories QWOME actually measured in this result set. A category with no
+  // data anywhere (e.g. a market type absent from this region) must NOT filter
+  // every home out ... it simply can't be applied here, so we skip it.
+  const measuredCats = useMemo(() => {
+    const s = new Set<string>();
+    for (const id in amenities) for (const cat in amenities[id]) s.add(cat);
+    return s;
+  }, [amenities]);
+
+  // A home "fits" when it satisfies EVERY APPLICABLE measurable preference (AND).
   const visible = useMemo(() => {
     if (!prefsActive || !amenitiesLoaded) return listings;
+    const applicable = measurablePrefs.filter((p) => measuredCats.has(p.category));
+    if (applicable.length === 0) return listings;
     return listings.filter((l) =>
-      measurablePrefs.every((p) => {
+      applicable.every((p) => {
         const d = amenities[l.id]?.[p.category as AmenityKey];
         return d != null && p.maxMiles != null && d.miles <= p.maxMiles;
       })
     );
-  }, [prefsActive, amenitiesLoaded, listings, amenities, measurablePrefs]);
+  }, [prefsActive, amenitiesLoaded, listings, amenities, measurablePrefs, measuredCats]);
 
   const statusNode = prefsActive
     ? amenitiesLoaded

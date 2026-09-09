@@ -26,7 +26,18 @@ export type QwomeCategoryKey =
   | "school_elem"
   | "school_mid"
   | "school_high"
-  | "grocery";
+  | "grocery"
+  | "grocery_any"
+  | "grocery_asian"
+  | "grocery_chinese"
+  | "grocery_korean"
+  | "grocery_japanese"
+  | "grocery_south_asian"
+  | "grocery_mideast"
+  | "grocery_halal"
+  | "grocery_latin"
+  | "grocery_african_caribbean"
+  | "grocery_kosher";
 
 export type QwomeDistance = { miles: number; name: string | null };
 export type QwomeNearby = Partial<Record<QwomeCategoryKey, QwomeDistance>>;
@@ -55,7 +66,20 @@ export const QWOME_CATEGORIES: Record<
   school_elem: { label: "Elementary School", datasetKey: "school_elem" },
   school_mid: { label: "Middle School", datasetKey: "school_mid" },
   school_high: { label: "High School", datasetKey: "school_high" },
-  grocery: { label: "Grocery", datasetKey: "grocery" },
+  // Grocery family. General + Any are dense (bbox); the international/specialty
+  // markets are sparse statewide, so scanAll to always resolve the nearest.
+  grocery: { label: "Grocery / Supermarket", datasetKey: "grocery" },
+  grocery_any: { label: "Any Full-Service Grocery", datasetKey: "grocery_any" },
+  grocery_asian: { label: "Asian Market", datasetKey: "grocery_asian", scanAll: true },
+  grocery_chinese: { label: "Chinese Market", datasetKey: "grocery_chinese", scanAll: true },
+  grocery_korean: { label: "Korean Market", datasetKey: "grocery_korean", scanAll: true },
+  grocery_japanese: { label: "Japanese Market", datasetKey: "grocery_japanese", scanAll: true },
+  grocery_south_asian: { label: "Indian / South Asian Market", datasetKey: "grocery_south_asian", scanAll: true },
+  grocery_mideast: { label: "Middle Eastern / Arabic Market", datasetKey: "grocery_mideast", scanAll: true },
+  grocery_halal: { label: "Halal Market", datasetKey: "grocery_halal", scanAll: true },
+  grocery_latin: { label: "Mexican / Latin American Market", datasetKey: "grocery_latin", scanAll: true },
+  grocery_african_caribbean: { label: "African / Caribbean Market", datasetKey: "grocery_african_caribbean", scanAll: true },
+  grocery_kosher: { label: "Kosher Market", datasetKey: "grocery_kosher", scanAll: true },
 };
 
 const EARTH_MI = 3958.8;

@@ -39,8 +39,22 @@ export type QwomeCategoryId =
   | "school_elem"
   | "school_mid"
   | "school_high"
-  // Everyday + personal places.
+  // Grocery ... a family of explicit, user-selectable preferences (never
+  // inferred): a conventional default, an "any full-service" option, and
+  // expandable international & specialty markets.
   | "grocery"
+  | "grocery_any"
+  | "grocery_asian"
+  | "grocery_chinese"
+  | "grocery_korean"
+  | "grocery_japanese"
+  | "grocery_south_asian"
+  | "grocery_mideast"
+  | "grocery_halal"
+  | "grocery_latin"
+  | "grocery_african_caribbean"
+  | "grocery_kosher"
+  // Everyday + personal places.
   | "workplace"
   | "family"
   | "airport"
@@ -86,7 +100,7 @@ export type QwomePreference = {
 };
 
 /** Grouping for the picker ... light section headers over a longer catalog. */
-export type QwomeGroup = "Healthcare" | "Schools" | "Everyday" | "People & places";
+export type QwomeGroup = "Healthcare" | "Schools" | "Grocery" | "Everyday" | "People & places";
 
 /** A selectable category in the catalog. */
 export type QwomeCatalogEntry = {
@@ -99,6 +113,12 @@ export type QwomeCatalogEntry = {
   icon: string;
   /** Section the picker groups this under. */
   group: QwomeGroup;
+  /**
+   * Optional expandable sub-section within a group (e.g. "International &
+   * Specialty Markets" under Grocery). Entries sharing a subgroup collapse
+   * behind one expander; entries without a subgroup sit directly in the group.
+   */
+  subgroup?: string;
   /** True when the bundled QWOME dataset can measure distance TODAY. */
   measurable: boolean;
   /** True when this category is anchored to a specific address, not a category. */
@@ -133,8 +153,22 @@ export const QWOME_CATALOG: QwomeCatalogEntry[] = [
   { id: "school_elem", label: "Elementary School", short: "Elementary", icon: "🎒", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public elementary school in district", note: "Nearest public elementary school in the district (not boundary-assigned)." },
   { id: "school_mid", label: "Middle School", short: "Middle", icon: "📗", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public middle school in district", note: "Nearest public middle school in the district (not boundary-assigned)." },
   { id: "school_high", label: "High School", short: "High School", icon: "🎓", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public high school in district", note: "Nearest public high school in the district (not boundary-assigned)." },
+  // Grocery ... explicit, user-selectable (never inferred). General is the
+  // conventional default; Any Full-Service adds international supermarkets; the
+  // International & Specialty Markets expander holds the specific market types.
+  { id: "grocery", label: "General Grocery / Supermarket", short: "Grocery", icon: "🛒", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest supermarket", note: "Conventional full-service supermarkets and major/regional chains (Kroger, Meijer, Aldi, Walmart Supercenter, ...)." },
+  { id: "grocery_any", label: "Any Full-Service Grocery", short: "Full-Service", icon: "🏪", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest full-service grocery", note: "Conventional supermarkets plus legitimate full-service international supermarkets." },
+  { id: "grocery_asian", label: "Asian Market", short: "Asian", icon: "🥢", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Asian market" },
+  { id: "grocery_chinese", label: "Chinese Market", short: "Chinese", icon: "🥟", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Chinese market" },
+  { id: "grocery_korean", label: "Korean Market", short: "Korean", icon: "🍲", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Korean market" },
+  { id: "grocery_japanese", label: "Japanese Market", short: "Japanese", icon: "🍱", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Japanese market" },
+  { id: "grocery_south_asian", label: "Indian / South Asian Market", short: "Indian", icon: "🍛", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Indian / South Asian market" },
+  { id: "grocery_mideast", label: "Middle Eastern / Arabic Market", short: "Middle Eastern", icon: "🧆", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Middle Eastern / Arabic market" },
+  { id: "grocery_halal", label: "Halal Market", short: "Halal", icon: "🌙", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest halal market" },
+  { id: "grocery_latin", label: "Mexican / Latin American Market", short: "Latin", icon: "🌮", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Mexican / Latin American market" },
+  { id: "grocery_african_caribbean", label: "African / Caribbean Market", short: "African/Caribbean", icon: "🍠", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest African / Caribbean market" },
+  { id: "grocery_kosher", label: "Kosher Market", short: "Kosher", icon: "✡️", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest kosher market" },
   // Everyday
-  { id: "grocery", label: "Grocery / Supermarket", short: "Grocery", icon: "🛒", group: "Everyday", measurable: true, addressBased: false, descriptor: "nearest full-service supermarket", note: "Full-service supermarkets for a weekly shop (excludes warehouse clubs, convenience, dollar, and specialty stores)." },
   { id: "dining", label: "Restaurants / Coffee", short: "Dining", icon: "☕", group: "Everyday", measurable: false, addressBased: false },
   { id: "shopping", label: "Shopping", short: "Shopping", icon: "🛍️", group: "Everyday", measurable: false, addressBased: false },
   { id: "gym", label: "Gym / Fitness", short: "Gym", icon: "🏋️", group: "Everyday", measurable: false, addressBased: false },
@@ -148,7 +182,7 @@ export const QWOME_CATALOG: QwomeCatalogEntry[] = [
 ];
 
 /** Catalog groups in display order (drives the picker's section headers). */
-export const QWOME_GROUPS: QwomeGroup[] = ["Healthcare", "Schools", "Everyday", "People & places"];
+export const QWOME_GROUPS: QwomeGroup[] = ["Healthcare", "Schools", "Grocery", "Everyday", "People & places"];
 
 const CATALOG_BY_ID = new Map(QWOME_CATALOG.map((c) => [c.id, c]));
 const VALID_IDS = new Set<QwomeCategoryId>(QWOME_CATALOG.map((c) => c.id));
@@ -171,6 +205,18 @@ const DEFAULT_MILES: Partial<Record<QwomeCategoryId, number>> = {
   school_mid: 5,
   school_high: 8,
   grocery: 5,
+  grocery_any: 5,
+  // International & specialty markets are sparser, so a wider default radius.
+  grocery_asian: 10,
+  grocery_chinese: 15,
+  grocery_korean: 15,
+  grocery_japanese: 15,
+  grocery_south_asian: 15,
+  grocery_mideast: 10,
+  grocery_halal: 10,
+  grocery_latin: 10,
+  grocery_african_caribbean: 15,
+  grocery_kosher: 15,
 };
 
 export function catalogEntry(id: QwomeCategoryId): QwomeCatalogEntry | undefined {

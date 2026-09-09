@@ -188,27 +188,69 @@ function classifySchools(elements) {
   return { school_elem, school_mid, school_high };
 }
 
-// ---- grocery classification (full-service supermarkets only) ----
+// ---- grocery classification ----
+// Grocery is a family of user-selectable layers, never inferred:
+//   grocery      General / conventional supermarkets (the tightened default)
+//   grocery_any  Any full-service grocery (conventional + intl supermarkets)
+//   grocery_<x>  International & specialty markets, classified by name
 // Names that are NOT a full-service weekly-grocery supermarket even when OSM
-// tags them shop=supermarket: dollar stores, Target, food-service/bulk
-// warehouses, convenience/party/liquor/gas, pharmacies, specialty-only shops.
+// tags them shop=supermarket: dollar stores, Target, warehouse clubs, food-
+// service bulk, convenience/party/liquor/gas, pharmacies, specialty-only shops.
 const NON_SUPERMARKET = /\b(dollar (general|tree)|family dollar|dollar\b|target|costco|sam.s club|bj.s wholesale|wholesale club|warehouse club|gordon food|gfs|bulk barn|liquor|party store|convenience|smoke shop|vape|marathon|speedway|\bbp\b|shell|mobil|sunoco|citgo|7-eleven|circle k|quik|quick stop|corner (store|market)|cvs|walgreens|rite aid|pharmacy|greenhouse|farm stand|butcher|bakery|meat market|spice|candy|nutrition|vitamin)\b/i;
 // Department-store rows qualify only as full-grocery supercenters.
 const SUPERCENTER = /meijer|walmart supercent/i;
 
-function classifyGrocery(elements) {
-  const out = [];
+// International / specialty market name patterns.
+const GP = {
+  chinese: /\b(chinese|china|hong ?kong|canton|szechuan|sichuan|shanghai|great wall|dynasty|tai pan|888)\b/i,
+  korean: /\b(korean|korea|h-?mart|seoul|hankook|arirang|zion market)\b/i,
+  japanese: /\b(japanese|japan|nijiya|mitsuwa|tokyo|sakura|maruwa|one world market)\b/i,
+  south_asian: /\b(indian|india|patel|desi|south asian|bombay|mumbai|punjab|pakistan|bangladesh|apna|namaste|swad|sabzi|india ?bazaar)\b/i,
+  mideast: /\b(middle eastern|arab|arabic|lebanese|persian|iranian|mediterranean market|greenland|shatila|arabian|mid.?east|baladi|sahara|damascus|aladdin|jerusalem|zam ?zam|al[- ](?:noor|salam|huda|rashid))\b/i,
+  halal: /\bhalal|zabiha\b/i,
+  latin: /\b(mexican|mexico|latino?|latin|carniceria|supermercado|mercado|hispanic|el rancho|michoacana|tapatia|guadalajara|el paisano|la mich|fiesta|azteca)\b/i,
+  african_caribbean: /\b(african|caribbean|jamaican|nigeria|ghana|west indian|tropical (market|foods)|afro)\b/i,
+  kosher: /\b(kosher|glatt|jewish)\b/i,
+};
+const asianAny = (n) =>
+  /\b(asian|oriental|viet|vietnam|thai|filipino|pinoy|manila|indo(nesia)?|malaysia|hmong|lao|cambod|pan.?asian|mongolian)\b/i.test(n) ||
+  GP.chinese.test(n) || GP.korean.test(n) || GP.japanese.test(n);
+const anyIntl = (n) =>
+  asianAny(n) || GP.south_asian.test(n) || GP.mideast.test(n) || GP.halal.test(n) ||
+  GP.latin.test(n) || GP.african_caribbean.test(n) || GP.kosher.test(n);
+
+// Base full-service supermarket set (conventional + international), as rows.
+function fullServiceRows(elements) {
+  const keep = [];
   for (const e of elements) {
     const t = T(e); if (isDisused(t) || !coord(e)) continue;
     const shop = (t.shop || "").toLowerCase();
     const name = nameOf(t) || "";
-    let keep = false;
-    if (shop === "supermarket") keep = !NON_SUPERMARKET.test(name);
-    else if (shop === "department_store") keep = SUPERCENTER.test(name);
-    // shop=wholesale (Costco/Sam's/BJ's/GFS) -> warehouse club, excluded by default.
-    if (keep) out.push(e);
+    let ok = false;
+    if (shop === "supermarket") ok = !NON_SUPERMARKET.test(name);
+    else if (shop === "department_store") ok = SUPERCENTER.test(name);
+    if (ok) keep.push(e);
   }
-  return out;
+  return toRows(keep);
+}
+
+function classifyGrocery(elements) {
+  const any = fullServiceRows(elements);
+  const sel = (pred) => any.filter((r) => pred(r[2] || ""));
+  return {
+    grocery: any.filter((r) => !anyIntl(r[2] || "")),
+    grocery_any: any,
+    grocery_asian: sel(asianAny),
+    grocery_chinese: sel((n) => GP.chinese.test(n)),
+    grocery_korean: sel((n) => GP.korean.test(n)),
+    grocery_japanese: sel((n) => GP.japanese.test(n)),
+    grocery_south_asian: sel((n) => GP.south_asian.test(n)),
+    grocery_mideast: sel((n) => GP.mideast.test(n)),
+    grocery_halal: sel((n) => GP.halal.test(n)),
+    grocery_latin: sel((n) => GP.latin.test(n)),
+    grocery_african_caribbean: sel((n) => GP.african_caribbean.test(n)),
+    grocery_kosher: sel((n) => GP.kosher.test(n)),
+  };
 }
 
 async function main() {
@@ -224,6 +266,7 @@ async function main() {
 
   const h = classifyHealth(health.elements);
   const s = classifySchools(schools.elements);
+  const g = classifyGrocery(grocery.elements);
   const dataset = {
     hospital: toRows(h.hospital),
     er: toRows(h.er),
@@ -233,7 +276,7 @@ async function main() {
     school_elem: toRows(s.school_elem),
     school_mid: toRows(s.school_mid),
     school_high: toRows(s.school_high),
-    grocery: toRows(classifyGrocery(grocery.elements)),
+    ...g, // grocery + grocery_any + grocery_<international> layers
   };
 
   fs.writeFileSync(DATA_FILE, JSON.stringify(dataset));
