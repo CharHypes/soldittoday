@@ -134,7 +134,7 @@ export const QWOME_CATALOG: QwomeCatalogEntry[] = [
   { id: "school_mid", label: "Middle School", short: "Middle", icon: "📗", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public middle school in district", note: "Nearest public middle school in the district (not boundary-assigned)." },
   { id: "school_high", label: "High School", short: "High School", icon: "🎓", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public high school in district", note: "Nearest public high school in the district (not boundary-assigned)." },
   // Everyday
-  { id: "grocery", label: "Grocery", short: "Grocery", icon: "🛒", group: "Everyday", measurable: true, addressBased: false, descriptor: "nearest grocery" },
+  { id: "grocery", label: "Grocery / Supermarket", short: "Grocery", icon: "🛒", group: "Everyday", measurable: true, addressBased: false, descriptor: "nearest full-service supermarket", note: "Full-service supermarkets for a weekly shop (excludes warehouse clubs, convenience, dollar, and specialty stores)." },
   { id: "dining", label: "Restaurants / Coffee", short: "Dining", icon: "☕", group: "Everyday", measurable: false, addressBased: false },
   { id: "shopping", label: "Shopping", short: "Shopping", icon: "🛍️", group: "Everyday", measurable: false, addressBased: false },
   { id: "gym", label: "Gym / Fitness", short: "Gym", icon: "🏋️", group: "Everyday", measurable: false, addressBased: false },

@@ -25,7 +25,11 @@
  *   school_elem  public elementary schools (nearest-in-district, see note)
  *   school_mid   public middle / junior-high schools
  *   school_high  public high schools
- *   grocery      preserved from the previous dataset unchanged
+ *   grocery      full-service supermarkets a household does a weekly shop at
+ *                (excludes warehouse clubs, Target/dollar/convenience/party/
+ *                liquor stores, pharmacies, food-service bulk, and specialty-
+ *                only food shops). Warehouse Club / Convenience / Organic-
+ *                Specialty are planned as separate optional categories.
  *
  * SCHOOL ACCURACY NOTE: OSM has no attendance-boundary data, so these are the
  * NEAREST public school of each level, not the boundary-ASSIGNED school. The UI
@@ -60,6 +64,12 @@ const HEALTH_Q = `[out:json][timeout:300];area(${MI_AREA})->.mi;(
 
 const SCHOOL_Q = `[out:json][timeout:300];area(${MI_AREA})->.mi;(
   nwr["amenity"="school"](area.mi);
+);out center tags;`;
+
+const GROCERY_Q = `[out:json][timeout:300];area(${MI_AREA})->.mi;(
+  nwr["shop"="supermarket"](area.mi);
+  nwr["shop"="wholesale"](area.mi);
+  nwr["shop"="department_store"]["name"~"Meijer|Walmart|Target",i](area.mi);
 );out center tags;`;
 
 // ---- helpers ----
@@ -178,14 +188,39 @@ function classifySchools(elements) {
   return { school_elem, school_mid, school_high };
 }
 
+// ---- grocery classification (full-service supermarkets only) ----
+// Names that are NOT a full-service weekly-grocery supermarket even when OSM
+// tags them shop=supermarket: dollar stores, Target, food-service/bulk
+// warehouses, convenience/party/liquor/gas, pharmacies, specialty-only shops.
+const NON_SUPERMARKET = /\b(dollar (general|tree)|family dollar|dollar\b|target|gordon food|gfs|bulk barn|liquor|party store|convenience|smoke shop|vape|marathon|speedway|\bbp\b|shell|mobil|sunoco|citgo|7-eleven|circle k|quik|quick stop|corner (store|market)|cvs|walgreens|rite aid|pharmacy|greenhouse|farm stand|butcher|bakery|meat market|spice|candy|nutrition|vitamin)\b/i;
+// Department-store rows qualify only as full-grocery supercenters.
+const SUPERCENTER = /meijer|walmart supercent/i;
+
+function classifyGrocery(elements) {
+  const out = [];
+  for (const e of elements) {
+    const t = T(e); if (isDisused(t) || !coord(e)) continue;
+    const shop = (t.shop || "").toLowerCase();
+    const name = nameOf(t) || "";
+    let keep = false;
+    if (shop === "supermarket") keep = !NON_SUPERMARKET.test(name);
+    else if (shop === "department_store") keep = SUPERCENTER.test(name);
+    // shop=wholesale (Costco/Sam's/BJ's/GFS) -> warehouse club, excluded by default.
+    if (keep) out.push(e);
+  }
+  return out;
+}
+
 async function main() {
-  const existing = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
   console.log("Fetching Michigan healthcare from Overpass...");
   const health = await overpass(HEALTH_Q);
   console.log(`  ${health.elements.length} health features`);
   console.log("Fetching Michigan schools from Overpass...");
   const schools = await overpass(SCHOOL_Q);
   console.log(`  ${schools.elements.length} school features`);
+  console.log("Fetching Michigan supermarkets from Overpass...");
+  const grocery = await overpass(GROCERY_Q);
+  console.log(`  ${grocery.elements.length} grocery features`);
 
   const h = classifyHealth(health.elements);
   const s = classifySchools(schools.elements);
@@ -198,7 +233,7 @@ async function main() {
     school_elem: toRows(s.school_elem),
     school_mid: toRows(s.school_mid),
     school_high: toRows(s.school_high),
-    grocery: existing.grocery, // preserved unchanged
+    grocery: toRows(classifyGrocery(grocery.elements)),
   };
 
   fs.writeFileSync(DATA_FILE, JSON.stringify(dataset));
