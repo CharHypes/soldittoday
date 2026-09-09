@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
-import { readPrefs, evaluatePreference, type QwomePreference } from "@/lib/qwome/preferences";
+import { readPrefs, evaluatePreference, isMeasurable, type QwomePreference } from "@/lib/qwome/preferences";
 
 const LABEL: Record<AmenityKey, string> = {
   hospital: "Hospital",
@@ -56,17 +56,20 @@ export default function WhyThisHomeWorks({
   // Personalized lines ... evaluated against the viewer's own limits.
   const personalized: Reason[] = [];
   for (const p of prefs) {
-    const d = nearby[p.category];
+    // Only measurable prefs have a nearby distance to reason about today.
+    if (!isMeasurable(p.category)) continue;
+    const key = p.category as AmenityKey;
+    const d = nearby[key];
     if (!d) continue;
     const status = evaluatePreference(p, d.miles);
     if (status === "met") {
       personalized.push({
-        text: `${LABEL[p.category]} within your ${p.maxMiles}-mile limit (${formatMiles(d.miles)})`,
+        text: `${LABEL[key]} within your ${p.maxMiles}-mile limit (${formatMiles(d.miles)})`,
         ok: true,
       });
-    } else {
+    } else if (status) {
       personalized.push({
-        text: `${LABEL[p.category]} is ${formatMiles(d.miles)} ... ${
+        text: `${LABEL[key]} is ${formatMiles(d.miles)} ... ${
           status === "far" ? "beyond" : "just past"
         } your ${p.maxMiles}-mile preference`,
         ok: false,

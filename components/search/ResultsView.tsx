@@ -11,6 +11,7 @@ import {
   writePrefs,
   encodePrefs,
   decodePrefs,
+  isMeasurable,
   type QwomePreference,
 } from "@/lib/qwome/preferences";
 
@@ -95,19 +96,29 @@ export default function ResultsView({ listings }: { listings: Listing[] }) {
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
   };
 
-  const prefsActive = prefs.length > 0;
-  const activeCategories = useMemo(() => prefs.map((p) => p.category), [prefs]);
+  // Only the MEASURABLE prefs (hospital/school/grocery today) constrain search
+  // and show a distance on the card. Lifestyle picks QWOME can't measure yet
+  // (gym, dining, ...) are saved and shown as chips but don't hide any homes.
+  const measurablePrefs = useMemo(
+    () => prefs.filter((p) => isMeasurable(p.category) && p.maxMiles != null),
+    [prefs]
+  );
+  const prefsActive = measurablePrefs.length > 0;
+  const activeCategories = useMemo(
+    () => measurablePrefs.map((p) => p.category as AmenityKey),
+    [measurablePrefs]
+  );
 
-  // A home "fits" when it satisfies EVERY active preference (AND).
+  // A home "fits" when it satisfies EVERY measurable preference (AND).
   const visible = useMemo(() => {
     if (!prefsActive || !amenitiesLoaded) return listings;
     return listings.filter((l) =>
-      prefs.every((p) => {
-        const d = amenities[l.id]?.[p.category];
-        return d != null && d.miles <= p.maxMiles;
+      measurablePrefs.every((p) => {
+        const d = amenities[l.id]?.[p.category as AmenityKey];
+        return d != null && p.maxMiles != null && d.miles <= p.maxMiles;
       })
     );
-  }, [prefsActive, amenitiesLoaded, listings, amenities, prefs]);
+  }, [prefsActive, amenitiesLoaded, listings, amenities, measurablePrefs]);
 
   const statusNode = prefsActive
     ? amenitiesLoaded
