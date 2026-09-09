@@ -78,11 +78,14 @@ export default async function Listings() {
                 ) : (
                   <div className="grid h-full w-full place-items-center text-dusty/60">Photo coming soon</div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-plum/60 via-transparent to-transparent opacity-70" />
+                {/* Fixed dark gradient (NOT theme tokens) so the over-photo
+                    price reads in both light and dark mode. */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80" />
                 <span className="absolute left-4 top-4 rounded-full bg-pearl px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-plum">
                   {statusLabel[l.status]}
                 </span>
-                <div className="absolute bottom-4 left-4 text-lg font-semibold text-pearl drop-shadow">
+                {/* Price stays light on the photo in both themes. */}
+                <div className="absolute bottom-4 left-4 text-lg font-semibold text-white drop-shadow-[0_1px_4px_rgba(0,0,0,0.75)]">
                   {money(l.price)}
                 </div>
               </div>
