@@ -148,7 +148,11 @@ const SPARK_BASE = process.env.IDX_FEED_URL || "https://replication.sparkapi.com
 export const IDX_ENABLED =
   process.env.IDX_FEED_ENABLED === "true" && Boolean(process.env.IDX_FEED_TOKEN);
 
-const RESULT_LIMIT = 24;
+// How many listings a single search returns. Raised from 24 so real city
+// searches don't silently drop homes past the first page. The Spark replication
+// API honors this; big-market searches show a "showing X of Y, refine to see
+// more" note (see app/search/page.tsx) rather than pretending 24 is everything.
+const RESULT_LIMIT = 100;
 
 /** Spark photo URLs come back as http; force https so they load on our site. */
 function https(u: string | null | undefined): string | null {
@@ -311,7 +315,9 @@ export async function searchListings(
   const filter = buildFilter(params);
   const url =
     `${SPARK_BASE}/listings?_filter=${encodeURIComponent(filter)}` +
-    `&_expand=Photos&_limit=${RESULT_LIMIT}`;
+    // _pagination=1 makes Spark return the true TotalRows (so we can show an
+    // honest "showing X of Y" note when a market has more than RESULT_LIMIT).
+    `&_expand=Photos&_pagination=1&_limit=${RESULT_LIMIT}`;
 
   try {
     const res = await fetch(url, {

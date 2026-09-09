@@ -164,6 +164,14 @@ export default async function SearchPage({
                   <p className="text-sm text-dusty">
                     {result!.total.toLocaleString("en-US")}{" "}
                     {result!.total === 1 ? "home" : "homes"} found
+                    {result!.listings.length < result!.total && (
+                      <span className="text-dusty/70">
+                        {" "}
+                        &middot; showing the first{" "}
+                        {result!.listings.length.toLocaleString("en-US")}, refine
+                        your search (price, beds, or area) to see more
+                      </span>
+                    )}
                   </p>
                   <SaveSearchButton />
                 </div>
