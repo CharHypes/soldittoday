@@ -11,38 +11,11 @@ import ListingCard from "@/components/search/ListingCard";
 import ListingPaymentCalculator from "@/components/search/ListingPaymentCalculator";
 import WhyThisHomeWorks from "@/components/search/WhyThisHomeWorks";
 import { amenitiesForPoints, formatMiles, type AmenityKey } from "@/lib/amenities";
+import { catalogEntry } from "@/lib/qwome/preferences";
 import { contact } from "@/lib/data";
 
-/* Fixed icons: hospital = "H" in a box (highway sign), school = schoolhouse
-   (K-12), grocery = cart. Matches the search cards. */
-const NEARBY_ICON: Record<AmenityKey, JSX.Element> = {
-  hospital: (
-    <>
-      <rect x="3.5" y="3.5" width="17" height="17" rx="4" />
-      <path d="M9 8v8M15 8v8M9 12h6" />
-    </>
-  ),
-  school: (
-    <>
-      <path d="M3 21h18" />
-      <path d="M5 21V10l7-3.5L19 10v11" />
-      <path d="M10 21v-4h4v4" />
-      <path d="M12 6.5V3l3 1-3 1" />
-    </>
-  ),
-  grocery: (
-    <>
-      <circle cx="9" cy="20" r="1.3" />
-      <circle cx="18" cy="20" r="1.3" />
-      <path d="M2 3h2l2.2 12.2a1.5 1.5 0 0 0 1.5 1.3H18a1.5 1.5 0 0 0 1.5-1.2L21 7H5.2" />
-    </>
-  ),
-};
-const NEARBY_LABEL: Record<AmenityKey, string> = {
-  hospital: "Nearest hospital",
-  school: "Nearest school",
-  grocery: "Nearest grocery",
-};
+// Default "Nearby" tiles on the detail page (shown to everyone, no prefs set).
+const NEARBY_DEFAULT: AmenityKey[] = ["hospital", "grocery", "school_elem", "pharmacy"];
 
 export const metadata: Metadata = {
   title: "Home for Sale | SOLD IT TODAY",
@@ -93,7 +66,7 @@ export default async function ListingPage({ params }: { params: { id: string } }
     listing.lat != null && listing.lng != null
       ? (await amenitiesForPoints([{ id: listing.id, lat: listing.lat, lng: listing.lng }]))[listing.id] ?? {}
       : {};
-  const nearbyKeys = (["hospital", "school", "grocery"] as AmenityKey[]).filter((k) => nearby[k]);
+  const nearbyKeys = NEARBY_DEFAULT.filter((k) => nearby[k]);
 
   // "Similar homes" ... nearby comparable active listings (excludes this one).
   const similar = await getSimilarListings(
@@ -223,19 +196,8 @@ export default async function ListingPage({ params }: { params: { id: string } }
                     {nearbyKeys.map((k) => (
                       <div key={k} className="rounded-xl2 border border-dusty/15 bg-plum/50 p-4">
                         <div className="flex items-center gap-2">
-                          <svg
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth={1.7}
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            className="h-5 w-5 text-gold"
-                            aria-hidden
-                          >
-                            {NEARBY_ICON[k]}
-                          </svg>
-                          <span className="text-xs uppercase tracking-wider text-dusty">{NEARBY_LABEL[k]}</span>
+                          <span aria-hidden className="text-base leading-none">{catalogEntry(k)?.icon}</span>
+                          <span className="text-xs uppercase tracking-wider text-dusty">Nearest {catalogEntry(k)?.short ?? k}</span>
                         </div>
                         <div className="mt-2 text-xl font-semibold text-pearl">{formatMiles(nearby[k]!.miles)}</div>
                         {nearby[k]!.name && (

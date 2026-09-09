@@ -23,5 +23,7 @@ export const formatMiles = qwomeFormatMiles;
 export async function amenitiesForPoints(
   points: Array<{ id: string; lat: number; lng: number }>
 ): Promise<Record<string, AmenityDistances>> {
-  return qwomeNearby(points, ["hospital", "school", "grocery"]);
+  // No category list ... QWOME resolves every measurable category (healthcare,
+  // schools by level, grocery). The UI shows only the ones the viewer picked.
+  return qwomeNearby(points);
 }

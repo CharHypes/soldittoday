@@ -17,7 +17,16 @@
 import raw from "./data/mi-pois.json";
 
 /** Categories QWOME can measure. Extend this union as the dataset grows. */
-export type QwomeCategoryKey = "hospital" | "school" | "grocery";
+export type QwomeCategoryKey =
+  | "hospital"
+  | "er"
+  | "urgentcare"
+  | "pharmacy"
+  | "behavioral"
+  | "school_elem"
+  | "school_mid"
+  | "school_high"
+  | "grocery";
 
 export type QwomeDistance = { miles: number; name: string | null };
 export type QwomeNearby = Partial<Record<QwomeCategoryKey, QwomeDistance>>;
@@ -36,8 +45,16 @@ export const QWOME_CATEGORIES: Record<
   QwomeCategoryKey,
   { label: string; datasetKey: string; scanAll?: boolean }
 > = {
+  // Healthcare ... sparse statewide, so scanAll to always resolve the nearest.
   hospital: { label: "Hospital", datasetKey: "hospital", scanAll: true },
-  school: { label: "School", datasetKey: "school" },
+  er: { label: "Emergency Room", datasetKey: "er", scanAll: true },
+  urgentcare: { label: "Urgent Care", datasetKey: "urgentcare", scanAll: true },
+  pharmacy: { label: "Pharmacy", datasetKey: "pharmacy" },
+  behavioral: { label: "Behavioral / Psychiatric Care", datasetKey: "behavioral", scanAll: true },
+  // Public schools by level (nearest-in-district; see data builder note).
+  school_elem: { label: "Elementary School", datasetKey: "school_elem" },
+  school_mid: { label: "Middle School", datasetKey: "school_mid" },
+  school_high: { label: "High School", datasetKey: "school_high" },
   grocery: { label: "Grocery", datasetKey: "grocery" },
 };
 

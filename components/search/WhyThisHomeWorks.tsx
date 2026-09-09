@@ -2,18 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
-import { readPrefs, evaluatePreference, isMeasurable, type QwomePreference } from "@/lib/qwome/preferences";
+import { readPrefs, evaluatePreference, isMeasurable, catalogEntry, type QwomePreference } from "@/lib/qwome/preferences";
 
-const LABEL: Record<AmenityKey, string> = {
-  hospital: "Hospital",
-  school: "School",
-  grocery: "Grocery",
-};
-const NOUN: Record<AmenityKey, string> = {
-  hospital: "a hospital",
-  school: "a school",
-  grocery: "groceries",
-};
+/**
+ * How each category reads in a "why this home works" line. Uses the catalog's
+ * honest descriptor ("nearest public elementary school in district", never
+ * "assigned") so we never overstate what the data proves.
+ */
+const descriptorFor = (key: AmenityKey) =>
+  catalogEntry(key)?.descriptor ?? catalogEntry(key)?.short.toLowerCase() ?? key;
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 type Reason = { text: string; ok: boolean };
 
@@ -64,12 +62,12 @@ export default function WhyThisHomeWorks({
     const status = evaluatePreference(p, d.miles);
     if (status === "met") {
       personalized.push({
-        text: `${LABEL[key]} within your ${p.maxMiles}-mile limit (${formatMiles(d.miles)})`,
+        text: `${cap(descriptorFor(key))} is ${formatMiles(d.miles)} (within your ${p.maxMiles}-mile limit)`,
         ok: true,
       });
     } else if (status) {
       personalized.push({
-        text: `${LABEL[key]} is ${formatMiles(d.miles)} ... ${
+        text: `${cap(descriptorFor(key))} is ${formatMiles(d.miles)} ... ${
           status === "far" ? "beyond" : "just past"
         } your ${p.maxMiles}-mile preference`,
         ok: false,
@@ -77,14 +75,14 @@ export default function WhyThisHomeWorks({
     }
   }
 
-  // With no preferences set, keep today's behavior exactly: one generic
-  // "Close to ..." line built from the nearest hospital / school / grocery.
+  // With no preferences set, keep today's behavior: one generic "Close to ..."
+  // line built from the nearest hospital / grocery / public elementary school.
   const genericNearby: Reason[] = [];
   if (prefs.length === 0) {
-    const parts = (["hospital", "school", "grocery"] as AmenityKey[])
+    const parts = (["hospital", "grocery", "school_elem"] as AmenityKey[])
       .filter((k) => nearby[k])
-      .map((k) => `${NOUN[k]} (${formatMiles(nearby[k]!.miles)})`);
-    if (parts.length) genericNearby.push({ text: `Close to ${parts.join(", ")}`, ok: true });
+      .map((k) => `${descriptorFor(k)} (${formatMiles(nearby[k]!.miles)})`);
+    if (parts.length) genericNearby.push({ text: `Close to the ${parts.join(", ")}`, ok: true });
   }
 
   const reasons = [...personalized, ...factReasons, ...genericNearby].slice(0, 6);

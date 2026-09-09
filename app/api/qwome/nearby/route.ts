@@ -25,7 +25,7 @@ export async function POST(req: Request) {
           Number.isFinite(p.lat) &&
           Number.isFinite(p.lng)
       )
-      .slice(0, 60);
+      .slice(0, 500);
     if (points.length === 0) return NextResponse.json({});
     const result = await qwomeNearby(points, body.categories);
     return NextResponse.json(result);

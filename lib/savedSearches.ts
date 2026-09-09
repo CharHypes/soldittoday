@@ -3,6 +3,8 @@
  * account-backed. A saved search is just the /search query string plus a
  * human-readable label. Shared by the Save button and the Saved Searches page.
  */
+import { catalogEntry, type QwomeCategoryId } from "@/lib/qwome/preferences";
+
 export type SavedSearch = { query: string; label: string; savedAt: number };
 
 const KEY = "sit-saved-searches";
@@ -60,12 +62,12 @@ export function describeSearch(qs: string): string {
   // QWOME proximity preferences: "near=hospital:10,grocery:3".
   const near = p.get("near");
   if (near) {
-    const labels: Record<string, string> = { hospital: "hospital", school: "school", grocery: "grocery" };
     const bits = near
       .split(",")
       .map((c) => {
         const [cat, mi] = c.split(":");
-        return labels[cat] && mi ? `≤${mi}mi ${labels[cat]}` : "";
+        const label = catalogEntry(cat as QwomeCategoryId)?.short.toLowerCase();
+        return label && mi ? `≤${mi}mi ${label}` : "";
       })
       .filter(Boolean);
     parts.push(...bits);

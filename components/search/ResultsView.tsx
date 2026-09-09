@@ -75,7 +75,7 @@ export default function ResultsView({ listings }: { listings: Listing[] }) {
     if (fromUrl.length === 0) {
       const mi = Number(sp.get("radiusMi"));
       const of = sp.get("radiusOf") as AmenityKey | null;
-      if (Number.isFinite(mi) && mi > 0 && (of === "hospital" || of === "school" || of === "grocery")) {
+      if (Number.isFinite(mi) && mi > 0 && of && isMeasurable(of)) {
         setPrefs([{ category: of, maxMiles: mi }]);
         return;
       }

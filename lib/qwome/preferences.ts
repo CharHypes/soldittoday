@@ -28,13 +28,22 @@ import type { AmenityKey } from "@/lib/amenities";
 
 /** Every lifestyle category a viewer can prioritise in QWOME. */
 export type QwomeCategoryId =
+  // Healthcare ... deliberately precise (acute-care hospital is NOT the same as
+  // an ER, urgent care, a pharmacy, or a psychiatric/behavioral facility).
   | "hospital"
-  | "school"
+  | "er"
+  | "urgentcare"
+  | "pharmacy"
+  | "behavioral"
+  // Public schools by level (nearest-in-district; not boundary-assigned yet).
+  | "school_elem"
+  | "school_mid"
+  | "school_high"
+  // Everyday + personal places.
   | "grocery"
   | "workplace"
   | "family"
   | "airport"
-  | "pharmacy"
   | "parks"
   | "shopping"
   | "dining"
@@ -76,41 +85,70 @@ export type QwomePreference = {
   id?: string;
 };
 
+/** Grouping for the picker ... light section headers over a longer catalog. */
+export type QwomeGroup = "Healthcare" | "Schools" | "Everyday" | "People & places";
+
 /** A selectable category in the catalog. */
 export type QwomeCatalogEntry = {
   id: QwomeCategoryId;
-  /** Full label for the picker ("Hospital / Medical"). */
+  /** Full label for the picker ("Emergency Room"). */
   label: string;
-  /** Compact label for the card chip ("Hospital"). */
+  /** Compact label for the card chip ("ER"). */
   short: string;
   /** Small glyph, for quick scanning in the picker + on the card. */
   icon: string;
+  /** Section the picker groups this under. */
+  group: QwomeGroup;
   /** True when the bundled QWOME dataset can measure distance TODAY. */
   measurable: boolean;
   /** True when this category is anchored to a specific address, not a category. */
   addressBased: boolean;
+  /**
+   * How the nearest result is described in "Why this home works" and tooltips.
+   * For schools this is deliberately "nearest public ... in district", never
+   * "assigned", until attendance-boundary data is available.
+   */
+  descriptor?: string;
+  /** Optional clarifying note shown under the option in the picker. */
+  note?: string;
 };
 
 /**
  * The full QWOME category catalog. To bring a new category online, flip
- * `measurable` (and add its dataset in lib/qwome/engine). Order here is the
- * order shown in the picker: the three measurable categories lead.
+ * `measurable` and add its dataset key in lib/qwome/engine + the data builder
+ * (scripts/build-qwome-pois.mjs). Order here is the order shown in the picker.
+ *
+ * Healthcare is split into precise, separately-measurable categories on purpose:
+ * a general acute-care hospital is not an ER, urgent care, pharmacy, or a
+ * psychiatric/behavioral facility, and QWOME must not conflate them.
  */
 export const QWOME_CATALOG: QwomeCatalogEntry[] = [
-  { id: "hospital", label: "Hospital / Medical", short: "Hospital", icon: "🏥", measurable: true, addressBased: false },
-  { id: "school", label: "School", short: "School", icon: "🎓", measurable: true, addressBased: false },
-  { id: "grocery", label: "Grocery", short: "Grocery", icon: "🛒", measurable: true, addressBased: false },
-  { id: "workplace", label: "Workplace", short: "Workplace", icon: "💼", measurable: false, addressBased: true },
-  { id: "family", label: "Family & Friends", short: "Family", icon: "🏡", measurable: false, addressBased: true },
-  { id: "airport", label: "Airport", short: "Airport", icon: "✈️", measurable: false, addressBased: false },
-  { id: "pharmacy", label: "Pharmacy", short: "Pharmacy", icon: "💊", measurable: false, addressBased: false },
-  { id: "parks", label: "Parks / Dog Parks", short: "Parks", icon: "🌳", measurable: false, addressBased: false },
-  { id: "shopping", label: "Shopping", short: "Shopping", icon: "🛍️", measurable: false, addressBased: false },
-  { id: "dining", label: "Restaurants / Coffee", short: "Dining", icon: "☕", measurable: false, addressBased: false },
-  { id: "gym", label: "Gym / Fitness", short: "Gym", icon: "🏋️", measurable: false, addressBased: false },
-  { id: "transit", label: "Public Transportation", short: "Transit", icon: "🚌", measurable: false, addressBased: false },
-  { id: "custom", label: "Custom Location", short: "Custom", icon: "📍", measurable: false, addressBased: true },
+  // Healthcare
+  { id: "hospital", label: "Hospital", short: "Hospital", icon: "🏥", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest acute-care hospital", note: "General acute-care hospitals only (excludes psychiatric, rehab, and specialty facilities)." },
+  { id: "er", label: "Emergency Room", short: "ER", icon: "🚑", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest emergency room" },
+  { id: "urgentcare", label: "Urgent Care", short: "Urgent Care", icon: "⛑️", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest urgent care" },
+  { id: "pharmacy", label: "Pharmacy", short: "Pharmacy", icon: "💊", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest pharmacy" },
+  { id: "behavioral", label: "Behavioral / Psychiatric Care", short: "Behavioral", icon: "🧠", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest behavioral / psychiatric care" },
+  // Schools (public, by level)
+  { id: "school_elem", label: "Elementary School", short: "Elementary", icon: "🎒", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public elementary school in district", note: "Nearest public elementary school in the district (not boundary-assigned)." },
+  { id: "school_mid", label: "Middle School", short: "Middle", icon: "📗", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public middle school in district", note: "Nearest public middle school in the district (not boundary-assigned)." },
+  { id: "school_high", label: "High School", short: "High School", icon: "🎓", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public high school in district", note: "Nearest public high school in the district (not boundary-assigned)." },
+  // Everyday
+  { id: "grocery", label: "Grocery", short: "Grocery", icon: "🛒", group: "Everyday", measurable: true, addressBased: false, descriptor: "nearest grocery" },
+  { id: "dining", label: "Restaurants / Coffee", short: "Dining", icon: "☕", group: "Everyday", measurable: false, addressBased: false },
+  { id: "shopping", label: "Shopping", short: "Shopping", icon: "🛍️", group: "Everyday", measurable: false, addressBased: false },
+  { id: "gym", label: "Gym / Fitness", short: "Gym", icon: "🏋️", group: "Everyday", measurable: false, addressBased: false },
+  { id: "parks", label: "Parks / Dog Parks", short: "Parks", icon: "🌳", group: "Everyday", measurable: false, addressBased: false },
+  { id: "transit", label: "Public Transportation", short: "Transit", icon: "🚌", group: "Everyday", measurable: false, addressBased: false },
+  { id: "airport", label: "Airport", short: "Airport", icon: "✈️", group: "Everyday", measurable: false, addressBased: false },
+  // People & places (address-based)
+  { id: "workplace", label: "Workplace", short: "Workplace", icon: "💼", group: "People & places", measurable: false, addressBased: true },
+  { id: "family", label: "Family & Friends", short: "Family", icon: "🏡", group: "People & places", measurable: false, addressBased: true },
+  { id: "custom", label: "Custom Location", short: "Custom", icon: "📍", group: "People & places", measurable: false, addressBased: true },
 ];
+
+/** Catalog groups in display order (drives the picker's section headers). */
+export const QWOME_GROUPS: QwomeGroup[] = ["Healthcare", "Schools", "Everyday", "People & places"];
 
 const CATALOG_BY_ID = new Map(QWOME_CATALOG.map((c) => [c.id, c]));
 const VALID_IDS = new Set<QwomeCategoryId>(QWOME_CATALOG.map((c) => c.id));
@@ -125,7 +163,13 @@ export const QWOME_MILE_OPTIONS = [1, 2, 3, 5, 10, 15, 20, 25];
 /** Sensible starting radius when a viewer first turns on a measurable category. */
 const DEFAULT_MILES: Partial<Record<QwomeCategoryId, number>> = {
   hospital: 10,
-  school: 5,
+  er: 15,
+  urgentcare: 10,
+  pharmacy: 3,
+  behavioral: 15,
+  school_elem: 3,
+  school_mid: 5,
+  school_high: 8,
   grocery: 5,
 };
 

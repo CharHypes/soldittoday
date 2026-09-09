@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   QWOME_CATALOG,
+  QWOME_GROUPS,
   QWOME_MILE_OPTIONS,
   catalogEntry,
   defaultMilesFor,
@@ -214,90 +215,109 @@ function QwomeModal({
           </button>
         </div>
 
-        {/* Options (scrollable) */}
+        {/* Options (scrollable), grouped by section. */}
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-4">
-          <ul className="flex flex-col gap-2">
-            {QWOME_CATALOG.map((entry) => {
-              const on = active.has(entry.id);
-              const pref = active.get(entry.id);
+          <div className="flex flex-col gap-5">
+            {QWOME_GROUPS.map((group) => {
+              const entries = QWOME_CATALOG.filter((c) => c.group === group);
+              if (entries.length === 0) return null;
               return (
-                <li
-                  key={entry.id}
-                  className={[
-                    "rounded-xl border transition-colors",
-                    on ? "border-auroraMauve/45 bg-wine/20" : "border-dusty/15 bg-plum/40",
-                  ].join(" ")}
-                >
-                  <button
-                    type="button"
-                    role="checkbox"
-                    aria-checked={on}
-                    onClick={() => toggle(entry.id)}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left"
-                  >
-                    <span aria-hidden className="text-xl leading-none">{entry.icon}</span>
-                    <span className={on ? "flex-1 text-sm font-medium text-pearl" : "flex-1 text-sm text-dusty"}>
-                      {entry.label}
-                    </span>
-                    <span
-                      className={[
-                        "grid h-6 w-6 shrink-0 place-items-center rounded-md border transition-colors",
-                        on ? "border-auroraMauve bg-gradient-to-br from-gold to-auroraMauve" : "border-dusty/40 bg-transparent",
-                      ].join(" ")}
-                    >
-                      {on && (
-                        <svg viewBox="0 0 16 16" className="h-4 w-4 text-plum" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                          <path d="M3.5 8.5l3 3 6-7" />
-                        </svg>
-                      )}
-                    </span>
-                  </button>
+                <section key={group}>
+                  <p className="mb-2 px-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-auroraMauve/80">
+                    {group}
+                  </p>
+                  <ul className="flex flex-col gap-2">
+                    {entries.map((entry) => {
+                      const on = active.has(entry.id);
+                      const pref = active.get(entry.id);
+                      return (
+                        <li
+                          key={entry.id}
+                          className={[
+                            "rounded-xl border transition-colors",
+                            on ? "border-auroraMauve/45 bg-wine/20" : "border-dusty/15 bg-plum/40",
+                          ].join(" ")}
+                        >
+                          <button
+                            type="button"
+                            role="checkbox"
+                            aria-checked={on}
+                            onClick={() => toggle(entry.id)}
+                            className="flex w-full items-center gap-3 px-4 py-3 text-left"
+                          >
+                            <span aria-hidden className="text-xl leading-none">{entry.icon}</span>
+                            <span className={on ? "flex-1 text-sm font-medium text-pearl" : "flex-1 text-sm text-dusty"}>
+                              {entry.label}
+                            </span>
+                            <span
+                              className={[
+                                "grid h-6 w-6 shrink-0 place-items-center rounded-md border transition-colors",
+                                on ? "border-auroraMauve bg-gradient-to-br from-gold to-auroraMauve" : "border-dusty/40 bg-transparent",
+                              ].join(" ")}
+                            >
+                              {on && (
+                                <svg viewBox="0 0 16 16" className="h-4 w-4 text-plum" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                                  <path d="M3.5 8.5l3 3 6-7" />
+                                </svg>
+                              )}
+                            </span>
+                          </button>
 
-                  {/* Distance control ... measurable categories only. */}
-                  {on && isMeasurable(entry.id) && (
-                    <div className="flex items-center gap-2 border-t border-dusty/12 px-4 py-2.5 text-sm text-dusty">
-                      <span>within</span>
-                      <select
-                        aria-label={`${entry.label} distance in miles`}
-                        className={selectCls}
-                        value={pref?.maxMiles ?? defaultMilesFor(entry.id)}
-                        onChange={(e) => patch(entry.id, { maxMiles: Number(e.target.value) })}
-                      >
-                        {QWOME_MILE_OPTIONS.map((m) => (
-                          <option key={m} value={m}>{m} mi</option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
+                          {/* Distance control + accuracy note ... measurable only. */}
+                          {on && isMeasurable(entry.id) && (
+                            <div className="flex flex-col gap-2 border-t border-dusty/12 px-4 py-2.5">
+                              <div className="flex items-center gap-2 text-sm text-dusty">
+                                <span>within</span>
+                                <select
+                                  aria-label={`${entry.label} distance in miles`}
+                                  className={selectCls}
+                                  value={pref?.maxMiles ?? defaultMilesFor(entry.id)}
+                                  onChange={(e) => patch(entry.id, { maxMiles: Number(e.target.value) })}
+                                >
+                                  {QWOME_MILE_OPTIONS.map((m) => (
+                                    <option key={m} value={m}>{m} mi</option>
+                                  ))}
+                                </select>
+                              </div>
+                              {entry.note && (
+                                <p className="text-xs leading-snug text-dusty/70">{entry.note}</p>
+                              )}
+                            </div>
+                          )}
 
-                  {/* Address entry ... structure for the future address-based
-                      matching step. Captured toward the QWOME data model now;
-                      distance from these places is computed once geocoding
-                      ships. Optional, so it never blocks a selection. */}
-                  {on && entry.addressBased && (
-                    <div className="flex flex-col gap-2 border-t border-dusty/12 px-4 py-2.5">
-                      {entry.id === "custom" && (
-                        <input
-                          type="text"
-                          value={pref?.label ?? ""}
-                          onChange={(e) => patch(entry.id, { label: e.target.value })}
-                          placeholder="Name this place (e.g. Mom's house)"
-                          className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
-                        />
-                      )}
-                      <input
-                        type="text"
-                        value={pref?.address?.formatted ?? ""}
-                        onChange={(e) => patch(entry.id, { address: { ...pref?.address, formatted: e.target.value } })}
-                        placeholder="Address or place (optional)"
-                        className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
-                      />
-                    </div>
-                  )}
-                </li>
+                          {/* Address entry ... structure for the future
+                              address-based matching step. Captured toward the
+                              QWOME data model now; distance from these places is
+                              computed once geocoding ships. Optional, so it never
+                              blocks a selection. */}
+                          {on && entry.addressBased && (
+                            <div className="flex flex-col gap-2 border-t border-dusty/12 px-4 py-2.5">
+                              {entry.id === "custom" && (
+                                <input
+                                  type="text"
+                                  value={pref?.label ?? ""}
+                                  onChange={(e) => patch(entry.id, { label: e.target.value })}
+                                  placeholder="Name this place (e.g. Mom's house)"
+                                  className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
+                                />
+                              )}
+                              <input
+                                type="text"
+                                value={pref?.address?.formatted ?? ""}
+                                onChange={(e) => patch(entry.id, { address: { ...pref?.address, formatted: e.target.value } })}
+                                placeholder="Address or place (optional)"
+                                className="w-full rounded-lg border border-dusty/25 bg-plum/60 px-3 py-2 text-sm text-pearl placeholder:text-dusty/60 outline-none transition-colors focus:border-auroraMauve/60"
+                              />
+                            </div>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
               );
             })}
-          </ul>
+          </div>
         </div>
 
         {/* Footer (sticky) */}

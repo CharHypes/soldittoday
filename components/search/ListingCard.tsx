@@ -3,21 +3,16 @@ import type { Listing } from "@/lib/idx";
 import { IDX_DISCLAIMER } from "@/lib/idx";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
 import { formatInt } from "@/lib/format";
+import { catalogEntry } from "@/lib/qwome/preferences";
 import FavoriteButton from "./FavoriteButton";
 
-const AMENITY_LABEL: Record<AmenityKey, string> = {
-  hospital: "Hospital",
-  school: "School",
-  grocery: "Grocery",
-};
-
 /**
- * Compact QWOME™ proximity line ... shown ONLY for the categories the viewer has
- * chosen in their QWOME preferences (e.g. "Hospital 3.4 mi · Grocery 1.1 mi").
- * No preferences => no line, so cards stay clean and we never dump distance data
- * that isn't relevant to this viewer.
+ * QWOME™ proximity chips ... one small pill per category the viewer chose in
+ * their QWOME preferences, each with the category's icon + this home's real
+ * distance (e.g. "🏥 Hospital 3.4 mi"). No preferences => no chips, so cards stay
+ * clean and we never dump distance data that isn't relevant to this viewer.
  */
-function QwomeLine({
+function QwomeChips({
   amenities,
   categories,
 }: {
@@ -25,16 +20,25 @@ function QwomeLine({
   categories: AmenityKey[];
 }) {
   if (!amenities || categories.length === 0) return null;
-  const parts = categories
-    .filter((k) => amenities[k])
-    .map((k) => `${AMENITY_LABEL[k]} ${formatMiles(amenities[k]!.miles)}`);
-  if (parts.length === 0) return null;
+  const chips = categories
+    .map((k) => ({ k, entry: catalogEntry(k), d: amenities[k] }))
+    .filter((c) => c.entry && c.d);
+  if (chips.length === 0) return null;
   return (
-    <div className="mt-3 flex items-center gap-2 border-t border-dusty/12 pt-3">
+    <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-dusty/12 pt-3">
       <span className="rounded-full bg-wine/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-auroraMauve">
         QWOME&trade;
       </span>
-      <span className="text-xs text-dusty">{parts.join(" · ")}</span>
+      {chips.map(({ k, entry, d }) => (
+        <span
+          key={k}
+          className="inline-flex items-center gap-1 rounded-full border border-dusty/20 bg-plum/50 px-2 py-0.5 text-[11px] text-dusty"
+        >
+          <span aria-hidden className="text-[12px] leading-none">{entry!.icon}</span>
+          <span className="font-medium text-pearl/90">{entry!.short}</span>
+          <span>{formatMiles(d!.miles)}</span>
+        </span>
+      ))}
     </div>
   );
 }
@@ -117,7 +121,7 @@ export default function ListingCard({
           {listing.sqft != null && <span>{formatInt(listing.sqft)} sqft</span>}
         </div>
 
-        <QwomeLine amenities={amenities} categories={qwomeCategories} />
+        <QwomeChips amenities={amenities} categories={qwomeCategories} />
 
         {/* Required attribution for the listing broker (Subscriber). */}
         <div className="mt-4 border-t border-dusty/12 pt-3 text-xs text-dusty">
