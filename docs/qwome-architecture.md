@@ -16,7 +16,7 @@ IDX, brokerage, and auth stay in the client.**
 ```
 lib/qwome/                      QWOME core (no Sold It Today imports)
   engine.ts                     proximity engine (nearest-of-category, haversine)
-  providers.ts                  PlaceProvider abstraction + bundled MI + empty
+  providers.ts                  PlaceProvider abstraction: bundled MI, empty, http
   regionsMeta.ts                shared region metadata (runtime + ingestion)
   regions.ts                    region registry + resolveProvider(points)
   analysis.ts                   analyzePropertyFit / analyzeProperties (normalized)
@@ -121,9 +121,13 @@ Overpass queries by the region's OSM area id and iterates the metadata (or one
 region via `node build-qwome-pois.mjs <id>`), writing each region's dataset with
 the same shared classification rules.
 
-**Adding a region** = one `regionsMeta` entry + wiring its bundled dataset into a
-provider (`PROVIDER_BY_ID` in `regions.ts`) + one build run. Optionally add a
-hosted `HttpPlaceProvider` for regions too large to bundle.
+**Adding a region** = one `regionsMeta` entry + wiring its dataset into a provider
+(`PROVIDER_BY_ID` in `regions.ts`) + one build run. The provider can be bundled
+(`inMemoryProvider`) or **hosted** (`httpPlaceProvider`, added for regions too
+large to bundle): `rows()` may be sync or async and the engine awaits it, so a
+hosted region needs no engine/analysis change ... just fetch its per-category
+datasets over HTTP. `httpPlaceProvider` is server-only (network I/O), caches each
+dataset per process (optional TTL), and degrades to no-data on failure.
 
 ### 5. No geocoding / travel-time providers yet
 Address-based categories (Workplace, Family, Custom) capture text but are not
