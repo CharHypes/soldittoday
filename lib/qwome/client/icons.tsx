@@ -35,9 +35,11 @@ const PATHS: Record<IconKey, React.ReactNode> = {
   // Universal roadway "H" hospital symbol (an H inside a rounded sign), so it
   // reads instantly as "hospital" rather than as a building.
   hospital: (<><rect x="3.5" y="3.5" width="17" height="17" rx="4" /><path d="M8.5 8v8M15.5 8v8M8.5 12h7" /></>),
-  er: (<><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M12 8.5v7M8.5 12h7" /></>),
+  // "ER" sign so it reads specifically as Emergency Room (matches the H sign).
+  er: (<><rect x="3.5" y="3.5" width="17" height="17" rx="4" /><text x="12" y="15.6" textAnchor="middle" fontSize="9" fontWeight={700} fill="currentColor" stroke="none" style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif" }}>ER</text></>),
   urgentcare: (<><path d="M12 3.5l6.5 2.7v4.3c0 3.9-2.8 6.9-6.5 8.3-3.7-1.4-6.5-4.4-6.5-8.3V6.2z" /><path d="M12 9v5M9.5 11.5h5" /></>),
-  pharmacy: (<><path d="M9.5 4h5v2.6l1 2V19a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1V8.6l1-2z" /><path d="M12 12v4M10 14h4" /></>),
+  // Familiar "Rx" pharmacy sign rather than a literal bottle (matches the H sign).
+  pharmacy: (<><rect x="3.5" y="3.5" width="17" height="17" rx="4" /><text x="12" y="16" textAnchor="middle" fontSize="10.5" fontWeight={700} fill="currentColor" stroke="none" style={{ fontFamily: "ui-sans-serif, system-ui, sans-serif" }}>Rx</text></>),
   behavioral: (<><path d="M15.5 20.5v-1.7a2 2 0 0 0-1.2-1.8A6.5 6.5 0 1 0 6 13" /><path d="M6 13v3.5a1 1 0 0 0 1 1h1.5v3" /></>),
   pencil: (<><path d="M4 20l1-4 10-10 3 3-10 10z" /><path d="M13.5 6.5l3 3" /></>),
   book: (<><path d="M4 5.5C6 4.5 9 4.5 12 6c3-1.5 6-1.5 8 0v12c-2-1.2-5-1.2-8 0-3-1.2-6-1.2-8 0z" /><path d="M12 6v12" /></>),
