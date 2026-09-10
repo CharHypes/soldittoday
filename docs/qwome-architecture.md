@@ -19,9 +19,11 @@ lib/qwome/                      QWOME core (no Sold It Today imports)
   providers.ts                  PlaceProvider abstraction + bundled MI provider
   analysis.ts                   analyzePropertyFit / analyzeProperties (normalized)
   preferences.ts                preference model: catalog, encode/decode, evaluate
+  classification/               shared place-classification rules (single source)
+    healthcare.ts school.ts grocery.ts  ... classifyPlace() in index.ts
   client/prefsStorage.ts        BROWSER persistence adapter (localStorage)  <- client
   data/mi-pois.json             bundled, classified place data (one provider)
-scripts/build-qwome-pois.mjs    data ingestion + classification (build-time)
+scripts/build-qwome-pois.mjs    data ingestion (applies the shared rules, build-time)
 app/api/v1/qwome/nearby         versioned proximity endpoint
 app/api/v1/qwome/analyze        versioned property-fit endpoint
 app/api/qwome/nearby            legacy alias -> v1
@@ -57,6 +59,13 @@ SoldItToday UI ─▶ lib/amenities / api/v1 ─▶ analysis ─▶ engine ─�
   client (mobile, account-backed) swaps that one file.
 - **Core no longer depends on the client.** `preferences.ts` imports the engine's
   own `QwomeCategoryKey`, not the Sold It Today `AmenityKey` adapter.
+- **Classification rules are a reusable core module.** `lib/qwome/classification/`
+  holds the single source of truth for what a place *is* (acute-care hospital vs
+  psychiatric vs urgent care; public school level; full-service vs warehouse vs
+  organic vs international grocery). Rules take a provider-neutral `{ name, tags }`
+  and return the QWOME categories a place belongs to. The build-time ingestion
+  imports them (proven to reproduce the shipped dataset byte-for-byte), and a
+  future live/query-time provider or the standalone app imports the same rules.
 
 ---
 
@@ -64,18 +73,14 @@ SoldItToday UI ─▶ lib/amenities / api/v1 ─▶ analysis ─▶ engine ─�
 
 Ordered by leverage. Each step is independently shippable and non-breaking.
 
-### 1. Classification rules live only in the build script  *(highest value)*
-`scripts/build-qwome-pois.mjs` holds the healthcare / school / grocery
-classification logic (what counts as an acute-care hospital, a public middle
-school, a full-service vs. warehouse vs. international grocery). It is pure logic
-but trapped in a Node build script and not reusable at runtime or by an ingestion
-service.
-
-**Separate it:** extract pure modules `lib/qwome/classification/{place,healthcare,
-school,grocery}.ts` that take normalized OSM/provider tags and return a QWOME
-category. The build script imports them (run it with `tsx`), and a future QWOME
-ingestion service reuses the exact same rules. No behavior change; just move the
-regex/tag logic into typed, tested functions.
+### 1. Classification rules ... ✅ DONE
+Extracted into `lib/qwome/classification/{healthcare,school,grocery}.ts` (+
+`index.ts` `classifyPlace`). Rules take a provider-neutral `{ name, tags }` and
+return the QWOME categories a place belongs to. `scripts/build-qwome-pois.mjs`
+now imports and applies them (Node loads the `.ts` via native type-stripping;
+type-only imports are erased at runtime), and the output was verified identical to
+the shipped dataset for all 22 layers. A future query-time provider or the
+standalone app imports the same modules.
 
 ### 2. Category catalog mixes core registry with presentation
 `preferences.ts` `QWOME_CATALOG` carries both **core** facts (id, `measurable`,
