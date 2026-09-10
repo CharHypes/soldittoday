@@ -13,6 +13,7 @@ import {
   type QwomeDistance,
   type QwomeNearby,
 } from "./qwome/engine";
+import { resolveProvider } from "./qwome/regions";
 
 export type AmenityKey = QwomeCategoryKey;
 export type AmenityDistance = QwomeDistance;
@@ -25,5 +26,6 @@ export async function amenitiesForPoints(
 ): Promise<Record<string, AmenityDistances>> {
   // No category list ... QWOME resolves every measurable category (healthcare,
   // schools by level, grocery). The UI shows only the ones the viewer picked.
-  return qwomeNearby(points);
+  // Resolve the region's data provider from the points (Michigan today).
+  return qwomeNearby(points, undefined, resolveProvider(points));
 }

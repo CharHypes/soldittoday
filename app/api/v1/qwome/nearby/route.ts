@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { qwomeNearby, type QwomeCategoryKey } from "@/lib/qwome/engine";
+import { resolveProvider } from "@/lib/qwome/regions";
 
 /**
  * QWOME™ proximity service ... versioned (v1) so external partners/clients can
@@ -34,7 +35,8 @@ export async function POST(req: Request) {
       )
       .slice(0, 500);
     if (points.length === 0) return NextResponse.json({});
-    const result = await qwomeNearby(points, body.categories);
+    // Resolve the region's data provider from the query points (Michigan today).
+    const result = await qwomeNearby(points, body.categories, resolveProvider(points));
     return NextResponse.json(result);
   } catch {
     return NextResponse.json({});

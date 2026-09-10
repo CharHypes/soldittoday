@@ -37,6 +37,17 @@ export function inMemoryProvider(id: string, data: Record<string, PlaceRow[]>): 
   };
 }
 
+/**
+ * A provider with no data. Returned when a location falls in no known region, so
+ * QWOME yields "no data" (and never another region's places) rather than
+ * guessing. Region resolution can also choose to fall back to a default region
+ * instead ... see lib/qwome/regions.
+ */
+export const emptyProvider: PlaceProvider = {
+  id: "empty",
+  rows: () => [],
+};
+
 // Default provider: the bundled Michigan OSM extract. This is the ONE place the
 // core references the bundled file; swapping providers (region, vendor, hosted
 // service) happens here or per-call, never in the engine's algorithm.

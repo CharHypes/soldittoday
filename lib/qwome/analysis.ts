@@ -18,7 +18,8 @@ import {
   type QwomeCategoryKey,
   type QwomeNearby,
 } from "./engine";
-import { defaultPlaceProvider, type PlaceProvider } from "./providers";
+import type { PlaceProvider } from "./providers";
+import { resolveProvider } from "./regions";
 import { isMeasurable, type QwomePreference } from "./preferences";
 import { evaluateFit, type QwomeCategoryResult } from "./fit";
 
@@ -75,10 +76,14 @@ function buildResult(
   };
 }
 
-/** Analyze one property/address against a set of QWOME preferences. */
+/**
+ * Analyze one property/address against a set of QWOME preferences. When no
+ * provider is given, QWOME resolves the region from the location (see
+ * lib/qwome/regions), so this works across regions with no caller change.
+ */
 export async function analyzePropertyFit(
   input: QwomeAnalysisInput,
-  provider: PlaceProvider = defaultPlaceProvider
+  provider: PlaceProvider = resolveProvider([input.location])
 ): Promise<QwomeFitResult> {
   const cats = input.preferences.map((p) => p.category).filter(isMeasurable);
   const point = { id: input.id ?? "0", lat: input.location.lat, lng: input.location.lng };
@@ -88,10 +93,13 @@ export async function analyzePropertyFit(
   return buildResult(input, nearby, provider.id);
 }
 
-/** Analyze many properties at once (e.g. a page of search results). */
+/**
+ * Analyze many properties at once (e.g. a page of search results). Resolves the
+ * region from the properties' locations when no provider is given.
+ */
 export async function analyzeProperties(
   inputs: QwomeAnalysisInput[],
-  provider: PlaceProvider = defaultPlaceProvider
+  provider: PlaceProvider = resolveProvider(inputs.map((i) => i.location))
 ): Promise<QwomeFitResult[]> {
   // Union of measurable categories across all inputs ... one batched engine pass.
   const catSet = new Set<QwomeCategoryKey>();
