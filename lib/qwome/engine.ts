@@ -15,6 +15,7 @@
  */
 
 import { defaultPlaceProvider, type PlaceProvider, type PlaceRow } from "./providers";
+import { defaultDistanceProvider, type DistanceProvider } from "./distance";
 
 /** Categories QWOME can measure. Extend this union as the dataset grows. */
 export type QwomeCategoryKey =
@@ -84,28 +85,22 @@ export const QWOME_CATEGORIES: Record<
   grocery_kosher: { label: "Kosher Market", datasetKey: "grocery_kosher", scanAll: true },
 };
 
-const EARTH_MI = 3958.8;
-function haversineMiles(aLat: number, aLng: number, bLat: number, bLng: number): number {
-  const toRad = (d: number) => (d * Math.PI) / 180;
-  const dLat = toRad(bLat - aLat);
-  const dLng = toRad(bLng - aLng);
-  const s =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(aLat)) * Math.cos(toRad(bLat)) * Math.sin(dLng / 2) ** 2;
-  return EARTH_MI * 2 * Math.asin(Math.sqrt(s));
-}
-
 /** Display miles ... very-close results read "<0.1 mi" instead of "0 mi". */
 export function formatMiles(mi: number): string {
   if (!Number.isFinite(mi)) return "";
   return mi < 0.1 ? "<0.1 mi" : `${mi} mi`;
 }
 
-function nearest(lat: number, lng: number, rows: readonly Row[]): QwomeDistance | undefined {
+function nearest(
+  lat: number,
+  lng: number,
+  rows: readonly Row[],
+  distance: DistanceProvider
+): QwomeDistance | undefined {
   let bestMi = Infinity;
   let bestName: string | null = null;
   for (const r of rows) {
-    const mi = haversineMiles(lat, lng, r[0], r[1]);
+    const mi = distance.miles(lat, lng, r[0], r[1]);
     if (mi < bestMi) {
       bestMi = mi;
       bestName = r[2];
@@ -118,12 +113,15 @@ function nearest(lat: number, lng: number, rows: readonly Row[]): QwomeDistance 
 /**
  * Core QWOME query: nearest of each requested category for each point. One bbox
  * pre-filter covers a whole results page cheaply. Unknown/empty categories are
- * skipped; missing data yields no entry (callers hide the row).
+ * skipped; missing data yields no entry (callers hide the row). The distance
+ * metric is a provider (straight-line by default), so it can be swapped without
+ * touching this algorithm.
  */
 export async function qwomeNearby(
   points: QwomePoint[],
   categories: QwomeCategoryKey[] = Object.keys(QWOME_CATEGORIES) as QwomeCategoryKey[],
-  provider: PlaceProvider = defaultPlaceProvider
+  provider: PlaceProvider = defaultPlaceProvider,
+  distance: DistanceProvider = defaultDistanceProvider
 ): Promise<Record<string, QwomeNearby>> {
   const valid = points.filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng));
   if (valid.length === 0) return {};
@@ -159,7 +157,7 @@ export async function qwomeNearby(
   for (const p of valid) {
     const nearby: QwomeNearby = {};
     for (const [key, rows] of candidates) {
-      const d = nearest(p.lat, p.lng, rows);
+      const d = nearest(p.lat, p.lng, rows, distance);
       if (d) nearby[key] = d;
     }
     out[p.id] = nearby;
