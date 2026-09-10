@@ -16,7 +16,8 @@ IDX, brokerage, and auth stay in the client.**
 ```
 lib/qwome/                      QWOME core (no Sold It Today imports)
   engine.ts                     proximity engine (nearest-of-category, haversine)
-  providers.ts                  PlaceProvider abstraction + bundled MI provider
+  providers.ts                  PlaceProvider abstraction + bundled MI + empty
+  regions.ts                    region registry + resolveProvider(points)
   analysis.ts                   analyzePropertyFit / analyzeProperties (normalized)
   fit.ts                        evaluateFit / selectFitting (pure, engine-free)
   preferences.ts                SEMANTIC registry + preference model (no presentation)
@@ -100,13 +101,26 @@ just renders the result; it reimplements none of the logic. `analysis.ts`
 re-exports these and uses `evaluateFit` internally, so the API and the UI share
 one implementation.
 
-### 4. Data is Michigan-only and bundled
-`data/mi-pois.json` is one region baked into the app. Fine for launch, wrong for a
-multi-region platform.
+### 4. Per-region providers ... ✅ DONE (runtime)
+`lib/qwome/regions.ts` binds a geographic bounding box to a `PlaceProvider`.
+`resolveProvider(points)` picks the region containing the query points and returns
+its provider; Michigan is the first region and the current fallback, so behavior
+is unchanged. Resolution happens at the seams (analysis layer, `lib/amenities`,
+the nearby API), never in the pure engine. A new region is
+`registerRegion({ id, label, bounds, provider })` with its dataset ... no engine or
+analysis change. The registry is side-effect-free so regions/providers/data stay
+tree-shakeable (no client bloat). REMAINING: the build ingestion is still
+Michigan-hardcoded (see #4b) and, until a second real region exists, unmatched
+locations fall back to Michigan rather than returning no data.
 
-**Separate it:** the `PlaceProvider` seam already exists. Next, add per-region
-providers (more bundled extracts, or a hosted `HttpPlaceProvider`) and resolve the
-provider per request by market/tenant. The engine and callers do not change.
+### 4b. Data ingestion is Michigan-hardcoded
+`scripts/build-qwome-pois.mjs` hardcodes the Michigan OSM area id and writes one
+`mi-pois.json`. The runtime is region-ready; ingestion is not yet.
+
+**Separate it:** parameterize the builder by region (area id / bounds + output
+path) so a new region is a config entry plus one build run, reusing the same
+shared classification rules. Optionally add a hosted `HttpPlaceProvider` for
+regions too large to bundle.
 
 ### 5. No geocoding / travel-time providers yet
 Address-based categories (Workplace, Family, Custom) capture text but are not
