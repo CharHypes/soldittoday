@@ -1,9 +1,15 @@
 /**
- * QWOME™ POI dataset builder.
+ * QWOME™ POI dataset builder ... region-parameterized.
  *
- *   node scripts/build-qwome-pois.mjs
+ *   node scripts/build-qwome-pois.mjs            # build every region
+ *   node scripts/build-qwome-pois.mjs us-mi      # build one region by id
  *
- * Regenerates lib/qwome/data/mi-pois.json from OpenStreetMap (Overpass) with
+ * Regions come from the shared metadata (lib/qwome/regionsMeta): id, label, OSM
+ * area id, and output dataset file. Adding a region is one entry there plus a
+ * build run (and, for the runtime, wiring its dataset into a provider). Nothing
+ * below is Michigan-specific; only the region's OSM area id changes.
+ *
+ * Regenerates each region's dataset (e.g. mi-pois.json) from OpenStreetMap with
  * PRECISE classification, because the raw "amenity=hospital / amenity=school"
  * categories are too broad for the accuracy QWOME needs. Straight OSM/Places
  * results mix psychiatric + rehab + veterinary hospitals into "hospital", and
@@ -44,10 +50,12 @@ import { fileURLToPath } from "node:url";
 import { classifyHealthcare } from "../lib/qwome/classification/healthcare.ts";
 import { classifySchool } from "../lib/qwome/classification/school.ts";
 import { classifyGrocery } from "../lib/qwome/classification/grocery.ts";
+// Shared region metadata (id / label / OSM area id / dataset file) ... the same
+// list the runtime resolver reads, so ingestion and runtime never drift.
+import { QWOME_REGION_META } from "../lib/qwome/regionsMeta.ts";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = path.join(__dirname, "..", "lib", "qwome", "data", "mi-pois.json");
-const MI_AREA = 3600165789; // OSM relation 165789 (State of Michigan) as an area id
+const DATA_DIR = path.join(__dirname, "..", "lib", "qwome", "data");
 const ENDPOINT = "https://overpass-api.de/api/interpreter";
 
 async function overpass(query) {
@@ -56,25 +64,27 @@ async function overpass(query) {
   return res.json();
 }
 
-const HEALTH_Q = `[out:json][timeout:300];area(${MI_AREA})->.mi;(
-  nwr["amenity"="hospital"](area.mi); nwr["healthcare"="hospital"](area.mi);
-  nwr["amenity"="clinic"](area.mi); nwr["healthcare"="clinic"](area.mi);
-  nwr["healthcare"="urgent_care"](area.mi);
-  nwr["amenity"="pharmacy"](area.mi); nwr["healthcare"="pharmacy"](area.mi);
-  nwr["healthcare"~"psychotherapist|counselling|rehabilitation"](area.mi);
-  nwr["healthcare:speciality"~"psychiatry|psychology|mental"](area.mi);
-  nwr["emergency"="department"](area.mi);
-  nwr["amenity"="social_facility"]["social_facility:for"~"mental"](area.mi);
+// Queries are parameterized by the region's OSM area id ... nothing here is
+// Michigan-specific; only the area id changes per region.
+const healthQuery = (areaId) => `[out:json][timeout:300];area(${areaId})->.a;(
+  nwr["amenity"="hospital"](area.a); nwr["healthcare"="hospital"](area.a);
+  nwr["amenity"="clinic"](area.a); nwr["healthcare"="clinic"](area.a);
+  nwr["healthcare"="urgent_care"](area.a);
+  nwr["amenity"="pharmacy"](area.a); nwr["healthcare"="pharmacy"](area.a);
+  nwr["healthcare"~"psychotherapist|counselling|rehabilitation"](area.a);
+  nwr["healthcare:speciality"~"psychiatry|psychology|mental"](area.a);
+  nwr["emergency"="department"](area.a);
+  nwr["amenity"="social_facility"]["social_facility:for"~"mental"](area.a);
 );out center tags;`;
 
-const SCHOOL_Q = `[out:json][timeout:300];area(${MI_AREA})->.mi;(
-  nwr["amenity"="school"](area.mi);
+const schoolQuery = (areaId) => `[out:json][timeout:300];area(${areaId})->.a;(
+  nwr["amenity"="school"](area.a);
 );out center tags;`;
 
-const GROCERY_Q = `[out:json][timeout:300];area(${MI_AREA})->.mi;(
-  nwr["shop"="supermarket"](area.mi);
-  nwr["shop"="wholesale"](area.mi);
-  nwr["shop"="department_store"]["name"~"Meijer|Walmart|Target",i](area.mi);
+const groceryQuery = (areaId) => `[out:json][timeout:300];area(${areaId})->.a;(
+  nwr["shop"="supermarket"](area.a);
+  nwr["shop"="wholesale"](area.a);
+  nwr["shop"="department_store"]["name"~"Meijer|Walmart|Target",i](area.a);
 );out center tags;`;
 
 // ---- helpers ----
@@ -115,15 +125,28 @@ function bucket(elements, classify) {
   return map;
 }
 
-async function main() {
-  console.log("Fetching Michigan healthcare from Overpass...");
-  const health = await overpass(HEALTH_Q);
+// Dataset layer order (stable for diffs + the app).
+const KEYS = [
+  "hospital", "er", "urgentcare", "pharmacy", "behavioral",
+  "school_elem", "school_mid", "school_high",
+  "grocery", "grocery_any", "grocery_warehouse", "grocery_organic",
+  "grocery_asian", "grocery_chinese", "grocery_korean", "grocery_japanese",
+  "grocery_south_asian", "grocery_mideast", "grocery_halal", "grocery_latin",
+  "grocery_african_caribbean", "grocery_kosher",
+];
+
+/** Fetch + classify + write one region's dataset. */
+async function buildRegion(region) {
+  const out = path.join(DATA_DIR, region.datasetFile);
+  console.log(`\n== ${region.label} (${region.id}) -> ${region.datasetFile} ==`);
+  console.log("Fetching healthcare from Overpass...");
+  const health = await overpass(healthQuery(region.osmAreaId));
   console.log(`  ${health.elements.length} health features`);
-  console.log("Fetching Michigan schools from Overpass...");
-  const schools = await overpass(SCHOOL_Q);
+  console.log("Fetching schools from Overpass...");
+  const schools = await overpass(schoolQuery(region.osmAreaId));
   console.log(`  ${schools.elements.length} school features`);
-  console.log("Fetching Michigan supermarkets from Overpass...");
-  const grocery = await overpass(GROCERY_Q);
+  console.log("Fetching supermarkets from Overpass...");
+  const grocery = await overpass(groceryQuery(region.osmAreaId));
   console.log(`  ${grocery.elements.length} grocery features`);
 
   const buckets = {
@@ -131,21 +154,23 @@ async function main() {
     ...bucket(schools.elements, classifySchool),
     ...bucket(grocery.elements, classifyGrocery),
   };
-  // Explicit key order = the dataset's layer order (stable for diffs + the app).
-  const KEYS = [
-    "hospital", "er", "urgentcare", "pharmacy", "behavioral",
-    "school_elem", "school_mid", "school_high",
-    "grocery", "grocery_any", "grocery_warehouse", "grocery_organic",
-    "grocery_asian", "grocery_chinese", "grocery_korean", "grocery_japanese",
-    "grocery_south_asian", "grocery_mideast", "grocery_halal", "grocery_latin",
-    "grocery_african_caribbean", "grocery_kosher",
-  ];
   const dataset = {};
   for (const key of KEYS) dataset[key] = toRows(buckets[key] ?? []);
 
-  fs.writeFileSync(DATA_FILE, JSON.stringify(dataset));
-  console.log("\nWrote", DATA_FILE);
+  fs.writeFileSync(out, JSON.stringify(dataset));
+  console.log("Wrote", out);
   for (const [k, v] of Object.entries(dataset)) console.log("  " + k.padEnd(13), v.length);
+}
+
+async function main() {
+  // Optional CLI arg selects one region by id; otherwise build every region in
+  // the shared metadata (today: Michigan -> mi-pois.json).
+  const only = process.argv[2];
+  const regions = only ? QWOME_REGION_META.filter((r) => r.id === only) : QWOME_REGION_META;
+  if (only && regions.length === 0) {
+    throw new Error(`Unknown region "${only}". Known: ${QWOME_REGION_META.map((r) => r.id).join(", ")}`);
+  }
+  for (const region of regions) await buildRegion(region);
 }
 
 main().catch((err) => { console.error(err); process.exit(1); });

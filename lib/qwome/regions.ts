@@ -16,11 +16,12 @@
  * unmatched locations should fall back or return no data (see resolveProvider).
  */
 import { bundledMiProvider, emptyProvider, type PlaceProvider } from "./providers";
+import { QWOME_REGION_META, type QwomeRegionBounds } from "./regionsMeta";
 
 export type QwomeRegionId = string;
 
 /** A geographic area a region's data covers (inclusive degrees). */
-export type QwomeBounds = { south: number; west: number; north: number; east: number };
+export type QwomeBounds = QwomeRegionBounds;
 
 export type QwomeRegion = {
   /** Stable id, e.g. "us-mi". */
@@ -34,22 +35,29 @@ export type QwomeRegion = {
 };
 
 /**
- * Michigan ... the first QWOME region. Bounds are padded to safely contain the
- * whole state (incl. the UP and Isle Royale), since a listing must always
- * resolve to Michigan today.
+ * Region id -> data provider. Each region's dataset is a static import in
+ * providers.ts (required so Next can bundle it), so onboarding a region adds its
+ * provider here; its id / label / bounds come from the shared region metadata
+ * (lib/qwome/regionsMeta), the same list the build ingestion reads.
  */
-export const MICHIGAN: QwomeRegion = {
-  id: "us-mi",
-  label: "Michigan",
-  bounds: { south: 41.6, west: -90.6, north: 48.4, east: -82.0 },
-  provider: bundledMiProvider,
+const PROVIDER_BY_ID: Record<QwomeRegionId, PlaceProvider> = {
+  "us-mi": bundledMiProvider,
 };
 
-// Registry initialized as a literal (no top-level side-effect call) so this
-// module stays tree-shakeable ... a client that never calls resolveProvider must
-// not pull the region providers (and their bundled data) into its bundle.
-const REGISTRY = new Map<QwomeRegionId, QwomeRegion>([[MICHIGAN.id, MICHIGAN]]);
-let defaultRegionId: QwomeRegionId = MICHIGAN.id;
+// Built from the shared metadata. Marked /*#__PURE__*/ so bundlers can drop this
+// whole module (and the region providers + their bundled data) from any client
+// that never calls the resolver ... keeping the dataset out of the browser.
+// Regions without a wired provider are skipped.
+function buildRegistry(): Map<QwomeRegionId, QwomeRegion> {
+  const registry = new Map<QwomeRegionId, QwomeRegion>();
+  for (const m of QWOME_REGION_META) {
+    const provider = PROVIDER_BY_ID[m.id];
+    if (provider) registry.set(m.id, { id: m.id, label: m.label, bounds: m.bounds, provider });
+  }
+  return registry;
+}
+const REGISTRY = /*#__PURE__*/ buildRegistry();
+let defaultRegionId: QwomeRegionId = "us-mi";
 
 /** Add or replace a region. This is how a new region/data source is onboarded. */
 export function registerRegion(region: QwomeRegion): void {
