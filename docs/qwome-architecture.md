@@ -17,6 +17,8 @@ IDX, brokerage, and auth stay in the client.**
 lib/qwome/                      QWOME core (no Sold It Today imports)
   engine.ts                     proximity engine (nearest-of-category, haversine)
   providers.ts                  PlaceProvider abstraction: bundled MI, empty, http
+  distance.ts                   DistanceProvider (haversine) + TravelTimeProvider
+  geocode.ts                    GeocodeProvider (address -> coordinates)
   regionsMeta.ts                shared region metadata (runtime + ingestion)
   regions.ts                    region registry + resolveProvider(points)
   analysis.ts                   analyzePropertyFit / analyzeProperties (normalized)
@@ -129,13 +131,19 @@ hosted region needs no engine/analysis change ... just fetch its per-category
 datasets over HTTP. `httpPlaceProvider` is server-only (network I/O), caches each
 dataset per process (optional TTL), and degrades to no-data on failure.
 
-### 5. No geocoding / travel-time providers yet
-Address-based categories (Workplace, Family, Custom) capture text but are not
-geocoded; distance is straight-line haversine only.
+### 5. Geocoding + distance / travel-time seams ... ✅ DONE (interfaces)
+- `lib/qwome/distance.ts`: `DistanceProvider` (scalar miles) is now the engine's
+  distance metric, straight-line (haversine) by default and swappable via a
+  `qwomeNearby` param ... verified bit-identical, so results are unchanged. Plus
+  `TravelTimeProvider` (async drive/transit minutes, optional batch matrix) for
+  future drive-time preferences + scoring; defaults to "unavailable"
+  (`setTravelTimeProvider` to wire a routing vendor).
+- `lib/qwome/geocode.ts`: `GeocodeProvider` (address → coordinates) for the
+  address-based categories; defaults to "unavailable" so they stay text-only
+  exactly as today (`setGeocodeProvider` / `geocode()` to wire + use a vendor).
 
-**Separate it:** mirror the `PlaceProvider` pattern with `GeocodeProvider`
-(address → lat/lng) and `DistanceProvider` (straight-line today; drive-time via a
-routing vendor later). Both behind interfaces so QWOME is never tied to one vendor.
+REMAINING: no vendor adapters are wired (these are the ready seams), and drive-
+time is not yet consumed by preferences/scoring or the address-entry flow.
 
 ### 6. API + data ingestion are co-hosted in the Next.js app
 The v1 routes and the build script run inside Sold It Today's deployment.
