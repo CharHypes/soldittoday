@@ -14,7 +14,7 @@
  * category, add it to QWOME_CATEGORIES and provide its dataset key.
  */
 
-import raw from "./data/mi-pois.json";
+import { defaultPlaceProvider, type PlaceProvider, type PlaceRow } from "./providers";
 
 /** Categories QWOME can measure. Extend this union as the dataset grows. */
 export type QwomeCategoryKey =
@@ -28,6 +28,8 @@ export type QwomeCategoryKey =
   | "school_high"
   | "grocery"
   | "grocery_any"
+  | "grocery_warehouse"
+  | "grocery_organic"
   | "grocery_asian"
   | "grocery_chinese"
   | "grocery_korean"
@@ -43,9 +45,7 @@ export type QwomeDistance = { miles: number; name: string | null };
 export type QwomeNearby = Partial<Record<QwomeCategoryKey, QwomeDistance>>;
 export type QwomePoint = { id: string; lat: number; lng: number };
 
-type Row = [number, number, string | null]; // [lat, lng, name]
-type Dataset = Record<string, Row[]>;
-const DATA = raw as unknown as Dataset;
+type Row = PlaceRow; // [lat, lng, name]
 
 /**
  * Category registry. `datasetKey` maps to the bundled dataset; `scanAll` skips
@@ -70,6 +70,8 @@ export const QWOME_CATEGORIES: Record<
   // markets are sparse statewide, so scanAll to always resolve the nearest.
   grocery: { label: "Grocery / Supermarket", datasetKey: "grocery" },
   grocery_any: { label: "Any Full-Service Grocery", datasetKey: "grocery_any" },
+  grocery_warehouse: { label: "Warehouse Club", datasetKey: "grocery_warehouse", scanAll: true },
+  grocery_organic: { label: "Organic / Specialty Grocery", datasetKey: "grocery_organic", scanAll: true },
   grocery_asian: { label: "Asian Market", datasetKey: "grocery_asian", scanAll: true },
   grocery_chinese: { label: "Chinese Market", datasetKey: "grocery_chinese", scanAll: true },
   grocery_korean: { label: "Korean Market", datasetKey: "grocery_korean", scanAll: true },
@@ -99,7 +101,7 @@ export function formatMiles(mi: number): string {
   return mi < 0.1 ? "<0.1 mi" : `${mi} mi`;
 }
 
-function nearest(lat: number, lng: number, rows: Row[]): QwomeDistance | undefined {
+function nearest(lat: number, lng: number, rows: readonly Row[]): QwomeDistance | undefined {
   let bestMi = Infinity;
   let bestName: string | null = null;
   for (const r of rows) {
@@ -120,7 +122,8 @@ function nearest(lat: number, lng: number, rows: Row[]): QwomeDistance | undefin
  */
 export async function qwomeNearby(
   points: QwomePoint[],
-  categories: QwomeCategoryKey[] = Object.keys(QWOME_CATEGORIES) as QwomeCategoryKey[]
+  categories: QwomeCategoryKey[] = Object.keys(QWOME_CATEGORIES) as QwomeCategoryKey[],
+  provider: PlaceProvider = defaultPlaceProvider
 ): Promise<Record<string, QwomeNearby>> {
   const valid = points.filter((p) => Number.isFinite(p.lat) && Number.isFinite(p.lng));
   if (valid.length === 0) return {};
@@ -139,12 +142,12 @@ export async function qwomeNearby(
   const inBox = (r: Row) =>
     r[0] >= s - pad && r[0] <= n + pad && r[1] >= w - pad && r[1] <= e + pad;
 
-  // Pre-resolve each category's candidate rows once.
-  const candidates = new Map<QwomeCategoryKey, Row[]>();
+  // Pre-resolve each category's candidate rows once, via the place provider.
+  const candidates = new Map<QwomeCategoryKey, readonly Row[]>();
   for (const key of categories) {
     const cfg = QWOME_CATEGORIES[key];
     if (!cfg) continue;
-    const rows = DATA[cfg.datasetKey] ?? [];
+    const rows = provider.rows(cfg.datasetKey);
     candidates.set(key, cfg.scanAll ? rows : rows.filter(inBox));
   }
 

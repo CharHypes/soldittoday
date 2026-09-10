@@ -218,6 +218,10 @@ const asianAny = (n) =>
 const anyIntl = (n) =>
   asianAny(n) || GP.south_asian.test(n) || GP.mideast.test(n) || GP.halal.test(n) ||
   GP.latin.test(n) || GP.african_caribbean.test(n) || GP.kosher.test(n);
+// Membership warehouse clubs, and organic/natural/specialty grocers ... their
+// own optional categories, kept out of the conventional "General" default.
+const WAREHOUSE = /\b(costco|sam.s club|bj.s wholesale|bj.s club|bj.s)\b/i;
+const ORGANIC = /\b(whole foods|trader joe|sprouts|fresh thyme|natural groc|earth ?fare|plum market|health food|co-?op|the fresh market|mom.s organic|better health|nino salvaggio|natural food|earthfare|market district)\b/i;
 
 // Base full-service supermarket set (conventional + international), as rows.
 function fullServiceRows(elements) {
@@ -237,9 +241,16 @@ function fullServiceRows(elements) {
 function classifyGrocery(elements) {
   const any = fullServiceRows(elements);
   const sel = (pred) => any.filter((r) => pred(r[2] || ""));
+  // Warehouse clubs are often tagged shop=wholesale (outside the supermarket
+  // set), so classify them from ALL fetched grocery elements by name.
+  const warehouse = toRows(elements.filter((e) => {
+    const t = T(e); return !isDisused(t) && coord(e) && WAREHOUSE.test(nameOf(t) || "");
+  }));
   return {
-    grocery: any.filter((r) => !anyIntl(r[2] || "")),
+    grocery: any.filter((r) => !anyIntl(r[2] || "") && !ORGANIC.test(r[2] || "")),
     grocery_any: any,
+    grocery_warehouse: warehouse,
+    grocery_organic: sel((n) => ORGANIC.test(n)),
     grocery_asian: sel(asianAny),
     grocery_chinese: sel((n) => GP.chinese.test(n)),
     grocery_korean: sel((n) => GP.korean.test(n)),

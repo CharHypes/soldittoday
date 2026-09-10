@@ -7,13 +7,12 @@ import QwomePanel from "./QwomePanel";
 import type { Listing } from "@/lib/idx";
 import type { AmenityDistances, AmenityKey } from "@/lib/amenities";
 import {
-  readPrefs,
-  writePrefs,
   encodePrefs,
   decodePrefs,
   isMeasurable,
   type QwomePreference,
 } from "@/lib/qwome/preferences";
+import { readPrefs, writePrefs } from "@/lib/qwome/client/prefsStorage";
 
 // Leaflet needs the browser, so the map is client-only.
 const ResultsMap = dynamic(() => import("./ResultsMap"), {

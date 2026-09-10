@@ -24,7 +24,10 @@
  * rest are captured now so the model is stable and the UI, URL, and storage
  * never have to change as those calculations come online.
  */
-import type { AmenityKey } from "@/lib/amenities";
+// QWOME core depends only on the engine's own category type, never on a client
+// adapter (lib/amenities is Sold It Today's adapter). This keeps the preference
+// model client-agnostic and separable into the standalone QWOME package.
+import type { QwomeCategoryKey } from "./engine";
 
 /** Every lifestyle category a viewer can prioritise in QWOME. */
 export type QwomeCategoryId =
@@ -44,6 +47,8 @@ export type QwomeCategoryId =
   // expandable international & specialty markets.
   | "grocery"
   | "grocery_any"
+  | "grocery_warehouse"
+  | "grocery_organic"
   | "grocery_asian"
   | "grocery_chinese"
   | "grocery_korean"
@@ -158,6 +163,8 @@ export const QWOME_CATALOG: QwomeCatalogEntry[] = [
   // International & Specialty Markets expander holds the specific market types.
   { id: "grocery", label: "General Grocery / Supermarket", short: "Grocery", icon: "🛒", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest supermarket", note: "Conventional full-service supermarkets and major/regional chains (Kroger, Meijer, Aldi, Walmart Supercenter, ...)." },
   { id: "grocery_any", label: "Any Full-Service Grocery", short: "Full-Service", icon: "🏪", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest full-service grocery", note: "Conventional supermarkets plus legitimate full-service international supermarkets." },
+  { id: "grocery_warehouse", label: "Warehouse Club", short: "Warehouse", icon: "📦", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest warehouse club", note: "Membership warehouse clubs (Costco, Sam's Club, BJ's)." },
+  { id: "grocery_organic", label: "Organic / Specialty Grocery", short: "Organic", icon: "🌱", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest organic / specialty grocery", note: "Natural, organic, and specialty grocers (Whole Foods, Trader Joe's, Fresh Thyme, co-ops)." },
   { id: "grocery_asian", label: "Asian Market", short: "Asian", icon: "🥢", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Asian market" },
   { id: "grocery_chinese", label: "Chinese Market", short: "Chinese", icon: "🥟", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Chinese market" },
   { id: "grocery_korean", label: "Korean Market", short: "Korean", icon: "🍲", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Korean market" },
@@ -206,6 +213,8 @@ const DEFAULT_MILES: Partial<Record<QwomeCategoryId, number>> = {
   school_high: 8,
   grocery: 5,
   grocery_any: 5,
+  grocery_warehouse: 15,
+  grocery_organic: 10,
   // International & specialty markets are sparser, so a wider default radius.
   grocery_asian: 10,
   grocery_chinese: 15,
@@ -224,7 +233,7 @@ export function catalogEntry(id: QwomeCategoryId): QwomeCatalogEntry | undefined
 }
 
 /** True when this preference can be measured (and therefore filters search). */
-export function isMeasurable(id: QwomeCategoryId): id is AmenityKey {
+export function isMeasurable(id: QwomeCategoryId): id is QwomeCategoryKey {
   return QWOME_MEASURABLE.has(id);
 }
 
@@ -232,8 +241,6 @@ export function isMeasurable(id: QwomeCategoryId): id is AmenityKey {
 export function defaultMilesFor(id: QwomeCategoryId): number {
   return DEFAULT_MILES[id] ?? 5;
 }
-
-const KEY = "sit-qwome-prefs";
 
 /**
  * Normalise a stored/decoded list: keep only valid categories, de-dupe by
@@ -287,27 +294,14 @@ function clean(list: unknown): QwomePreference[] {
   return out;
 }
 
-export function readPrefs(): QwomePreference[] {
-  try {
-    return clean(JSON.parse(localStorage.getItem(KEY) || "[]"));
-  } catch {
-    return [];
-  }
-}
-
-export function writePrefs(list: QwomePreference[]) {
-  const cleaned = clean(list);
-  try {
-    localStorage.setItem(KEY, JSON.stringify(cleaned));
-  } catch {
-    /* private mode ... ignore */
-  }
-  try {
-    window.dispatchEvent(new Event("sit-qwome-prefs-change"));
-  } catch {
-    /* SSR ... ignore */
-  }
-}
+/**
+ * Normalize an arbitrary prefs list (validate categories, de-dupe, apply
+ * defaults). Exposed so persistence adapters and API callers can sanitize input
+ * without re-implementing the rules. Persistence itself is a CLIENT concern and
+ * lives outside this pure model (see lib/qwome/client/prefsStorage for the
+ * browser/localStorage adapter Sold It Today uses).
+ */
+export const normalizePrefs = clean;
 
 /**
  * Encode prefs for the URL: "hospital:10,grocery:3" (stable order). Only the

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
-import { readPrefs, evaluatePreference, isMeasurable, catalogEntry, type QwomePreference } from "@/lib/qwome/preferences";
+import { evaluatePreference, isMeasurable, catalogEntry, type QwomePreference } from "@/lib/qwome/preferences";
+import { readPrefs, PREFS_CHANGE_EVENT } from "@/lib/qwome/client/prefsStorage";
 
 /**
  * How each category reads in a "why this home works" line. Uses the catalog's
@@ -41,10 +42,10 @@ export default function WhyThisHomeWorks({
   useEffect(() => {
     const load = () => setPrefs(readPrefs());
     load();
-    window.addEventListener("sit-qwome-prefs-change", load);
+    window.addEventListener(PREFS_CHANGE_EVENT, load);
     window.addEventListener("focus", load);
     return () => {
-      window.removeEventListener("sit-qwome-prefs-change", load);
+      window.removeEventListener(PREFS_CHANGE_EVENT, load);
       window.removeEventListener("focus", load);
     };
   }, []);
