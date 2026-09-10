@@ -32,7 +32,9 @@ const ICON_FOR: Record<QwomeCategoryId, IconKey> = {
 };
 
 const PATHS: Record<IconKey, React.ReactNode> = {
-  hospital: (<><path d="M5 21V6.5A1.5 1.5 0 0 1 6.5 5h11A1.5 1.5 0 0 1 19 6.5V21" /><path d="M3 21h18" /><path d="M12 8.5v4M10 10.5h4" /></>),
+  // Universal roadway "H" hospital symbol (an H inside a rounded sign), so it
+  // reads instantly as "hospital" rather than as a building.
+  hospital: (<><rect x="3.5" y="3.5" width="17" height="17" rx="4" /><path d="M8.5 8v8M15.5 8v8M8.5 12h7" /></>),
   er: (<><rect x="4" y="4" width="16" height="16" rx="3" /><path d="M12 8.5v7M8.5 12h7" /></>),
   urgentcare: (<><path d="M12 3.5l6.5 2.7v4.3c0 3.9-2.8 6.9-6.5 8.3-3.7-1.4-6.5-4.4-6.5-8.3V6.2z" /><path d="M12 9v5M9.5 11.5h5" /></>),
   pharmacy: (<><path d="M9.5 4h5v2.6l1 2V19a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1V8.6l1-2z" /><path d="M12 12v4M10 14h4" /></>),
