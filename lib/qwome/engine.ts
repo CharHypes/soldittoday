@@ -143,13 +143,17 @@ export async function qwomeNearby(
     r[0] >= s - pad && r[0] <= n + pad && r[1] >= w - pad && r[1] <= e + pad;
 
   // Pre-resolve each category's candidate rows once, via the place provider.
+  // rows() may be sync (bundled) or async (hosted), so await in parallel ...
+  // awaiting a plain array is a no-op, so bundled providers are unaffected.
   const candidates = new Map<QwomeCategoryKey, readonly Row[]>();
-  for (const key of categories) {
-    const cfg = QWOME_CATEGORIES[key];
-    if (!cfg) continue;
-    const rows = provider.rows(cfg.datasetKey);
-    candidates.set(key, cfg.scanAll ? rows : rows.filter(inBox));
-  }
+  await Promise.all(
+    categories.map(async (key) => {
+      const cfg = QWOME_CATEGORIES[key];
+      if (!cfg) return;
+      const rows = await provider.rows(cfg.datasetKey);
+      candidates.set(key, cfg.scanAll ? rows : rows.filter(inBox));
+    })
+  );
 
   const out: Record<string, QwomeNearby> = {};
   for (const p of valid) {

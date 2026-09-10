@@ -20,13 +20,17 @@ export type PlaceRow = [number, number, string | null];
 
 /**
  * Supplies candidate places for a category's dataset key. Implementations may
- * be in-memory (bundled JSON), networked (a places API), or cached.
+ * be in-memory (bundled JSON), hosted (fetched over HTTP), or cached.
+ *
+ * `rows` may return synchronously (in-memory) OR asynchronously (a hosted
+ * provider). The engine always `await`s the result, so both work identically and
+ * this stays backward compatible with the bundled providers.
  */
 export interface PlaceProvider {
   /** A stable id for logging / cache-keying (e.g. "bundled:mi-osm"). */
   readonly id: string;
-  /** All candidate rows for a dataset key (empty array when unknown). */
-  rows(datasetKey: string): readonly PlaceRow[];
+  /** Candidate rows for a dataset key (empty when unknown). Sync or async. */
+  rows(datasetKey: string): readonly PlaceRow[] | Promise<readonly PlaceRow[]>;
 }
 
 /** Build an in-memory provider from a `{ datasetKey: PlaceRow[] }` map. */
@@ -59,3 +63,83 @@ export const bundledMiProvider: PlaceProvider = inMemoryProvider(
 
 /** The provider the engine uses when a caller doesn't pass one. */
 export const defaultPlaceProvider: PlaceProvider = bundledMiProvider;
+
+/** Coerce an unknown JSON payload into valid PlaceRows, dropping bad entries. */
+function normalizeRows(data: unknown): PlaceRow[] {
+  if (!Array.isArray(data)) return [];
+  const out: PlaceRow[] = [];
+  for (const r of data) {
+    if (Array.isArray(r) && Number.isFinite(r[0]) && Number.isFinite(r[1])) {
+      out.push([Number(r[0]), Number(r[1]), r[2] == null ? null : String(r[2])]);
+    }
+  }
+  return out;
+}
+
+export type HttpPlaceProviderOptions = {
+  /** Provider id for logging / traceability (default derived from baseUrl). */
+  id?: string;
+  /** Base URL of the hosted region dataset (e.g. a CDN path for one region). */
+  baseUrl: string;
+  /** Map a datasetKey to a URL. Default: `${baseUrl}/${datasetKey}.json`. */
+  urlFor?: (datasetKey: string, baseUrl: string) => string;
+  /** Extra request headers (e.g. an API key). */
+  headers?: Record<string, string>;
+  /** Per-request timeout in ms (default 8000). */
+  timeoutMs?: number;
+  /** How long a fetched dataset stays cached, in ms (default: process lifetime). */
+  ttlMs?: number;
+  /** Injectable fetch (defaults to the global fetch). */
+  fetchImpl?: typeof fetch;
+};
+
+/**
+ * A hosted PlaceProvider: fetches a region's category datasets over HTTP instead
+ * of bundling them ... for regions too large to ship in the app. It implements
+ * the SAME PlaceProvider contract, so the engine, analysis, and region resolver
+ * use it with zero changes; only the region's `PROVIDER_BY_ID` wiring differs.
+ *
+ * Each datasetKey is fetched at most once per process (cached), with an optional
+ * TTL; failures and empty results degrade to "no data" and are not cached, so a
+ * transient outage retries rather than sticking. The remote must return a JSON
+ * array of [lat, lng, name|null] rows ... the same shape as the bundled files.
+ *
+ * NOTE: server-side only (it performs network I/O); never import into a client
+ * component. No live hosted region exists yet ... this is the ready seam for one.
+ */
+export function httpPlaceProvider(options: HttpPlaceProviderOptions): PlaceProvider {
+  const { baseUrl, headers, timeoutMs = 8000, ttlMs, urlFor, fetchImpl } = options;
+  const id = options.id ?? `http:${baseUrl}`;
+  const doFetch = fetchImpl ?? globalThis.fetch;
+  const buildUrl = urlFor ?? ((key, base) => `${base.replace(/\/+$/, "")}/${key}.json`);
+  const cache = new Map<string, { at: number; rows: Promise<readonly PlaceRow[]> }>();
+
+  async function load(datasetKey: string): Promise<readonly PlaceRow[]> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const res = await doFetch(buildUrl(datasetKey, baseUrl), { headers, signal: controller.signal });
+      if (!res.ok) return [];
+      return normalizeRows(await res.json());
+    } catch {
+      return []; // degrade to no-data rather than throwing into the engine
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  return {
+    id,
+    rows(datasetKey: string) {
+      const hit = cache.get(datasetKey);
+      if (hit && (ttlMs == null || Date.now() - hit.at < ttlMs)) return hit.rows;
+      const rows = load(datasetKey);
+      cache.set(datasetKey, { at: Date.now(), rows });
+      // Don't let a failed/empty fetch stick: evict so the next call retries.
+      void rows.then((r) => {
+        if (r.length === 0 && cache.get(datasetKey)?.rows === rows) cache.delete(datasetKey);
+      });
+      return rows;
+    },
+  };
+}
