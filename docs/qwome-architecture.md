@@ -18,10 +18,13 @@ lib/qwome/                      QWOME core (no Sold It Today imports)
   engine.ts                     proximity engine (nearest-of-category, haversine)
   providers.ts                  PlaceProvider abstraction + bundled MI provider
   analysis.ts                   analyzePropertyFit / analyzeProperties (normalized)
-  preferences.ts                preference model: catalog, encode/decode, evaluate
+  fit.ts                        evaluateFit / selectFitting (pure, engine-free)
+  preferences.ts                SEMANTIC registry + preference model (no presentation)
   classification/               shared place-classification rules (single source)
     healthcare.ts school.ts grocery.ts  ... classifyPlace() in index.ts
   client/prefsStorage.ts        BROWSER persistence adapter (localStorage)  <- client
+  client/presentation.ts        labels / copy / descriptors (per category id)  <- client
+  client/icons.tsx              outline/line category icons (QwomeIcon)         <- client
   data/mi-pois.json             bundled, classified place data (one provider)
 scripts/build-qwome-pois.mjs    data ingestion (applies the shared rules, build-time)
 app/api/v1/qwome/nearby         versioned proximity endpoint
@@ -82,24 +85,20 @@ type-only imports are erased at runtime), and the output was verified identical 
 the shipped dataset for all 22 layers. A future query-time provider or the
 standalone app imports the same modules.
 
-### 2. Category catalog mixes core registry with presentation
-`preferences.ts` `QWOME_CATALOG` carries both **core** facts (id, `measurable`,
-`datasetKey` mapping, group) and **presentation** (emoji `icon`, marketing
-`label`/`note` copy). A pure engine should not dictate a client's icons or copy.
+### 2. Category catalog: registry vs presentation ... ✅ DONE
+`QWOME_CATALOG` is now SEMANTIC only (id, group, subgroup, capabilities). All
+presentation moved to the client: `lib/qwome/client/presentation.ts` (labels,
+short names, descriptors, notes, subgroup labels) and `lib/qwome/client/icons.tsx`
+(consistent outline/line icons, replacing emoji). A different QWOME client ships
+its own presentation for the same category ids without touching core.
 
-**Separate it:** split into a core registry (`ids`, `measurable`, `group`,
-`defaultMiles`) inside QWOME, and a presentation map (labels/icons/notes) the
-client owns. Sold It Today keeps today's labels; QWOME.com or a partner supplies
-their own. Do this behind a re-export so no component import changes.
-
-### 3. Business logic still in the Sold It Today UI
-`ResultsView.tsx` re-implements the "does this home satisfy every preference"
-filter and the empty-category suppression. That is QWOME analysis logic living in
-the client.
-
-**Separate it:** have `ResultsView` consume `analyzeProperties()` results (which
-already return `satisfied` per category) instead of its own AND-filter. The UI
-then only renders; the intelligence is 100% in `lib/qwome/analysis`.
+### 3. Fit logic in the UI ... ✅ DONE
+The fit/satisfaction + empty-category rules live in `lib/qwome/fit.ts`
+(`evaluateFit` / `selectFitting`), engine-free with type-only engine imports so it
+ships no bundled data to the browser. `ResultsView` now calls `selectFitting` and
+just renders the result; it reimplements none of the logic. `analysis.ts`
+re-exports these and uses `evaluateFit` internally, so the API and the UI share
+one implementation.
 
 ### 4. Data is Michigan-only and bundled
 `data/mi-pois.json` is one region baked into the app. Fine for launch, wrong for a
