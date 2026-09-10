@@ -17,6 +17,7 @@ IDX, brokerage, and auth stay in the client.**
 lib/qwome/                      QWOME core (no Sold It Today imports)
   engine.ts                     proximity engine (nearest-of-category, haversine)
   providers.ts                  PlaceProvider abstraction + bundled MI + empty
+  regionsMeta.ts                shared region metadata (runtime + ingestion)
   regions.ts                    region registry + resolveProvider(points)
   analysis.ts                   analyzePropertyFit / analyzeProperties (normalized)
   fit.ts                        evaluateFit / selectFitting (pure, engine-free)
@@ -106,21 +107,23 @@ one implementation.
 `resolveProvider(points)` picks the region containing the query points and returns
 its provider; Michigan is the first region and the current fallback, so behavior
 is unchanged. Resolution happens at the seams (analysis layer, `lib/amenities`,
-the nearby API), never in the pure engine. A new region is
-`registerRegion({ id, label, bounds, provider })` with its dataset ... no engine or
-analysis change. The registry is side-effect-free so regions/providers/data stay
-tree-shakeable (no client bloat). REMAINING: the build ingestion is still
-Michigan-hardcoded (see #4b) and, until a second real region exists, unmatched
-locations fall back to Michigan rather than returning no data.
+the nearby API), never in the pure engine. The registry is tree-shakeable (built
+via a `/*#__PURE__*/` helper) so regions/providers/data stay out of the client
+bundle. REMAINING: until a second real region exists, unmatched locations fall
+back to Michigan rather than returning no data (`setDefaultRegion(null)` flips
+this when ready).
 
-### 4b. Data ingestion is Michigan-hardcoded
-`scripts/build-qwome-pois.mjs` hardcodes the Michigan OSM area id and writes one
-`mi-pois.json`. The runtime is region-ready; ingestion is not yet.
+### 4b. Region-parameterized ingestion ... ✅ DONE
+Region metadata (id, label, bounds, OSM area id, dataset file) lives once in
+`lib/qwome/regionsMeta.ts`, read by BOTH the runtime resolver and the build
+ingestion, so they never drift. `scripts/build-qwome-pois.mjs` parameterizes its
+Overpass queries by the region's OSM area id and iterates the metadata (or one
+region via `node build-qwome-pois.mjs <id>`), writing each region's dataset with
+the same shared classification rules.
 
-**Separate it:** parameterize the builder by region (area id / bounds + output
-path) so a new region is a config entry plus one build run, reusing the same
-shared classification rules. Optionally add a hosted `HttpPlaceProvider` for
-regions too large to bundle.
+**Adding a region** = one `regionsMeta` entry + wiring its bundled dataset into a
+provider (`PROVIDER_BY_ID` in `regions.ts`) + one build run. Optionally add a
+hosted `HttpPlaceProvider` for regions too large to bundle.
 
 ### 5. No geocoding / travel-time providers yet
 Address-based categories (Workplace, Family, Custom) capture text but are not
