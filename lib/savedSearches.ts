@@ -4,6 +4,7 @@
  * human-readable label. Shared by the Save button and the Saved Searches page.
  */
 import { catalogEntry, type QwomeCategoryId } from "@/lib/qwome/preferences";
+import { qwomePresentation } from "@/lib/qwome/client/presentation";
 
 export type SavedSearch = { query: string; label: string; savedAt: number };
 
@@ -66,7 +67,8 @@ export function describeSearch(qs: string): string {
       .split(",")
       .map((c) => {
         const [cat, mi] = c.split(":");
-        const label = catalogEntry(cat as QwomeCategoryId)?.short.toLowerCase();
+        const known = catalogEntry(cat as QwomeCategoryId);
+        const label = known ? qwomePresentation(cat as QwomeCategoryId).short.toLowerCase() : undefined;
         return label && mi ? `≤${mi}mi ${label}` : "";
       })
       .filter(Boolean);

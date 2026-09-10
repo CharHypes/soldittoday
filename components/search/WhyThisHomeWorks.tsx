@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
-import { evaluatePreference, isMeasurable, catalogEntry, type QwomePreference } from "@/lib/qwome/preferences";
+import { evaluatePreference, isMeasurable, type QwomePreference } from "@/lib/qwome/preferences";
+import { qwomePresentation } from "@/lib/qwome/client/presentation";
 import { readPrefs, PREFS_CHANGE_EVENT } from "@/lib/qwome/client/prefsStorage";
 
 /**
@@ -10,8 +11,10 @@ import { readPrefs, PREFS_CHANGE_EVENT } from "@/lib/qwome/client/prefsStorage";
  * honest descriptor ("nearest public elementary school in district", never
  * "assigned") so we never overstate what the data proves.
  */
-const descriptorFor = (key: AmenityKey) =>
-  catalogEntry(key)?.descriptor ?? catalogEntry(key)?.short.toLowerCase() ?? key;
+const descriptorFor = (key: AmenityKey) => {
+  const p = qwomePresentation(key);
+  return p.descriptor ?? p.short.toLowerCase();
+};
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 type Reason = { text: string; ok: boolean };

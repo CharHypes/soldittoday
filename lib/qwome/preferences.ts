@@ -107,41 +107,35 @@ export type QwomePreference = {
 /** Grouping for the picker ... light section headers over a longer catalog. */
 export type QwomeGroup = "Healthcare" | "Schools" | "Grocery" | "Everyday" | "People & places";
 
-/** A selectable category in the catalog. */
+/**
+ * A category in the QWOME registry ... SEMANTIC only. It defines identity,
+ * capabilities, and relationships. It carries NO presentation (labels, copy,
+ * icons, colors): those are client-owned (for Sold It Today, see
+ * lib/qwome/client/presentation + lib/qwome/client/icons). This is what lets the
+ * standalone QWOME app, widgets, and partners present the same categories their
+ * own way without changing core.
+ */
 export type QwomeCatalogEntry = {
   id: QwomeCategoryId;
-  /** Full label for the picker ("Emergency Room"). */
-  label: string;
-  /** Compact label for the card chip ("ER"). */
-  short: string;
-  /** Small glyph, for quick scanning in the picker + on the card. */
-  icon: string;
-  /** Section the picker groups this under. */
+  /** Section this category belongs to (a semantic grouping). */
   group: QwomeGroup;
   /**
-   * Optional expandable sub-section within a group (e.g. "International &
-   * Specialty Markets" under Grocery). Entries sharing a subgroup collapse
-   * behind one expander; entries without a subgroup sit directly in the group.
+   * Optional expandable sub-section id within a group (e.g. "international"
+   * under Grocery). Entries sharing a subgroup collapse behind one expander;
+   * the client maps the id to a display label.
    */
   subgroup?: string;
-  /** True when the bundled QWOME dataset can measure distance TODAY. */
+  /** Capability: the QWOME dataset can measure distance for this today. */
   measurable: boolean;
-  /** True when this category is anchored to a specific address, not a category. */
+  /** Capability: anchored to a specific address rather than a place category. */
   addressBased: boolean;
-  /**
-   * How the nearest result is described in "Why this home works" and tooltips.
-   * For schools this is deliberately "nearest public ... in district", never
-   * "assigned", until attendance-boundary data is available.
-   */
-  descriptor?: string;
-  /** Optional clarifying note shown under the option in the picker. */
-  note?: string;
 };
 
 /**
- * The full QWOME category catalog. To bring a new category online, flip
- * `measurable` and add its dataset key in lib/qwome/engine + the data builder
- * (scripts/build-qwome-pois.mjs). Order here is the order shown in the picker.
+ * The QWOME category registry. To bring a new category online, add it here
+ * (semantic), add its dataset key in lib/qwome/engine + the data builder, and
+ * add its presentation in the client. Order here is the canonical order clients
+ * present the categories in.
  *
  * Healthcare is split into precise, separately-measurable categories on purpose:
  * a general acute-care hospital is not an ER, urgent care, pharmacy, or a
@@ -149,43 +143,41 @@ export type QwomeCatalogEntry = {
  */
 export const QWOME_CATALOG: QwomeCatalogEntry[] = [
   // Healthcare
-  { id: "hospital", label: "Hospital", short: "Hospital", icon: "🏥", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest acute-care hospital", note: "General acute-care hospitals only (excludes psychiatric, rehab, and specialty facilities)." },
-  { id: "er", label: "Emergency Room", short: "ER", icon: "🚑", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest emergency room" },
-  { id: "urgentcare", label: "Urgent Care", short: "Urgent Care", icon: "⛑️", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest urgent care" },
-  { id: "pharmacy", label: "Pharmacy", short: "Pharmacy", icon: "💊", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest pharmacy" },
-  { id: "behavioral", label: "Behavioral / Psychiatric Care", short: "Behavioral", icon: "🧠", group: "Healthcare", measurable: true, addressBased: false, descriptor: "nearest behavioral / psychiatric care" },
+  { id: "hospital", group: "Healthcare", measurable: true, addressBased: false },
+  { id: "er", group: "Healthcare", measurable: true, addressBased: false },
+  { id: "urgentcare", group: "Healthcare", measurable: true, addressBased: false },
+  { id: "pharmacy", group: "Healthcare", measurable: true, addressBased: false },
+  { id: "behavioral", group: "Healthcare", measurable: true, addressBased: false },
   // Schools (public, by level)
-  { id: "school_elem", label: "Elementary School", short: "Elementary", icon: "🎒", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public elementary school in district", note: "Nearest public elementary school in the district (not boundary-assigned)." },
-  { id: "school_mid", label: "Middle School", short: "Middle", icon: "📗", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public middle school in district", note: "Nearest public middle school in the district (not boundary-assigned)." },
-  { id: "school_high", label: "High School", short: "High School", icon: "🎓", group: "Schools", measurable: true, addressBased: false, descriptor: "nearest public high school in district", note: "Nearest public high school in the district (not boundary-assigned)." },
-  // Grocery ... explicit, user-selectable (never inferred). General is the
-  // conventional default; Any Full-Service adds international supermarkets; the
-  // International & Specialty Markets expander holds the specific market types.
-  { id: "grocery", label: "General Grocery / Supermarket", short: "Grocery", icon: "🛒", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest supermarket", note: "Conventional full-service supermarkets and major/regional chains (Kroger, Meijer, Aldi, Walmart Supercenter, ...)." },
-  { id: "grocery_any", label: "Any Full-Service Grocery", short: "Full-Service", icon: "🏪", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest full-service grocery", note: "Conventional supermarkets plus legitimate full-service international supermarkets." },
-  { id: "grocery_warehouse", label: "Warehouse Club", short: "Warehouse", icon: "📦", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest warehouse club", note: "Membership warehouse clubs (Costco, Sam's Club, BJ's)." },
-  { id: "grocery_organic", label: "Organic / Specialty Grocery", short: "Organic", icon: "🌱", group: "Grocery", measurable: true, addressBased: false, descriptor: "nearest organic / specialty grocery", note: "Natural, organic, and specialty grocers (Whole Foods, Trader Joe's, Fresh Thyme, co-ops)." },
-  { id: "grocery_asian", label: "Asian Market", short: "Asian", icon: "🥢", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Asian market" },
-  { id: "grocery_chinese", label: "Chinese Market", short: "Chinese", icon: "🥟", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Chinese market" },
-  { id: "grocery_korean", label: "Korean Market", short: "Korean", icon: "🍲", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Korean market" },
-  { id: "grocery_japanese", label: "Japanese Market", short: "Japanese", icon: "🍱", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Japanese market" },
-  { id: "grocery_south_asian", label: "Indian / South Asian Market", short: "Indian", icon: "🍛", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Indian / South Asian market" },
-  { id: "grocery_mideast", label: "Middle Eastern / Arabic Market", short: "Middle Eastern", icon: "🧆", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Middle Eastern / Arabic market" },
-  { id: "grocery_halal", label: "Halal Market", short: "Halal", icon: "🌙", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest halal market" },
-  { id: "grocery_latin", label: "Mexican / Latin American Market", short: "Latin", icon: "🌮", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest Mexican / Latin American market" },
-  { id: "grocery_african_caribbean", label: "African / Caribbean Market", short: "African/Caribbean", icon: "🍠", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest African / Caribbean market" },
-  { id: "grocery_kosher", label: "Kosher Market", short: "Kosher", icon: "✡️", group: "Grocery", subgroup: "International & Specialty Markets", measurable: true, addressBased: false, descriptor: "nearest kosher market" },
+  { id: "school_elem", group: "Schools", measurable: true, addressBased: false },
+  { id: "school_mid", group: "Schools", measurable: true, addressBased: false },
+  { id: "school_high", group: "Schools", measurable: true, addressBased: false },
+  // Grocery ... explicit, user-selectable (never inferred).
+  { id: "grocery", group: "Grocery", measurable: true, addressBased: false },
+  { id: "grocery_any", group: "Grocery", measurable: true, addressBased: false },
+  { id: "grocery_warehouse", group: "Grocery", measurable: true, addressBased: false },
+  { id: "grocery_organic", group: "Grocery", measurable: true, addressBased: false },
+  { id: "grocery_asian", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_chinese", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_korean", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_japanese", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_south_asian", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_mideast", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_halal", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_latin", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_african_caribbean", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
+  { id: "grocery_kosher", group: "Grocery", subgroup: "international", measurable: true, addressBased: false },
   // Everyday
-  { id: "dining", label: "Restaurants / Coffee", short: "Dining", icon: "☕", group: "Everyday", measurable: false, addressBased: false },
-  { id: "shopping", label: "Shopping", short: "Shopping", icon: "🛍️", group: "Everyday", measurable: false, addressBased: false },
-  { id: "gym", label: "Gym / Fitness", short: "Gym", icon: "🏋️", group: "Everyday", measurable: false, addressBased: false },
-  { id: "parks", label: "Parks / Dog Parks", short: "Parks", icon: "🌳", group: "Everyday", measurable: false, addressBased: false },
-  { id: "transit", label: "Public Transportation", short: "Transit", icon: "🚌", group: "Everyday", measurable: false, addressBased: false },
-  { id: "airport", label: "Airport", short: "Airport", icon: "✈️", group: "Everyday", measurable: false, addressBased: false },
+  { id: "dining", group: "Everyday", measurable: false, addressBased: false },
+  { id: "shopping", group: "Everyday", measurable: false, addressBased: false },
+  { id: "gym", group: "Everyday", measurable: false, addressBased: false },
+  { id: "parks", group: "Everyday", measurable: false, addressBased: false },
+  { id: "transit", group: "Everyday", measurable: false, addressBased: false },
+  { id: "airport", group: "Everyday", measurable: false, addressBased: false },
   // People & places (address-based)
-  { id: "workplace", label: "Workplace", short: "Workplace", icon: "💼", group: "People & places", measurable: false, addressBased: true },
-  { id: "family", label: "Family & Friends", short: "Family", icon: "🏡", group: "People & places", measurable: false, addressBased: true },
-  { id: "custom", label: "Custom Location", short: "Custom", icon: "📍", group: "People & places", measurable: false, addressBased: true },
+  { id: "workplace", group: "People & places", measurable: false, addressBased: true },
+  { id: "family", group: "People & places", measurable: false, addressBased: true },
+  { id: "custom", group: "People & places", measurable: false, addressBased: true },
 ];
 
 /** Catalog groups in display order (drives the picker's section headers). */

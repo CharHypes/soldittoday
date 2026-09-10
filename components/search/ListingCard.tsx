@@ -4,12 +4,14 @@ import { IDX_DISCLAIMER } from "@/lib/idx";
 import { formatMiles, type AmenityDistances, type AmenityKey } from "@/lib/amenities";
 import { formatInt } from "@/lib/format";
 import { catalogEntry } from "@/lib/qwome/preferences";
+import { qwomePresentation } from "@/lib/qwome/client/presentation";
+import { QwomeIcon } from "@/lib/qwome/client/icons";
 import FavoriteButton from "./FavoriteButton";
 
 /**
  * QWOME™ proximity chips ... one small pill per category the viewer chose in
  * their QWOME preferences, each with the category's icon + this home's real
- * distance (e.g. "🏥 Hospital 3.4 mi"). No preferences => no chips, so cards stay
+ * distance (e.g. "Hospital 3.4 mi"). No preferences => no chips, so cards stay
  * clean and we never dump distance data that isn't relevant to this viewer.
  */
 function QwomeChips({
@@ -20,23 +22,21 @@ function QwomeChips({
   categories: AmenityKey[];
 }) {
   if (!amenities || categories.length === 0) return null;
-  const chips = categories
-    .map((k) => ({ k, entry: catalogEntry(k), d: amenities[k] }))
-    .filter((c) => c.entry && c.d);
+  const chips = categories.filter((k) => catalogEntry(k) && amenities[k]);
   if (chips.length === 0) return null;
   return (
     <div className="mt-3 flex flex-wrap items-center gap-1.5 border-t border-dusty/12 pt-3">
       <span className="rounded-full bg-wine/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-auroraMauve">
         QWOME&trade;
       </span>
-      {chips.map(({ k, entry, d }) => (
+      {chips.map((k) => (
         <span
           key={k}
           className="inline-flex items-center gap-1 rounded-full border border-dusty/20 bg-plum/50 px-2 py-0.5 text-[11px] text-dusty"
         >
-          <span aria-hidden className="text-[12px] leading-none">{entry!.icon}</span>
-          <span className="font-medium text-pearl/90">{entry!.short}</span>
-          <span>{formatMiles(d!.miles)}</span>
+          <QwomeIcon name={k} className="h-3.5 w-3.5 text-auroraMauve" />
+          <span className="font-medium text-pearl/90">{qwomePresentation(k).short}</span>
+          <span>{formatMiles(amenities[k]!.miles)}</span>
         </span>
       ))}
     </div>

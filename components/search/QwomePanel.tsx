@@ -12,6 +12,8 @@ import {
   type QwomeCategoryId,
   type QwomePreference,
 } from "@/lib/qwome/preferences";
+import { qwomePresentation, QWOME_SUBGROUP_LABELS } from "@/lib/qwome/client/presentation";
+import { QwomeIcon, QwomeSubgroupIcon } from "@/lib/qwome/client/icons";
 
 const selectCls =
   "rounded-lg border border-dusty/25 bg-plum/60 px-2.5 py-1.5 text-sm text-pearl outline-none transition-colors focus:border-auroraMauve/60";
@@ -96,9 +98,9 @@ export default function QwomePanel({
                 key={entry.id === "custom" ? `custom-${pref.id ?? pref.label ?? entry.id}` : entry.id}
                 className="inline-flex items-center gap-1.5 rounded-full border border-auroraMauve/40 bg-wine/25 px-3 py-1.5 text-sm text-pearl"
               >
-                <span aria-hidden className="text-[15px] leading-none">{entry.icon}</span>
+                <QwomeIcon name={entry.id} className="h-4 w-4 text-auroraMauve" />
                 <span className="font-medium">
-                  {entry.id === "custom" && pref.label ? pref.label : entry.short}
+                  {entry.id === "custom" && pref.label ? pref.label : qwomePresentation(entry.id).short}
                 </span>
                 {isMeasurable(entry.id) && pref.maxMiles != null && (
                   <span className="text-xs text-dusty">· {pref.maxMiles} mi</span>
@@ -183,6 +185,7 @@ function QwomeModal({
   const renderRow = (entry: (typeof QWOME_CATALOG)[number]) => {
     const on = active.has(entry.id);
     const pref = active.get(entry.id);
+    const present = qwomePresentation(entry.id);
     return (
       <li
         key={entry.id}
@@ -198,9 +201,9 @@ function QwomeModal({
           onClick={() => toggle(entry.id)}
           className="flex w-full items-center gap-3 px-4 py-3 text-left"
         >
-          <span aria-hidden className="text-xl leading-none">{entry.icon}</span>
+          <QwomeIcon name={entry.id} className={on ? "h-5 w-5 text-auroraMauve" : "h-5 w-5 text-dusty"} />
           <span className={on ? "flex-1 text-sm font-medium text-pearl" : "flex-1 text-sm text-dusty"}>
-            {entry.label}
+            {present.label}
           </span>
           <span
             className={[
@@ -222,7 +225,7 @@ function QwomeModal({
             <div className="flex items-center gap-2 text-sm text-dusty">
               <span>within</span>
               <select
-                aria-label={`${entry.label} distance in miles`}
+                aria-label={`${present.label} distance in miles`}
                 className={selectCls}
                 value={pref?.maxMiles ?? defaultMilesFor(entry.id)}
                 onChange={(e) => patch(entry.id, { maxMiles: Number(e.target.value) })}
@@ -232,8 +235,8 @@ function QwomeModal({
                 ))}
               </select>
             </div>
-            {entry.note && (
-              <p className="text-xs leading-snug text-dusty/70">{entry.note}</p>
+            {present.note && (
+              <p className="text-xs leading-snug text-dusty/70">{present.note}</p>
             )}
           </div>
         )}
@@ -346,8 +349,8 @@ function QwomeModal({
                           onClick={() => setOpenSubs((s) => ({ ...s, [subName]: !isOpen }))}
                           className="flex w-full items-center gap-3 px-4 py-3 text-left"
                         >
-                          <span aria-hidden className="text-lg leading-none">🌍</span>
-                          <span className="flex-1 text-sm font-medium text-pearl">{subName}</span>
+                          <QwomeSubgroupIcon className="h-5 w-5 text-auroraMauve" />
+                          <span className="flex-1 text-sm font-medium text-pearl">{QWOME_SUBGROUP_LABELS[subName] ?? subName}</span>
                           {selectedInSub > 0 && (
                             <span className="rounded-full bg-wine/40 px-2 py-0.5 text-[11px] font-semibold text-pearl">
                               {selectedInSub}

@@ -12,6 +12,7 @@ import {
   isMeasurable,
   type QwomePreference,
 } from "@/lib/qwome/preferences";
+import { selectFitting } from "@/lib/qwome/fit";
 import { readPrefs, writePrefs } from "@/lib/qwome/client/prefsStorage";
 
 // Leaflet needs the browser, so the map is client-only.
@@ -95,40 +96,18 @@ export default function ResultsView({ listings }: { listings: Listing[] }) {
     window.history.replaceState(null, "", qs ? `?${qs}` : window.location.pathname);
   };
 
-  // Only the MEASURABLE prefs (hospital/school/grocery today) constrain search
-  // and show a distance on the card. Lifestyle picks QWOME can't measure yet
-  // (gym, dining, ...) are saved and shown as chips but don't hide any homes.
-  const measurablePrefs = useMemo(
-    () => prefs.filter((p) => isMeasurable(p.category) && p.maxMiles != null),
-    [prefs]
-  );
-  const prefsActive = measurablePrefs.length > 0;
-  const activeCategories = useMemo(
-    () => measurablePrefs.map((p) => p.category as AmenityKey),
-    [measurablePrefs]
-  );
+  // Fit selection is computed by the QWOME analysis layer, not here. The UI just
+  // consumes it: `activeCategories` drives which chips show, `fittingIds` says
+  // which homes satisfy the viewer's measurable preferences (with the empty-
+  // category rule handled in core). The UI reimplements none of that logic.
+  const fit = useMemo(() => selectFitting(amenities, prefs), [amenities, prefs]);
+  const prefsActive = fit.hasMeasurablePreferences;
+  const activeCategories = fit.activeCategories as AmenityKey[];
 
-  // Categories QWOME actually measured in this result set. A category with no
-  // data anywhere (e.g. a market type absent from this region) must NOT filter
-  // every home out ... it simply can't be applied here, so we skip it.
-  const measuredCats = useMemo(() => {
-    const s = new Set<string>();
-    for (const id in amenities) for (const cat in amenities[id]) s.add(cat);
-    return s;
-  }, [amenities]);
-
-  // A home "fits" when it satisfies EVERY APPLICABLE measurable preference (AND).
   const visible = useMemo(() => {
-    if (!prefsActive || !amenitiesLoaded) return listings;
-    const applicable = measurablePrefs.filter((p) => measuredCats.has(p.category));
-    if (applicable.length === 0) return listings;
-    return listings.filter((l) =>
-      applicable.every((p) => {
-        const d = amenities[l.id]?.[p.category as AmenityKey];
-        return d != null && p.maxMiles != null && d.miles <= p.maxMiles;
-      })
-    );
-  }, [prefsActive, amenitiesLoaded, listings, amenities, measurablePrefs, measuredCats]);
+    if (!prefsActive || !amenitiesLoaded || !fit.filtering) return listings;
+    return listings.filter((l) => fit.fittingIds.has(l.id));
+  }, [prefsActive, amenitiesLoaded, fit, listings]);
 
   const statusNode = prefsActive
     ? amenitiesLoaded

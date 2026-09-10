@@ -19,11 +19,17 @@ import {
   type QwomeNearby,
 } from "./engine";
 import { defaultPlaceProvider, type PlaceProvider } from "./providers";
-import {
-  evaluatePreference,
-  isMeasurable,
-  type QwomePreference,
-} from "./preferences";
+import { isMeasurable, type QwomePreference } from "./preferences";
+import { evaluateFit, type QwomeCategoryResult } from "./fit";
+
+// Re-export the pure fit primitives so callers can reach them via the analysis
+// barrel; their implementation lives in ./fit (engine-free, no bundled data).
+export { evaluateFit, selectFitting } from "./fit";
+export type {
+  QwomeCategoryResult,
+  QwomeFitEvaluation,
+  QwomeFitSelection,
+} from "./fit";
 
 /** A bare geographic location ... no listing / property object required. */
 export type QwomeLocation = { lat: number; lng: number };
@@ -34,24 +40,6 @@ export type QwomeAnalysisInput = {
   id?: string;
   location: QwomeLocation;
   preferences: QwomePreference[];
-};
-
-/** Per-category outcome against the viewer's preference. */
-export type QwomeCategoryResult = {
-  category: QwomeCategoryKey;
-  /** The viewer's distance limit, if any. */
-  maxMiles: number | null;
-  /** Straight-line distance to the nearest place (null when unmeasurable here). */
-  distanceMi: number | null;
-  /** Name of the nearest place, when known. */
-  placeName: string | null;
-  /**
-   * met  ... within the limit; unmet ... just past; far ... well past;
-   * no_data ... QWOME can't measure this category at this location.
-   */
-  status: "met" | "unmet" | "far" | "no_data";
-  /** True when within the viewer's limit. */
-  satisfied: boolean;
 };
 
 /** Normalized structured result for one property/address. */
@@ -77,35 +65,11 @@ function buildResult(
   nearby: QwomeNearby,
   providerId: string
 ): QwomeFitResult {
-  const categories: QwomeCategoryResult[] = [];
-  let satisfiedCount = 0;
-  let measuredCount = 0;
-
-  for (const pref of input.preferences) {
-    if (!isMeasurable(pref.category)) continue; // address-based / not-yet-measurable
-    const d = nearby[pref.category];
-    const distanceMi = d ? d.miles : null;
-    const evalStatus = evaluatePreference(pref, distanceMi);
-    const status: QwomeCategoryResult["status"] = distanceMi == null ? "no_data" : evalStatus ?? "no_data";
-    const satisfied = status === "met";
-    if (distanceMi != null) measuredCount += 1;
-    if (satisfied) satisfiedCount += 1;
-    categories.push({
-      category: pref.category,
-      maxMiles: pref.maxMiles ?? null,
-      distanceMi,
-      placeName: d?.name ?? null,
-      status,
-      satisfied,
-    });
-  }
-
+  const evaluation = evaluateFit(nearby, input.preferences);
   return {
     id: input.id,
     location: input.location,
-    categories,
-    satisfiedCount,
-    measuredCount,
+    ...evaluation,
     score: null, // reserved for the QWOME fit score
     providerId,
   };

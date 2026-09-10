@@ -11,7 +11,8 @@ import ListingCard from "@/components/search/ListingCard";
 import ListingPaymentCalculator from "@/components/search/ListingPaymentCalculator";
 import WhyThisHomeWorks from "@/components/search/WhyThisHomeWorks";
 import { amenitiesForPoints, formatMiles, type AmenityKey } from "@/lib/amenities";
-import { catalogEntry } from "@/lib/qwome/preferences";
+import { qwomePresentation } from "@/lib/qwome/client/presentation";
+import { QwomeIcon } from "@/lib/qwome/client/icons";
 import { contact } from "@/lib/data";
 
 // Default "Nearby" tiles on the detail page (shown to everyone, no prefs set).
@@ -196,8 +197,8 @@ export default async function ListingPage({ params }: { params: { id: string } }
                     {nearbyKeys.map((k) => (
                       <div key={k} className="rounded-xl2 border border-dusty/15 bg-plum/50 p-4">
                         <div className="flex items-center gap-2">
-                          <span aria-hidden className="text-base leading-none">{catalogEntry(k)?.icon}</span>
-                          <span className="text-xs uppercase tracking-wider text-dusty">Nearest {catalogEntry(k)?.short ?? k}</span>
+                          <QwomeIcon name={k} className="h-4 w-4 text-gold" />
+                          <span className="text-xs uppercase tracking-wider text-dusty">Nearest {qwomePresentation(k).short}</span>
                         </div>
                         <div className="mt-2 text-xl font-semibold text-pearl">{formatMiles(nearby[k]!.miles)}</div>
                         {nearby[k]!.name && (
