@@ -145,15 +145,22 @@ dataset per process (optional TTL), and degrades to no-data on failure.
 REMAINING: no vendor adapters are wired (these are the ready seams), and drive-
 time is not yet consumed by preferences/scoring or the address-entry flow.
 
-### 6. API + data ingestion are co-hosted in the Next.js app
-The v1 routes and the build script run inside Sold It Today's deployment.
+### 6a. Package boundary ... ✅ DONE
+`lib/qwome` is now an explicit, extraction-ready package with one public API:
+`lib/qwome/index.ts` (`@qwome/engine`, full/server) and `lib/qwome/index.client.ts`
+(`@qwome/engine/client`, pure/data-free). `lib/qwome/README.md` documents the
+public surface, what is engine vs SIT-consumer code (`lib/qwome/client/*`,
+`lib/amenities`, `app/api/v1/qwome/*`), the intended `package.json`, and the
+extraction steps. The SIT server seam (`lib/amenities` + the v1 routes) imports
+from the barrel, so extraction is a find/replace (`@/lib/qwome` -> `@qwome/engine`).
 
-**Separate it:** because the route handlers are thin (they only call
-`lib/qwome/*`), the extraction is mechanical when the time comes — move
-`lib/qwome/` into a standalone package (`@qwome/engine`) and host the v1 routes in
-a dedicated QWOME service. Sold It Today then calls QWOME over HTTP via
-`lib/amenities` (already the single adapter seam) instead of importing the package
-directly. Nothing else in the site changes.
+### 6b. Separate deployment ... PENDING (infra decision)
+`app/api/v1/qwome/*` already ARE the service API. Standing QWOME up as its own
+deployment (its own domain + partner auth) and flipping SIT to call it over HTTP
+(env-gated `QWOME_SERVICE_URL` in `lib/amenities`, default in-process) is an infra
+step, not a code refactor. Recommended only once there's a second consumer or
+QWOME.com ... until then, in-process is simpler and lower-latency, and the seam is
+ready to turn on.
 
 ---
 
