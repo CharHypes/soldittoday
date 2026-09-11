@@ -154,13 +154,16 @@ public surface, what is engine vs SIT-consumer code (`lib/qwome/client/*`,
 extraction steps. The SIT server seam (`lib/amenities` + the v1 routes) imports
 from the barrel, so extraction is a find/replace (`@/lib/qwome` -> `@qwome/engine`).
 
-### 6b. Separate deployment ... PENDING (infra decision)
+### 6b. Separate deployment ... DEFERRED (decision: hold in-process)
 `app/api/v1/qwome/*` already ARE the service API. Standing QWOME up as its own
 deployment (its own domain + partner auth) and flipping SIT to call it over HTTP
 (env-gated `QWOME_SERVICE_URL` in `lib/amenities`, default in-process) is an infra
-step, not a code refactor. Recommended only once there's a second consumer or
-QWOME.com ... until then, in-process is simpler and lower-latency, and the seam is
-ready to turn on.
+step, not a code refactor.
+
+**Decision (2026-09):** hold QWOME in-process for now ... no separate deployment
+until there's a real second consumer (QWOME.com, a partner, another brokerage).
+In-process is simpler and lower-latency, and the package boundary (#6a) means the
+switch stays a find/replace + config flip whenever a need arrives.
 
 ---
 
