@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { analyzeProperties, type QwomeAnalysisInput } from "@/lib/qwome/analysis";
-import { normalizePrefs } from "@/lib/qwome/preferences";
+import { analyzeProperties, normalizePrefs, type QwomeAnalysisInput } from "@/lib/qwome";
 
 /**
  * QWOME™ property-fit analysis ... versioned (v1) partner/client API.

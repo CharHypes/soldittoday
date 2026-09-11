@@ -9,11 +9,11 @@
 import {
   qwomeNearby,
   formatMiles as qwomeFormatMiles,
+  resolveProvider,
   type QwomeCategoryKey,
   type QwomeDistance,
   type QwomeNearby,
-} from "./qwome/engine";
-import { resolveProvider } from "./qwome/regions";
+} from "./qwome";
 
 export type AmenityKey = QwomeCategoryKey;
 export type AmenityDistance = QwomeDistance;

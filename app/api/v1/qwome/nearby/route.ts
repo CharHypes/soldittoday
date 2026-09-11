@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { qwomeNearby, type QwomeCategoryKey } from "@/lib/qwome/engine";
-import { resolveProvider } from "@/lib/qwome/regions";
+import { qwomeNearby, resolveProvider, type QwomeCategoryKey } from "@/lib/qwome";
 
 /**
  * QWOME™ proximity service ... versioned (v1) so external partners/clients can
