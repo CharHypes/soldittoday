@@ -1,0 +1,29 @@
+{
+  "_meta": {
+    "purpose": "Permanent BEFORE-state record of production supabase_migrations.schema_migrations, captured read-only immediately before the planned one-time migration-history repair.",
+    "project_ref": "bjtesdlddhxsosktzobv",
+    "captured_at": "2026-09-12",
+    "capture_method": "read-only SELECT via Supabase MCP (no writes)",
+    "note_full_bodies": "The exact statement bodies for these 10 versions are preserved verbatim in this repo: the 8 legacy versions in supabase/legacy-recovered/<version>_<name>.sql, and the 2 Phase 0 versions in supabase/migrations/<version>_<name>.sql. Each row below records version, name, created_by, statement count, character length, and an md5 fingerprint of the stored statements so the exact bytes can be verified later.",
+    "repair_status": "NOT YET PERFORMED — the Supabase CLI (the supported repair mechanism) was unavailable in the automation environment (not installed / not authenticated). Repair to be run by the project owner."
+  },
+  "rows": [
+    {"version": "20260719192247", "name": "leads_rename_enable_rls_anon_insert", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 206, "statements_md5": "18ebbe88e9e536ebd77bde0d7a9ad1ce"},
+    {"version": "20260816021201", "name": "create_leads_table", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 561, "statements_md5": "a27b396b2aa6e603314486bf5b7625cf"},
+    {"version": "20260819023111", "name": "phase1_portal_schema", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 4629, "statements_md5": "5ceea8ccf0e73546d19ee6ef63d10c5d"},
+    {"version": "20260819031357", "name": "phase1b_agent_rls", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 2130, "statements_md5": "b3fd533c78ecba719d6b3be71ba08c12"},
+    {"version": "20260820051002", "name": "agent_avatar_url", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 1830, "statements_md5": "ede154a182690f1a3bd8fb2df5f4ebd7"},
+    {"version": "20260822031947", "name": "phase4_buyer_portal", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 3843, "statements_md5": "10359f87288ea86d2112d8aaad939044"},
+    {"version": "20260822032541", "name": "phase4_buyer_photo", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 1388, "statements_md5": "b86b79c37bb5297172f5d4b7c9d5900a"},
+    {"version": "20260822163930", "name": "phase4b_documents_and_two_way_notes", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 4117, "statements_md5": "b98a00cf472ea4f4a5182ba5e0c681fc"},
+    {"version": "20260912215211", "name": "phase0_org_tenancy_foundation", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 20500, "statements_md5": "9e9f7f696c9337c94f47bacf3ebc0ffc"},
+    {"version": "20260912220434", "name": "phase0_secdef_hardening", "created_by": "contactus@hypescreations.com", "n_statements": 1, "sql_chars": 2012, "statements_md5": "b3f32d872f75563e4a5ed2220a7ddf7b"}
+  ],
+  "planned_after_repair": {
+    "mechanism": "supabase migration repair (CLI) only — no manual SQL on schema_migrations",
+    "mark_reverted": ["20260719192247","20260816021201","20260819023111","20260819031357","20260820051002","20260822031947","20260822032541","20260822163930"],
+    "mark_applied": ["20260101000000"],
+    "left_untouched_already_applied": ["20260912215211","20260912220434"],
+    "resulting_remote_history": ["20260101000000","20260912215211","20260912220434"]
+  }
+}
