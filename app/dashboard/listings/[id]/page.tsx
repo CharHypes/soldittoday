@@ -3,7 +3,9 @@ import { redirect } from "next/navigation";
 import DashHeader from "@/components/dash/DashHeader";
 import CopyLink from "@/components/dash/CopyLink";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { updateListing, addNote, addSnapshot } from "@/app/dashboard/actions";
+import { updateListing, addSnapshot } from "@/app/dashboard/actions";
+import { AI_ENABLED } from "@/lib/ai";
+import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 
 export const metadata: Metadata = {
   title: "Edit Listing | Sold It Today",
@@ -125,16 +127,7 @@ export default async function EditListing({ params }: { params: { id: string } }
         {/* Notes */}
         <div className={card}>
           <p className="text-sm font-semibold text-pearl">Notes for the seller</p>
-          <form action={addNote} className="mt-3 space-y-3">
-            <input type="hidden" name="listing_id" value={listing.id} />
-            <textarea name="body" rows={3} placeholder="Share an update your seller will see on their portal..." className={inp} />
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 text-xs text-dusty">
-                <input type="checkbox" name="client_visible" defaultChecked /> Visible to seller
-              </label>
-              <button type="submit" className="btn-aurora !px-4 !py-2 text-sm">Add note</button>
-            </div>
-          </form>
+          <SellerNoteComposer listingId={listing.id} aiEnabled={AI_ENABLED} />
           <div className="mt-5 space-y-3">
             {(notes ?? []).map((n) => (
               <div key={n.id} className="rounded-xl border border-dusty/12 bg-plum/40 p-4">

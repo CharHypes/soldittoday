@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { createAdminClient, PORTAL_DOCS_BUCKET } from "@/lib/supabase/admin";
+import { AI_ENABLED, draftWithClaude } from "@/lib/ai";
 
 const num = (v: FormDataEntryValue | null): number | null => {
   const s = String(v ?? "").trim();
@@ -116,6 +117,91 @@ export async function addSnapshot(formData: FormData) {
     source: "manual",
   });
   revalidatePath(`/dashboard/listings/${listing_id}`);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  AI ... draft a seller update note from the listing's ListTrac stats         */
+/* -------------------------------------------------------------------------- */
+
+type DraftResult = { ok: true; draft: string } | { ok: false; error: string };
+
+const money = (n: number | null | undefined) =>
+  n == null ? null : n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+const topOf = (arr: unknown, key: "site" | "city"): string => {
+  if (!Array.isArray(arr)) return "";
+  return arr
+    .filter((r) => r && typeof r === "object")
+    .slice(0, 3)
+    .map((r) => `${(r as Record<string, unknown>)[key] ?? "?"}: ${(r as Record<string, unknown>).views ?? 0}`)
+    .join(", ");
+};
+
+/**
+ * Draft a warm, on-brand seller-update note from a listing's latest ListTrac
+ * snapshot(s). Returns the draft text for the agent to review/edit before saving
+ * as a note; it never posts anything itself. Agent-scoped via RLS (only drafts
+ * for the logged-in agent's own listings). Uses ONLY the real stored numbers.
+ */
+export async function draftSellerUpdate(listingId: string): Promise<DraftResult> {
+  if (!AI_ENABLED) return { ok: false, error: "AI drafting isn't enabled yet." };
+  const supabase = createSupabaseServer();
+
+  const { data: listing } = await supabase
+    .from("listings")
+    .select("address,city,state,price,status,list_date,clients(name)")
+    .eq("id", listingId)
+    .maybeSingle();
+  if (!listing) return { ok: false, error: "Listing not found." };
+
+  const { data: snaps } = await supabase
+    .from("engagement_snapshots")
+    .select("*")
+    .eq("listing_id", listingId)
+    .order("period_end", { ascending: false })
+    .limit(2);
+  const latest = snaps?.[0];
+  if (!latest) return { ok: false, error: "Add this week's ListTrac stats first, then draft the update." };
+  const prev = snaps?.[1];
+
+  const dom =
+    listing.list_date != null
+      ? Math.max(0, Math.round((Date.now() - new Date(String(listing.list_date) + "T00:00:00").getTime()) / 86_400_000))
+      : null;
+
+  const facts = [
+    `Property: ${listing.address}${listing.city ? `, ${listing.city}` : ""}${listing.state ? ` ${listing.state}` : ""}.`,
+    money(listing.price as number) ? `List price: ${money(listing.price as number)}.` : "",
+    `Status: ${listing.status ?? "Active"}.`,
+    dom != null ? `Days on market: ${dom}.` : "",
+    latest.period_start && latest.period_end ? `Reporting period: ${latest.period_start} to ${latest.period_end}.` : "",
+    `Total online views this period: ${latest.total_views ?? 0}.`,
+    latest.favorites != null ? `Saved/favorited by: ${latest.favorites}.` : "",
+    latest.shares != null ? `Shares: ${latest.shares}.` : "",
+    latest.returning_pct != null ? `Returning visitors: ${latest.returning_pct}%.` : "",
+    topOf(latest.by_source, "site") ? `Top sites: ${topOf(latest.by_source, "site")}.` : "",
+    topOf(latest.by_city, "city") ? `Top viewer cities: ${topOf(latest.by_city, "city")}.` : "",
+    prev?.total_views != null ? `Previous period total views: ${prev.total_views}.` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  const system = [
+    "You write short weekly update notes from the Sold It Today real-estate TEAM to a home seller, shown on the seller's private portal.",
+    "Voice: first-person plural (we, us, our). NEVER 'I', 'me', or 'my'.",
+    "NEVER use em dashes. Use '...' instead where you'd pause.",
+    "Use ONLY the numbers and facts provided. Never invent showings, offers, buyer feedback, or any statistic not given. If a trend is stated (previous vs this period), you may note the change honestly.",
+    "Tone: warm, encouraging, professional, honest. 2 to 3 short paragraphs, about 90 to 140 words.",
+    "Do not greet the seller by name and do not add a sign-off or signature (the portal already shows those). Plain text only, no markdown, no headings, no bullet lists.",
+    "Focus on what the numbers mean for them and one light, forward-looking line.",
+  ].join(" ");
+
+  const draftRaw = await draftWithClaude({ system, user: `Here are this period's real figures for the listing:\n\n${facts}` });
+  if (!draftRaw) return { ok: false, error: "Couldn't reach the drafting service. Please try again." };
+
+  // Belt-and-suspenders on the house style: no em dashes, ever.
+  const draft = draftRaw.replace(/\s*[—–]\s*/g, " ... ").trim();
+  return { ok: true, draft };
 }
 
 /* -------------------------------------------------------------------------- */
