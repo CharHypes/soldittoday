@@ -170,11 +170,14 @@ export async function parseListTracEmail(raw: string, address?: string): Promise
   if (text.length < 20) return { ok: false, error: "Paste the ListTrac email contents first." };
 
   const system = [
-    "You extract listing-engagement metrics from a pasted ListTrac weekly report email into strict JSON.",
+    "You extract listing-engagement metrics from a pasted ListTrac 'Online Analytics Report' email (from alert@listtrac.com) into strict JSON.",
     "Return ONLY a JSON object ... no prose, no code fences.",
     'Schema (use null when a value is not present; use [] when a breakdown is absent; NEVER invent numbers): {"period_start":"YYYY-MM-DD|null","period_end":"YYYY-MM-DD|null","total_views":int|null,"shares":int|null,"favorites":int|null,"returning_pct":int|null,"by_source":[{"site":string,"views":int}],"by_city":[{"city":string,"views":int}]}',
-    "total_views = the property's total online/detail views for the period. by_source = views broken down by website/source. by_city = views broken down by viewer city. returning_pct = percent of returning visitors as a 0-100 integer.",
-    address ? `If the email covers multiple listings, extract ONLY the section for the property at: ${address}.` : "",
+    "Field mapping: period_start/period_end come from the 'STATS FOR THE PERIOD' date range (e.g. 'Jul 26, 2026 - Aug 30, 2026').",
+    "total_views = the large headline 'PROPERTY VIEWS' number for that period. Do NOT use the 'TOTAL' at the bottom of the TOP WEBSITES table ... that is a different (past-30-days) window and will be a different number.",
+    "shares = the 'SHARES' number; favorites = the 'FAVORITES' number; returning_pct = the 'X% of visitors ... are returning visitors' percentage as an integer 0-100.",
+    "by_source = the TOP WEBSITES rows (website + property views). by_city = the TOP CITIES rows (city + property views). In BOTH tables IGNORE any 'TOTAL' summary row. Numbers may contain commas; return plain integers (1,883 -> 1883).",
+    address ? `This report is for a single property; ignore anything not about: ${address}.` : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -190,8 +193,12 @@ export async function parseListTracEmail(raw: string, address?: string): Promise
     return { ok: false, error: "That email didn't parse cleanly. You can enter the numbers manually below." };
   }
 
+  // Strip commas / stray characters so "1,883" -> 1883 even if the model echoes
+  // the formatted value.
   const toInt = (v: unknown): number | null => {
-    const n = Number(v);
+    const cleaned = String(v ?? "").replace(/[^0-9.-]/g, "");
+    if (!/\d/.test(cleaned)) return null;
+    const n = Number(cleaned);
     return Number.isFinite(n) ? Math.round(n) : null;
   };
   const toDate = (v: unknown): string | null =>
@@ -199,13 +206,13 @@ export async function parseListTracEmail(raw: string, address?: string): Promise
   const bySite = Array.isArray(parsed.by_source)
     ? (parsed.by_source as Record<string, unknown>[])
         .map((r) => ({ site: String(r?.site ?? "").trim(), views: toInt(r?.views) ?? 0 }))
-        .filter((r) => r.site && r.views > 0)
+        .filter((r) => r.site && r.views > 0 && !/^total$/i.test(r.site))
         .slice(0, 12)
     : [];
   const byCity = Array.isArray(parsed.by_city)
     ? (parsed.by_city as Record<string, unknown>[])
         .map((r) => ({ city: String(r?.city ?? "").trim(), views: toInt(r?.views) ?? 0 }))
-        .filter((r) => r.city && r.views > 0)
+        .filter((r) => r.city && r.views > 0 && !/^total$/i.test(r.city))
         .slice(0, 12)
     : [];
 
