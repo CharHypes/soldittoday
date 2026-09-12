@@ -6,6 +6,7 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { updateListing, addSnapshot } from "@/app/dashboard/actions";
 import { AI_ENABLED } from "@/lib/ai";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
+import ListTracImport from "@/components/dash/ListTracImport";
 
 export const metadata: Metadata = {
   title: "Edit Listing | Sold It Today",
@@ -99,7 +100,11 @@ export default async function EditListing({ params }: { params: { id: string } }
           <button type="submit" className="btn-aurora">Save changes</button>
         </form>
 
-        {/* Stats */}
+        {/* ListTrac email import (paste -> parse -> review -> save). Only when
+            AI parsing is enabled; otherwise the manual form below is used. */}
+        {AI_ENABLED && <ListTracImport listingId={listing.id} address={listing.address ?? ""} />}
+
+        {/* Stats (manual entry) */}
         <form action={addSnapshot} className={`${card} space-y-4`}>
           <input type="hidden" name="listing_id" value={listing.id} />
           <div className="flex items-center justify-between">
@@ -110,7 +115,7 @@ export default async function EditListing({ params }: { params: { id: string } }
               </span>
             )}
           </div>
-          <p className="text-xs text-dusty">Enter this week&rsquo;s numbers from your ListTrac report. (Phase 2 will read these automatically.)</p>
+          <p className="text-xs text-dusty">Prefer to type them in? Enter this week&rsquo;s numbers from your ListTrac report by hand.</p>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <label className={lbl}>Views<input name="total_views" inputMode="numeric" className={`mt-1.5 ${inp}`} /></label>
             <label className={lbl}>Shares<input name="shares" inputMode="numeric" className={`mt-1.5 ${inp}`} /></label>

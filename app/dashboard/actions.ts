@@ -102,21 +102,126 @@ export async function addNote(formData: FormData) {
   revalidatePath(`/dashboard/listings/${listing_id}`);
 }
 
+const rint = (v: FormDataEntryValue | null): number => Math.round(num(v) ?? 0);
+const jsonArr = (v: FormDataEntryValue | null): unknown[] | null => {
+  const s = str(v);
+  if (!s) return null;
+  try {
+    const p = JSON.parse(s);
+    return Array.isArray(p) ? p : null;
+  } catch {
+    return null;
+  }
+};
+
 export async function addSnapshot(formData: FormData) {
   const { supabase } = await agentId();
   const listing_id = str(formData.get("listing_id"));
   if (!listing_id) return;
-  await supabase.from("engagement_snapshots").insert({
+  const rpct = num(formData.get("returning_pct"));
+  const row: Record<string, unknown> = {
     listing_id,
     period_start: str(formData.get("period_start")),
     period_end: str(formData.get("period_end")),
-    total_views: num(formData.get("total_views")) ?? 0,
-    shares: num(formData.get("shares")) ?? 0,
-    favorites: num(formData.get("favorites")) ?? 0,
-    returning_pct: num(formData.get("returning_pct")),
-    source: "manual",
-  });
+    total_views: rint(formData.get("total_views")),
+    shares: rint(formData.get("shares")),
+    favorites: rint(formData.get("favorites")),
+    returning_pct: rpct == null ? null : Math.round(rpct),
+    // Manual form sends no source -> "manual" (unchanged); the ListTrac paste
+    // importer sends source "listtrac" + the by_source/by_city breakdowns.
+    source: str(formData.get("source")) || "manual",
+  };
+  const by_source = jsonArr(formData.get("by_source"));
+  const by_city = jsonArr(formData.get("by_city"));
+  if (by_source) row.by_source = by_source;
+  if (by_city) row.by_city = by_city;
+  await supabase.from("engagement_snapshots").insert(row);
   revalidatePath(`/dashboard/listings/${listing_id}`);
+}
+
+/* -------------------------------------------------------------------------- */
+/*  ListTrac email paste -> parsed snapshot (agent reviews before saving)      */
+/* -------------------------------------------------------------------------- */
+
+export type ParsedSnapshot = {
+  period_start: string | null;
+  period_end: string | null;
+  total_views: number | null;
+  shares: number | null;
+  favorites: number | null;
+  returning_pct: number | null;
+  by_source: { site: string; views: number }[];
+  by_city: { city: string; views: number }[];
+};
+type ParseResult = { ok: true; data: ParsedSnapshot } | { ok: false; error: string };
+
+/**
+ * Extract engagement metrics from a pasted ListTrac weekly email into our
+ * existing snapshot shape, using Claude (so we never hard-code a specific email
+ * layout). Returns the parsed values for the agent to REVIEW/edit; it saves
+ * nothing and sends nothing. Auth + AI gated. Optionally scoped to one property
+ * address when the email covers several listings.
+ */
+export async function parseListTracEmail(raw: string, address?: string): Promise<ParseResult> {
+  const { id } = await agentId();
+  if (!id) return { ok: false, error: "Please sign in again." };
+  if (!AI_ENABLED) return { ok: false, error: "AI parsing isn't enabled yet (missing API key)." };
+  const text = (raw ?? "").trim();
+  if (text.length < 20) return { ok: false, error: "Paste the ListTrac email contents first." };
+
+  const system = [
+    "You extract listing-engagement metrics from a pasted ListTrac weekly report email into strict JSON.",
+    "Return ONLY a JSON object ... no prose, no code fences.",
+    'Schema (use null when a value is not present; use [] when a breakdown is absent; NEVER invent numbers): {"period_start":"YYYY-MM-DD|null","period_end":"YYYY-MM-DD|null","total_views":int|null,"shares":int|null,"favorites":int|null,"returning_pct":int|null,"by_source":[{"site":string,"views":int}],"by_city":[{"city":string,"views":int}]}',
+    "total_views = the property's total online/detail views for the period. by_source = views broken down by website/source. by_city = views broken down by viewer city. returning_pct = percent of returning visitors as a 0-100 integer.",
+    address ? `If the email covers multiple listings, extract ONLY the section for the property at: ${address}.` : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const out = await draftWithClaude({ system, user: text, temperature: 0, maxTokens: 900 });
+  if (!out) return { ok: false, error: "Couldn't reach the parsing service. Please try again." };
+
+  const jsonText = out.slice(out.indexOf("{"), out.lastIndexOf("}") + 1);
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(jsonText) as Record<string, unknown>;
+  } catch {
+    return { ok: false, error: "That email didn't parse cleanly. You can enter the numbers manually below." };
+  }
+
+  const toInt = (v: unknown): number | null => {
+    const n = Number(v);
+    return Number.isFinite(n) ? Math.round(n) : null;
+  };
+  const toDate = (v: unknown): string | null =>
+    typeof v === "string" && /^\d{4}-\d{2}-\d{2}$/.test(v.trim()) ? v.trim() : null;
+  const bySite = Array.isArray(parsed.by_source)
+    ? (parsed.by_source as Record<string, unknown>[])
+        .map((r) => ({ site: String(r?.site ?? "").trim(), views: toInt(r?.views) ?? 0 }))
+        .filter((r) => r.site && r.views > 0)
+        .slice(0, 12)
+    : [];
+  const byCity = Array.isArray(parsed.by_city)
+    ? (parsed.by_city as Record<string, unknown>[])
+        .map((r) => ({ city: String(r?.city ?? "").trim(), views: toInt(r?.views) ?? 0 }))
+        .filter((r) => r.city && r.views > 0)
+        .slice(0, 12)
+    : [];
+
+  return {
+    ok: true,
+    data: {
+      period_start: toDate(parsed.period_start),
+      period_end: toDate(parsed.period_end),
+      total_views: toInt(parsed.total_views),
+      shares: toInt(parsed.shares),
+      favorites: toInt(parsed.favorites),
+      returning_pct: toInt(parsed.returning_pct),
+      by_source: bySite,
+      by_city: byCity,
+    },
+  };
 }
 
 /* -------------------------------------------------------------------------- */
