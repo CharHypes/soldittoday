@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import DashHeader from "@/components/dash/DashHeader";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
@@ -45,13 +46,14 @@ export default async function DashboardHome() {
         ) : (
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {rows.map((l) => (
-              <a
+              <Link
                 key={l.id}
                 href={`/dashboard/listings/${l.id}`}
-                className="aurora-ring block rounded-xl2 border border-dusty/15 bg-plum/50 p-6 transition-colors hover:border-auroraMauve/40"
+                aria-label={`Open workspace for ${l.address}`}
+                className="group aurora-ring block cursor-pointer rounded-xl2 border border-dusty/15 bg-plum/50 p-6 transition-colors hover:border-auroraMauve/50 hover:bg-plum/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-auroraMauve/70"
               >
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="text-lg font-semibold text-pearl">{l.address}</h2>
+                  <h2 className="text-lg font-semibold text-pearl group-hover:text-white">{l.address}</h2>
                   <span className="shrink-0 rounded-full bg-wine/40 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-pearl">
                     {l.status}
                   </span>
@@ -63,7 +65,13 @@ export default async function DashboardHome() {
                   <span className="text-lg font-semibold text-pearl">{money(l.price)}</span>
                   {l.mls_number && <span className="text-xs text-dusty/70">MLS# {l.mls_number}</span>}
                 </div>
-              </a>
+                <div className="mt-4 flex items-center justify-end gap-1 text-xs font-semibold text-auroraMauve/80 transition-colors group-hover:text-pearl">
+                  Open workspace
+                  <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition-transform group-hover:translate-x-0.5">
+                    <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+              </Link>
             ))}
           </div>
         )}
