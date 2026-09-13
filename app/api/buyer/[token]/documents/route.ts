@@ -26,7 +26,7 @@ export async function POST(
 
   const { data: tx } = await admin
     .from("transactions")
-    .select("id, agent_id, address, client_id")
+    .select("id, agent_id, address, client_id, organization_id")
     .eq("portal_token", params.token)
     .maybeSingle();
   if (!tx) return NextResponse.json({ error: "Portal not found" }, { status: 404 });
@@ -53,6 +53,7 @@ export async function POST(
   if (upErr) return NextResponse.json({ error: "Upload failed" }, { status: 500 });
 
   const { error: insErr } = await admin.from("documents").insert({
+    organization_id: tx.organization_id,
     transaction_id: tx.id,
     agent_id: tx.agent_id,
     name: display,
