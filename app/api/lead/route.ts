@@ -120,15 +120,20 @@ export async function POST(request: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const { error } = await supabase.from("leads").insert({
-    first_name: lead.firstName,
-    last_name: lead.lastName,
-    email: lead.email,
-    phone: lead.phone || null,
-    lead_type: lead.leadType,
-    message: lead.message || null,
-    source_page: lead.sourcePage,
-    status: "new",
+  // Route the lead to the correct organization SERVER-SIDE, from the verified
+  // request host (mapped through the organization_domains allowlist inside the
+  // RPC). We never accept a client-supplied organization id, and unknown hosts
+  // fall back to Sold It Today. This replaces the temporary Phase 0 stamping.
+  const host = (request.headers.get("host") || "").toLowerCase().split(":")[0];
+  const { error } = await supabase.rpc("submit_lead", {
+    p_host: host,
+    p_first: lead.firstName,
+    p_last: lead.lastName,
+    p_email: lead.email,
+    p_phone: lead.phone || null,
+    p_lead_type: lead.leadType,
+    p_source_page: lead.sourcePage,
+    p_message: lead.message || null,
   });
 
   if (error) {

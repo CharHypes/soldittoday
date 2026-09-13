@@ -175,15 +175,18 @@ export async function POST(request: Request) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 
-  const { error } = await supabase.from("leads").insert({
-    first_name: firstName,
-    last_name: lastName,
-    email,
-    phone: clean(body.phone) || null,
-    lead_type: `DPA: ${city}`,
-    message,
-    source_page: sourcePage,
-    status: "new",
+  // Route to the correct org server-side via the verified host (allowlist inside
+  // the RPC); never trust a client-supplied org. Replaces the direct anon insert.
+  const host = (request.headers.get("host") || "").toLowerCase().split(":")[0];
+  const { error } = await supabase.rpc("submit_lead", {
+    p_host: host,
+    p_first: firstName,
+    p_last: lastName,
+    p_email: email,
+    p_phone: clean(body.phone) || null,
+    p_lead_type: `DPA: ${city}`,
+    p_source_page: sourcePage,
+    p_message: message,
   });
 
   if (error) {

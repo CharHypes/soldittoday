@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getOrgContext } from "@/lib/context";
 import { createAdminClient, PORTAL_DOCS_BUCKET } from "@/lib/supabase/admin";
 import { AI_ENABLED, draftWithClaude } from "@/lib/ai";
 
@@ -18,22 +19,29 @@ const str = (v: FormDataEntryValue | null): string | null => {
   return s || null;
 };
 
-async function agentId() {
+/**
+ * Active-workspace context for the signed-in agent (organization + agent id +
+ * role), resolved server-side via my_context(). Every write below stamps
+ * organization_id explicitly from here ... the app is the source of truth for
+ * tenancy + ownership (the temporary Phase 0 stamping triggers are removed in
+ * Migration C). Returns id undefined when not signed in.
+ */
+async function ctx() {
   const supabase = createSupabaseServer();
-  const { data } = await supabase.from("agents").select("id").maybeSingle();
-  return { supabase, id: data?.id as string | undefined };
+  const { orgId, agentId, role } = await getOrgContext(supabase);
+  return { supabase, id: agentId, orgId, role };
 }
 
 export async function createListing(formData: FormData) {
-  const { supabase, id: agent_id } = await agentId();
-  if (!agent_id) redirect("/dashboard/login");
+  const { supabase, id: agent_id, orgId } = await ctx();
+  if (!agent_id || !orgId) redirect("/dashboard/login");
 
   let client_id: string | null = null;
   const clientName = str(formData.get("client_name"));
   if (clientName) {
     const { data: client } = await supabase
       .from("clients")
-      .insert({ agent_id, name: clientName, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")), type: "seller" })
+      .insert({ organization_id: orgId, agent_id, name: clientName, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")), type: "seller" })
       .select("id")
       .single();
     client_id = client?.id ?? null;
@@ -42,6 +50,7 @@ export async function createListing(formData: FormData) {
   const { data: listing } = await supabase
     .from("listings")
     .insert({
+      organization_id: orgId,
       agent_id,
       client_id,
       address: str(formData.get("address")),
@@ -65,7 +74,7 @@ export async function createListing(formData: FormData) {
 }
 
 export async function updateListing(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase } = await ctx();
   const id = str(formData.get("id"));
   if (!id) return;
   await supabase
@@ -90,11 +99,12 @@ export async function updateListing(formData: FormData) {
 }
 
 export async function addNote(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase, orgId } = await ctx();
   const listing_id = str(formData.get("listing_id"));
   const body = str(formData.get("body"));
-  if (!listing_id || !body) return;
+  if (!listing_id || !body || !orgId) return;
   await supabase.from("notes").insert({
+    organization_id: orgId,
     listing_id,
     body,
     client_visible: formData.get("client_visible") === "on",
@@ -115,11 +125,12 @@ const jsonArr = (v: FormDataEntryValue | null): unknown[] | null => {
 };
 
 export async function addSnapshot(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase, orgId } = await ctx();
   const listing_id = str(formData.get("listing_id"));
-  if (!listing_id) return;
+  if (!listing_id || !orgId) return;
   const rpct = num(formData.get("returning_pct"));
   const row: Record<string, unknown> = {
+    organization_id: orgId,
     listing_id,
     period_start: str(formData.get("period_start")),
     period_end: str(formData.get("period_end")),
@@ -163,7 +174,7 @@ type ParseResult = { ok: true; data: ParsedSnapshot } | { ok: false; error: stri
  * address when the email covers several listings.
  */
 export async function parseListTracEmail(raw: string, address?: string): Promise<ParseResult> {
-  const { id } = await agentId();
+  const { id } = await ctx();
   if (!id) return { ok: false, error: "Please sign in again." };
   if (!AI_ENABLED) return { ok: false, error: "AI parsing isn't enabled yet (missing API key)." };
   const text = (raw ?? "").trim();
@@ -331,15 +342,15 @@ const DEFAULT_MILESTONES = [
 ];
 
 export async function createBuyer(formData: FormData) {
-  const { supabase, id: agent_id } = await agentId();
-  if (!agent_id) redirect("/dashboard/login");
+  const { supabase, id: agent_id, orgId } = await ctx();
+  if (!agent_id || !orgId) redirect("/dashboard/login");
 
   let client_id: string | null = null;
   const clientName = str(formData.get("client_name"));
   if (clientName) {
     const { data: client } = await supabase
       .from("clients")
-      .insert({ agent_id, name: clientName, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")), type: "buyer" })
+      .insert({ organization_id: orgId, agent_id, name: clientName, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")), type: "buyer" })
       .select("id")
       .single();
     client_id = client?.id ?? null;
@@ -348,6 +359,7 @@ export async function createBuyer(formData: FormData) {
   const { data: tx } = await supabase
     .from("transactions")
     .insert({
+      organization_id: orgId,
       agent_id,
       client_id,
       address: str(formData.get("address")),
@@ -365,6 +377,7 @@ export async function createBuyer(formData: FormData) {
   if (tx?.id) {
     await supabase.from("milestones").insert(
       DEFAULT_MILESTONES.map((label, i) => ({
+        organization_id: orgId,
         transaction_id: tx.id,
         label,
         sort_order: i + 1,
@@ -378,7 +391,7 @@ export async function createBuyer(formData: FormData) {
 }
 
 export async function updateTransaction(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase } = await ctx();
   const id = str(formData.get("id"));
   if (!id) return;
   await supabase
@@ -399,7 +412,7 @@ export async function updateTransaction(formData: FormData) {
 }
 
 export async function updateMilestones(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase } = await ctx();
   const transaction_id = str(formData.get("transaction_id"));
   if (!transaction_id) return;
   const { data: ms } = await supabase
@@ -418,11 +431,12 @@ export async function updateMilestones(formData: FormData) {
 }
 
 export async function addBuyerNote(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase, orgId } = await ctx();
   const transaction_id = str(formData.get("transaction_id"));
   const body = str(formData.get("body"));
-  if (!transaction_id || !body) return;
+  if (!transaction_id || !body || !orgId) return;
   await supabase.from("notes").insert({
+    organization_id: orgId,
     transaction_id,
     body,
     client_visible: formData.get("client_visible") === "on",
@@ -437,8 +451,8 @@ const safeDocName = (name: string): string =>
 
 /** Agent uploads a document to a buyer's file. Optionally shares it immediately. */
 export async function uploadBuyerDocument(formData: FormData) {
-  const { supabase, id: agent_id } = await agentId();
-  if (!agent_id) redirect("/dashboard/login");
+  const { supabase, id: agent_id, orgId } = await ctx();
+  if (!agent_id || !orgId) redirect("/dashboard/login");
   const transaction_id = str(formData.get("transaction_id"));
   const file = formData.get("file");
   if (!transaction_id || !(file instanceof File) || file.size === 0) return;
@@ -446,7 +460,7 @@ export async function uploadBuyerDocument(formData: FormData) {
   const admin = createAdminClient();
   if (!admin) return; // service-role key not configured yet
 
-  // Confirm the agent owns this transaction (RLS-scoped read).
+  // Confirm the agent owns/can-access this transaction (RLS-scoped read).
   const { data: tx } = await supabase
     .from("transactions").select("id").eq("id", transaction_id).maybeSingle();
   if (!tx) return;
@@ -461,6 +475,7 @@ export async function uploadBuyerDocument(formData: FormData) {
   if (upErr) return;
 
   await admin.from("documents").insert({
+    organization_id: orgId,
     transaction_id,
     agent_id,
     name: display,
@@ -475,7 +490,7 @@ export async function uploadBuyerDocument(formData: FormData) {
 
 /** Flip whether a document is visible on the buyer's portal. */
 export async function toggleDocumentShare(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase } = await ctx();
   const id = str(formData.get("id"));
   const transaction_id = str(formData.get("transaction_id"));
   const share = str(formData.get("share")) === "1";
@@ -486,7 +501,7 @@ export async function toggleDocumentShare(formData: FormData) {
 
 /** Permanently delete a document (removes the stored file too). */
 export async function deleteDocument(formData: FormData) {
-  const { supabase } = await agentId();
+  const { supabase } = await ctx();
   const id = str(formData.get("id"));
   const transaction_id = str(formData.get("transaction_id"));
   if (!id) return;
