@@ -427,6 +427,32 @@ export async function getListing(id: string): Promise<ListingDetail | null> {
 }
 
 /**
+ * Resolve a single listing by its MLS number (RESO ListingId). Used by the Agent
+ * Hub to cache the stable Spark listing key + primary photo onto our own listing
+ * record (so cards/Overview read our DB, never the feed per render). The returned
+ * Listing's `id` IS the stable Spark ListingKey; `photoUrl` is the primary photo.
+ * Null if not found or the feed is off.
+ */
+export async function getListingByMlsNumber(mlsNumber: string): Promise<Listing | null> {
+  if (!IDX_ENABLED || !mlsNumber) return null;
+  const filter = `ListingId Eq '${String(mlsNumber).replace(/'/g, "''")}'`;
+  const url = `${SPARK_BASE}/listings?_filter=${encodeURIComponent(filter)}&_expand=Photos&_limit=1`;
+  try {
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${process.env.IDX_FEED_TOKEN}`, Accept: "application/json" },
+      next: { revalidate: 900 },
+    });
+    if (!res.ok) return null;
+    const json = await res.json();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rec: any = json?.D?.Results?.[0];
+    return rec ? mapRecord(rec) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Fetch summaries for a set of listing ids (the Saved Homes page). Fetches each
  * by id and drops any that are gone/inactive, so removed listings vanish
  * gracefully rather than breaking the page.

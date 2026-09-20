@@ -7,6 +7,7 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
 import { createAdminClient, PORTAL_DOCS_BUCKET } from "@/lib/supabase/admin";
 import { AI_ENABLED, draftWithClaude } from "@/lib/ai";
+import { getListingByMlsNumber } from "@/lib/idx";
 
 const num = (v: FormDataEntryValue | null): number | null => {
   const s = String(v ?? "").trim();
@@ -71,6 +72,37 @@ export async function createListing(formData: FormData) {
 
   revalidatePath("/dashboard");
   redirect(listing?.id ? `/dashboard/listings/${listing.id}` : "/dashboard");
+}
+
+/**
+ * Resolve this listing's MLS number to its stable Spark ListingKey via the IDX
+ * feed and cache the key + primary photo onto our own listing row. Explicit
+ * (agent-triggered) ... never per render. RLS scopes the update to the agent's
+ * own listing. No-op if IDX is off, there's no MLS number, or no match is found.
+ */
+export async function syncListingPhoto(formData: FormData) {
+  const { supabase, id: agent_id } = await ctx();
+  if (!agent_id) redirect("/dashboard/login");
+
+  const listingId = str(formData.get("id"));
+  if (!listingId) return;
+
+  const { data: listing } = await supabase
+    .from("listings")
+    .select("id, mls_number")
+    .eq("id", listingId)
+    .maybeSingle();
+
+  if (listing?.mls_number) {
+    const match = await getListingByMlsNumber(listing.mls_number);
+    if (match) {
+      const patch: { listing_key: string; photo_url?: string } = { listing_key: match.id };
+      if (match.photoUrl) patch.photo_url = match.photoUrl;
+      await supabase.from("listings").update(patch).eq("id", listingId);
+    }
+  }
+  revalidatePath(`/dashboard/listings/${listingId}`);
+  revalidatePath("/dashboard");
 }
 
 export async function updateListing(formData: FormData) {

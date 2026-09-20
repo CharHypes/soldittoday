@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateListing, addSnapshot } from "@/app/dashboard/actions";
+import { updateListing, addSnapshot, syncListingPhoto } from "@/app/dashboard/actions";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 import ListTracImport from "@/components/dash/ListTracImport";
 import CopyLink from "@/components/dash/CopyLink";
@@ -119,7 +119,7 @@ export default function ListingWorkspace({
         {tab === "Overview" && (
           <div role="tabpanel" id="panel-Overview" aria-labelledby="tab-Overview" className="space-y-6">
             <div className={`${card} sm:flex sm:gap-6`}>
-              {/* Primary photo (or placeholder until IDX photo sync lands) */}
+              {/* Primary property photo, cached from IDX (Spark) onto our record */}
               <div className="sm:w-64 shrink-0">
                 {listing.photo_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -127,8 +127,16 @@ export default function ListingWorkspace({
                 ) : (
                   <div className="flex h-44 w-full flex-col items-center justify-center rounded-xl border border-dashed border-dusty/25 bg-plum/40 text-center">
                     <span className="text-sm text-dusty">No photo yet</span>
-                    <span className="mt-1 text-[11px] text-dusty/60">IDX photo sync coming</span>
+                    <span className="mt-1 text-[11px] text-dusty/60">{listing.mls_number ? "Sync the IDX photo below" : "Add an MLS # to sync"}</span>
                   </div>
+                )}
+                {listing.mls_number && (
+                  <form action={syncListingPhoto} className="mt-2">
+                    <input type="hidden" name="id" value={listing.id} />
+                    <button type="submit" className="w-full rounded-lg border border-dusty/25 bg-plum/50 px-3 py-1.5 text-xs font-medium text-dusty transition-colors hover:border-auroraMauve/50 hover:text-pearl">
+                      {listing.photo_url ? "Refresh IDX photo" : "Sync IDX photo"}
+                    </button>
+                  </form>
                 )}
               </div>
               <div className="mt-4 min-w-0 flex-1 sm:mt-0">
