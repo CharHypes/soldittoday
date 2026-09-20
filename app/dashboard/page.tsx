@@ -18,7 +18,7 @@ export default async function DashboardHome() {
   const supabase = createSupabaseServer();
   const { data: listings } = await supabase
     .from("listings")
-    .select("id, address, city, state, zip, price, status, mls_number")
+    .select("id, address, city, state, zip, price, status, mls_number, photo_url")
     .order("created_at", { ascending: false });
 
   const rows = listings ?? [];
@@ -52,6 +52,14 @@ export default async function DashboardHome() {
                 aria-label={`Open workspace for ${l.address}`}
                 className="group aurora-ring block cursor-pointer rounded-xl2 border border-dusty/15 bg-plum/50 p-6 transition-colors hover:border-auroraMauve/50 hover:bg-plum/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-auroraMauve/70"
               >
+                {l.photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={l.photo_url} alt={l.address} className="mb-4 h-40 w-full rounded-xl object-cover" />
+                ) : (
+                  <div className="mb-4 flex h-40 w-full items-center justify-center rounded-xl border border-dashed border-dusty/25 bg-plum/40 text-xs text-dusty/70">
+                    No photo yet
+                  </div>
+                )}
                 <div className="flex items-start justify-between gap-3">
                   <h2 className="text-lg font-semibold text-pearl group-hover:text-white">{l.address}</h2>
                   <span className="shrink-0 rounded-full bg-wine/40 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-pearl">
