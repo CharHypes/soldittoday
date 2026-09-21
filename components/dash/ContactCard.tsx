@@ -50,7 +50,7 @@ export default function ContactCard(props: ContactCardProps) {
   const phone = telHref(person.phone);
 
   return (
-    <section className="rounded-xl2 border border-dusty/15 bg-plum/40 p-6 sm:p-8">
+    <section className="rounded-xl2 border border-dusty/15 bg-bruised/25 p-6 sm:p-8">
       {/* breadcrumb */}
       <p className="text-sm text-dusty">
         <Link href="/dashboard/contacts" className="hover:text-pearl">All contacts</Link>
@@ -62,7 +62,7 @@ export default function ContactCard(props: ContactCardProps) {
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-auroraMauve to-wine font-serif text-lg font-semibold text-plum ring-2 ring-gold/80 ring-offset-2 ring-offset-plum">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-auroraMauve font-serif text-lg font-semibold text-plum ring-2 ring-gold/80 ring-offset-2 ring-offset-plum">
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
@@ -266,7 +266,7 @@ function Box({
   label: string; onEdit?: () => void; addHref?: string; addLabel?: string; soon?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl2 border border-dusty/15 bg-bruised/40 p-5">
+    <div className="rounded-xl2 border border-dusty/15 bg-bruised/70 p-5">
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-dusty/80">{label}</h3>
         {onEdit && <EditLink onClick={onEdit} />}
