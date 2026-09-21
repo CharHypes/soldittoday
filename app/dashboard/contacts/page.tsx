@@ -115,7 +115,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
   }
 
   return (
-    <main className="min-h-screen bg-mulberry-radial">
+    <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
         <div className="flex items-end justify-between gap-4">

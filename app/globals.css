@@ -300,6 +300,18 @@
     transform: translateY(-1px);
   }
 
+  /*
+   * Agent Hub page background — matches the mockup: darker down the center
+   * gutter, a soft mauve bloom toward each outer edge (symmetric top glows).
+   */
+  .bg-agenthub {
+    background:
+      radial-gradient(46% 52% at 9% -4%, color-mix(in srgb, rgb(var(--aurora-mauve)) 8%, transparent) 0%, transparent 58%),
+      radial-gradient(46% 52% at 91% -4%, color-mix(in srgb, rgb(var(--aurora-mauve)) 8%, transparent) 0%, transparent 58%),
+      rgb(var(--plum));
+    background-attachment: fixed;
+  }
+
   /* Reusable soft aurora halo for cards / sections on hover or always-on. */
   .aurora-ring {
     @apply transition-all duration-500 ease-lux;
