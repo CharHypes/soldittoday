@@ -132,7 +132,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
 
         <div className="mt-7 grid gap-6 md:grid-cols-[326px_minmax(0,1fr)]">
           {/* LEFT list */}
-          <aside className="h-fit rounded-xl2 border border-dusty/15 bg-bruised/25 p-3">
+          <aside className="h-fit rounded-xl2 border border-dusty/15 bg-bruised/50 p-3">
             <form action="/dashboard/contacts" method="get" className="p-1">
               <input
                 name="q"
@@ -162,7 +162,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
               deals={deals}
             />
           ) : (
-            <section className="grid min-h-[300px] place-items-center rounded-xl2 border border-dusty/15 bg-bruised/25 text-dusty">
+            <section className="grid min-h-[300px] place-items-center rounded-xl2 border border-dusty/15 bg-bruised/50 text-dusty">
               Select a contact to open their card.
             </section>
           )}
