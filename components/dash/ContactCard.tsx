@@ -62,7 +62,7 @@ export default function ContactCard(props: ContactCardProps) {
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-wine/50 font-serif text-lg text-pearl ring-2 ring-gold/70 ring-offset-2 ring-offset-plum">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-gradient-to-br from-auroraMauve to-wine font-serif text-lg font-semibold text-plum ring-2 ring-gold/80 ring-offset-2 ring-offset-plum">
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
@@ -313,7 +313,7 @@ function LabeledInput({
 function SaveCancel({ onCancel }: { onCancel: () => void }) {
   return (
     <div className="flex items-center gap-2 pt-1">
-      <button type="submit" className="btn-aurora !px-4 !py-1.5 text-sm">Save</button>
+      <button type="submit" className="btn-mauve text-sm">Save</button>
       <button type="button" onClick={onCancel} className="rounded-lg px-3 py-1.5 text-sm text-dusty hover:text-pearl">Cancel</button>
     </div>
   );

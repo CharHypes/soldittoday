@@ -261,6 +261,30 @@
     opacity: 1;
   }
 
+  /*
+   * Mauve CTA — the softer mauve-pink button from the Agent Hub mockup's
+   * New Transaction button: light mauve fill, dark text, rounded rectangle
+   * (not a pill). Theme-aware via tokens so it reads in light and dark.
+   */
+  .btn-mauve {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    border-radius: 0.75rem;
+    padding: 0.55rem 1rem;
+    font-weight: 600;
+    line-height: 1.1;
+    background: rgb(var(--aurora-mauve));
+    color: rgb(var(--plum));
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+  .btn-mauve:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+  }
+
   /* Reusable soft aurora halo for cards / sections on hover or always-on. */
   .aurora-ring {
     @apply transition-all duration-500 ease-lux;

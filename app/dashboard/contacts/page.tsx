@@ -182,7 +182,7 @@ function ContactList({
     if (first !== letter) {
       letter = first;
       out.push(
-        <div key={`h-${letter}`} className="sticky top-0 bg-plum/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-dusty/70 backdrop-blur">
+        <div key={`h-${letter}`} className="sticky top-0 bg-plum/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-auroraMauve/90 backdrop-blur">
           {letter}
         </div>
       );
@@ -197,7 +197,7 @@ function ContactList({
         className={`flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors ${active ? "bg-bruised/70" : "hover:bg-bruised/40"}`}
       >
         <span
-          className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-wine/45 text-xs font-semibold text-pearl ${
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-auroraMauve to-wine text-xs font-semibold text-plum ${
             active ? "ring-2 ring-gold/80 ring-offset-2 ring-offset-plum" : ""
           }`}
         >

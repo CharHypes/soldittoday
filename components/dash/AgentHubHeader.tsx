@@ -39,7 +39,9 @@ export default function AgentHubHeader() {
         >
           <GearIcon />
         </Link>
-        <Link href="/dashboard/buyers/new" className="btn-aurora !px-4 !py-2 text-sm">+ New Transaction</Link>
+        <Link href="/dashboard/buyers/new" className="btn-mauve text-sm">
+          <PlusIcon /> New Transaction
+        </Link>
         <form action={signOut}>
           <button type="submit" className="ml-1 hidden text-xs text-dusty transition-colors hover:text-pearl sm:block">
             Sign out
@@ -93,6 +95,13 @@ function ThemeToggle() {
   );
 }
 
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
+      <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+    </svg>
+  );
+}
 function GearIcon() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-[18px] w-[18px]">
