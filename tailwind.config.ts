@@ -13,6 +13,7 @@ const config: Config = {
         // background" in both themes rather than a fixed hex.
         plum: "rgb(var(--plum) / <alpha-value>)", // Page background
         bruised: "rgb(var(--bruised) / <alpha-value>)", // Elevated surface
+        raise: "rgb(var(--raise) / <alpha-value>)", // Lighter inner-card surface
         truffle: "rgb(var(--truffle) / <alpha-value>)",
         smoked: "rgb(var(--smoked) / <alpha-value>)",
         pearl: "rgb(var(--pearl) / <alpha-value>)", // Primary text

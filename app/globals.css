@@ -17,6 +17,8 @@
 
   --plum: 26 21 24;
   --bruised: 42 31 37;
+  /* Elevated inner-card surface (mockup --surface2 #33262d), lighter than bruised. */
+  --raise: 51 38 45;
   --truffle: 37 32 31;
   --smoked: 58 46 50;
   --pearl: 245 232 228;
@@ -89,6 +91,7 @@
    */
   --plum: 247 237 242;
   --bruised: 255 255 255;
+  --raise: 246 238 244;
   --truffle: 242 230 236;
   --smoked: 208 189 197;
   --pearl: 26 21 24;

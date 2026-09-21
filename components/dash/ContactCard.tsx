@@ -50,7 +50,7 @@ export default function ContactCard(props: ContactCardProps) {
   const phone = telHref(person.phone);
 
   return (
-    <section className="rounded-xl2 border border-dusty/15 bg-bruised/50 p-6 sm:p-8">
+    <section className="rounded-xl2 border border-dusty/15 bg-bruised p-6 sm:p-8">
       {/* breadcrumb */}
       <p className="text-sm text-dusty">
         <Link href="/dashboard/contacts" className="hover:text-pearl">All contacts</Link>
@@ -266,7 +266,7 @@ function Box({
   label: string; onEdit?: () => void; addHref?: string; addLabel?: string; soon?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl2 border border-dusty/15 bg-bruised p-5">
+    <div className="rounded-xl2 border border-dusty/15 bg-raise p-5">
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-[11px] font-semibold uppercase tracking-wider text-dusty/80">{label}</h3>
         {onEdit && <EditLink onClick={onEdit} />}
@@ -332,13 +332,13 @@ function ActionBtn({ icon, label, href }: { icon: React.ReactNode; label: string
     "flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition-colors";
   if (href) {
     return (
-      <a href={href} className={`${cls} border-dusty/40 bg-bruised text-pearl hover:border-gold/70`}>
+      <a href={href} className={`${cls} border-dusty/40 bg-raise text-pearl hover:border-gold/70`}>
         {icon} {label}
       </a>
     );
   }
   return (
-    <span className={`${cls} cursor-default border-dusty/30 bg-bruised/70 text-dusty`} title={`Add a ${label.toLowerCase()} detail first`}>
+    <span className={`${cls} cursor-default border-dusty/30 bg-raise/70 text-dusty`} title={`Add a ${label.toLowerCase()} detail first`}>
       {icon} {label}
     </span>
   );
