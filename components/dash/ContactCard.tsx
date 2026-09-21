@@ -50,7 +50,7 @@ export default function ContactCard(props: ContactCardProps) {
   const phone = telHref(person.phone);
 
   return (
-    <section className="rounded-xl2 border border-dusty/15 bg-bruised p-6 sm:p-8">
+    <section className="rounded-xl2 border border-dusty/15 bg-bruised p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] sm:p-8">
       {/* breadcrumb */}
       <p className="text-sm text-dusty">
         <Link href="/dashboard/contacts" className="hover:text-pearl">All contacts</Link>
