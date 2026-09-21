@@ -57,6 +57,16 @@ export default function ContactCard(props: ContactCardProps) {
   };
 
   const phone = telHref(person.phone);
+  const spouseRel = rels.find((r) => r.relation === "spouse");
+  // Homeiversary = the close date of their most recent CLOSED purchase.
+  const homeiversary = (() => {
+    const closed = deals
+      .filter((d) => (d.role === "buyer" || d.role === "co_buyer") && d.txn?.status && /clos/i.test(d.txn.status) && d.txn?.target_close_date)
+      .map((d) => d.txn!.target_close_date as string)
+      .sort();
+    return closed.length ? closed[closed.length - 1] : null;
+  })();
+  const fmtDate = (d: string | null) => (d ? new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : null);
 
   return (
     <section className="rounded-xl2 border border-dusty/15 bg-bruised p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] sm:p-8">
@@ -167,6 +177,8 @@ export default function ContactCard(props: ContactCardProps) {
               <>
                 <Field label="Birthday" value={formatBirthday(person.birthday)} />
                 <Field label="Marital status" value={person.marital_status ? MARITAL_LABEL[person.marital_status] ?? person.marital_status : null} />
+                <Field label="Spouse" value={spouseRel?.name ?? null} href={spouseRel?.related_person_id ? `/dashboard/contacts?id=${spouseRel.related_person_id}` : undefined} />
+                <Field label="Homeiversary" value={fmtDate(homeiversary)} />
               </>
             )}
           </Box>
@@ -307,7 +319,9 @@ export default function ContactCard(props: ContactCardProps) {
             <form action={addPersonNote} className="pt-1">
               <input type="hidden" name="person_id" value={person.id} />
               <textarea name="body" required rows={2} placeholder="Add a note..." className={`${inp} w-full resize-y`} />
-              <button type="submit" className="btn-mauve mt-2 text-sm">Add note</button>
+              <div className="mt-2 flex justify-end">
+                <button type="submit" className="btn-mauve !px-3.5 !py-1.5 text-[12.5px]">Add a note</button>
+              </div>
             </form>
           </Box>
         </div>
