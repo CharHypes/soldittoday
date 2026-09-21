@@ -26,6 +26,7 @@ const config: Config = {
         // never a flat fill. Kept muted on purpose (no neon).
         aurora: "rgb(var(--aurora) / <alpha-value>)",
         auroraMauve: "rgb(var(--aurora-mauve) / <alpha-value>)",
+        mauve: "rgb(var(--mauve) / <alpha-value>)", // pretty pink-mauve (avatars + primary button)
         // Always-dark text for the cream band that stays light in both themes.
         ink: "rgb(var(--ink) / <alpha-value>)",
         inkAccent: "rgb(var(--ink-accent) / <alpha-value>)",

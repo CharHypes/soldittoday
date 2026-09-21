@@ -29,6 +29,8 @@
   --stone: 236 224 220;
   --aurora: 122 74 94;
   --aurora-mauve: 184 154 164;
+  /* Prettier pink-mauve for avatars + primary button (less gray than aurora-mauve). */
+  --mauve: 212 162 186;
 
   /*
    * Ink tokens for the inverted cream band (WhyWorkWithUs, SectionHeading
@@ -105,6 +107,7 @@
   --stone: 228 214 210;
   --aurora: 110 67 85;
   --aurora-mauve: 124 92 105;
+  --mauve: 150 78 110;
 
   /* Band text flips with the band it sits on. */
   --ink: 245 236 233;
@@ -279,7 +282,7 @@
     padding: 0.55rem 1rem;
     font-weight: 600;
     line-height: 1.1;
-    background: rgb(var(--aurora-mauve));
+    background: rgb(var(--mauve));
     color: rgb(var(--plum));
     /* rose-gold rim with a small gap, matching the avatar ring */
     outline: 2px solid rgb(var(--gold));

@@ -62,7 +62,7 @@ export default function ContactCard(props: ContactCardProps) {
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-auroraMauve font-serif text-lg font-semibold text-plum ring-2 ring-gold ring-offset-2 ring-offset-plum">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-mauve font-serif text-lg font-semibold text-plum ring-2 ring-gold ring-offset-2 ring-offset-plum">
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
