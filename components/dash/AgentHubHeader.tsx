@@ -11,12 +11,14 @@ export default function AgentHubHeader() {
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname.startsWith(p));
 
   return (
-    <header className="sticky top-0 z-30 border-b border-dusty/12 bg-[rgb(26,21,24)]/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 border-b border-dusty/12 bg-plum/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-5 px-6">
-        {/* brand */}
+        {/* brand ... logo swaps by theme so it always reads */}
         <Link href="/dashboard/contacts" className="flex shrink-0 items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="h-6 w-auto" />
+          <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="theme-dark-only h-6 w-auto" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/logos/optimized/sold-it-today-dark-400w.png" alt="Sold It Today" className="theme-light-only h-6 w-auto" />
           <span className="hidden border-l border-dusty/20 pl-3 font-serif text-sm text-dusty sm:inline">Agent Hub</span>
         </Link>
 
@@ -56,8 +58,8 @@ function Tab({ href, active, children }: { href: string; active: boolean; childr
   return (
     <Link
       href={href}
-      className={`rounded-lg px-3 py-2 text-sm transition-colors ${
-        active ? "bg-bruised/70 font-medium text-pearl" : "text-dusty hover:text-pearl"
+      className={`rounded-lg px-3 py-2 text-[13.5px] transition-colors ${
+        active ? "border border-dusty/15 bg-bruised font-medium text-pearl shadow-sm" : "text-dusty hover:text-pearl"
       }`}
     >
       {children}
