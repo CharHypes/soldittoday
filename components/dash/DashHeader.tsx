@@ -10,6 +10,7 @@ export default function DashHeader() {
         <nav className="flex items-center gap-5">
           <a href="/dashboard" className="text-sm text-dusty transition-colors hover:text-pearl">Listings</a>
           <a href="/dashboard/buyers" className="text-sm text-dusty transition-colors hover:text-pearl">Buyers</a>
+          <a href="/dashboard/contacts" className="text-sm text-dusty transition-colors hover:text-pearl">Contacts</a>
           <form action={signOut}>
             <button type="submit" className="text-xs text-dusty transition-colors hover:text-pearl">
               Sign out
