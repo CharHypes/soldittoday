@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { updatePerson } from "@/app/dashboard/contacts/actions";
+import { updatePerson, addPersonNote, deletePersonNote, savePersonReview } from "@/app/dashboard/contacts/actions";
 import { money } from "@/lib/format";
 import {
   fullName,
@@ -26,6 +26,9 @@ type Deal = {
   txn?: { address: string; status: string | null; price: number | null; target_close_date: string | null } | null;
 };
 
+type Note = { id: string; body: string; created_at: string };
+type Review = { id: string; status: string; platform: string | null; rating: number | null; quote: string | null; url: string | null };
+
 export type ContactCardProps = {
   person: Person;
   referredBy: NamedRef | null;
@@ -34,18 +37,24 @@ export type ContactCardProps = {
   primaryRelName: string | null;
   primaryRelLabel: string | null;
   deals: Deal[];
+  notes: Note[];
+  review: Review | null;
 };
 
-type Section = "name" | "contact" | "personal" | "referral" | null;
+type Section = "name" | "contact" | "personal" | "referral" | "review" | null;
 
 export default function ContactCard(props: ContactCardProps) {
-  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals } = props;
+  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review } = props;
   const [editing, setEditing] = useState<Section>(null);
 
   async function save(fd: FormData) {
     await updatePerson(fd);
     setEditing(null);
   }
+  const save2 = (action: (fd: FormData) => Promise<void>) => async (fd: FormData) => {
+    await action(fd);
+    setEditing(null);
+  };
 
   const phone = telHref(person.phone);
 
@@ -97,6 +106,11 @@ export default function ContactCard(props: ContactCardProps) {
                     </>
                   )}
                 </p>
+                {review?.status === "left" && (
+                  <span className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-green/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] text-green">
+                    <span className="h-1.5 w-1.5 rounded-full bg-current" /> Review left
+                  </span>
+                )}
               </div>
               <EditLink onClick={() => setEditing("name")} />
             </div>
@@ -121,12 +135,14 @@ export default function ContactCard(props: ContactCardProps) {
                 <input type="hidden" name="id" value={person.id} />
                 <LabeledInput name="phone" label="Phone" defaultValue={person.phone} placeholder="(734) 555-1234" />
                 <LabeledInput name="email" label="Email" defaultValue={person.email} placeholder="name@email.com" type="email" />
+                <LabeledInput name="address" label="Address" defaultValue={person.address} placeholder="123 Main St, City, MI 48000" />
                 <SaveCancel onCancel={() => setEditing(null)} />
               </form>
             ) : (
               <>
                 <Field label="Phone" value={formatPhone(person.phone)} />
                 <Field label="Email" value={person.email} />
+                <Field label="Address" value={person.address} />
               </>
             )}
           </Box>
@@ -205,16 +221,16 @@ export default function ContactCard(props: ContactCardProps) {
               <ul className="space-y-3 pt-1">
                 {deals.map((d) => (
                   <li key={d.transaction_id} className="flex gap-3">
-                    <div className="grid h-[72px] w-24 shrink-0 place-items-center rounded-lg border border-dusty/15 bg-bruised/60 text-dusty/60">
+                    <div className="grid h-[76px] w-[108px] shrink-0 place-items-center rounded-[10px] border border-dusty/15 bg-bruised text-dusty/60">
                       <HouseIcon />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-pearl">{d.txn?.address ?? "Property"}</p>
-                      <p className="mt-0.5 text-sm text-dusty">
+                      <p className="truncate text-[13.5px] font-semibold text-mauve">{d.txn?.address ?? "Property"}</p>
+                      <p className="mt-0.5 text-[12px] text-dusty">
                         {ROLE_LABEL[d.role] || typeLabel(person.type)}
                         {d.txn?.status ? ` · ${d.txn.status}` : ""}
                       </p>
-                      <p className="mt-0.5 text-sm text-dusty">
+                      <p className="mt-0.5 text-[12px] text-dusty">
                         {[money(d.txn?.price), closeDate(d.txn?.target_close_date ?? null)].filter(Boolean).join(" · ")}
                       </p>
                     </div>
@@ -230,12 +246,69 @@ export default function ContactCard(props: ContactCardProps) {
             </p>
           </Box>
 
-          <Box label="Reviews" soon="Coming soon">
-            <p className="py-1 text-sm text-dusty">Track the review you asked for and where it landed (Google, Zillow).</p>
+          <Box label="Reviews" onEdit={() => setEditing("review")}>
+            {editing === "review" ? (
+              <form action={save2(savePersonReview)} className="space-y-3 pt-1">
+                <input type="hidden" name="person_id" value={person.id} />
+                {review && <input type="hidden" name="review_id" value={review.id} />}
+                <div className="grid grid-cols-[98px_minmax(0,1fr)] items-center gap-2.5">
+                  <label className="text-[13px] text-ink3">Status</label>
+                  <select name="status" defaultValue={review?.status ?? "requested"} className={`${inp} w-full`}>
+                    <option value="requested">Review requested</option>
+                    <option value="left">Review left</option>
+                    <option value="declined">Declined</option>
+                  </select>
+                </div>
+                <LabeledInput name="platform" label="Platform" defaultValue={review?.platform} placeholder="Google, Zillow, Facebook" />
+                <div className="grid grid-cols-[98px_minmax(0,1fr)] items-center gap-2.5">
+                  <label className="text-[13px] text-ink3">Stars</label>
+                  <select name="rating" defaultValue={review?.rating != null ? String(review.rating) : ""} className={`${inp} w-full`}>
+                    <option value="">...</option>
+                    {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} star{n > 1 ? "s" : ""}</option>)}
+                  </select>
+                </div>
+                <LabeledInput name="quote" label="Quote" defaultValue={review?.quote} placeholder="What they said" />
+                <LabeledInput name="url" label="Link" defaultValue={review?.url} placeholder="https://..." />
+                <SaveCancel onCancel={() => setEditing(null)} />
+              </form>
+            ) : review ? (
+              <div className="py-1">
+                {review.quote && <p className="text-[13.5px] italic text-pearl">&ldquo;{review.quote}&rdquo;</p>}
+                <p className="mt-1 text-[12px] text-dusty">
+                  {review.rating ? <span className="text-gold">{"★".repeat(review.rating)}</span> : null}
+                  {review.rating && review.platform ? " · " : ""}
+                  {review.platform}
+                  {review.status !== "left" ? ` · ${review.status === "requested" ? "requested" : "declined"}` : ""}
+                </p>
+                {review.url && <a href={review.url} target="_blank" rel="noreferrer" className="mt-1 inline-block text-[12px] text-mauve hover:text-pearl">View review</a>}
+              </div>
+            ) : (
+              <p className="py-1 text-[13px] text-ink3">No review tracked yet. Use Edit to log one.</p>
+            )}
           </Box>
 
-          <Box label="Notes" soon="Coming soon">
-            <p className="py-1 text-sm text-dusty">Private notes about this contact will live here.</p>
+          <Box label="Notes">
+            {notes.length > 0 && (
+              <ul className="space-y-2 pb-2 pt-1">
+                {notes.map((n) => (
+                  <li key={n.id} className="group flex items-start justify-between gap-2 border-b border-dusty/10 pb-2 last:border-0">
+                    <div className="min-w-0">
+                      <p className="text-[13px] text-pearl">{n.body}</p>
+                      <p className="mt-0.5 text-[11px] text-ink3">{new Date(n.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}</p>
+                    </div>
+                    <form action={deletePersonNote}>
+                      <input type="hidden" name="id" value={n.id} />
+                      <button type="submit" title="Delete note" className="text-[11px] text-ink3 opacity-0 transition-opacity hover:text-mauve group-hover:opacity-100">Delete</button>
+                    </form>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <form action={addPersonNote} className="pt-1">
+              <input type="hidden" name="person_id" value={person.id} />
+              <textarea name="body" required rows={2} placeholder="Add a note..." className={`${inp} w-full resize-y`} />
+              <button type="submit" className="btn-mauve mt-2 text-sm">Add note</button>
+            </form>
           </Box>
         </div>
       </div>

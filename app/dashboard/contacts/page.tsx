@@ -60,6 +60,8 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
   let primaryRelName: string | null = null;
   let primaryRelLabel: string | null = null;
   let deals: { transaction_id: string; role: string; txn?: Txn | null }[] = [];
+  let notes: { id: string; body: string; created_at: string }[] = [];
+  let review: { id: string; status: string; platform: string | null; rating: number | null; quote: string | null; url: string | null } | null = null;
 
   if (selectedId) {
     const { data: p } = await supabase.from("people").select("*").eq("id", selectedId).maybeSingle();
@@ -112,6 +114,13 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
       txns = (data ?? []) as Txn[];
     }
     deals = (tp ?? []).map((link: any) => ({ ...link, txn: txns.find((t) => t.id === link.transaction_id) ?? null }));
+
+    const { data: nData } = await supabase
+      .from("person_notes").select("id, body, created_at").eq("person_id", selectedId).order("created_at", { ascending: false });
+    notes = (nData ?? []) as typeof notes;
+    const { data: rData } = await supabase
+      .from("person_reviews").select("id, status, platform, rating, quote, url").eq("person_id", selectedId).order("created_at", { ascending: false }).limit(1).maybeSingle();
+    review = (rData as typeof review) ?? null;
   }
 
   return (
@@ -160,6 +169,8 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
               primaryRelName={primaryRelName}
               primaryRelLabel={primaryRelLabel}
               deals={deals}
+              notes={notes}
+              review={review}
             />
           ) : (
             <section className="grid min-h-[300px] place-items-center rounded-xl2 border border-dusty/15 bg-bruised text-dusty">
