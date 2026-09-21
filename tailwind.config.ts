@@ -18,6 +18,7 @@ const config: Config = {
         smoked: "rgb(var(--smoked) / <alpha-value>)",
         pearl: "rgb(var(--pearl) / <alpha-value>)", // Primary text
         dusty: "rgb(var(--dusty) / <alpha-value>)", // Muted text / hairlines
+        ink3: "rgb(var(--ink3) / <alpha-value>)", // Third, more-muted text shade
         wine: "rgb(var(--wine) / <alpha-value>)",
         ivory: "rgb(var(--ivory) / <alpha-value>)",
         champagne: "rgb(var(--champagne) / <alpha-value>)",

@@ -52,17 +52,17 @@ export default function ContactCard(props: ContactCardProps) {
   return (
     <section className="rounded-xl2 border border-dusty/15 bg-bruised p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] sm:p-8">
       {/* breadcrumb */}
-      <p className="text-sm text-dusty">
+      <p className="text-[11.5px] tracking-wide text-ink3">
         <Link href="/dashboard/contacts" className="hover:text-pearl">All contacts</Link>
-        <span className="px-1.5 text-dusty/50">/</span>
+        <span className="px-1.5 text-ink3/60">/</span>
         {typeLabel(person.type)}
-        <span className="px-1.5 text-dusty/50">/</span>
-        <span className="text-pearl/90">{lastFirst(person)}</span>
+        <span className="px-1.5 text-ink3/60">/</span>
+        <span className="text-dusty">{lastFirst(person)}</span>
       </p>
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-mauve font-serif text-lg font-semibold text-plum ring-2 ring-gold ring-offset-2 ring-offset-plum">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-mauve font-serif text-lg font-semibold text-plum ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum">
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
@@ -92,7 +92,7 @@ export default function ContactCard(props: ContactCardProps) {
                   {primaryRelName && (
                     <>
                       {" · with "}
-                      <span className="text-auroraMauve">{primaryRelName}</span>
+                      <span className="text-mauve">{primaryRelName}</span>
                       {primaryRelLabel ? ` (${primaryRelLabel.toLowerCase()})` : ""}
                     </>
                   )}
@@ -171,7 +171,7 @@ export default function ContactCard(props: ContactCardProps) {
                     <span className="text-sm text-dusty">They referred</span>
                     <span className="flex flex-wrap gap-x-2 text-sm text-pearl">
                       {theyReferred.map((t, i) => (
-                        <Link key={t.id} href={`/dashboard/contacts?id=${t.id}`} className="text-auroraMauve hover:text-pearl">
+                        <Link key={t.id} href={`/dashboard/contacts?id=${t.id}`} className="text-mauve hover:text-pearl">
                           {t.name}{i < theyReferred.length - 1 ? "," : ""}
                         </Link>
                       ))}
@@ -268,10 +268,10 @@ function Box({
   return (
     <div className="rounded-xl2 border border-dusty/15 bg-raise p-5">
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-[11px] font-semibold uppercase tracking-wider text-dusty/80">{label}</h3>
+        <h3 className="text-[10.5px] font-bold uppercase tracking-[0.13em] text-ink3">{label}</h3>
         {onEdit && <EditLink onClick={onEdit} />}
         {addHref && (
-          <Link href={addHref} className="flex items-center gap-1 text-xs font-medium text-auroraMauve hover:text-pearl">
+          <Link href={addHref} className="flex items-center gap-1 text-xs font-medium text-mauve hover:text-pearl">
             <PlusIcon /> {addLabel ?? "Add"}
           </Link>
         )}
@@ -284,16 +284,16 @@ function Box({
 
 function Field({ label, value, href }: { label: string; value?: string | null; href?: string }) {
   return (
-    <div className="grid grid-cols-[120px_minmax(0,1fr)] gap-2 py-1.5">
-      <span className="text-sm text-dusty">{label}</span>
+    <div className="grid grid-cols-[98px_minmax(0,1fr)] gap-2.5 py-1">
+      <span className="text-[13px] text-ink3">{label}</span>
       {value ? (
         href ? (
-          <Link href={href} className="text-sm text-auroraMauve hover:text-pearl">{value}</Link>
+          <Link href={href} className="text-[13px] text-mauve hover:text-pearl">{value}</Link>
         ) : (
-          <span className="text-sm text-pearl">{value}</span>
+          <span className="text-[13px] text-pearl">{value}</span>
         )
       ) : (
-        <span className="text-sm text-dusty/50">...</span>
+        <span className="text-[13px] text-ink3/70">...</span>
       )}
     </div>
   );
@@ -321,7 +321,7 @@ function SaveCancel({ onCancel }: { onCancel: () => void }) {
 
 function EditLink({ onClick }: { onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="flex items-center gap-1 text-xs font-medium text-auroraMauve transition-colors hover:text-pearl">
+    <button type="button" onClick={onClick} className="flex items-center gap-1 text-[11.5px] font-semibold text-mauve transition-colors hover:text-pearl">
       <PencilIcon /> Edit
     </button>
   );
@@ -329,16 +329,16 @@ function EditLink({ onClick }: { onClick: () => void }) {
 
 function ActionBtn({ icon, label, href }: { icon: React.ReactNode; label: string; href?: string }) {
   const cls =
-    "flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition-colors";
+    "inline-flex items-center gap-2 rounded-[9px] border px-3.5 py-2 text-[12.5px] font-medium transition-colors";
   if (href) {
     return (
-      <a href={href} className={`${cls} border-dusty/40 bg-raise text-pearl hover:border-gold/70`}>
+      <a href={href} className={`${cls} border-pearl/15 bg-bruised text-pearl hover:border-mauve hover:text-mauve`}>
         {icon} {label}
       </a>
     );
   }
   return (
-    <span className={`${cls} cursor-default border-dusty/30 bg-raise/70 text-dusty`} title={`Add a ${label.toLowerCase()} detail first`}>
+    <span className={`${cls} cursor-default border-pearl/10 bg-bruised text-dusty`} title={`Add a ${label.toLowerCase()} detail first`}>
       {icon} {label}
     </span>
   );
