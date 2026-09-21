@@ -10,16 +10,16 @@ export default function AgentHubHeader() {
   const pathname = usePathname() || "";
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname.startsWith(p));
 
-  // The top bar is always the dark plum band so the real (never-recolored)
-  // logo always reads. Text is fixed-light so it stays readable in light mode too.
   return (
-    <header className="sticky top-0 z-30 border-b border-white/10 bg-[rgb(26,21,24)]/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-30 border-b border-dusty/12 bg-plum/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-5 px-6">
-        {/* brand ... the REAL logo, unchanged, in every theme */}
+        {/* brand ... logo swaps by theme so it always reads */}
         <Link href="/dashboard/contacts" className="flex shrink-0 items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="h-6 w-auto" />
-          <span className="hidden border-l border-white/15 pl-3 font-serif text-sm text-[#a89aa0] sm:inline">Agent Hub</span>
+          <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="theme-dark-only h-6 w-auto" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/logos/optimized/sold-it-today-dark-400w.png" alt="Sold It Today" className="theme-light-only h-6 w-auto" />
+          <span className="hidden border-l border-dusty/20 pl-3 font-serif text-sm text-dusty sm:inline">Agent Hub</span>
         </Link>
 
         {/* tabs */}
@@ -27,7 +27,7 @@ export default function AgentHubHeader() {
           <Tab href="/dashboard/contacts" active={is("/dashboard/contacts")}>Contacts</Tab>
           <Tab href="/dashboard/buyers/new" active={is("/dashboard/buyers/new")}>New Transaction</Tab>
           <Tab href="/dashboard" active={is("/dashboard", true) || is("/dashboard/listings")}>Listings</Tab>
-          <span className="cursor-default rounded-lg px-3 py-2 text-[13.5px] text-[#82757c]" title="Coming soon">Leads</span>
+          <span className="cursor-default rounded-lg px-3 py-2 text-sm text-dusty/40" title="Coming soon">Leads</span>
         </nav>
 
         <div className="flex-1" />
@@ -37,7 +37,7 @@ export default function AgentHubHeader() {
         <Link
           href="/dashboard/settings"
           aria-label="Settings"
-          className="grid h-9 w-9 place-items-center rounded-lg border border-white/15 text-[#a89aa0] transition-colors hover:border-[#d4a2ba]/60 hover:text-[#f5e8e4]"
+          className="grid h-9 w-9 place-items-center rounded-lg border border-dusty/20 text-dusty transition-colors hover:border-auroraMauve/50 hover:text-pearl"
         >
           <GearIcon />
         </Link>
@@ -45,7 +45,7 @@ export default function AgentHubHeader() {
           <PlusIcon /> New Transaction
         </Link>
         <form action={signOut}>
-          <button type="submit" className="ml-1 hidden text-xs text-[#a89aa0] transition-colors hover:text-[#f5e8e4] sm:block">
+          <button type="submit" className="ml-1 hidden text-xs text-dusty transition-colors hover:text-pearl sm:block">
             Sign out
           </button>
         </form>
@@ -59,7 +59,7 @@ function Tab({ href, active, children }: { href: string; active: boolean; childr
     <Link
       href={href}
       className={`rounded-lg px-3 py-2 text-[13.5px] transition-colors ${
-        active ? "border border-white/10 bg-[#33262d] font-medium text-[#f5e8e4] shadow-sm" : "text-[#a89aa0] hover:text-[#f5e8e4]"
+        active ? "border border-dusty/15 bg-bruised font-medium text-pearl shadow-sm" : "text-dusty hover:text-pearl"
       }`}
     >
       {children}
@@ -90,7 +90,7 @@ function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label="Toggle light and dark"
-      className="grid h-9 w-9 place-items-center rounded-lg border border-white/15 text-[#a89aa0] transition-colors hover:border-[#d4a2ba]/60 hover:text-[#f5e8e4]"
+      className="grid h-9 w-9 place-items-center rounded-lg border border-dusty/20 text-dusty transition-colors hover:border-auroraMauve/50 hover:text-pearl"
     >
       {dark ? <SunIcon /> : <MoonIcon />}
     </button>
