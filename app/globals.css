@@ -279,7 +279,7 @@
     background: rgb(var(--aurora-mauve));
     color: rgb(var(--plum));
     /* rose-gold rim with a small gap, matching the avatar ring */
-    outline: 1.5px solid rgb(var(--gold) / 0.85);
+    outline: 2px solid rgb(var(--gold));
     outline-offset: 2px;
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
     overflow: hidden;

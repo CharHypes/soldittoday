@@ -62,7 +62,7 @@ export default function ContactCard(props: ContactCardProps) {
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-auroraMauve font-serif text-lg font-semibold text-plum ring-2 ring-gold/80 ring-offset-2 ring-offset-plum">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-auroraMauve font-serif text-lg font-semibold text-plum ring-2 ring-gold ring-offset-2 ring-offset-plum">
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
@@ -332,13 +332,13 @@ function ActionBtn({ icon, label, href }: { icon: React.ReactNode; label: string
     "flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm transition-colors";
   if (href) {
     return (
-      <a href={href} className={`${cls} border-dusty/25 bg-plum/40 text-pearl hover:border-gold/60 hover:bg-plum/60`}>
+      <a href={href} className={`${cls} border-dusty/40 bg-bruised text-pearl hover:border-gold/70`}>
         {icon} {label}
       </a>
     );
   }
   return (
-    <span className={`${cls} cursor-default border-dusty/15 bg-plum/30 text-dusty/50`} title={`Add a ${label.toLowerCase()} detail first`}>
+    <span className={`${cls} cursor-default border-dusty/30 bg-bruised/70 text-dusty`} title={`Add a ${label.toLowerCase()} detail first`}>
       {icon} {label}
     </span>
   );

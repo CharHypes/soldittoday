@@ -182,7 +182,7 @@ function ContactList({
     if (first !== letter) {
       letter = first;
       out.push(
-        <div key={`h-${letter}`} className="sticky top-0 bg-plum/80 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-auroraMauve/90 backdrop-blur">
+        <div key={`h-${letter}`} className="sticky top-0 bg-bruised/95 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-auroraMauve backdrop-blur">
           {letter}
         </div>
       );
@@ -198,7 +198,7 @@ function ContactList({
       >
         <span
           className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-auroraMauve text-xs font-semibold text-plum ${
-            active ? "ring-2 ring-gold/80 ring-offset-2 ring-offset-plum" : ""
+            active ? "ring-2 ring-gold ring-offset-2 ring-offset-plum" : ""
           }`}
         >
           {initials(p)}
