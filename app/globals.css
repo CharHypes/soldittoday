@@ -267,6 +267,7 @@
    * (not a pill). Theme-aware via tokens so it reads in light and dark.
    */
   .btn-mauve {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -277,8 +278,22 @@
     line-height: 1.1;
     background: rgb(var(--aurora-mauve));
     color: rgb(var(--plum));
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+    /* rose-gold rim with a small gap, matching the avatar ring */
+    outline: 1.5px solid rgb(var(--gold) / 0.85);
+    outline-offset: 2px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+    overflow: hidden;
     transition: filter 0.15s ease, transform 0.15s ease;
+  }
+  /* subtle film grain on the button, matching the app's texture */
+  .btn-mauve::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    pointer-events: none;
   }
   .btn-mauve:hover {
     filter: brightness(1.06);
