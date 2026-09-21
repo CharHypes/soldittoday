@@ -237,14 +237,11 @@ export default function ContactCard(props: ContactCardProps) {
                       <HouseIcon />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-[13.5px] font-semibold text-mauve">{d.txn?.address ?? "Property"}</p>
+                      <p className="truncate text-[13.5px] font-semibold text-[#dcc4cb]">{d.txn?.address ?? "Property"}</p>
                       <p className="mt-0.5 text-[12px] text-dusty">
-                        {ROLE_LABEL[d.role] || typeLabel(person.type)}
-                        {d.txn?.status ? ` · ${d.txn.status}` : ""}
+                        {[ROLE_LABEL[d.role] || typeLabel(person.type), money(d.txn?.price), closeDate(d.txn?.target_close_date ?? null)].filter(Boolean).join(" · ")}
                       </p>
-                      <p className="mt-0.5 text-[12px] text-dusty">
-                        {[money(d.txn?.price), closeDate(d.txn?.target_close_date ?? null)].filter(Boolean).join(" · ")}
-                      </p>
+                      {d.txn?.status && <StatusPill status={d.txn.status} />}
                     </div>
                   </li>
                 ))}
@@ -345,6 +342,19 @@ function relationLabel(r: string): string {
 function closeDate(d: string | null): string | null {
   if (!d) return null;
   return `Closes ${new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+}
+
+function StatusPill({ status }: { status: string }) {
+  const s = status.toLowerCase();
+  let cls = "bg-dusty/15 text-dusty";
+  if (/active|coming/.test(s)) cls = "bg-green/15 text-green";
+  else if (/under contract|pending/.test(s)) cls = "bg-gold/15 text-gold";
+  else if (/expired|withdrawn|cancel|fell/.test(s)) cls = "bg-dusty/15 text-dusty/80";
+  return (
+    <span className={`mt-1.5 inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.06em] ${cls}`}>
+      <span className="h-1.5 w-1.5 rounded-full bg-current" /> {status}
+    </span>
+  );
 }
 
 function Box({
