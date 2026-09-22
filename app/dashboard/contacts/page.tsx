@@ -62,6 +62,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
   let deals: { transaction_id: string; role: string; txn?: Txn | null }[] = [];
   let notes: { id: string; body: string; created_at: string }[] = [];
   let review: { id: string; status: string; platform: string | null; rating: number | null; quote: string | null; url: string | null } | null = null;
+  let documents: { id: string; kind: string; sensitivity: string; filename: string | null; view_only: boolean; created_at: string }[] = [];
 
   if (selectedId) {
     const { data: p } = await supabase.from("people").select("*").eq("id", selectedId).maybeSingle();
@@ -121,6 +122,10 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
     const { data: rData } = await supabase
       .from("person_reviews").select("id, status, platform, rating, quote, url").eq("person_id", selectedId).order("created_at", { ascending: false }).limit(1).maybeSingle();
     review = (rData as typeof review) ?? null;
+
+    const { data: dData } = await supabase
+      .from("person_documents").select("id, kind, sensitivity, filename, view_only, created_at").eq("person_id", selectedId).order("created_at", { ascending: false });
+    documents = (dData ?? []) as typeof documents;
   }
 
   return (
@@ -171,6 +176,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
               deals={deals}
               notes={notes}
               review={review}
+              documents={documents}
             />
           ) : (
             <section className="grid min-h-[300px] place-items-center rounded-xl2 border border-dusty/15 bg-bruised text-dusty">

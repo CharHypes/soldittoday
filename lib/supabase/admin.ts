@@ -27,3 +27,6 @@ export const DOCS_ENABLED = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 /** Private bucket that holds all portal documents. */
 export const PORTAL_DOCS_BUCKET = "portal-docs";
+
+/** Private bucket that holds CRM person documents (IDs, pre-approvals, SSN cards). */
+export const PERSON_DOCS_BUCKET = "person-docs";

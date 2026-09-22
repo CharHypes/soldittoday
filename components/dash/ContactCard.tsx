@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { updatePerson, addPersonNote, deletePersonNote, savePersonReview } from "@/app/dashboard/contacts/actions";
+import { updatePerson, addPersonNote, deletePersonNote, savePersonReview, uploadPersonDocument, openPersonDocument, deletePersonDocument } from "@/app/dashboard/contacts/actions";
 import { money } from "@/lib/format";
 import {
   fullName,
@@ -28,6 +28,13 @@ type Deal = {
 
 type Note = { id: string; body: string; created_at: string };
 type Review = { id: string; status: string; platform: string | null; rating: number | null; quote: string | null; url: string | null };
+type Doc = { id: string; kind: string; sensitivity: string; filename: string | null; view_only: boolean; created_at: string };
+
+const DOC_KIND_LABEL: Record<string, string> = {
+  drivers_license: "Driver's license", state_id: "State ID", passport: "Passport", resident_card: "Resident card",
+  pre_approval: "Pre-approval letter", proof_of_funds: "Proof of funds", income_letter: "Income letter",
+  ssn_card: "SSN card", other: "Document",
+};
 
 export type ContactCardProps = {
   person: Person;
@@ -39,12 +46,13 @@ export type ContactCardProps = {
   deals: Deal[];
   notes: Note[];
   review: Review | null;
+  documents: Doc[];
 };
 
 type Section = "name" | "contact" | "personal" | "referral" | "review" | null;
 
 export default function ContactCard(props: ContactCardProps) {
-  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review } = props;
+  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review, documents } = props;
   const [editing, setEditing] = useState<Section>(null);
 
   async function save(fd: FormData) {
@@ -249,10 +257,25 @@ export default function ContactCard(props: ContactCardProps) {
             )}
           </Box>
 
-          <Box label="Documents on file" soon="Secure upload coming next">
-            <p className="py-1 text-sm text-dusty">
-              The private document vault (IDs, pre-approvals, SSN cards for DPA) is the next stage.
-            </p>
+          <Box label="Documents on file">
+            {documents.length > 0 && (
+              <ul className="space-y-1.5 pb-2 pt-1">
+                {documents.map((d) => <DocItem key={d.id} doc={d} />)}
+              </ul>
+            )}
+            <form action={uploadPersonDocument} className="grid gap-2 pt-1">
+              <input type="hidden" name="person_id" value={person.id} />
+              <div className="flex flex-wrap items-center gap-2">
+                <select name="kind" defaultValue="other" className={inp}>
+                  {Object.entries(DOC_KIND_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+                </select>
+                <input type="file" name="file" required className="max-w-[160px] text-[12px] text-dusty file:mr-2 file:rounded-md file:border-0 file:bg-raise file:px-2 file:py-1 file:text-[12px] file:text-pearl" />
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[11px] text-ink3">Stored privately · every open is logged · SSN cards are masked.</span>
+                <button type="submit" className="btn-mauve !px-3.5 !py-1.5 text-[12.5px]">Upload</button>
+              </div>
+            </form>
           </Box>
 
           <Box label="Reviews" onEdit={() => setEditing("review")}>
@@ -342,6 +365,55 @@ function relationLabel(r: string): string {
 function closeDate(d: string | null): string | null {
   if (!d) return null;
   return `Closes ${new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+}
+
+function DocItem({ doc }: { doc: Doc }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const isHigh = doc.sensitivity === "high";
+  const label = DOC_KIND_LABEL[doc.kind] ?? "Document";
+  const open = async () => {
+    setBusy(true);
+    setErr(null);
+    try {
+      const res = await openPersonDocument(doc.id);
+      if (res.url) window.open(res.url, "_blank", "noopener,noreferrer");
+      else setErr(res.error === "forbidden" ? "Not permitted" : "Unavailable");
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <li className="group flex items-center justify-between gap-2 border-b border-dusty/10 pb-1.5 last:border-0">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="shrink-0 text-dusty/60">{isHigh ? <LockIcon /> : <DocIcon />}</span>
+        <div className="min-w-0">
+          <p className="truncate text-[13px] text-pearl">
+            {label}
+            {isHigh && <span className="ml-1.5 rounded bg-gold/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-gold">Sensitive</span>}
+          </p>
+          <p className="truncate text-[11px] text-ink3">
+            {isHigh ? "••••••  masked ... open to view" : doc.filename ?? "File"}
+            {doc.view_only ? " · view only" : ""}
+          </p>
+        </div>
+      </div>
+      <div className="flex shrink-0 items-center gap-2">
+        {err && <span className="text-[10px] text-wine">{err}</span>}
+        <button type="button" onClick={open} disabled={busy} className="text-[11px] font-semibold text-mauve hover:text-pearl disabled:opacity-50">{busy ? "..." : "Open"}</button>
+        <form action={deletePersonDocument}>
+          <input type="hidden" name="id" value={doc.id} />
+          <button type="submit" title="Delete document" className="text-[11px] text-ink3 opacity-0 transition-opacity hover:text-mauve group-hover:opacity-100">Delete</button>
+        </form>
+      </div>
+    </li>
+  );
+}
+function LockIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-4 w-4"><rect x="4" y="10" width="16" height="11" rx="2" /><path d="M8 10V7a4 4 0 0 1 8 0v3" strokeLinecap="round" /></svg>;
+}
+function DocIcon() {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-4 w-4"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" strokeLinejoin="round" /><path d="M14 3v5h5" strokeLinejoin="round" /></svg>;
 }
 
 function StatusPill({ status }: { status: string }) {
