@@ -148,6 +148,53 @@
   --scrollbar-thumb: 200 184 190;
 }
 
+/* =====================================================================
+   NEUTRAL workspace theme (OPT-IN, scoped to .theme-neutral on the Agent
+   Hub wrapper). This is the sellable-product / demo look: grayscale
+   surfaces + a single Mulberry ACCENT (--mauve, swappable per brokerage).
+   Sold It Today defaults to Mulberry Noir and can switch to this in
+   Settings. The marketing site is never affected (scoped class).
+   ===================================================================== */
+.theme-neutral {
+  --plum: 16 17 19;
+  --bruised: 23 24 27;
+  --raise: 32 34 38;
+  --pearl: 233 234 237;
+  --dusty: 150 152 159;
+  --ink3: 108 110 117;
+  --mauve: 201 128 156;
+  --aurora-mauve: 201 128 156;
+  --gold: 201 160 100;
+  --green: 108 190 158;
+  --wine: 205 120 120;
+}
+:root[data-theme="light"] .theme-neutral {
+  --plum: 250 250 251;
+  --bruised: 255 255 255;
+  --raise: 247 247 249;
+  --pearl: 24 24 27;
+  --dusty: 90 92 99;
+  --ink3: 135 137 144;
+  --mauve: 142 59 88;
+  --aurora-mauve: 142 59 88;
+  --gold: 150 108 46;
+  --green: 30 128 92;
+  --wine: 178 68 68;
+}
+/* strip the Mulberry decoration in neutral mode */
+.theme-neutral .btn-mauve {
+  outline: none;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+.theme-neutral .btn-mauve::after { content: none; }
+.theme-neutral .bg-agenthub { background: rgb(var(--plum)); }
+.theme-neutral .av-chip {
+  background-color: rgb(var(--raise));
+  color: rgb(var(--pearl));
+  --tw-ring-color: rgb(var(--mauve));
+}
+.theme-neutral .txn-addr { color: rgb(var(--mauve)); }
+
 /*
  * Buyer closing tracker ... light mode only. In dark mode the "done" marker is
  * the rose-gold gradient (which reads beautifully), but in light that same

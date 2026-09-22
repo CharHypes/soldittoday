@@ -89,7 +89,7 @@ export default function ContactCard(props: ContactCardProps) {
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-mauve font-serif text-lg font-semibold text-plum ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum">
+        <div className="av-chip grid h-16 w-16 shrink-0 place-items-center rounded-full bg-mauve font-serif text-lg font-semibold text-plum ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum">
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
@@ -245,7 +245,7 @@ export default function ContactCard(props: ContactCardProps) {
                       <HouseIcon />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-[13.5px] font-semibold text-[#dcc4cb]">{d.txn?.address ?? "Property"}</p>
+                      <p className="txn-addr truncate text-[13.5px] font-semibold text-[#dcc4cb]">{d.txn?.address ?? "Property"}</p>
                       <p className="mt-0.5 text-[12px] text-dusty">
                         {[ROLE_LABEL[d.role] || typeLabel(person.type), money(d.txn?.price), closeDate(d.txn?.target_close_date ?? null)].filter(Boolean).join(" · ")}
                       </p>

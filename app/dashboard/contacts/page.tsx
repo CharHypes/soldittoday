@@ -214,7 +214,7 @@ function ContactList({
         className={`flex items-center gap-3 border-b border-dusty/10 px-3 py-3 transition-colors ${active ? "bg-raise" : "hover:bg-raise/40"}`}
       >
         <span
-          className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mauve text-xs font-semibold text-plum ${
+          className={`av-chip grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mauve text-xs font-semibold text-plum ${
             active ? "ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum" : ""
           }`}
         >

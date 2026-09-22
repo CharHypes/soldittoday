@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
+import DesignPicker from "@/components/dash/DesignPicker";
 
 export const metadata: Metadata = {
   title: "Settings | Sold It Today",
@@ -24,7 +25,18 @@ export default function SettingsPage() {
         <h1 className="font-serif text-3xl font-medium text-pearl">Settings</h1>
         <p className="mt-1 text-sm text-dusty">Make it yours ... branding, appearance, integrations, and who has access.</p>
 
-        <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="mt-7 rounded-xl2 border border-dusty/15 bg-bruised/40 p-5">
+          <div className="mb-1 flex items-center justify-between">
+            <h2 className="font-serif text-lg text-pearl">Workspace design</h2>
+            <span className="rounded-full border border-green/30 bg-green/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-green">Live</span>
+          </div>
+          <p className="mb-4 text-sm text-dusty">
+            Choose how your Agent Hub looks. Sold It Today uses Mulberry Noir; switch to Neutral to preview the clean look we ship to other brokerages.
+          </p>
+          <DesignPicker />
+        </section>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {AREAS.map((a) => (
             <div key={a.title} className="rounded-xl2 border border-dusty/15 bg-bruised/40 p-5">
               <div className="mb-1 flex items-center justify-between">
