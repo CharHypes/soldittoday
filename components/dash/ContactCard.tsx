@@ -28,13 +28,9 @@ type Deal = {
 
 type Note = { id: string; body: string; created_at: string };
 type Review = { id: string; status: string; platform: string | null; rating: number | null; quote: string | null; url: string | null };
-type Doc = { id: string; kind: string; sensitivity: string; filename: string | null; view_only: boolean; created_at: string };
+type Doc = { id: string; kind: string; title: string | null; sensitivity: string; filename: string | null; view_only: boolean; created_at: string };
 
-const DOC_KIND_LABEL: Record<string, string> = {
-  drivers_license: "Driver's license", state_id: "State ID", passport: "Passport", resident_card: "Resident card",
-  pre_approval: "Pre-approval letter", proof_of_funds: "Proof of funds", income_letter: "Income letter",
-  ssn_card: "SSN card", other: "Document",
-};
+const docName = (d: Doc) => d.title?.trim() || d.filename || "Document";
 
 export type ContactCardProps = {
   person: Person;
@@ -54,6 +50,7 @@ type Section = "name" | "contact" | "personal" | "referral" | "review" | null;
 export default function ContactCard(props: ContactCardProps) {
   const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review, documents } = props;
   const [editing, setEditing] = useState<Section>(null);
+  const [uploadOpen, setUploadOpen] = useState(false);
 
   async function save(fd: FormData) {
     await updatePerson(fd);
@@ -62,6 +59,10 @@ export default function ContactCard(props: ContactCardProps) {
   const save2 = (action: (fd: FormData) => Promise<void>) => async (fd: FormData) => {
     await action(fd);
     setEditing(null);
+  };
+  const uploadAndClose = async (fd: FormData) => {
+    await uploadPersonDocument(fd);
+    setUploadOpen(false);
   };
 
   const phone = telHref(person.phone);
@@ -257,25 +258,31 @@ export default function ContactCard(props: ContactCardProps) {
             )}
           </Box>
 
-          <Box label="Documents on file">
+          <Box label="Documents on file" onAdd={() => setUploadOpen((v) => !v)} addLabel="Upload">
+            {documents.length === 0 && !uploadOpen && (
+              <p className="py-1 text-[13px] text-ink3">IDs, SSN cards, award letters ... the personal papers that follow this contact. Use Upload.</p>
+            )}
             {documents.length > 0 && (
-              <ul className="space-y-1.5 pb-2 pt-1">
+              <ul className="space-y-1.5 py-1">
                 {documents.map((d) => <DocItem key={d.id} doc={d} />)}
               </ul>
             )}
-            <form action={uploadPersonDocument} className="grid gap-2 pt-1">
-              <input type="hidden" name="person_id" value={person.id} />
-              <div className="flex flex-wrap items-center gap-2">
-                <select name="kind" defaultValue="other" className={inp}>
-                  {Object.entries(DOC_KIND_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
-                </select>
-                <input type="file" name="file" required className="max-w-[160px] text-[12px] text-dusty file:mr-2 file:rounded-md file:border-0 file:bg-raise file:px-2 file:py-1 file:text-[12px] file:text-pearl" />
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-ink3">Stored privately · every open is logged · SSN cards are masked.</span>
-                <button type="submit" className="btn-mauve !px-3.5 !py-1.5 text-[12.5px]">Upload</button>
-              </div>
-            </form>
+            {uploadOpen && (
+              <form action={uploadAndClose} className="mt-1 grid gap-2.5 border-t border-dusty/10 pt-3">
+                <input type="hidden" name="person_id" value={person.id} />
+                <input name="title" required placeholder="Name this document (e.g. Driver's license)" className={`${inp} w-full`} />
+                <input type="file" name="file" required className="text-[12px] text-dusty file:mr-2 file:rounded-md file:border-0 file:bg-bruised file:px-2.5 file:py-1 file:text-[12px] file:text-pearl" />
+                <label className="flex items-center gap-2 text-[12.5px] text-dusty">
+                  <input type="checkbox" name="sensitive" className="accent-mauve" />
+                  Highly sensitive (SSN card, etc.) ... mask + restrict to owner/admin or the owning agent
+                </label>
+                <div className="flex items-center gap-2">
+                  <button type="submit" className="btn-mauve !px-3.5 !py-1.5 text-[12.5px]">Upload</button>
+                  <button type="button" onClick={() => setUploadOpen(false)} className="rounded-lg px-3 py-1.5 text-[12.5px] text-dusty hover:text-pearl">Cancel</button>
+                  <span className="ml-auto text-[11px] text-ink3">Stored privately · every open is logged</span>
+                </div>
+              </form>
+            )}
           </Box>
 
           <Box label="Reviews" onEdit={() => setEditing("review")}>
@@ -371,7 +378,8 @@ function DocItem({ doc }: { doc: Doc }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const isHigh = doc.sensitivity === "high";
-  const label = DOC_KIND_LABEL[doc.kind] ?? "Document";
+  const label = docName(doc);
+  const added = new Date(doc.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   const open = async () => {
     setBusy(true);
     setErr(null);
@@ -393,7 +401,7 @@ function DocItem({ doc }: { doc: Doc }) {
             {isHigh && <span className="ml-1.5 rounded bg-gold/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-gold">Sensitive</span>}
           </p>
           <p className="truncate text-[11px] text-ink3">
-            {isHigh ? "••••••  masked ... open to view" : doc.filename ?? "File"}
+            {isHigh ? "Protected · opens are logged" : `Added ${added}`}
             {doc.view_only ? " · view only" : ""}
           </p>
         </div>
@@ -430,15 +438,20 @@ function StatusPill({ status }: { status: string }) {
 }
 
 function Box({
-  label, onEdit, addHref, addLabel, soon, children,
+  label, onEdit, onAdd, addHref, addLabel, soon, children,
 }: {
-  label: string; onEdit?: () => void; addHref?: string; addLabel?: string; soon?: string; children: React.ReactNode;
+  label: string; onEdit?: () => void; onAdd?: () => void; addHref?: string; addLabel?: string; soon?: string; children: React.ReactNode;
 }) {
   return (
     <div className="rounded-xl2 border border-dusty/15 bg-raise p-5">
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-[10.5px] font-bold uppercase tracking-[0.13em] text-ink3">{label}</h3>
         {onEdit && <EditLink onClick={onEdit} />}
+        {onAdd && (
+          <button type="button" onClick={onAdd} className="flex items-center gap-1 text-xs font-medium text-mauve hover:text-pearl">
+            <PlusIcon /> {addLabel ?? "Add"}
+          </button>
+        )}
         {addHref && (
           <Link href={addHref} className="flex items-center gap-1 text-xs font-medium text-mauve hover:text-pearl">
             <PlusIcon /> {addLabel ?? "Add"}

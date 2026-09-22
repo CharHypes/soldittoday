@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import DashHeader from "@/components/dash/DashHeader";
+import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -23,8 +23,8 @@ export default async function BuyersHome() {
   const rows = txns ?? [];
 
   return (
-    <main className="min-h-screen bg-mulberry-radial">
-      <DashHeader />
+    <main className="min-h-screen bg-agenthub">
+      <AgentHubHeader />
       <div className="mx-auto max-w-5xl px-6 py-10">
         <div className="flex items-center justify-between">
           <div>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import DashHeader from "@/components/dash/DashHeader";
+import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import CopyLink from "@/components/dash/CopyLink";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import {
@@ -51,8 +51,8 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
   const client = tx.clients as { name?: string } | null;
 
   return (
-    <main className="min-h-screen bg-mulberry-radial">
-      <DashHeader />
+    <main className="min-h-screen bg-agenthub">
+      <AgentHubHeader />
       <div className="mx-auto max-w-3xl space-y-6 px-6 py-10">
         <div className="flex items-center justify-between">
           <a href="/dashboard/buyers" className="text-sm text-dusty hover:text-pearl">&larr; Back to buyers</a>

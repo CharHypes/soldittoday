@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import DashHeader from "@/components/dash/DashHeader";
+import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import ListingWorkspace from "@/components/dash/ListingWorkspace";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { AI_ENABLED } from "@/lib/ai";
@@ -35,8 +35,8 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
   const portalUrl = `${SITE}/seller/${listing.portal_token}`;
 
   return (
-    <main className="min-h-screen bg-mulberry-radial">
-      <DashHeader />
+    <main className="min-h-screen bg-agenthub">
+      <AgentHubHeader />
       <div className="mx-auto max-w-3xl space-y-6 px-6 py-10">
         <div className="flex items-center justify-between">
           <a href="/dashboard" className="text-sm text-dusty hover:text-pearl">&larr; Back to listings</a>

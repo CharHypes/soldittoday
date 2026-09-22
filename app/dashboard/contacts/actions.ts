@@ -126,12 +126,16 @@ export async function uploadPersonDocument(formData: FormData) {
   if (!admin) return; // service key not configured
 
   const person_id = str(formData.get("person_id"));
-  const kind = str(formData.get("kind")) ?? "other";
   const file = formData.get("file") as File | null;
   if (!person_id || !file || file.size === 0) return;
 
-  const sensitivity = kind === "ssn_card" ? "high" : "standard";
-  const view_only = ID_KINDS.includes(kind);
+  // Agents NAME their document; a single "sensitive" flag drives masking + the
+  // Option B access gate (SSN cards, etc.). No fixed kind dropdown.
+  const title = str(formData.get("title")) ?? file.name;
+  const sensitive = formData.get("sensitive") === "on";
+  const sensitivity = sensitive ? "high" : "standard";
+  const kind = "other";
+  const view_only = false;
   const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "");
   const path = `${orgId}/${person_id}/${randomUUID()}.${ext}`;
 
@@ -149,6 +153,7 @@ export async function uploadPersonDocument(formData: FormData) {
       organization_id: orgId,
       person_id,
       kind,
+      title,
       sensitivity,
       storage_bucket: PERSON_DOCS_BUCKET,
       storage_path: path,

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import DashHeader from "@/components/dash/DashHeader";
+import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import { createBuyer } from "@/app/dashboard/actions";
 
 export const metadata: Metadata = {
@@ -13,8 +13,8 @@ const lbl = "block text-sm text-dusty";
 
 export default function NewBuyer() {
   return (
-    <main className="min-h-screen bg-mulberry-radial">
-      <DashHeader />
+    <main className="min-h-screen bg-agenthub">
+      <AgentHubHeader />
       <div className="mx-auto max-w-2xl px-6 py-10">
         <a href="/dashboard/buyers" className="text-sm text-dusty hover:text-pearl">&larr; Back to buyers</a>
         <h1 className="mt-3 text-2xl font-semibold text-pearl">Add Buyer</h1>
