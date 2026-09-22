@@ -129,7 +129,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
   }
 
   return (
-    <main className="min-h-screen bg-agenthub">
+    <main className="min-h-screen bg-plum">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
         <div className="flex items-end justify-between gap-4">
@@ -146,7 +146,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
 
         <div className="mt-7 grid gap-6 md:grid-cols-[326px_minmax(0,1fr)]">
           {/* LEFT list */}
-          <aside className="rounded-xl2 border border-dusty/15 bg-bruised p-3 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+          <aside className="rounded-xl2 border border-dusty/15 bg-bruised p-3 shadow-sm">
             <form action="/dashboard/contacts" method="get" className="p-1">
               <input
                 name="q"
@@ -199,7 +199,7 @@ function ContactList({
     if (first !== letter) {
       letter = first;
       out.push(
-        <div key={`h-${letter}`} className="sticky top-0 border-b border-dusty/10 bg-bruised/95 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-mauve backdrop-blur">
+        <div key={`h-${letter}`} className="sticky top-0 border-b border-dusty/10 bg-bruised/95 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-dusty backdrop-blur">
           {letter}
         </div>
       );
@@ -214,8 +214,8 @@ function ContactList({
         className={`flex items-center gap-3 border-b border-dusty/10 px-3 py-3 transition-colors ${active ? "bg-raise" : "hover:bg-raise/40"}`}
       >
         <span
-          className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mauve text-xs font-semibold text-plum ${
-            active ? "ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum" : ""
+          className={`grid h-10 w-10 shrink-0 place-items-center rounded-full bg-raise text-xs font-semibold text-pearl ${
+            active ? "ring-2 ring-mauve/70 ring-offset-2 ring-offset-plum" : ""
           }`}
         >
           {initials(p)}

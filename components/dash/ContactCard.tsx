@@ -77,7 +77,7 @@ export default function ContactCard(props: ContactCardProps) {
   const fmtDate = (d: string | null) => (d ? new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : null);
 
   return (
-    <section className="rounded-xl2 border border-dusty/15 bg-bruised p-6 shadow-[0_20px_50px_rgba(0,0,0,0.35)] sm:p-8">
+    <section className="rounded-xl2 border border-dusty/15 bg-bruised p-6 shadow-sm sm:p-8">
       {/* breadcrumb */}
       <p className="text-[11.5px] tracking-wide text-ink3">
         <Link href="/dashboard/contacts" className="hover:text-pearl">All contacts</Link>
@@ -89,7 +89,7 @@ export default function ContactCard(props: ContactCardProps) {
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-mauve font-serif text-lg font-semibold text-plum ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum">
+        <div className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-raise font-serif text-lg font-semibold text-pearl ring-2 ring-mauve/70 ring-offset-2 ring-offset-plum">
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
@@ -245,7 +245,7 @@ export default function ContactCard(props: ContactCardProps) {
                       <HouseIcon />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-[13.5px] font-semibold text-[#dcc4cb]">{d.txn?.address ?? "Property"}</p>
+                      <p className="truncate text-[13.5px] font-semibold text-mauve">{d.txn?.address ?? "Property"}</p>
                       <p className="mt-0.5 text-[12px] text-dusty">
                         {[ROLE_LABEL[d.role] || typeLabel(person.type), money(d.txn?.price), closeDate(d.txn?.target_close_date ?? null)].filter(Boolean).join(" · ")}
                       </p>
