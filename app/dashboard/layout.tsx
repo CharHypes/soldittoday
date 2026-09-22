@@ -9,7 +9,7 @@ import AgentHubShell from "@/components/dash/AgentHubShell";
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <AgentHubShell>
-      <style dangerouslySetInnerHTML={{ __html: ".grain-overlay{display:none!important}" }} />
+      <style dangerouslySetInnerHTML={{ __html: ".grain-overlay{display:none!important}html{scrollbar-gutter:stable}" }} />
       {children}
     </AgentHubShell>
   );
