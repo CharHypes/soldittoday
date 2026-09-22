@@ -287,44 +287,26 @@
     line-height: 1.1;
     background: rgb(var(--mauve));
     color: rgb(var(--plum));
-    box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
-    transition: filter 0.15s ease;
+    /* warmer gold rim with a small gap, matching the avatar ring */
+    outline: 2px solid #e4bc90;
+    outline-offset: 2px;
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+    overflow: hidden;
+    transition: filter 0.15s ease, transform 0.15s ease;
+  }
+  /* subtle film grain on the button, matching the app's texture */
+  .btn-mauve::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.16;
+    mix-blend-mode: overlay;
+    pointer-events: none;
   }
   .btn-mauve:hover {
-    filter: brightness(1.05);
-  }
-
-  /* =====================================================================
-     AGENT HUB (backend) ... NEUTRAL workspace theme.
-     Grayscale surfaces + a single Mulberry ACCENT (--mauve). Scoped to
-     the .agent-hub wrapper so the marketing site's Mulberry Noir tokens
-     are never touched. Swap the --mauve values to reskin per brokerage.
-     ===================================================================== */
-  .agent-hub {
-    --plum: 16 17 19;        /* page ... near-black charcoal */
-    --bruised: 23 24 27;     /* panel */
-    --raise: 32 34 38;       /* card */
-    --pearl: 233 234 237;    /* primary text */
-    --dusty: 150 152 159;    /* muted text / borders */
-    --ink3: 108 110 117;     /* faint text */
-    --mauve: 201 128 156;    /* ACCENT (mulberry, lightened for dark) */
-    --aurora-mauve: 201 128 156;
-    --gold: 201 160 100;     /* amber ... status only */
-    --green: 108 190 158;
-    --wine: 205 120 120;
-  }
-  :root[data-theme="light"] .agent-hub {
-    --plum: 250 250 251;     /* page ... clean off-white */
-    --bruised: 255 255 255;  /* panel ... white */
-    --raise: 247 247 249;    /* card ... light gray */
-    --pearl: 24 24 27;       /* near-black text */
-    --dusty: 90 92 99;
-    --ink3: 135 137 144;
-    --mauve: 142 59 88;      /* ACCENT (deep mulberry) */
-    --aurora-mauve: 142 59 88;
-    --gold: 150 108 46;
-    --green: 30 128 92;
-    --wine: 178 68 68;
+    filter: brightness(1.06);
+    transform: translateY(-1px);
   }
 
   /*

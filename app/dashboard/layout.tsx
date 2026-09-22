@@ -6,9 +6,9 @@
  */
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="agent-hub">
+    <>
       <style dangerouslySetInnerHTML={{ __html: ".grain-overlay{display:none!important}" }} />
       {children}
-    </div>
+    </>
   );
 }

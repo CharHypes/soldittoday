@@ -18,7 +18,7 @@ const AREAS: { title: string; body: string }[] = [
 
 export default function SettingsPage() {
   return (
-    <main className="min-h-screen bg-plum">
+    <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
         <h1 className="font-serif text-3xl font-medium text-pearl">Settings</h1>
