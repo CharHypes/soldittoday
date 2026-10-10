@@ -416,9 +416,45 @@ export async function createBuyer(formData: FormData) {
         status: i === 0 ? "done" : "upcoming",
       }))
     );
+
+    // Also create/link a CRM contact (person) so this transaction shows up on a
+    // contact card. Starting a transaction starts a contact. Keeps the legacy
+    // client row too (source_client_id) so the Buyers pages keep working.
+    if (clientName && client_id) {
+      const trimmed = clientName.trim();
+      const cut = trimmed.lastIndexOf(" ");
+      const first = cut > 0 ? trimmed.slice(0, cut) : null;
+      const last = cut > 0 ? trimmed.slice(cut + 1) : trimmed;
+      const { data: person } = await supabase
+        .from("people")
+        .insert({
+          organization_id: orgId,
+          agent_id,
+          visibility: "organization",
+          first_name: first,
+          last_name: last,
+          display_name: trimmed,
+          type: "buyer",
+          email: str(formData.get("client_email")),
+          phone: str(formData.get("client_phone")),
+          source_client_id: client_id,
+        })
+        .select("id")
+        .single();
+      if (person?.id) {
+        await supabase.from("transaction_people").insert({
+          organization_id: orgId,
+          transaction_id: tx.id,
+          person_id: person.id,
+          role: "buyer",
+          name_on_deal: trimmed,
+        });
+      }
+    }
   }
 
   revalidatePath("/dashboard/buyers");
+  revalidatePath("/dashboard/contacts");
   redirect(tx?.id ? `/dashboard/buyers/${tx.id}` : "/dashboard/buyers");
 }
 

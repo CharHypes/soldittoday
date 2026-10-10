@@ -64,6 +64,41 @@ export async function updatePerson(formData: FormData) {
   revalidatePath("/dashboard/contacts");
 }
 
+/** Create a new contact (person) directly, then open its card. */
+export async function createPerson(formData: FormData) {
+  const supabase = createSupabaseServer();
+  const { orgId, agentId } = await getOrgContext(supabase);
+  if (!agentId || !orgId) redirect("/dashboard/login");
+
+  const first = str(formData.get("first_name"));
+  const last = str(formData.get("last_name"));
+  const company = str(formData.get("company"));
+  const display = str(formData.get("display_name")) ?? ([first, last].filter(Boolean).join(" ") || company);
+  // need at least one name part
+  if (!first && !last && !company && !display) redirect("/dashboard/contacts/new");
+
+  const { data } = await supabase
+    .from("people")
+    .insert({
+      organization_id: orgId,
+      agent_id: agentId,
+      visibility: "organization",
+      first_name: first,
+      last_name: last,
+      company,
+      display_name: display,
+      type: str(formData.get("type")) ?? "lead",
+      email: str(formData.get("email")),
+      phone: str(formData.get("phone")),
+      address: str(formData.get("address")),
+    })
+    .select("id")
+    .single();
+
+  revalidatePath("/dashboard/contacts");
+  redirect(data?.id ? `/dashboard/contacts?id=${data.id}` : "/dashboard/contacts");
+}
+
 /** Add a private note to a contact. */
 export async function addPersonNote(formData: FormData) {
   const supabase = createSupabaseServer();

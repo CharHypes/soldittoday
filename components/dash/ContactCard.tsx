@@ -102,6 +102,7 @@ export default function ContactCard(props: ContactCardProps) {
                 <input name="last_name" defaultValue={person.last_name ?? ""} placeholder="Last name" className={inp} />
               </div>
               <input name="display_name" defaultValue={person.display_name ?? ""} placeholder="Display name (optional)" className={`${inp} w-full`} />
+              <input name="company" defaultValue={person.company ?? ""} placeholder="Company (e.g. title company, optional)" className={`${inp} w-full`} />
               <div className="flex flex-wrap items-center gap-2">
                 <select name="type" defaultValue={person.type} className={inp}>
                   {Object.entries(TYPE_LABEL).map(([v, l]) => (
@@ -117,6 +118,7 @@ export default function ContactCard(props: ContactCardProps) {
                 <h2 className="font-serif text-3xl font-medium text-pearl">{fullName(person)}</h2>
                 <p className="mt-1 text-sm text-dusty">
                   {typeLabel(person.type)}
+                  {person.company ? ` · ${person.company}` : ""}
                   {primaryRelName && (
                     <>
                       {" · with "}
