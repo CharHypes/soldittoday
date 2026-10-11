@@ -17,7 +17,7 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
   const supabase = createSupabaseServer();
   const { data: listing } = await supabase
     .from("listings")
-    .select("*, clients(name,email,phone)")
+    .select("*")
     .eq("id", params.id)
     .maybeSingle();
 
@@ -31,7 +31,11 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
       .eq("listing_id", params.id).order("created_at", { ascending: false }),
   ]);
 
-  const client = (listing.clients as { name?: string; email?: string; phone?: string } | null) ?? null;
+  let client: { name?: string | null; email?: string | null; phone?: string | null } | null = null;
+  if (listing.client_id) {
+    const { data: c } = await supabase.from("clients").select("name,email,phone").eq("id", listing.client_id).maybeSingle();
+    client = c;
+  }
   const portalUrl = `${SITE}/seller/${listing.portal_token}`;
 
   return (

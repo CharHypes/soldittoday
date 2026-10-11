@@ -347,7 +347,7 @@ export async function draftSellerUpdate(listingId: string): Promise<DraftResult>
 
   const { data: listing } = await supabase
     .from("listings")
-    .select("address,city,state,price,status,list_date,clients(name)")
+    .select("address,city,state,price,status,list_date,client_id")
     .eq("id", listingId)
     .maybeSingle();
   if (!listing) return { ok: false, error: "Listing not found." };

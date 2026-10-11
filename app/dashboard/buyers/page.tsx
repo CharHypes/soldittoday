@@ -17,10 +17,16 @@ export default async function BuyersHome() {
   const supabase = createSupabaseServer();
   const { data: txns } = await supabase
     .from("transactions")
-    .select("id, address, city, state, zip, price, status, target_close_date, clients(name)")
+    .select("id, address, city, state, zip, price, status, target_close_date, client_id")
     .order("created_at", { ascending: false });
 
   const rows = txns ?? [];
+  const clientIds = [...new Set(rows.map((t: any) => t.client_id).filter(Boolean))];
+  const clientMap = new Map<string, string>();
+  if (clientIds.length) {
+    const { data } = await supabase.from("clients").select("id, name").in("id", clientIds);
+    (data ?? []).forEach((c: any) => clientMap.set(c.id, c.name));
+  }
 
   return (
     <main className="min-h-screen bg-agenthub">
@@ -45,7 +51,7 @@ export default async function BuyersHome() {
         ) : (
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {rows.map((t) => {
-              const client = t.clients as { name?: string } | null;
+              const clientName = t.client_id ? clientMap.get(t.client_id) : null;
               return (
                 <a
                   key={t.id}
@@ -54,7 +60,7 @@ export default async function BuyersHome() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      {client?.name && <p className="text-sm text-auroraMauve">{client.name}</p>}
+                      {clientName && <p className="text-sm text-mauve">{clientName}</p>}
                       <h2 className="mt-0.5 text-lg font-semibold text-pearl">{t.address}</h2>
                     </div>
                     <span className="shrink-0 rounded-full bg-wine/40 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-pearl">

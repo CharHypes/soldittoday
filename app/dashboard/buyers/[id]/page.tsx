@@ -35,7 +35,7 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
   const supabase = createSupabaseServer();
   const { data: tx } = await supabase
     .from("transactions")
-    .select("*, clients(name,email,phone)")
+    .select("*")
     .eq("id", params.id)
     .maybeSingle();
   if (!tx) redirect("/dashboard/buyers");
@@ -48,7 +48,11 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
     .from("documents").select("*").eq("transaction_id", params.id).order("created_at", { ascending: false });
 
   const portalUrl = `${SITE}/buyer/${tx.portal_token}`;
-  const client = tx.clients as { name?: string } | null;
+  let client: { name?: string | null; email?: string | null; phone?: string | null } | null = null;
+  if (tx.client_id) {
+    const { data: c } = await supabase.from("clients").select("name,email,phone").eq("id", tx.client_id).maybeSingle();
+    client = c;
+  }
 
   return (
     <main className="min-h-screen bg-agenthub">
