@@ -29,8 +29,9 @@ export default function AgentHubHeader() {
 
         {/* tabs */}
         <nav className="ml-2 hidden items-center gap-1 md:flex">
+          <Tab href="/dashboard" active={is("/dashboard", true)}>Dashboard</Tab>
           <Tab href="/dashboard/contacts" active={is("/dashboard/contacts")}>Contacts</Tab>
-          <Tab href="/dashboard" active={is("/dashboard", true) || is("/dashboard/listings")}>Listings</Tab>
+          <Tab href="/dashboard/listings" active={is("/dashboard/listings")}>Listings</Tab>
           <Tab href="/dashboard/buyers" active={is("/dashboard/buyers")}>Buyers</Tab>
           <span className="cursor-default rounded-lg px-3 py-2 text-[13.5px] text-dusty/40" title="Coming soon">Leads</span>
         </nav>

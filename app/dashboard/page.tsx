@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
+import DashboardDeals, { type DashDeal, type DashStats } from "@/components/dash/DashboardDeals";
 import { createSupabaseServer } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -9,80 +9,156 @@ export const metadata: Metadata = {
 };
 export const dynamic = "force-dynamic";
 
-function money(n: number | null): string {
-  if (n == null) return "";
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+const money = (n: number | null): string =>
+  n == null ? "" : n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+
+function initials(name: string | null | undefined): string {
+  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function txnKind(status: string | null): DashDeal["statusKind"] {
+  const s = (status ?? "").toLowerCase();
+  if (/clos/.test(s)) return "closed";
+  if (/cancel|withdraw|fell|expired|dead/.test(s)) return "other";
+  return "under";
+}
+function listingKind(status: string | null): DashDeal["statusKind"] {
+  const s = (status ?? "").toLowerCase();
+  if (/clos|sold/.test(s)) return "closed";
+  if (/expired|withdraw|cancel/.test(s)) return "other";
+  return "active";
+}
+
+const fmtClose = (d: string | null): string | null =>
+  d ? `Closes ${new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })}` : null;
+
+function daysOnMarket(listDate: string | null): string {
+  if (!listDate) return "Active listing";
+  const days = Math.max(0, Math.floor((Date.now() - new Date(`${listDate}T00:00:00`).getTime()) / 86400000));
+  return `${days} day${days === 1 ? "" : "s"} on market`;
 }
 
 export default async function DashboardHome() {
   const supabase = createSupabaseServer();
-  const { data: listings } = await supabase
-    .from("listings")
-    .select("id, address, city, state, zip, price, status, mls_number, photo_url")
-    .order("created_at", { ascending: false });
 
-  const rows = listings ?? [];
+  const [{ data: txns }, { data: lsts }] = await Promise.all([
+    supabase
+      .from("transactions")
+      .select("id, address, city, state, zip, price, status, target_close_date, photo_url, clients(name), agents(name)")
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("listings")
+      .select("id, address, city, state, zip, price, status, list_date, photo_url, clients(name), agents(name)")
+      .order("created_at", { ascending: false }),
+  ]);
+
+  // milestones for progress on buyer deals
+  const txnIds = (txns ?? []).map((t: any) => t.id);
+  const msByTxn = new Map<string, { label: string; status: string }[]>();
+  if (txnIds.length) {
+    const { data: ms } = await supabase
+      .from("milestones")
+      .select("transaction_id, label, status, sort_order")
+      .in("transaction_id", txnIds)
+      .order("sort_order", { ascending: true });
+    (ms ?? []).forEach((m: any) => {
+      const arr = msByTxn.get(m.transaction_id) ?? [];
+      arr.push({ label: m.label, status: m.status });
+      msByTxn.set(m.transaction_id, arr);
+    });
+  }
+
+  const cityLine = (c: string | null, s: string | null, z: string | null) =>
+    [[c, s].filter(Boolean).join(", "), z].filter(Boolean).join(" ").trim();
+
+  const deals: DashDeal[] = [];
+
+  for (const t of (txns ?? []) as any[]) {
+    const ms = msByTxn.get(t.id) ?? [];
+    const total = ms.length;
+    const done = ms.filter((m) => m.status === "done").length;
+    const current = ms.find((m) => m.status !== "done");
+    const clientName = t.clients?.name ?? null;
+    const agentName = t.agents?.name ?? null;
+    deals.push({
+      kind: "transaction",
+      id: t.id,
+      href: `/dashboard/buyers/${t.id}`,
+      photoUrl: t.photo_url ?? null,
+      address: t.address,
+      cityLine: cityLine(t.city, t.state, t.zip),
+      side: "Buyer side",
+      statusLabel: t.status ?? "Under Contract",
+      statusKind: txnKind(t.status),
+      priceText: money(t.price),
+      metaText: fmtClose(t.target_close_date ?? null) ?? "",
+      clientName,
+      clientInitials: initials(clientName),
+      agentName,
+      agentInitials: initials(agentName),
+      progressPct: total ? Math.round((done / total) * 100) : null,
+      stageText: current?.label ?? (total ? "Closed" : null),
+      stageCount: total ? `${done} of ${total}` : null,
+    });
+  }
+
+  for (const l of (lsts ?? []) as any[]) {
+    const clientName = l.clients?.name ?? null;
+    const agentName = l.agents?.name ?? null;
+    deals.push({
+      kind: "listing",
+      id: l.id,
+      href: `/dashboard/listings/${l.id}`,
+      photoUrl: l.photo_url ?? null,
+      address: l.address,
+      cityLine: cityLine(l.city, l.state, l.zip),
+      side: "Seller side",
+      statusLabel: l.status ?? "Active",
+      statusKind: listingKind(l.status),
+      priceText: money(l.price),
+      metaText: daysOnMarket(l.list_date ?? null),
+      clientName,
+      clientInitials: initials(clientName),
+      agentName,
+      agentInitials: initials(agentName),
+      progressPct: null,
+      stageText: null,
+      stageCount: null,
+    });
+  }
+
+  const under = deals.filter((d) => d.statusKind === "under");
+  const active = deals.filter((d) => d.statusKind === "active");
+  const volume = [...under, ...active].reduce((s, d) => s + 0, 0); // volume computed below from raw prices
+  const rawVol = [
+    ...((txns ?? []) as any[]).filter((t) => txnKind(t.status) === "under").map((t) => t.price ?? 0),
+    ...((lsts ?? []) as any[]).filter((l) => listingKind(l.status) === "active").map((l) => l.price ?? 0),
+  ].reduce((s, n) => s + n, 0);
+  const nextCloseTxn = ((txns ?? []) as any[])
+    .filter((t) => txnKind(t.status) === "under" && t.target_close_date)
+    .sort((a, b) => String(a.target_close_date).localeCompare(String(b.target_close_date)))[0];
+
+  const stats: DashStats = {
+    under: under.length,
+    active: active.length,
+    volumeText:
+      rawVol >= 1_000_000
+        ? `$${(rawVol / 1_000_000).toLocaleString("en-US", { maximumFractionDigits: 2 })}M`
+        : money(rawVol) || "$0",
+    nextCloseText: nextCloseTxn
+      ? new Date(`${nextCloseTxn.target_close_date}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+      : "...",
+    nextCloseAddr: nextCloseTxn?.address ?? "No closings scheduled",
+  };
 
   return (
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-pearl">My Listings</h1>
-            <p className="mt-1 text-sm text-dusty">
-              {rows.length} {rows.length === 1 ? "listing" : "listings"}
-            </p>
-          </div>
-          <a href="/dashboard/listings/new" className="btn-aurora !px-5 !py-3">
-            + Add Listing
-          </a>
-        </div>
-
-        {rows.length === 0 ? (
-          <div className="mt-10 rounded-xl2 border border-dusty/15 bg-plum/40 p-10 text-center text-dusty">
-            No listings yet. Add your first one to create its seller portal.
-          </div>
-        ) : (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {rows.map((l) => (
-              <Link
-                key={l.id}
-                href={`/dashboard/listings/${l.id}`}
-                aria-label={`Open workspace for ${l.address}`}
-                className="group aurora-ring block cursor-pointer rounded-xl2 border border-dusty/15 bg-plum/50 p-6 transition-colors hover:border-auroraMauve/50 hover:bg-plum/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-auroraMauve/70"
-              >
-                {l.photo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={l.photo_url} alt={l.address} className="mb-4 h-40 w-full rounded-xl object-cover" />
-                ) : (
-                  <div className="mb-4 flex h-40 w-full items-center justify-center rounded-xl border border-dashed border-dusty/25 bg-plum/40 text-xs text-dusty/70">
-                    No photo yet
-                  </div>
-                )}
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="text-lg font-semibold text-pearl group-hover:text-white">{l.address}</h2>
-                  <span className="shrink-0 rounded-full bg-wine/40 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-pearl">
-                    {l.status}
-                  </span>
-                </div>
-                <p className="mt-1 text-sm text-dusty">
-                  {[l.city, l.state].filter(Boolean).join(", ")} {l.zip ?? ""}
-                </p>
-                <div className="mt-3 flex items-center justify-between">
-                  <span className="text-lg font-semibold text-pearl">{money(l.price)}</span>
-                  {l.mls_number && <span className="text-xs text-dusty/70">MLS# {l.mls_number}</span>}
-                </div>
-                <div className="mt-4 flex items-center justify-end gap-1 text-xs font-semibold text-auroraMauve/80 transition-colors group-hover:text-pearl">
-                  Open workspace
-                  <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4 transition-transform group-hover:translate-x-0.5">
-                    <path d="M7 4l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+        <DashboardDeals deals={deals} stats={stats} />
       </div>
     </main>
   );
