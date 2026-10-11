@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { updateListing, addSnapshot, syncListingPhoto, deleteListing } from "@/app/dashboard/actions";
 import DeleteButton from "@/components/dash/DeleteButton";
+import { dealEmailAddress } from "@/lib/dealEmail";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 import ListTracImport from "@/components/dash/ListTracImport";
 import CopyLink from "@/components/dash/CopyLink";
@@ -37,6 +38,7 @@ type Listing = {
   list_date: string | null;
   mls_number: string | null;
   photo_url: string | null;
+  email_token: string | null;
 };
 
 const TABS = ["Overview", "Seller", "Activity", "Notes", "Documents", "Portal"] as const;
@@ -333,6 +335,15 @@ export default function ListingWorkspace({
             <a href={portalUrl} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm text-auroraMauve hover:text-pearl">
               Preview seller portal &rarr;
             </a>
+            {listing.email_token && (
+              <div className="mt-5 border-t border-dusty/10 pt-4">
+                <p className="text-sm font-semibold text-pearl">Email documents to this listing</p>
+                <p className="mt-1 text-xs text-dusty">
+                  Forward or send anything (PDFs, photos, disclosures) to this address and it files onto this listing&rsquo;s Documents automatically.
+                </p>
+                <div className="mt-3"><CopyLink url={dealEmailAddress(listing.email_token)!} /></div>
+              </div>
+            )}
           </div>
         )}
       </div>

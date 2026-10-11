@@ -15,6 +15,7 @@ import {
 } from "@/app/dashboard/actions";
 import DeleteButton from "@/components/dash/DeleteButton";
 import { DOCS_ENABLED } from "@/lib/supabase/admin";
+import { dealEmailAddress } from "@/lib/dealEmail";
 
 export const metadata: Metadata = {
   title: "Edit Buyer | Sold It Today",
@@ -107,6 +108,17 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
           </p>
           <div className="mt-3"><CopyLink url={portalUrl} /></div>
         </div>
+
+        {/* Per-deal email */}
+        {tx.email_token && (
+          <div className={card}>
+            <p className="text-sm font-semibold text-pearl">Email documents to this deal</p>
+            <p className="mt-1 text-xs text-dusty">
+              Forward or send anything (PDFs, photos, pre-approvals) to this address and it files onto this deal&rsquo;s Documents automatically.
+            </p>
+            <div className="mt-3"><CopyLink url={dealEmailAddress(tx.email_token)!} /></div>
+          </div>
+        )}
 
         {/* Closing tracker */}
         <form action={updateMilestones} className={`${card} space-y-4`}>
