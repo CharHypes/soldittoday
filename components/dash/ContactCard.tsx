@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { updatePerson, addPersonNote, deletePersonNote, savePersonReview, uploadPersonDocument, openPersonDocument, deletePersonDocument, mergePeople } from "@/app/dashboard/contacts/actions";
+import { updatePerson, addPersonNote, deletePersonNote, savePersonReview, uploadPersonDocument, openPersonDocument, deletePersonDocument, mergePeople, addRelationship, deleteRelationship } from "@/app/dashboard/contacts/actions";
 import { money } from "@/lib/format";
 import {
   fullName,
@@ -11,6 +11,7 @@ import {
   typeLabel,
   TYPE_LABEL,
   ROLE_LABEL,
+  RELATION_LABEL,
   MARITAL_LABEL,
   formatPhone,
   telHref,
@@ -205,6 +206,15 @@ export default function ContactCard(props: ContactCardProps) {
             {editing === "referral" ? (
               <form action={save} className="space-y-3 pt-1">
                 <input type="hidden" name="id" value={person.id} />
+                <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-2">
+                  <label className="text-sm text-dusty">Referred by</label>
+                  <select name="referred_by_person_id" defaultValue={person.referred_by_person_id ?? ""} className={`${inp} w-full`}>
+                    <option value="">... none ...</option>
+                    {allContacts.filter((c) => c.id !== person.id).map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
                 <LabeledInput name="lead_source" label="Lead source" defaultValue={person.lead_source} placeholder="Repeat client, Zillow, referral..." />
                 <SaveCancel onCancel={() => setEditing(null)} />
               </form>
@@ -228,18 +238,27 @@ export default function ContactCard(props: ContactCardProps) {
             )}
           </Box>
 
-          {rels.length > 0 && (
-            <Box label={`Relationships (${rels.length})`}>
-              {rels.map((r) => (
-                <Field
-                  key={r.id}
-                  label={relationLabel(r.relation)}
-                  value={r.name}
-                  href={r.related_person_id ? `/dashboard/contacts?id=${r.related_person_id}` : undefined}
-                />
-              ))}
-            </Box>
-          )}
+          <Box label={`Relationships${rels.length ? ` (${rels.length})` : ""}`}>
+            {rels.length === 0 && <p className="py-1 text-sm text-dusty/60">No relationships yet.</p>}
+            {rels.map((r) => (
+              <div key={r.id} className="flex items-center justify-between gap-2 py-1.5">
+                <div className="grid min-w-0 flex-1 grid-cols-[120px_minmax(0,1fr)] gap-2">
+                  <span className="text-sm text-dusty">{relationLabel(r.relation)}</span>
+                  {r.related_person_id ? (
+                    <Link href={`/dashboard/contacts?id=${r.related_person_id}`} className="truncate text-sm text-mauve hover:text-pearl">{r.name}</Link>
+                  ) : (
+                    <span className="truncate text-sm text-pearl">{r.name}</span>
+                  )}
+                </div>
+                <form action={deleteRelationship}>
+                  <input type="hidden" name="id" value={r.id} />
+                  <input type="hidden" name="person_id" value={person.id} />
+                  <button type="submit" aria-label="Remove relationship" className="text-xs text-dusty/60 transition-colors hover:text-pearl">Remove</button>
+                </form>
+              </div>
+            ))}
+            <RelAdd personId={person.id} others={allContacts.filter((c) => c.id !== person.id)} />
+          </Box>
         </div>
 
         {/* RIGHT: what we do with them */}
@@ -371,6 +390,54 @@ export default function ContactCard(props: ContactCardProps) {
 }
 
 /* ------------------------------- pieces ------------------------------- */
+
+function RelAdd({ personId, others }: { personId: string; others: { id: string; name: string }[] }) {
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"contact" | "name">("contact");
+  if (!open) {
+    return (
+      <button type="button" onClick={() => setOpen(true)} className="mt-2 flex w-full items-center gap-1 border-t border-dusty/10 pt-3 text-xs font-medium text-mauve transition-colors hover:text-pearl">
+        + Add relationship
+      </button>
+    );
+  }
+  const useContact = mode === "contact" && others.length > 0;
+  return (
+    <form action={addRelationship} className="mt-2 space-y-2 border-t border-dusty/10 pt-3">
+      <input type="hidden" name="person_id" value={personId} />
+      <div className="flex flex-wrap items-center gap-2">
+        <select name="relation" defaultValue="spouse" className={inp}>
+          {Object.entries(RELATION_LABEL).map(([v, l]) => (
+            <option key={v} value={v}>{l}</option>
+          ))}
+        </select>
+        {others.length > 0 && (
+          <div className="inline-flex overflow-hidden rounded-lg border border-dusty/20 text-xs">
+            <button type="button" onClick={() => setMode("contact")} className={`px-2.5 py-1 ${mode === "contact" ? "bg-bruised text-pearl" : "text-dusty"}`}>A contact</button>
+            <button type="button" onClick={() => setMode("name")} className={`px-2.5 py-1 ${mode === "name" ? "bg-bruised text-pearl" : "text-dusty"}`}>A name</button>
+          </div>
+        )}
+      </div>
+      {useContact ? (
+        <select name="related_person_id" defaultValue="" className={`${inp} w-full`}>
+          <option value="">Choose a contact...</option>
+          {others.map((o) => (
+            <option key={o.id} value={o.id}>{o.name}</option>
+          ))}
+        </select>
+      ) : (
+        <input name="related_name" placeholder="Type a name (someone not in your contacts)" className={`${inp} w-full`} />
+      )}
+      <label className="flex items-center gap-2 text-xs text-dusty">
+        <input type="checkbox" name="is_primary" className="accent-[#c2a3ad]" /> Show in the header (the &ldquo;with ...&rdquo; line)
+      </label>
+      <div className="flex items-center gap-2">
+        <button type="submit" className="btn-mauve text-sm">Add</button>
+        <button type="button" onClick={() => setOpen(false)} className="rounded-lg px-3 py-1.5 text-sm text-dusty hover:text-pearl">Cancel</button>
+      </div>
+    </form>
+  );
+}
 
 function MergePanel({ keepId, keepName, others }: { keepId: string; keepName: string; others: { id: string; name: string }[] }) {
   const [open, setOpen] = useState(false);

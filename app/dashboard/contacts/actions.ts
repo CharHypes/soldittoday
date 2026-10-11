@@ -58,6 +58,7 @@ export async function updatePerson(formData: FormData) {
   setIf("birthday");
   setIf("marital_status");
   setIf("lead_source");
+  setIf("referred_by_person_id");
 
   if (Object.keys(patch).length === 0) return;
 
@@ -106,6 +107,79 @@ export async function createPerson(formData: FormData) {
 
   revalidatePath("/dashboard/contacts");
   redirect(data?.id ? `/dashboard/contacts?id=${data.id}` : "/dashboard/contacts");
+}
+
+const SYMMETRIC_RELATIONS = new Set(["spouse", "partner", "co_buyer", "co_seller", "family"]);
+
+/** Add a relationship from this contact to another contact (or a free-text name).
+ *  Symmetric relations (spouse, partner, co-buyer...) also create the reverse row
+ *  so it shows on both cards. */
+export async function addRelationship(formData: FormData) {
+  const supabase = createSupabaseServer();
+  const { orgId, agentId } = await getOrgContext(supabase);
+  if (!agentId || !orgId) redirect("/dashboard/login");
+
+  const person_id = str(formData.get("person_id"));
+  const relation = str(formData.get("relation")) ?? "other";
+  const related_person_id = str(formData.get("related_person_id"));
+  const related_name = str(formData.get("related_name"));
+  const is_primary = formData.get("is_primary") === "on";
+  if (!person_id || (!related_person_id && !related_name) || related_person_id === person_id) {
+    redirect(`/dashboard/contacts?id=${person_id ?? ""}`);
+  }
+
+  await supabase.from("person_relationships").insert({
+    organization_id: orgId,
+    person_id,
+    relation,
+    related_person_id: related_person_id || null,
+    related_name: related_person_id ? null : related_name,
+    is_primary,
+  });
+
+  if (related_person_id && SYMMETRIC_RELATIONS.has(relation)) {
+    await supabase.from("person_relationships").insert({
+      organization_id: orgId,
+      person_id: related_person_id,
+      relation,
+      related_person_id: person_id,
+      related_name: null,
+      is_primary,
+    });
+  }
+
+  revalidatePath("/dashboard/contacts");
+  redirect(`/dashboard/contacts?id=${person_id}`);
+}
+
+/** Remove a relationship (and its reverse, for symmetric relations). */
+export async function deleteRelationship(formData: FormData) {
+  const supabase = createSupabaseServer();
+  const { agentId } = await getOrgContext(supabase);
+  if (!agentId) redirect("/dashboard/login");
+  const id = str(formData.get("id"));
+  const person_id = str(formData.get("person_id"));
+  if (!id) return;
+
+  const { data: row } = await supabase
+    .from("person_relationships")
+    .select("person_id, related_person_id, relation")
+    .eq("id", id)
+    .maybeSingle();
+
+  await supabase.from("person_relationships").delete().eq("id", id);
+
+  if (row?.related_person_id && SYMMETRIC_RELATIONS.has(row.relation)) {
+    await supabase
+      .from("person_relationships")
+      .delete()
+      .eq("person_id", row.related_person_id)
+      .eq("related_person_id", row.person_id)
+      .eq("relation", row.relation);
+  }
+
+  revalidatePath("/dashboard/contacts");
+  if (person_id) redirect(`/dashboard/contacts?id=${person_id}`);
 }
 
 /** Merge a duplicate contact INTO the one we keep. The database function moves
