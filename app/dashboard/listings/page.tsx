@@ -25,7 +25,7 @@ export default async function ListingsIndex() {
   return (
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
-      <div className="mx-auto max-w-6xl px-6 py-9">
+      <div className="mx-auto max-w-6xl px-6 pb-10 pt-14">
         <DashboardDeals
           deals={deals}
           title="Listings"

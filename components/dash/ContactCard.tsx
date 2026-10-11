@@ -57,6 +57,21 @@ export type ContactCardProps = {
 
 type Section = "name" | "contact" | "personal" | "referral" | "review" | null;
 
+/** Edit pop-out: the form opens over the contact card, which stays visible/dimmed behind it. */
+function Pop({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  return (
+    <div className="bo-overlay" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+      <div className="bo-modal" style={{ maxWidth: 560 }}>
+        <div className="bo-modal-head">
+          <div className="bo-modal-title">{title}</div>
+          <div className="bo-modal-actions"><button type="button" className="bo-close" onClick={onClose} aria-label="Close">&times;</button></div>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function ContactCard(props: ContactCardProps) {
   const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review, documents, allContacts, avatarStyle } = props;
   const headBg = avatarBg(person.id, avatarStyle);
@@ -108,47 +123,48 @@ export default function ContactCard(props: ContactCardProps) {
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">
-          {editing === "name" ? (
-            <form action={save} className="space-y-2">
-              <input type="hidden" name="id" value={person.id} />
-              <div className="flex flex-wrap gap-2">
-                <input name="first_name" defaultValue={person.first_name ?? ""} placeholder="First name" className={inp} />
-                <input name="last_name" defaultValue={person.last_name ?? ""} placeholder="Last name" className={inp} />
-              </div>
-              <input name="display_name" defaultValue={person.display_name ?? ""} placeholder="Display name (optional)" className={`${inp} w-full`} />
-              <input name="company" defaultValue={person.company ?? ""} placeholder="Company (e.g. title company, optional)" className={`${inp} w-full`} />
-              <div className="flex flex-wrap items-center gap-2">
-                <select name="type" defaultValue={person.type} className={inp}>
-                  {Object.entries(TYPE_LABEL).map(([v, l]) => (
-                    <option key={v} value={v}>{l}</option>
-                  ))}
-                </select>
-                <SaveCancel onCancel={() => setEditing(null)} />
-              </div>
-            </form>
-          ) : (
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h2 className="font-serif text-3xl font-medium text-pearl">{fullName(person)}</h2>
-                <p className="mt-1 text-sm text-dusty">
-                  {typeLabel(person.type)}
-                  {person.company ? ` · ${person.company}` : ""}
-                  {primaryRelName && (
-                    <>
-                      {" · with "}
-                      <span className="text-mauve">{primaryRelName}</span>
-                      {primaryRelLabel ? ` (${primaryRelLabel.toLowerCase()})` : ""}
-                    </>
-                  )}
-                </p>
-                {review?.status === "left" && (
-                  <span className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-green/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] text-green">
-                    <span className="h-1.5 w-1.5 rounded-full bg-current" /> Review left
-                  </span>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="font-serif text-3xl font-medium text-pearl">{fullName(person)}</h2>
+              <p className="mt-1 text-sm text-dusty">
+                {typeLabel(person.type)}
+                {person.company ? ` · ${person.company}` : ""}
+                {primaryRelName && (
+                  <>
+                    {" · with "}
+                    <span className="text-mauve">{primaryRelName}</span>
+                    {primaryRelLabel ? ` (${primaryRelLabel.toLowerCase()})` : ""}
+                  </>
                 )}
-              </div>
-              <EditLink onClick={() => setEditing("name")} />
+              </p>
+              {review?.status === "left" && (
+                <span className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-green/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.06em] text-green">
+                  <span className="h-1.5 w-1.5 rounded-full bg-current" /> Review left
+                </span>
+              )}
             </div>
+            <EditLink onClick={() => setEditing("name")} />
+          </div>
+          {editing === "name" && (
+            <Pop title="Edit name" onClose={() => setEditing(null)}>
+              <form action={save} className="space-y-2">
+                <input type="hidden" name="id" value={person.id} />
+                <div className="flex flex-wrap gap-2">
+                  <input name="first_name" defaultValue={person.first_name ?? ""} placeholder="First name" className={inp} />
+                  <input name="last_name" defaultValue={person.last_name ?? ""} placeholder="Last name" className={inp} />
+                </div>
+                <input name="display_name" defaultValue={person.display_name ?? ""} placeholder="Display name (optional)" className={`${inp} w-full`} />
+                <input name="company" defaultValue={person.company ?? ""} placeholder="Company (e.g. title company, optional)" className={`${inp} w-full`} />
+                <div className="flex flex-wrap items-center gap-2">
+                  <select name="type" defaultValue={person.type} className={inp}>
+                    {Object.entries(TYPE_LABEL).map(([v, l]) => (
+                      <option key={v} value={v}>{l}</option>
+                    ))}
+                  </select>
+                  <SaveCancel onCancel={() => setEditing(null)} />
+                </div>
+              </form>
+            </Pop>
           )}
 
           {/* Call / Text / Email ... always present */}
@@ -165,82 +181,85 @@ export default function ContactCard(props: ContactCardProps) {
         {/* LEFT: who they are */}
         <div className="space-y-5">
           <Box label="Contact info" onEdit={() => setEditing("contact")}>
-            {editing === "contact" ? (
-              <form action={save} className="space-y-3 pt-1">
-                <input type="hidden" name="id" value={person.id} />
-                <LabeledInput name="phone" label="Phone" defaultValue={person.phone} placeholder="(734) 555-1234" />
-                <LabeledInput name="email" label="Email" defaultValue={person.email} placeholder="name@email.com" type="email" />
-                <LabeledInput name="address" label="Address" defaultValue={person.address} placeholder="123 Main St, City, MI 48000" />
-                <SaveCancel onCancel={() => setEditing(null)} />
-              </form>
-            ) : (
-              <>
-                <Field label="Phone" value={formatPhone(person.phone)} />
-                <Field label="Email" value={person.email} />
-                <Field label="Address" value={person.address} />
-              </>
+            <>
+              <Field label="Phone" value={formatPhone(person.phone)} />
+              <Field label="Email" value={person.email} />
+              <Field label="Address" value={person.address} />
+            </>
+            {editing === "contact" && (
+              <Pop title="Edit contact info" onClose={() => setEditing(null)}>
+                <form action={save} className="space-y-3 pt-1">
+                  <input type="hidden" name="id" value={person.id} />
+                  <LabeledInput name="phone" label="Phone" defaultValue={person.phone} placeholder="(734) 555-1234" />
+                  <LabeledInput name="email" label="Email" defaultValue={person.email} placeholder="name@email.com" type="email" />
+                  <LabeledInput name="address" label="Address" defaultValue={person.address} placeholder="123 Main St, City, MI 48000" />
+                  <SaveCancel onCancel={() => setEditing(null)} />
+                </form>
+              </Pop>
             )}
           </Box>
 
           <Box label="Personal" onEdit={() => setEditing("personal")}>
-            {editing === "personal" ? (
-              <form action={save} className="space-y-3 pt-1">
-                <input type="hidden" name="id" value={person.id} />
-                <LabeledInput name="birthday" label="Birthday" defaultValue={person.birthday} type="date" />
-                <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-2">
-                  <span className="text-sm text-dusty">Marital status</span>
-                  <select name="marital_status" defaultValue={person.marital_status ?? ""} className={`${inp} w-full`}>
-                    <option value="">...</option>
-                    {Object.entries(MARITAL_LABEL).map(([v, l]) => (
-                      <option key={v} value={v}>{l}</option>
-                    ))}
-                  </select>
-                </div>
-                <SaveCancel onCancel={() => setEditing(null)} />
-              </form>
-            ) : (
-              <>
-                <Field label="Birthday" value={formatBirthday(person.birthday)} />
-                <Field label="Marital status" value={person.marital_status ? MARITAL_LABEL[person.marital_status] ?? person.marital_status : null} />
-                <Field label="Spouse" value={spouseRel?.name ?? null} href={spouseRel?.related_person_id ? `/dashboard/contacts?id=${spouseRel.related_person_id}` : undefined} />
-                <Field label="Homeiversary" value={fmtDate(homeiversary)} />
-              </>
+            <>
+              <Field label="Birthday" value={formatBirthday(person.birthday)} />
+              <Field label="Marital status" value={person.marital_status ? MARITAL_LABEL[person.marital_status] ?? person.marital_status : null} />
+              <Field label="Spouse" value={spouseRel?.name ?? null} href={spouseRel?.related_person_id ? `/dashboard/contacts?id=${spouseRel.related_person_id}` : undefined} />
+              <Field label="Homeiversary" value={fmtDate(homeiversary)} />
+            </>
+            {editing === "personal" && (
+              <Pop title="Edit personal" onClose={() => setEditing(null)}>
+                <form action={save} className="space-y-3 pt-1">
+                  <input type="hidden" name="id" value={person.id} />
+                  <LabeledInput name="birthday" label="Birthday" defaultValue={person.birthday} type="date" />
+                  <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-2">
+                    <span className="text-sm text-dusty">Marital status</span>
+                    <select name="marital_status" defaultValue={person.marital_status ?? ""} className={`${inp} w-full`}>
+                      <option value="">...</option>
+                      {Object.entries(MARITAL_LABEL).map(([v, l]) => (
+                        <option key={v} value={v}>{l}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <SaveCancel onCancel={() => setEditing(null)} />
+                </form>
+              </Pop>
             )}
           </Box>
 
           <Box label="Referral" onEdit={() => setEditing("referral")}>
-            {editing === "referral" ? (
-              <form action={save} className="space-y-3 pt-1">
-                <input type="hidden" name="id" value={person.id} />
-                <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-2">
-                  <label className="text-sm text-dusty">Referred by</label>
-                  <select name="referred_by_person_id" defaultValue={person.referred_by_person_id ?? ""} className={`${inp} w-full`}>
-                    <option value="">... none ...</option>
-                    {allContacts.filter((c) => c.id !== person.id).map((c) => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
+            <>
+              <Field label="Referred by" value={referredBy?.name ?? null} href={referredBy ? `/dashboard/contacts?id=${referredBy.id}` : undefined} />
+              <Field label="Lead source" value={person.lead_source} />
+              {theyReferred.length > 0 && (
+                <div className="grid grid-cols-[120px_minmax(0,1fr)] gap-2 py-1.5">
+                  <span className="text-sm text-dusty">They referred</span>
+                  <span className="flex flex-wrap gap-x-2 text-sm text-pearl">
+                    {theyReferred.map((t, i) => (
+                      <Link key={t.id} href={`/dashboard/contacts?id=${t.id}`} className="text-mauve hover:text-pearl">
+                        {t.name}{i < theyReferred.length - 1 ? "," : ""}
+                      </Link>
                     ))}
-                  </select>
+                  </span>
                 </div>
-                <LabeledInput name="lead_source" label="Lead source" defaultValue={person.lead_source} placeholder="Repeat client, Zillow, referral..." />
-                <SaveCancel onCancel={() => setEditing(null)} />
-              </form>
-            ) : (
-              <>
-                <Field label="Referred by" value={referredBy?.name ?? null} href={referredBy ? `/dashboard/contacts?id=${referredBy.id}` : undefined} />
-                <Field label="Lead source" value={person.lead_source} />
-                {theyReferred.length > 0 && (
-                  <div className="grid grid-cols-[120px_minmax(0,1fr)] gap-2 py-1.5">
-                    <span className="text-sm text-dusty">They referred</span>
-                    <span className="flex flex-wrap gap-x-2 text-sm text-pearl">
-                      {theyReferred.map((t, i) => (
-                        <Link key={t.id} href={`/dashboard/contacts?id=${t.id}`} className="text-mauve hover:text-pearl">
-                          {t.name}{i < theyReferred.length - 1 ? "," : ""}
-                        </Link>
+              )}
+            </>
+            {editing === "referral" && (
+              <Pop title="Edit referral" onClose={() => setEditing(null)}>
+                <form action={save} className="space-y-3 pt-1">
+                  <input type="hidden" name="id" value={person.id} />
+                  <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-2">
+                    <label className="text-sm text-dusty">Referred by</label>
+                    <select name="referred_by_person_id" defaultValue={person.referred_by_person_id ?? ""} className={`${inp} w-full`}>
+                      <option value="">... none ...</option>
+                      {allContacts.filter((c) => c.id !== person.id).map((c) => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
                       ))}
-                    </span>
+                    </select>
                   </div>
-                )}
-              </>
+                  <LabeledInput name="lead_source" label="Lead source" defaultValue={person.lead_source} placeholder="Repeat client, Zillow, referral..." />
+                  <SaveCancel onCancel={() => setEditing(null)} />
+                </form>
+              </Pop>
             )}
           </Box>
 
@@ -322,31 +341,7 @@ export default function ContactCard(props: ContactCardProps) {
           </Box>
 
           <Box label="Reviews" onEdit={() => setEditing("review")}>
-            {editing === "review" ? (
-              <form action={save2(savePersonReview)} className="space-y-3 pt-1">
-                <input type="hidden" name="person_id" value={person.id} />
-                {review && <input type="hidden" name="review_id" value={review.id} />}
-                <div className="grid grid-cols-[98px_minmax(0,1fr)] items-center gap-2.5">
-                  <label className="text-[13px] text-ink3">Status</label>
-                  <select name="status" defaultValue={review?.status ?? "requested"} className={`${inp} w-full`}>
-                    <option value="requested">Review requested</option>
-                    <option value="left">Review left</option>
-                    <option value="declined">Declined</option>
-                  </select>
-                </div>
-                <LabeledInput name="platform" label="Platform" defaultValue={review?.platform} placeholder="Google, Zillow, Facebook" />
-                <div className="grid grid-cols-[98px_minmax(0,1fr)] items-center gap-2.5">
-                  <label className="text-[13px] text-ink3">Stars</label>
-                  <select name="rating" defaultValue={review?.rating != null ? String(review.rating) : ""} className={`${inp} w-full`}>
-                    <option value="">...</option>
-                    {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} star{n > 1 ? "s" : ""}</option>)}
-                  </select>
-                </div>
-                <LabeledInput name="quote" label="Quote" defaultValue={review?.quote} placeholder="What they said" />
-                <LabeledInput name="url" label="Link" defaultValue={review?.url} placeholder="https://..." />
-                <SaveCancel onCancel={() => setEditing(null)} />
-              </form>
-            ) : review ? (
+            {review ? (
               <div className="py-1">
                 {review.quote && <p className="text-[13.5px] italic text-pearl">&ldquo;{review.quote}&rdquo;</p>}
                 <p className="mt-1 text-[12px] text-dusty">
@@ -359,6 +354,33 @@ export default function ContactCard(props: ContactCardProps) {
               </div>
             ) : (
               <p className="py-1 text-[13px] text-ink3">No review tracked yet. Use Edit to log one.</p>
+            )}
+            {editing === "review" && (
+              <Pop title="Edit review" onClose={() => setEditing(null)}>
+                <form action={save2(savePersonReview)} className="space-y-3 pt-1">
+                  <input type="hidden" name="person_id" value={person.id} />
+                  {review && <input type="hidden" name="review_id" value={review.id} />}
+                  <div className="grid grid-cols-[98px_minmax(0,1fr)] items-center gap-2.5">
+                    <label className="text-[13px] text-ink3">Status</label>
+                    <select name="status" defaultValue={review?.status ?? "requested"} className={`${inp} w-full`}>
+                      <option value="requested">Review requested</option>
+                      <option value="left">Review left</option>
+                      <option value="declined">Declined</option>
+                    </select>
+                  </div>
+                  <LabeledInput name="platform" label="Platform" defaultValue={review?.platform} placeholder="Google, Zillow, Facebook" />
+                  <div className="grid grid-cols-[98px_minmax(0,1fr)] items-center gap-2.5">
+                    <label className="text-[13px] text-ink3">Stars</label>
+                    <select name="rating" defaultValue={review?.rating != null ? String(review.rating) : ""} className={`${inp} w-full`}>
+                      <option value="">...</option>
+                      {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n} star{n > 1 ? "s" : ""}</option>)}
+                    </select>
+                  </div>
+                  <LabeledInput name="quote" label="Quote" defaultValue={review?.quote} placeholder="What they said" />
+                  <LabeledInput name="url" label="Link" defaultValue={review?.url} placeholder="https://..." />
+                  <SaveCancel onCancel={() => setEditing(null)} />
+                </form>
+              </Pop>
             )}
           </Box>
 
