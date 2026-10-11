@@ -47,13 +47,29 @@ export default async function DashboardHome() {
   const [{ data: txns }, { data: lsts }] = await Promise.all([
     supabase
       .from("transactions")
-      .select("id, address, city, state, zip, price, status, target_close_date, photo_url, clients(name), agents(name)")
+      .select("id, address, city, state, zip, price, status, target_close_date, photo_url, agent_id, client_id")
       .order("created_at", { ascending: false }),
     supabase
       .from("listings")
-      .select("id, address, city, state, zip, price, status, list_date, photo_url, clients(name), agents(name)")
+      .select("id, address, city, state, zip, price, status, list_date, photo_url, agent_id, client_id")
       .order("created_at", { ascending: false }),
   ]);
+
+  // Resolve agent + client names by id (two FKs each to agents/clients make the
+  // PostgREST embed shortcut ambiguous, so we look them up directly).
+  const rows = [...((txns ?? []) as any[]), ...((lsts ?? []) as any[])];
+  const agentIds = [...new Set(rows.map((r) => r.agent_id).filter(Boolean))];
+  const clientIds = [...new Set(rows.map((r) => r.client_id).filter(Boolean))];
+  const agentMap = new Map<string, string>();
+  const clientMap = new Map<string, string>();
+  if (agentIds.length) {
+    const { data } = await supabase.from("agents").select("id, name").in("id", agentIds);
+    (data ?? []).forEach((a: any) => agentMap.set(a.id, a.name));
+  }
+  if (clientIds.length) {
+    const { data } = await supabase.from("clients").select("id, name").in("id", clientIds);
+    (data ?? []).forEach((c: any) => clientMap.set(c.id, c.name));
+  }
 
   // milestones for progress on buyer deals
   const txnIds = (txns ?? []).map((t: any) => t.id);
@@ -81,8 +97,8 @@ export default async function DashboardHome() {
     const total = ms.length;
     const done = ms.filter((m) => m.status === "done").length;
     const current = ms.find((m) => m.status !== "done");
-    const clientName = t.clients?.name ?? null;
-    const agentName = t.agents?.name ?? null;
+    const clientName = (t.client_id && clientMap.get(t.client_id)) || null;
+    const agentName = (t.agent_id && agentMap.get(t.agent_id)) || null;
     deals.push({
       kind: "transaction",
       id: t.id,
@@ -106,8 +122,8 @@ export default async function DashboardHome() {
   }
 
   for (const l of (lsts ?? []) as any[]) {
-    const clientName = l.clients?.name ?? null;
-    const agentName = l.agents?.name ?? null;
+    const clientName = (l.client_id && clientMap.get(l.client_id)) || null;
+    const agentName = (l.agent_id && agentMap.get(l.agent_id)) || null;
     deals.push({
       kind: "listing",
       id: l.id,
