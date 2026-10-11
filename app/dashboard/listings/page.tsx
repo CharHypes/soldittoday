@@ -29,7 +29,8 @@ export default async function ListingsIndex() {
           deals={deals}
           title="Listings"
           subtitle={`${activeCount} active ${activeCount === 1 ? "listing" : "listings"}`}
-          action={{ href: "/dashboard/listings/new", label: "+ Add Listing" }}
+          action={{ href: "/dashboard/listings/import", label: "+ From MLS" }}
+          secondaryAction={{ href: "/dashboard/listings/new", label: "+ Add manually" }}
           filters={LISTING_FILTERS}
         />
       </div>

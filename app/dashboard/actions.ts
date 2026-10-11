@@ -219,6 +219,56 @@ export async function syncTransactionPhoto(formData: FormData) {
   revalidatePath("/dashboard/buyers");
 }
 
+/** Import one of the agent's own MLS listings into the dashboard: pulls all the
+ *  fields from the feed, saves our own copy of the main photo, and de-dupes by
+ *  MLS number (re-importing just refreshes the existing row). */
+export async function importMlsListing(formData: FormData) {
+  const { supabase, id: agent_id, orgId } = await ctx();
+  if (!agent_id || !orgId) redirect("/dashboard/login");
+
+  const mls = str(formData.get("mls_number"));
+  if (!mls) redirect("/dashboard/listings/import");
+
+  const m = await getListingByMlsNumber(mls);
+  if (!m) redirect("/dashboard/listings/import");
+
+  const row: Record<string, unknown> = {
+    organization_id: orgId,
+    agent_id,
+    visibility: "organization",
+    address: m.address,
+    city: m.city,
+    state: m.state,
+    zip: m.zip,
+    price: m.price ?? null,
+    beds: m.beds ?? null,
+    baths: m.baths ?? null,
+    sqft: m.sqft ?? null,
+    status: mlsStatusLabel(m.status) ?? "Active",
+    mls_number: mls,
+    listing_key: m.id,
+    source: "idx",
+  };
+
+  const { data: existing } = await supabase.from("listings").select("id").eq("mls_number", mls).maybeSingle();
+  let listingId = existing?.id ?? null;
+  if (listingId) {
+    await supabase.from("listings").update(row).eq("id", listingId);
+  } else {
+    const { data } = await supabase.from("listings").insert(row).select("id").single();
+    listingId = data?.id ?? null;
+  }
+
+  if (listingId && m.photoUrl) {
+    const local = await rehostMainPhoto(m.photoUrl, `${orgId}/listing-${listingId}.jpg`);
+    await supabase.from("listings").update({ photo_url: local ?? m.photoUrl }).eq("id", listingId);
+  }
+
+  revalidatePath("/dashboard/listings");
+  revalidatePath("/dashboard");
+  redirect(listingId ? `/dashboard/listings/${listingId}` : "/dashboard/listings");
+}
+
 export async function updateListing(formData: FormData) {
   const { supabase } = await ctx();
   const id = str(formData.get("id"));
