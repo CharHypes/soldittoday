@@ -35,6 +35,7 @@ export default function AgentHubHeader() {
           <Tab href="/dashboard/listings" active={is("/dashboard/listings")}>Listings</Tab>
           <Tab href="/dashboard/buyers" active={is("/dashboard/buyers")}>Buyers</Tab>
           <Tab href="/dashboard/leads" active={is("/dashboard/leads")}>Leads</Tab>
+          <Tab href="/dashboard/search" active={is("/dashboard/search")}>Search</Tab>
         </nav>
 
         <div className="flex-1" />
