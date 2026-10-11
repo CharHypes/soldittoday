@@ -33,3 +33,6 @@ export const PERSON_DOCS_BUCKET = "person-docs";
 
 /** PUBLIC bucket for organization brand logos (served via the public CDN). */
 export const BRAND_BUCKET = "brand-logos";
+
+/** PUBLIC bucket for OUR copy of each property's main photo (re-hosted from the MLS). */
+export const LISTING_PHOTOS_BUCKET = "listing-photos";

@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
-import { createAdminClient, PORTAL_DOCS_BUCKET } from "@/lib/supabase/admin";
+import { createAdminClient, PORTAL_DOCS_BUCKET, LISTING_PHOTOS_BUCKET } from "@/lib/supabase/admin";
 import { AI_ENABLED, draftWithClaude } from "@/lib/ai";
 import { getListingByMlsNumber } from "@/lib/idx";
 import { findMatchingPerson } from "@/lib/peopleMatch";
@@ -123,8 +123,37 @@ export async function createListing(formData: FormData) {
  * (agent-triggered) ... never per render. RLS scopes the update to the agent's
  * own listing. No-op if IDX is off, there's no MLS number, or no match is found.
  */
+/** Map the MLS feed status to our listing status labels. */
+function mlsStatusLabel(s: string | null | undefined): string | null {
+  if (s === "active") return "Active";
+  if (s === "pending") return "Pending";
+  if (s === "sold") return "Sold";
+  return null;
+}
+
+/** Download the MLS main photo and save OUR OWN copy in the public bucket, so we
+ *  keep it even if the MLS later drops it. Returns our public url, or null to
+ *  fall back to the source url. Only the first/main photo. */
+async function rehostMainPhoto(sourceUrl: string, path: string): Promise<string | null> {
+  const admin = createAdminClient();
+  if (!admin) return null;
+  try {
+    const res = await fetch(sourceUrl);
+    if (!res.ok) return null;
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    const contentType = res.headers.get("content-type") || "image/jpeg";
+    const up = await admin.storage.from(LISTING_PHOTOS_BUCKET).upload(path, bytes, { contentType, upsert: true });
+    if (up.error) return null;
+    const { data } = admin.storage.from(LISTING_PHOTOS_BUCKET).getPublicUrl(path);
+    // cache-bust so a refreshed photo shows immediately
+    return data?.publicUrl ? `${data.publicUrl}?v=${Date.now()}` : null;
+  } catch {
+    return null;
+  }
+}
+
 export async function syncListingPhoto(formData: FormData) {
-  const { supabase, id: agent_id } = await ctx();
+  const { supabase, id: agent_id, orgId } = await ctx();
   if (!agent_id) redirect("/dashboard/login");
 
   const listingId = str(formData.get("id"));
@@ -139,8 +168,18 @@ export async function syncListingPhoto(formData: FormData) {
   if (listing?.mls_number) {
     const match = await getListingByMlsNumber(listing.mls_number);
     if (match) {
-      const patch: { listing_key: string; photo_url?: string } = { listing_key: match.id };
-      if (match.photoUrl) patch.photo_url = match.photoUrl;
+      // A listing is OUR sell side, so the MLS price IS the list price ... sync it + the key details.
+      const patch: Record<string, unknown> = { listing_key: match.id };
+      if (match.price != null) patch.price = match.price;
+      if (match.beds != null) patch.beds = match.beds;
+      if (match.baths != null) patch.baths = match.baths;
+      if (match.sqft != null) patch.sqft = match.sqft;
+      const statusLabel = mlsStatusLabel(match.status);
+      if (statusLabel) patch.status = statusLabel;
+      if (match.photoUrl) {
+        const local = await rehostMainPhoto(match.photoUrl, `${orgId}/listing-${listingId}.jpg`);
+        patch.photo_url = local ?? match.photoUrl;
+      }
       await supabase.from("listings").update(patch).eq("id", listingId);
     }
   }
@@ -151,7 +190,7 @@ export async function syncListingPhoto(formData: FormData) {
 /** Resolve a buyer transaction's MLS number to its Spark ListingKey + main photo
  *  and cache them on the transaction row. Agent-triggered; RLS-scoped. */
 export async function syncTransactionPhoto(formData: FormData) {
-  const { supabase, id: agent_id } = await ctx();
+  const { supabase, id: agent_id, orgId } = await ctx();
   if (!agent_id) redirect("/dashboard/login");
 
   const txId = str(formData.get("id"));
@@ -166,8 +205,12 @@ export async function syncTransactionPhoto(formData: FormData) {
   if (tx?.mls_number) {
     const match = await getListingByMlsNumber(tx.mls_number);
     if (match) {
-      const patch: { listing_key: string; photo_url?: string } = { listing_key: match.id };
-      if (match.photoUrl) patch.photo_url = match.photoUrl;
+      // Buyer deal: NEVER overwrite the purchase price with the MLS list price ... photo only.
+      const patch: Record<string, unknown> = { listing_key: match.id };
+      if (match.photoUrl) {
+        const local = await rehostMainPhoto(match.photoUrl, `${orgId}/txn-${txId}.jpg`);
+        patch.photo_url = local ?? match.photoUrl;
+      }
       await supabase.from("transactions").update(patch).eq("id", txId);
     }
   }
