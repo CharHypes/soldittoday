@@ -49,6 +49,7 @@ export default function DashboardDeals({
   secondaryAction,
   actionSlot,
   filters,
+  hideFilters = false,
   showTicker = false,
 }: {
   deals: DashDeal[];
@@ -59,6 +60,7 @@ export default function DashboardDeals({
   secondaryAction?: { href: string; label: string };
   actionSlot?: React.ReactNode;
   filters?: FilterDef[];
+  hideFilters?: boolean;
   showTicker?: boolean;
 }) {
   const fils = filters ?? DEFAULT_FILTERS;
@@ -86,11 +88,13 @@ export default function DashboardDeals({
           {subtitle && <p className="mt-1 text-sm text-dusty">{subtitle}</p>}
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
-          <Seg>
-            {fils.map((f, i) => (
-              <button key={f.label} onClick={() => setFi(i)} className={segBtn(fi === i)}>{f.label}</button>
-            ))}
-          </Seg>
+          {!hideFilters && (
+            <Seg>
+              {fils.map((f, i) => (
+                <button key={f.label} onClick={() => setFi(i)} className={segBtn(fi === i)}>{f.label}</button>
+              ))}
+            </Seg>
+          )}
           <Seg>
             <button onClick={() => setView("tiles")} className={segBtn(!list)} aria-label="Tiles"><GridIcon /> Tiles</button>
             <button onClick={() => setView("list")} className={segBtn(list)} aria-label="List"><ListIcon /> List</button>

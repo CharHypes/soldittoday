@@ -37,7 +37,7 @@ export default async function DashboardHome() {
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
-        <DashboardDeals deals={deals} stats={stats} showTicker />
+        <DashboardDeals deals={deals} stats={stats} hideFilters showTicker />
       </div>
     </main>
   );
