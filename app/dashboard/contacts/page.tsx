@@ -13,6 +13,17 @@ export const dynamic = "force-dynamic";
 
 type ListRow = Pick<Person, "id" | "first_name" | "last_name" | "company" | "display_name" | "type" | "sort_key">;
 type Txn = { id: string; address: string; status: string | null; price: number | null; target_close_date: string | null };
+type Deal = {
+  id: string;
+  kind: "transaction" | "listing";
+  role: string;
+  address: string | null;
+  status: string | null;
+  price: number | null;
+  closeDate: string | null;
+  listDate: string | null;
+  href: string;
+};
 
 export default async function ContactsPage({ searchParams }: { searchParams: { id?: string; q?: string } }) {
   const supabase = createSupabaseServer();
@@ -59,7 +70,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
   let rels: { id: string; relation: string; name: string | null; related_person_id: string | null }[] = [];
   let primaryRelName: string | null = null;
   let primaryRelLabel: string | null = null;
-  let deals: { transaction_id: string; role: string; txn?: Txn | null }[] = [];
+  let deals: Deal[] = [];
   let notes: { id: string; body: string; created_at: string }[] = [];
   let review: { id: string; status: string; platform: string | null; rating: number | null; quote: string | null; url: string | null } | null = null;
   let documents: { id: string; kind: string; title: string | null; sensitivity: string; filename: string | null; view_only: boolean; created_at: string }[] = [];
@@ -107,6 +118,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
       primaryRelLabel = RELATION_LABEL[primary.relation] ?? null;
     }
 
+    // Transactions (buyer/seller deals) + listings (sell side), merged into one list.
     const { data: tp } = await supabase.from("transaction_people").select("transaction_id, role").eq("person_id", selectedId);
     const txnIds = (tp ?? []).map((x: any) => x.transaction_id);
     let txns: Txn[] = [];
@@ -114,7 +126,34 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
       const { data } = await supabase.from("transactions").select("id, address, status, price, target_close_date").in("id", txnIds);
       txns = (data ?? []) as Txn[];
     }
-    deals = (tp ?? []).map((link: any) => ({ ...link, txn: txns.find((t) => t.id === link.transaction_id) ?? null }));
+    const txnDeals: Deal[] = (tp ?? []).map((link: any) => {
+      const t = txns.find((x) => x.id === link.transaction_id);
+      return {
+        id: link.transaction_id, kind: "transaction", role: link.role,
+        address: t?.address ?? null, status: t?.status ?? null, price: t?.price ?? null,
+        closeDate: t?.target_close_date ?? null, listDate: null,
+        href: `/dashboard/buyers/${link.transaction_id}`,
+      };
+    });
+
+    const { data: lp } = await supabase.from("listing_people").select("listing_id, role").eq("person_id", selectedId);
+    const lstIds = (lp ?? []).map((x: any) => x.listing_id);
+    let lsts: { id: string; address: string; status: string | null; price: number | null; list_date: string | null }[] = [];
+    if (lstIds.length) {
+      const { data } = await supabase.from("listings").select("id, address, status, price, list_date").in("id", lstIds);
+      lsts = (data ?? []) as typeof lsts;
+    }
+    const lstDeals: Deal[] = (lp ?? []).map((link: any) => {
+      const l = lsts.find((x) => x.id === link.listing_id);
+      return {
+        id: link.listing_id, kind: "listing", role: link.role,
+        address: l?.address ?? null, status: l?.status ?? null, price: l?.price ?? null,
+        closeDate: null, listDate: l?.list_date ?? null,
+        href: `/dashboard/listings/${link.listing_id}`,
+      };
+    });
+
+    deals = [...txnDeals, ...lstDeals];
 
     const { data: nData } = await supabase
       .from("person_notes").select("id, body, created_at").eq("person_id", selectedId).order("created_at", { ascending: false });

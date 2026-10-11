@@ -21,9 +21,15 @@ import {
 type NamedRef = { id: string; name: string };
 type Rel = { id: string; relation: string; name: string | null; related_person_id: string | null };
 type Deal = {
-  transaction_id: string;
+  id: string;
+  kind: "transaction" | "listing";
   role: string;
-  txn?: { address: string; status: string | null; price: number | null; target_close_date: string | null } | null;
+  address: string | null;
+  status: string | null;
+  price: number | null;
+  closeDate: string | null;
+  listDate: string | null;
+  href: string;
 };
 
 type Note = { id: string; body: string; created_at: string };
@@ -70,8 +76,8 @@ export default function ContactCard(props: ContactCardProps) {
   // Homeiversary = the close date of their most recent CLOSED purchase.
   const homeiversary = (() => {
     const closed = deals
-      .filter((d) => (d.role === "buyer" || d.role === "co_buyer") && d.txn?.status && /clos/i.test(d.txn.status) && d.txn?.target_close_date)
-      .map((d) => d.txn!.target_close_date as string)
+      .filter((d) => (d.role === "buyer" || d.role === "co_buyer") && d.status && /clos/i.test(d.status) && d.closeDate)
+      .map((d) => d.closeDate as string)
       .sort();
     return closed.length ? closed[closed.length - 1] : null;
   })();
@@ -243,16 +249,18 @@ export default function ContactCard(props: ContactCardProps) {
             ) : (
               <ul className="space-y-3 pt-1">
                 {deals.map((d) => (
-                  <li key={d.transaction_id} className="flex gap-3">
+                  <li key={`${d.kind}-${d.id}`} className="flex gap-3">
                     <div className="grid h-[76px] w-[108px] shrink-0 place-items-center rounded-[10px] border border-dusty/15 bg-bruised text-dusty/60">
                       <HouseIcon />
                     </div>
                     <div className="min-w-0">
-                      <p className="txn-addr truncate text-[13.5px] font-semibold text-[#dcc4cb]">{d.txn?.address ?? "Property"}</p>
+                      <Link href={d.href} className="txn-addr block truncate text-[13.5px] font-semibold text-[#dcc4cb] hover:underline">
+                        {d.address ?? "Property"}
+                      </Link>
                       <p className="mt-0.5 text-[12px] text-dusty">
-                        {[ROLE_LABEL[d.role] || typeLabel(person.type), money(d.txn?.price), closeDate(d.txn?.target_close_date ?? null)].filter(Boolean).join(" · ")}
+                        {[ROLE_LABEL[d.role] || typeLabel(person.type), money(d.price), d.kind === "listing" ? listedDate(d.listDate) : closeDate(d.closeDate)].filter(Boolean).join(" · ")}
                       </p>
-                      {d.txn?.status && <StatusPill status={d.txn.status} />}
+                      {d.status && <StatusPill status={d.status} />}
                     </div>
                   </li>
                 ))}
@@ -374,6 +382,10 @@ function relationLabel(r: string): string {
 function closeDate(d: string | null): string | null {
   if (!d) return null;
   return `Closes ${new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+}
+function listedDate(d: string | null): string | null {
+  if (!d) return null;
+  return `Listed ${new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
 }
 
 function DocItem({ doc }: { doc: Doc }) {

@@ -70,7 +70,42 @@ export async function createListing(formData: FormData) {
     .select("id")
     .single();
 
+  // Also create/link a CRM contact (person) so this listing shows on a contact
+  // card. Starting a listing starts a contact. Keeps the legacy client row.
+  if (clientName && client_id && listing?.id) {
+    const trimmed = clientName.trim();
+    const cut = trimmed.lastIndexOf(" ");
+    const first = cut > 0 ? trimmed.slice(0, cut) : null;
+    const last = cut > 0 ? trimmed.slice(cut + 1) : trimmed;
+    const { data: person } = await supabase
+      .from("people")
+      .insert({
+        organization_id: orgId,
+        agent_id,
+        visibility: "organization",
+        first_name: first,
+        last_name: last,
+        display_name: trimmed,
+        type: "seller",
+        email: str(formData.get("client_email")),
+        phone: str(formData.get("client_phone")),
+        source_client_id: client_id,
+      })
+      .select("id")
+      .single();
+    if (person?.id) {
+      await supabase.from("listing_people").insert({
+        organization_id: orgId,
+        listing_id: listing.id,
+        person_id: person.id,
+        role: "seller",
+        name_on_deal: trimmed,
+      });
+    }
+  }
+
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/contacts");
   redirect(listing?.id ? `/dashboard/listings/${listing.id}` : "/dashboard");
 }
 
