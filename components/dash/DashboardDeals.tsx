@@ -172,9 +172,25 @@ function StatusChip({ d }: { d: DashDeal }) {
   return <span className={`inline-block rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide ${PILL[d.statusKind]}`}>{d.statusLabel}</span>;
 }
 
+function ClientChip({ d, size }: { d: DashDeal; size: "tile" | "list" }) {
+  const av = size === "tile" ? "h-[26px] w-[26px] text-[10.5px]" : "h-6 w-6 text-[9.5px]";
+  const nameCls = size === "tile" ? "text-[13px] text-pearl/80" : "hidden truncate text-[12.5px] text-pearl/80 sm:inline";
+  const avatar = <span className={`grid ${av} place-items-center rounded-full bg-mauve font-bold text-plum`}>{d.clientInitials}</span>;
+  const name = <span className={nameCls}>{d.clientName ?? (d.clientPersonId ? "Contact" : size === "tile" ? "No client yet" : "No client")}</span>;
+  if (d.clientPersonId) {
+    return (
+      <Link href={`/dashboard/contacts?id=${d.clientPersonId}`} className="relative z-10 flex items-center gap-2 hover:underline" title="Open contact card">
+        {avatar}{name}
+      </Link>
+    );
+  }
+  return <span className="flex items-center gap-2">{avatar}{name}</span>;
+}
+
 function TileCard({ d }: { d: DashDeal }) {
   return (
-    <Link href={d.href} className="aurora-ring group block overflow-hidden rounded-[18px] border border-dusty/12 bg-bruised">
+    <article className="aurora-ring group relative block overflow-hidden rounded-[18px] border border-dusty/12 bg-bruised">
+      <Link href={d.href} aria-label={`Open ${d.address}`} className="absolute inset-0" />
       <Photo d={d} h="h-[170px]" />
       <div className="p-[16px_18px_18px]">
         <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-mauve">{d.side}</div>
@@ -196,17 +212,17 @@ function TileCard({ d }: { d: DashDeal }) {
           </div>
         )}
         <div className="mt-3 flex items-center gap-2 border-t border-dusty/10 pt-3">
-          <span className="grid h-[26px] w-[26px] place-items-center rounded-full bg-mauve text-[10.5px] font-bold text-plum">{d.clientInitials}</span>
-          <span className="text-[13px] text-pearl/80">{d.clientName ?? "No client yet"}</span>
+          <ClientChip d={d} size="tile" />
         </div>
       </div>
-    </Link>
+    </article>
   );
 }
 
 function ListRow({ d }: { d: DashDeal }) {
   return (
-    <Link href={d.href} className="aurora-ring flex items-stretch overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised">
+    <article className="aurora-ring relative flex items-stretch overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised">
+      <Link href={d.href} aria-label={`Open ${d.address}`} className="absolute inset-0" />
       <div className="w-[116px] flex-none"><Photo d={d} h="h-full min-h-[96px]" overlays={false} /></div>
       <div className="grid flex-1 items-center gap-4 p-[12px_18px] md:grid-cols-[minmax(0,1.9fr)_0.9fr_1.2fr_1.1fr]">
         <div className="min-w-0">
@@ -234,14 +250,13 @@ function ListRow({ d }: { d: DashDeal }) {
           )}
         </div>
         <div className="flex items-center justify-end gap-2">
-          <span className="grid h-6 w-6 place-items-center rounded-full bg-mauve text-[9.5px] font-bold text-plum">{d.clientInitials}</span>
-          <span className="hidden truncate text-[12.5px] text-pearl/80 sm:inline">{d.clientName ?? "No client"}</span>
+          <ClientChip d={d} size="list" />
           {d.agentName && (
             <span title={`${d.agentName} is on this deal`} className="ml-1 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-plum/70 text-[9px] font-bold text-pearl ring-1 ring-dusty/25">{d.agentInitials}</span>
           )}
         </div>
       </div>
-    </Link>
+    </article>
   );
 }
 

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { updateListing, addSnapshot, syncListingPhoto } from "@/app/dashboard/actions";
+import { updateListing, addSnapshot, syncListingPhoto, deleteListing } from "@/app/dashboard/actions";
+import DeleteButton from "@/components/dash/DeleteButton";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 import ListTracImport from "@/components/dash/ListTracImport";
 import CopyLink from "@/components/dash/CopyLink";
@@ -334,6 +335,19 @@ export default function ListingWorkspace({
             </a>
           </div>
         )}
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-xl2 border border-red-500/15 bg-red-500/5 p-4">
+        <div>
+          <p className="text-sm font-semibold text-pearl">Delete this listing</p>
+          <p className="text-xs text-dusty">Removes the listing and its seller link, notes, and documents. This can&rsquo;t be undone.</p>
+        </div>
+        <DeleteButton
+          action={deleteListing}
+          id={listing.id}
+          label="Delete listing"
+          confirmText={`Delete ${listing.address ?? "this listing"}? This removes the listing and its notes and documents, and can't be undone.`}
+        />
       </div>
     </div>
   );

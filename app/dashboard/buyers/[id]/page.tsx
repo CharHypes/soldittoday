@@ -11,7 +11,9 @@ import {
   toggleDocumentShare,
   deleteDocument,
   syncTransactionPhoto,
+  deleteTransaction,
 } from "@/app/dashboard/actions";
+import DeleteButton from "@/components/dash/DeleteButton";
 import { DOCS_ENABLED } from "@/lib/supabase/admin";
 
 export const metadata: Metadata = {
@@ -262,6 +264,18 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
               </div>
             ))}
           </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl2 border border-red-500/15 bg-red-500/5 p-4">
+          <div>
+            <p className="text-sm font-semibold text-pearl">Delete this buyer deal</p>
+            <p className="text-xs text-dusty">Removes the transaction and its closing tracker, notes, and documents. This can&rsquo;t be undone.</p>
+          </div>
+          <DeleteButton
+            action={deleteTransaction}
+            id={tx.id}
+            label="Delete buyer deal"
+            confirmText={`Delete ${tx.address ?? "this buyer deal"}? This removes the transaction and its notes and documents, and can't be undone.`}
+          />
         </div>
       </div>
     </main>

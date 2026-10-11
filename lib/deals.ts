@@ -16,6 +16,7 @@ export type DashDeal = {
   closeDateRaw: string | null;
   clientName: string | null;
   clientInitials: string;
+  clientPersonId: string | null;
   agentName: string | null;
   agentInitials: string;
   progressPct: number | null;
@@ -92,6 +93,24 @@ export async function loadDeals(
     (data ?? []).forEach((c: any) => clientMap.set(c.id, c.name));
   }
 
+  // the linked CONTACT (people) for each deal, so the client name links to their card
+  const txnIdList = txns.map((t) => t.id);
+  const lstIdList = lsts.map((l) => l.id);
+  const txnPerson = new Map<string, string>();
+  const lstPerson = new Map<string, string>();
+  if (txnIdList.length) {
+    const { data } = await supabase.from("transaction_people").select("transaction_id, person_id").in("transaction_id", txnIdList);
+    (data ?? []).forEach((x: any) => {
+      if (x.person_id && !txnPerson.has(x.transaction_id)) txnPerson.set(x.transaction_id, x.person_id);
+    });
+  }
+  if (lstIdList.length) {
+    const { data } = await supabase.from("listing_people").select("listing_id, person_id").in("listing_id", lstIdList);
+    (data ?? []).forEach((x: any) => {
+      if (x.person_id && !lstPerson.has(x.listing_id)) lstPerson.set(x.listing_id, x.person_id);
+    });
+  }
+
   const txnIds = txns.map((t) => t.id);
   const msByTxn = new Map<string, { label: string; status: string }[]>();
   if (txnIds.length) {
@@ -132,6 +151,7 @@ export async function loadDeals(
       closeDateRaw: t.target_close_date ?? null,
       clientName,
       clientInitials: initials(clientName),
+      clientPersonId: txnPerson.get(t.id) ?? null,
       agentName,
       agentInitials: initials(agentName),
       progressPct: total ? Math.round((done / total) * 100) : null,
@@ -159,6 +179,7 @@ export async function loadDeals(
       closeDateRaw: null,
       clientName,
       clientInitials: initials(clientName),
+      clientPersonId: lstPerson.get(l.id) ?? null,
       agentName,
       agentInitials: initials(agentName),
       progressPct: null,

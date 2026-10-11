@@ -269,6 +269,28 @@ export async function importMlsListing(formData: FormData) {
   redirect(listingId ? `/dashboard/listings/${listingId}` : "/dashboard/listings");
 }
 
+/** Delete a listing (RLS-scoped). Cascades its seller link, notes, documents. */
+export async function deleteListing(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  if (!id) return;
+  await supabase.from("listings").delete().eq("id", id);
+  revalidatePath("/dashboard/listings");
+  revalidatePath("/dashboard");
+  redirect("/dashboard/listings");
+}
+
+/** Delete a buyer transaction (RLS-scoped). Cascades its people link, milestones, notes. */
+export async function deleteTransaction(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  if (!id) return;
+  await supabase.from("transactions").delete().eq("id", id);
+  revalidatePath("/dashboard/buyers");
+  revalidatePath("/dashboard");
+  redirect("/dashboard/buyers");
+}
+
 export async function updateListing(formData: FormData) {
   const { supabase } = await ctx();
   const id = str(formData.get("id"));
