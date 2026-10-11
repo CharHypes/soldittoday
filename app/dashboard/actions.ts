@@ -8,6 +8,7 @@ import { getOrgContext } from "@/lib/context";
 import { createAdminClient, PORTAL_DOCS_BUCKET } from "@/lib/supabase/admin";
 import { AI_ENABLED, draftWithClaude } from "@/lib/ai";
 import { getListingByMlsNumber } from "@/lib/idx";
+import { findMatchingPerson } from "@/lib/peopleMatch";
 
 const num = (v: FormDataEntryValue | null): number | null => {
   const s = String(v ?? "").trim();
@@ -37,12 +38,18 @@ export async function createListing(formData: FormData) {
   const { supabase, id: agent_id, orgId } = await ctx();
   if (!agent_id || !orgId) redirect("/dashboard/login");
 
-  let client_id: string | null = null;
   const clientName = str(formData.get("client_name"));
-  if (clientName) {
+  const clientEmail = str(formData.get("client_email"));
+  const clientPhone = str(formData.get("client_phone"));
+
+  // Duplicate-matcher: reuse an existing contact when it confidently matches.
+  const match = clientName ? await findMatchingPerson(supabase, orgId, { name: clientName, email: clientEmail, phone: clientPhone }) : null;
+
+  let client_id: string | null = match?.source_client_id ?? null;
+  if (!client_id && clientName) {
     const { data: client } = await supabase
       .from("clients")
-      .insert({ organization_id: orgId, agent_id, name: clientName, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")), type: "seller" })
+      .insert({ organization_id: orgId, agent_id, name: clientName, email: clientEmail, phone: clientPhone, type: "seller" })
       .select("id")
       .single();
     client_id = client?.id ?? null;
@@ -70,37 +77,38 @@ export async function createListing(formData: FormData) {
     .select("id")
     .single();
 
-  // Also create/link a CRM contact (person) so this listing shows on a contact
-  // card. Starting a listing starts a contact. Keeps the legacy client row.
-  if (clientName && client_id && listing?.id) {
+  // Create/link a CRM contact (person) so this listing shows on a contact card.
+  // Reuse the matched contact when there is one; otherwise create a new person.
+  if (clientName && listing?.id) {
     const trimmed = clientName.trim();
-    const cut = trimmed.lastIndexOf(" ");
-    const first = cut > 0 ? trimmed.slice(0, cut) : null;
-    const last = cut > 0 ? trimmed.slice(cut + 1) : trimmed;
-    const { data: person } = await supabase
-      .from("people")
-      .insert({
-        organization_id: orgId,
-        agent_id,
-        visibility: "organization",
-        first_name: first,
-        last_name: last,
-        display_name: trimmed,
-        type: "seller",
-        email: str(formData.get("client_email")),
-        phone: str(formData.get("client_phone")),
-        source_client_id: client_id,
-      })
-      .select("id")
-      .single();
-    if (person?.id) {
-      await supabase.from("listing_people").insert({
-        organization_id: orgId,
-        listing_id: listing.id,
-        person_id: person.id,
-        role: "seller",
-        name_on_deal: trimmed,
-      });
+    let personId = match?.id ?? null;
+    if (!personId) {
+      const cut = trimmed.lastIndexOf(" ");
+      const { data: person } = await supabase
+        .from("people")
+        .insert({
+          organization_id: orgId,
+          agent_id,
+          visibility: "organization",
+          first_name: cut > 0 ? trimmed.slice(0, cut) : null,
+          last_name: cut > 0 ? trimmed.slice(cut + 1) : trimmed,
+          display_name: trimmed,
+          type: "seller",
+          email: clientEmail,
+          phone: clientPhone,
+          source_client_id: client_id,
+        })
+        .select("id")
+        .single();
+      personId = person?.id ?? null;
+    }
+    if (personId) {
+      await supabase
+        .from("listing_people")
+        .upsert(
+          { organization_id: orgId, listing_id: listing.id, person_id: personId, role: "seller", name_on_deal: trimmed },
+          { onConflict: "listing_id,person_id,role", ignoreDuplicates: true }
+        );
     }
   }
 
@@ -412,12 +420,18 @@ export async function createBuyer(formData: FormData) {
   const { supabase, id: agent_id, orgId } = await ctx();
   if (!agent_id || !orgId) redirect("/dashboard/login");
 
-  let client_id: string | null = null;
   const clientName = str(formData.get("client_name"));
-  if (clientName) {
+  const clientEmail = str(formData.get("client_email"));
+  const clientPhone = str(formData.get("client_phone"));
+
+  // Duplicate-matcher: reuse an existing contact when it confidently matches.
+  const match = clientName ? await findMatchingPerson(supabase, orgId, { name: clientName, email: clientEmail, phone: clientPhone }) : null;
+
+  let client_id: string | null = match?.source_client_id ?? null;
+  if (!client_id && clientName) {
     const { data: client } = await supabase
       .from("clients")
-      .insert({ organization_id: orgId, agent_id, name: clientName, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")), type: "buyer" })
+      .insert({ organization_id: orgId, agent_id, name: clientName, email: clientEmail, phone: clientPhone, type: "buyer" })
       .select("id")
       .single();
     client_id = client?.id ?? null;
@@ -452,38 +466,39 @@ export async function createBuyer(formData: FormData) {
       }))
     );
 
-    // Also create/link a CRM contact (person) so this transaction shows up on a
-    // contact card. Starting a transaction starts a contact. Keeps the legacy
-    // client row too (source_client_id) so the Buyers pages keep working.
-    if (clientName && client_id) {
+    // Create/link a CRM contact (person) so this transaction shows on a contact
+    // card. Reuse the matched contact when there is one; otherwise create a new
+    // person. Keeps the legacy client row (source_client_id) for the Buyers pages.
+    if (clientName) {
       const trimmed = clientName.trim();
-      const cut = trimmed.lastIndexOf(" ");
-      const first = cut > 0 ? trimmed.slice(0, cut) : null;
-      const last = cut > 0 ? trimmed.slice(cut + 1) : trimmed;
-      const { data: person } = await supabase
-        .from("people")
-        .insert({
-          organization_id: orgId,
-          agent_id,
-          visibility: "organization",
-          first_name: first,
-          last_name: last,
-          display_name: trimmed,
-          type: "buyer",
-          email: str(formData.get("client_email")),
-          phone: str(formData.get("client_phone")),
-          source_client_id: client_id,
-        })
-        .select("id")
-        .single();
-      if (person?.id) {
-        await supabase.from("transaction_people").insert({
-          organization_id: orgId,
-          transaction_id: tx.id,
-          person_id: person.id,
-          role: "buyer",
-          name_on_deal: trimmed,
-        });
+      let personId = match?.id ?? null;
+      if (!personId) {
+        const cut = trimmed.lastIndexOf(" ");
+        const { data: person } = await supabase
+          .from("people")
+          .insert({
+            organization_id: orgId,
+            agent_id,
+            visibility: "organization",
+            first_name: cut > 0 ? trimmed.slice(0, cut) : null,
+            last_name: cut > 0 ? trimmed.slice(cut + 1) : trimmed,
+            display_name: trimmed,
+            type: "buyer",
+            email: clientEmail,
+            phone: clientPhone,
+            source_client_id: client_id,
+          })
+          .select("id")
+          .single();
+        personId = person?.id ?? null;
+      }
+      if (personId) {
+        await supabase
+          .from("transaction_people")
+          .upsert(
+            { organization_id: orgId, transaction_id: tx.id, person_id: personId, role: "buyer", name_on_deal: trimmed },
+            { onConflict: "transaction_id,person_id,role", ignoreDuplicates: true }
+          );
       }
     }
   }

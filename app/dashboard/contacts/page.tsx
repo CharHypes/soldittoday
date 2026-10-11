@@ -25,7 +25,7 @@ type Deal = {
   href: string;
 };
 
-export default async function ContactsPage({ searchParams }: { searchParams: { id?: string; q?: string } }) {
+export default async function ContactsPage({ searchParams }: { searchParams: { id?: string; q?: string; dupe?: string } }) {
   const supabase = createSupabaseServer();
   const q = (searchParams.q ?? "").trim();
 
@@ -188,6 +188,12 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
             </Link>
           </div>
         </div>
+
+        {searchParams.dupe === "1" && person && (
+          <div className="mt-5 rounded-xl border border-gold/30 bg-gold/10 px-4 py-2.5 text-sm text-pearl">
+            This contact already existed, so we opened it instead of creating a duplicate.
+          </div>
+        )}
 
         <div className="mt-7 grid gap-6 md:grid-cols-[326px_minmax(0,1fr)]">
           {/* LEFT list */}

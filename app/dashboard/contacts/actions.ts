@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
+import { findMatchingPerson } from "@/lib/peopleMatch";
 import { createAdminClient, PERSON_DOCS_BUCKET } from "@/lib/supabase/admin";
 
 const ID_KINDS = ["drivers_license", "state_id", "passport", "resident_card"];
@@ -77,6 +78,14 @@ export async function createPerson(formData: FormData) {
   // need at least one name part
   if (!first && !last && !company && !display) redirect("/dashboard/contacts/new");
 
+  const email = str(formData.get("email"));
+  const phone = str(formData.get("phone"));
+
+  // Duplicate-matcher: if this confidently matches an existing contact, open
+  // that one instead of creating a copy.
+  const match = await findMatchingPerson(supabase, orgId, { name: display, email, phone });
+  if (match) redirect(`/dashboard/contacts?id=${match.id}&dupe=1`);
+
   const { data } = await supabase
     .from("people")
     .insert({
@@ -88,8 +97,8 @@ export async function createPerson(formData: FormData) {
       company,
       display_name: display,
       type: str(formData.get("type")) ?? "lead",
-      email: str(formData.get("email")),
-      phone: str(formData.get("phone")),
+      email,
+      phone,
       address: str(formData.get("address")),
     })
     .select("id")
