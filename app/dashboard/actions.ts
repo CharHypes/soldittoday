@@ -728,6 +728,38 @@ export async function createBuyer(formData: FormData) {
             { onConflict: "transaction_id,person_id,role", ignoreDuplicates: true }
           );
       }
+
+      // Referral + source on the buyer's contact card. The card reads
+      // people.lead_source and people.referred_by_person_id ... so set those.
+      // A named referrer becomes (or matches) a contact, and the link shows on
+      // BOTH cards ("Referred by X" here, "They referred Y" on the referrer's).
+      const leadSource = str(formData.get("lead_source"));
+      const referredByName = str(formData.get("referred_by"));
+      if (personId && (leadSource || referredByName)) {
+        let referrerId: string | null = null;
+        if (referredByName) {
+          const rMatch = await findMatchingPerson(supabase, orgId, { name: referredByName, email: null, phone: null });
+          referrerId = rMatch?.id ?? null;
+          if (!referrerId) {
+            const rt = referredByName.trim();
+            const rc = rt.lastIndexOf(" ");
+            const { data: rp } = await supabase
+              .from("people")
+              .insert({
+                organization_id: orgId, agent_id, visibility: "organization",
+                first_name: rc > 0 ? rt.slice(0, rc) : null, last_name: rc > 0 ? rt.slice(rc + 1) : rt,
+                display_name: rt, type: "referral_source",
+              })
+              .select("id")
+              .single();
+            referrerId = rp?.id ?? null;
+          }
+        }
+        const patch: Record<string, unknown> = {};
+        if (leadSource) patch.lead_source = leadSource;
+        if (referrerId) patch.referred_by_person_id = referrerId;
+        if (Object.keys(patch).length) await supabase.from("people").update(patch).eq("id", personId);
+      }
     }
 
     // Co-buyer (spouse / partner) ... also saved to Contacts and linked.

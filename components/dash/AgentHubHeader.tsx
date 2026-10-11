@@ -16,7 +16,7 @@ export default function AgentHubHeader() {
     <header className="sticky top-0 z-30 border-b border-dusty/12 bg-plum/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-5 px-6">
         {/* brand ... the REAL full-color logo, unchanged, in every theme */}
-        <Link href="/dashboard/contacts" className="flex shrink-0 items-center gap-3">
+        <Link href="/dashboard" className="flex shrink-0 items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {brand.logoUrl ? (
             <img src={brand.logoUrl} alt={brand.brandName ?? "Logo"} className="h-7 w-auto max-w-[180px] object-contain" />

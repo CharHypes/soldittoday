@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DashboardDeals, { type FilterDef } from "@/components/dash/DashboardDeals";
+import AddListingButton from "@/components/dash/AddListingButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { loadDeals } from "@/lib/deals";
 
@@ -25,12 +26,14 @@ export default async function ListingsIndex() {
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
+        <div className="mb-5 flex items-center justify-end">
+          <AddListingButton />
+        </div>
         <DashboardDeals
           deals={deals}
           title="Listings"
           subtitle={`${activeCount} active ${activeCount === 1 ? "listing" : "listings"}`}
           action={{ href: "/dashboard/listings/import", label: "+ From MLS" }}
-          secondaryAction={{ href: "/dashboard/listings/new", label: "+ Add manually" }}
           filters={LISTING_FILTERS}
         />
       </div>
