@@ -33,7 +33,7 @@ export default function AgentHubHeader() {
           <Tab href="/dashboard/contacts" active={is("/dashboard/contacts")}>Contacts</Tab>
           <Tab href="/dashboard/listings" active={is("/dashboard/listings")}>Listings</Tab>
           <Tab href="/dashboard/buyers" active={is("/dashboard/buyers")}>Buyers</Tab>
-          <span className="cursor-default rounded-lg px-3 py-2 text-[13.5px] text-dusty/40" title="Coming soon">Leads</span>
+          <Tab href="/dashboard/leads" active={is("/dashboard/leads")}>Leads</Tab>
         </nav>
 
         <div className="flex-1" />

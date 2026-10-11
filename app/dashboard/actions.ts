@@ -291,6 +291,39 @@ export async function deleteTransaction(formData: FormData) {
   redirect("/dashboard/buyers");
 }
 
+/** Stage labels shown as the deal's status when it moves along the pipeline. */
+const STAGE_STATUS: Record<string, string> = {
+  lead: "Lead",
+  buyer: "Active Buyer",
+  under_contract: "Under Contract",
+  closed: "Closed",
+  archived: "Archived",
+};
+
+/**
+ * Move a buyer-side deal along the pipeline (lead -> buyer -> under_contract ->
+ * closed / archived). One record, status changes ... carries its people, notes,
+ * emails and tasks with it. Stamps stage_changed_at for "days in stage".
+ */
+export async function moveStage(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  const toStage = str(formData.get("stage"));
+  if (!id || !toStage || !(toStage in STAGE_STATUS)) return;
+  await supabase
+    .from("transactions")
+    .update({
+      pipeline_stage: toStage,
+      stage_changed_at: new Date().toISOString(),
+      status: STAGE_STATUS[toStage],
+    })
+    .eq("id", id);
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/leads");
+  revalidatePath("/dashboard/buyers");
+  revalidatePath(`/dashboard/buyers/${id}`);
+}
+
 export async function updateListing(formData: FormData) {
   const { supabase } = await ctx();
   const id = str(formData.get("id"));
@@ -591,7 +624,9 @@ export async function createBuyer(formData: FormData) {
       state: str(formData.get("state")),
       zip: str(formData.get("zip")),
       price: num(formData.get("price")),
-      status: str(formData.get("status")) ?? "Under Contract",
+      status: "Lead",
+      pipeline_stage: "lead",
+      lead_source: str(formData.get("lead_source")),
       target_close_date: str(formData.get("target_close_date")),
       mls_number: str(formData.get("mls_number")),
       photo_url: str(formData.get("photo_url")),
@@ -647,9 +682,10 @@ export async function createBuyer(formData: FormData) {
     }
   }
 
+  revalidatePath("/dashboard/leads");
   revalidatePath("/dashboard/buyers");
   revalidatePath("/dashboard/contacts");
-  redirect(tx?.id ? `/dashboard/buyers/${tx.id}` : "/dashboard/buyers");
+  redirect("/dashboard/leads");
 }
 
 export async function updateTransaction(formData: FormData) {

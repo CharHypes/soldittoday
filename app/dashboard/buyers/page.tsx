@@ -18,7 +18,7 @@ const BUYER_FILTERS: FilterDef[] = [
 
 export default async function BuyersHome() {
   const supabase = createSupabaseServer();
-  const deals = await loadDeals(supabase, "transactions");
+  const deals = await loadDeals(supabase, "transactions", ["buyer", "under_contract", "closed"]);
   const inProgress = deals.filter((d) => d.statusKind === "under").length;
 
   return (

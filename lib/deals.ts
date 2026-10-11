@@ -62,14 +62,25 @@ const cityLine = (c: string | null, s: string | null, z: string | null) =>
 /** Load buyer transactions and/or seller listings as unified deal cards. */
 export async function loadDeals(
   supabase: SupabaseClient,
-  scope: "all" | "transactions" | "listings"
+  scope: "all" | "transactions" | "listings",
+  /** Restrict buyer-side transactions to these pipeline stages (e.g. ["buyer","under_contract"]). */
+  stages?: string[]
 ): Promise<DashDeal[]> {
   const wantTx = scope !== "listings";
   const wantLs = scope !== "transactions";
 
+  const txQuery = () => {
+    let q = supabase
+      .from("transactions")
+      .select("id, address, city, state, zip, price, status, pipeline_stage, stage_changed_at, target_close_date, photo_url, agent_id, client_id")
+      .order("created_at", { ascending: false });
+    if (stages && stages.length) q = q.in("pipeline_stage", stages);
+    return q;
+  };
+
   const [txRes, lsRes] = await Promise.all([
     wantTx
-      ? supabase.from("transactions").select("id, address, city, state, zip, price, status, target_close_date, photo_url, agent_id, client_id").order("created_at", { ascending: false })
+      ? txQuery()
       : Promise.resolve({ data: [] as any[] }),
     wantLs
       ? supabase.from("listings").select("id, address, city, state, zip, price, status, list_date, photo_url, agent_id, client_id").order("created_at", { ascending: false })

@@ -12,7 +12,9 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardHome() {
   const supabase = createSupabaseServer();
-  const deals = await loadDeals(supabase, "all");
+  // In-motion deals only: under-contract buyer transactions + active listings.
+  // Leads and active buyers (no house yet) live on the Leads / Buyers tabs.
+  const deals = await loadDeals(supabase, "all", ["under_contract"]);
 
   const under = deals.filter((d) => d.statusKind === "under");
   const active = deals.filter((d) => d.statusKind === "active");
