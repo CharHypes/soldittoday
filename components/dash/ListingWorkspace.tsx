@@ -75,6 +75,7 @@ export default function ListingWorkspace({
   aiEnabled: boolean;
 }) {
   const [tab, setTab] = useState<Tab>("Overview");
+  const [editOpen, setEditOpen] = useState(false);
   const latest = snapshots[0];
   const facts = [
     listing.beds != null ? `${num(listing.beds)} bd` : null,
@@ -189,38 +190,64 @@ export default function ListingWorkspace({
               </button>
             </div>
 
-            {/* Edit listing details (existing functionality) */}
-            <form action={updateListing} className={`${card} space-y-4`}>
-              <input type="hidden" name="id" value={listing.id} />
-              <p className="text-sm font-semibold text-pearl">Edit listing details</p>
-              <label className={lbl}>Address<input name="address" defaultValue={listing.address ?? ""} className={`mt-1.5 ${inp}`} /></label>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <label className={`${lbl} col-span-2`}>City<input name="city" defaultValue={listing.city ?? ""} className={`mt-1.5 ${inp}`} /></label>
-                <label className={lbl}>State<input name="state" defaultValue={listing.state ?? ""} className={`mt-1.5 ${inp}`} /></label>
-                <label className={lbl}>ZIP<input name="zip" defaultValue={listing.zip ?? ""} className={`mt-1.5 ${inp}`} /></label>
+            {/* Listing details ... edit opens a pop-out over the record */}
+            <div className={card}>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm font-semibold text-pearl">Listing details</p>
+                <button type="button" className="bo-btn bo-primary" onClick={() => setEditOpen(true)}>Edit listing</button>
               </div>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                <label className={lbl}>List Price<input name="price" defaultValue={listing.price ?? ""} className={`mt-1.5 ${inp}`} /></label>
-                <label className={lbl}>MLS #<input name="mls_number" defaultValue={listing.mls_number ?? ""} className={`mt-1.5 ${inp}`} /></label>
-                <label className={lbl}>
-                  Status
-                  <select name="status" defaultValue={listing.status ?? "Active"} className={`mt-1.5 ${inp}`}>
-                    <option>Active</option><option>Pending</option><option>Sold</option><option>Withdrawn</option>
-                  </select>
-                </label>
+              <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+                <div className="col-span-2"><dt className="text-dusty">Address</dt><dd className="text-pearl">{listing.address || "Not set"}</dd></div>
+                <div><dt className="text-dusty">List price</dt><dd className="text-pearl">{listing.price ? `$${Number(listing.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "Not set"}</dd></div>
+                <div><dt className="text-dusty">Status</dt><dd className="text-pearl">{listing.status || "Not set"}</dd></div>
+                <div><dt className="text-dusty">Beds / baths</dt><dd className="text-pearl">{`${listing.beds ?? "?"} / ${listing.baths ?? "?"}`}</dd></div>
+                <div><dt className="text-dusty">MLS #</dt><dd className="text-pearl">{listing.mls_number || "Not set"}</dd></div>
+              </dl>
+            </div>
+
+            {editOpen && (
+              <div className="bo-overlay" onClick={(e) => { if (e.target === e.currentTarget) setEditOpen(false); }}>
+                <div className="bo-modal">
+                  <div className="bo-modal-head">
+                    <div className="bo-modal-title">Edit listing</div>
+                    <div className="bo-modal-actions"><button type="button" className="bo-close" onClick={() => setEditOpen(false)} aria-label="Close">&times;</button></div>
+                  </div>
+                  <form action={updateListing}>
+                    <input type="hidden" name="id" value={listing.id} />
+                    <div className="bo-section">
+                      <div className="bo-section-title">Property</div>
+                      <div className="bo-form-grid">
+                        <div className="bo-field bo-span2"><label>Address</label><input name="address" defaultValue={listing.address ?? ""} /></div>
+                        <div className="bo-field"><label>City</label><input name="city" defaultValue={listing.city ?? ""} /></div>
+                        <div className="bo-field"><label>State</label><input name="state" defaultValue={listing.state ?? ""} /></div>
+                        <div className="bo-field"><label>ZIP</label><input name="zip" defaultValue={listing.zip ?? ""} /></div>
+                        <div className="bo-field"><label>MLS #</label><input name="mls_number" defaultValue={listing.mls_number ?? ""} /></div>
+                        <div className="bo-field"><label>Status</label>
+                          <select name="status" defaultValue={listing.status ?? "Active"}>
+                            <option>Active</option><option>Pending</option><option>Sold</option><option>Withdrawn</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bo-section">
+                      <div className="bo-section-title">Details</div>
+                      <div className="bo-form-grid bo-cols-4">
+                        <div className="bo-field"><label>List price</label><input name="price" inputMode="numeric" defaultValue={listing.price ?? ""} /></div>
+                        <div className="bo-field"><label>Beds</label><input name="beds" inputMode="numeric" defaultValue={listing.beds ?? ""} /></div>
+                        <div className="bo-field"><label>Baths</label><input name="baths" inputMode="numeric" defaultValue={listing.baths ?? ""} /></div>
+                        <div className="bo-field"><label>Sq ft</label><input name="sqft" inputMode="numeric" defaultValue={listing.sqft ?? ""} /></div>
+                        <div className="bo-field"><label>Listed</label><input type="date" name="list_date" defaultValue={listing.list_date ?? ""} /></div>
+                        <div className="bo-field bo-span2"><label>Photo URL</label><input name="photo_url" defaultValue={listing.photo_url ?? ""} placeholder="https://..." /></div>
+                      </div>
+                    </div>
+                    <div className="bo-modal-foot">
+                      <button type="button" className="bo-btn" onClick={() => setEditOpen(false)}>Cancel</button>
+                      <button type="submit" className="bo-save">Save changes</button>
+                    </div>
+                  </form>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <label className={lbl}>Beds<input name="beds" defaultValue={listing.beds ?? ""} className={`mt-1.5 ${inp}`} /></label>
-                <label className={lbl}>Baths<input name="baths" defaultValue={listing.baths ?? ""} className={`mt-1.5 ${inp}`} /></label>
-                <label className={lbl}>Sq Ft<input name="sqft" defaultValue={listing.sqft ?? ""} className={`mt-1.5 ${inp}`} /></label>
-                <label className={lbl}>Listed<input type="date" name="list_date" defaultValue={listing.list_date ?? ""} className={`mt-1.5 ${inp}`} /></label>
-              </div>
-              <label className={lbl}>
-                Listing photo URL
-                <input name="photo_url" defaultValue={listing.photo_url ?? ""} placeholder="https://... (paste a photo link; auto-fills once IDX photo sync is live)" className={`mt-1.5 ${inp}`} />
-              </label>
-              <button type="submit" className="btn-aurora">Save changes</button>
-            </form>
+            )}
           </div>
         )}
 

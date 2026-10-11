@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import CopyLink from "@/components/dash/CopyLink";
+import EditTransactionButton from "@/components/dash/EditTransactionButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import {
   updateTransaction,
@@ -211,36 +212,26 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
           </div>
         </div>
 
-        {/* Details */}
-        <form action={updateTransaction} className={`${card} space-y-4`}>
-          <input type="hidden" name="id" value={tx.id} />
-          <p className="text-sm font-semibold text-pearl">Details</p>
-          <label className={lbl}>Property address<input name="address" defaultValue={tx.address ?? ""} className={`mt-1.5 ${inp}`} /></label>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <label className={`${lbl} col-span-2`}>City<input name="city" defaultValue={tx.city ?? ""} className={`mt-1.5 ${inp}`} /></label>
-            <label className={lbl}>State<input name="state" defaultValue={tx.state ?? ""} className={`mt-1.5 ${inp}`} /></label>
-            <label className={lbl}>ZIP<input name="zip" defaultValue={tx.zip ?? ""} className={`mt-1.5 ${inp}`} /></label>
+        {/* Details ... edit opens a pop-out over the record */}
+        <div className={card}>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-semibold text-pearl">Details</p>
+            <EditTransactionButton
+              tx={{
+                id: tx.id, address: tx.address, city: tx.city, state: tx.state, zip: tx.zip,
+                price: tx.price, status: tx.status, target_close_date: tx.target_close_date,
+                mls_number: tx.mls_number, photo_url: tx.photo_url,
+              }}
+            />
           </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            <label className={lbl}>Purchase Price<input name="price" defaultValue={tx.price ?? ""} className={`mt-1.5 ${inp}`} /></label>
-            <label className={lbl}>Target Close<input type="date" name="target_close_date" defaultValue={tx.target_close_date ?? ""} className={`mt-1.5 ${inp}`} /></label>
-            <label className={lbl}>
-              Status
-              <select name="status" defaultValue={tx.status ?? "Under Contract"} className={`mt-1.5 ${inp}`}>
-                <option>Under Contract</option><option>Pending</option><option>Closed</option><option>Cancelled</option>
-              </select>
-            </label>
-          </div>
-          <label className={lbl}>
-            MLS number <span className="text-dusty/60">(pulls the home photo from the MLS)</span>
-            <input name="mls_number" defaultValue={tx.mls_number ?? ""} placeholder="e.g. 26039316" className={`mt-1.5 ${inp}`} />
-          </label>
-          <label className={lbl}>
-            House photo URL <span className="text-dusty/60">(optional)</span>
-            <input name="photo_url" defaultValue={tx.photo_url ?? ""} placeholder="https://..." className={`mt-1.5 ${inp}`} />
-          </label>
-          <button type="submit" className="btn-aurora">Save changes</button>
-        </form>
+          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
+            <div className="col-span-2"><dt className="text-dusty">Address</dt><dd className="text-pearl">{tx.address || "Not set"}</dd></div>
+            <div><dt className="text-dusty">Purchase price</dt><dd className="text-pearl">{tx.price ? `$${Number(tx.price).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "Not set"}</dd></div>
+            <div><dt className="text-dusty">Status</dt><dd className="text-pearl">{tx.status || "Not set"}</dd></div>
+            <div><dt className="text-dusty">Target close</dt><dd className="text-pearl">{tx.target_close_date || "Not set"}</dd></div>
+            <div><dt className="text-dusty">MLS #</dt><dd className="text-pearl">{tx.mls_number || "Not set"}</dd></div>
+          </dl>
+        </div>
 
         {/* Notes */}
         <div className={card}>
