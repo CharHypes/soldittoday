@@ -108,6 +108,20 @@ export async function createPerson(formData: FormData) {
   redirect(data?.id ? `/dashboard/contacts?id=${data.id}` : "/dashboard/contacts");
 }
 
+/** Merge a duplicate contact INTO the one we keep. The database function moves
+ *  every linked record and deletes the duplicate, after its own permission check. */
+export async function mergePeople(formData: FormData) {
+  const supabase = createSupabaseServer();
+  const { orgId, agentId } = await getOrgContext(supabase);
+  if (!agentId || !orgId) redirect("/dashboard/login");
+  const keep = str(formData.get("keep_id"));
+  const dup = str(formData.get("dup_id"));
+  if (!keep || !dup || keep === dup) redirect(`/dashboard/contacts?id=${keep ?? ""}`);
+  await supabase.rpc("merge_people", { p_keep: keep, p_dup: dup });
+  revalidatePath("/dashboard/contacts");
+  redirect(`/dashboard/contacts?id=${keep}&merged=1`);
+}
+
 /** Add a private note to a contact. */
 export async function addPersonNote(formData: FormData) {
   const supabase = createSupabaseServer();

@@ -25,7 +25,7 @@ type Deal = {
   href: string;
 };
 
-export default async function ContactsPage({ searchParams }: { searchParams: { id?: string; q?: string; dupe?: string } }) {
+export default async function ContactsPage({ searchParams }: { searchParams: { id?: string; q?: string; dupe?: string; merged?: string } }) {
   const supabase = createSupabaseServer();
   const q = (searchParams.q ?? "").trim();
 
@@ -194,6 +194,11 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
             This contact already existed, so we opened it instead of creating a duplicate.
           </div>
         )}
+        {searchParams.merged === "1" && person && (
+          <div className="mt-5 rounded-xl border border-green/30 bg-green/10 px-4 py-2.5 text-sm text-pearl">
+            Contacts merged ... everything now lives on this card.
+          </div>
+        )}
 
         <div className="mt-7 grid gap-6 md:grid-cols-[326px_minmax(0,1fr)]">
           {/* LEFT list */}
@@ -228,6 +233,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
               notes={notes}
               review={review}
               documents={documents}
+              allContacts={list.map((p) => ({ id: p.id, name: lastFirst(p) }))}
             />
           ) : (
             <section className="grid min-h-[300px] place-items-center rounded-xl2 border border-dusty/15 bg-bruised text-dusty">

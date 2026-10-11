@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { updatePerson, addPersonNote, deletePersonNote, savePersonReview, uploadPersonDocument, openPersonDocument, deletePersonDocument } from "@/app/dashboard/contacts/actions";
+import { updatePerson, addPersonNote, deletePersonNote, savePersonReview, uploadPersonDocument, openPersonDocument, deletePersonDocument, mergePeople } from "@/app/dashboard/contacts/actions";
 import { money } from "@/lib/format";
 import {
   fullName,
@@ -49,12 +49,13 @@ export type ContactCardProps = {
   notes: Note[];
   review: Review | null;
   documents: Doc[];
+  allContacts: { id: string; name: string }[];
 };
 
 type Section = "name" | "contact" | "personal" | "referral" | "review" | null;
 
 export default function ContactCard(props: ContactCardProps) {
-  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review, documents } = props;
+  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review, documents, allContacts } = props;
   const [editing, setEditing] = useState<Section>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
 
@@ -363,11 +364,57 @@ export default function ContactCard(props: ContactCardProps) {
           </Box>
         </div>
       </div>
+
+      <MergePanel keepId={person.id} keepName={fullName(person)} others={allContacts.filter((c) => c.id !== person.id)} />
     </section>
   );
 }
 
 /* ------------------------------- pieces ------------------------------- */
+
+function MergePanel({ keepId, keepName, others }: { keepId: string; keepName: string; others: { id: string; name: string }[] }) {
+  const [open, setOpen] = useState(false);
+  const [dup, setDup] = useState("");
+  if (others.length === 0) return null;
+  const dupName = others.find((o) => o.id === dup)?.name ?? "that contact";
+  return (
+    <div className="mt-7 border-t border-dusty/10 pt-4">
+      {!open ? (
+        <button type="button" onClick={() => setOpen(true)} className="text-xs text-dusty transition-colors hover:text-pearl">
+          Found a duplicate? Merge another contact into this one
+        </button>
+      ) : (
+        <div className="rounded-xl2 border border-dusty/15 bg-bruised/50 p-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-dusty/80">Merge a duplicate into {keepName}</p>
+          <p className="mt-1 text-xs text-dusty">
+            Everything from the contact you pick ... their transactions, documents, notes, and reviews ... moves here, and that
+            contact is permanently removed. This can&apos;t be undone.
+          </p>
+          <form
+            action={mergePeople}
+            onSubmit={(e) => {
+              if (!dup) { e.preventDefault(); return; }
+              if (!window.confirm(`Merge "${dupName}" into "${keepName}"? This moves all of their records here and permanently deletes "${dupName}". This can't be undone.`)) {
+                e.preventDefault();
+              }
+            }}
+            className="mt-3 flex flex-wrap items-center gap-2"
+          >
+            <input type="hidden" name="keep_id" value={keepId} />
+            <select name="dup_id" value={dup} onChange={(e) => setDup(e.target.value)} className={`${inp} min-w-[220px]`}>
+              <option value="">Choose the duplicate to merge in...</option>
+              {others.map((o) => (
+                <option key={o.id} value={o.id}>{o.name}</option>
+              ))}
+            </select>
+            <button type="submit" disabled={!dup} className="btn-mauve text-sm disabled:opacity-50">Merge in</button>
+            <button type="button" onClick={() => { setOpen(false); setDup(""); }} className="rounded-lg px-3 py-1.5 text-sm text-dusty hover:text-pearl">Cancel</button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
 
 const inp =
   "rounded-lg border border-dusty/25 bg-plum/50 px-3 py-2 text-sm text-pearl placeholder:text-dusty/50 focus:border-auroraMauve/60 focus:outline-none";
