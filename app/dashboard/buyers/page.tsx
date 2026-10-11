@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
+import DashboardDeals, { type FilterDef } from "@/components/dash/DashboardDeals";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { loadDeals } from "@/lib/deals";
 
 export const metadata: Metadata = {
   title: "Buyers | Sold It Today",
@@ -8,81 +10,28 @@ export const metadata: Metadata = {
 };
 export const dynamic = "force-dynamic";
 
-function money(n: number | null): string {
-  if (n == null) return "";
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
-}
+const BUYER_FILTERS: FilterDef[] = [
+  { label: "In progress", kinds: ["under"] },
+  { label: "Closed", kinds: ["closed"] },
+  { label: "All", kinds: ["under", "closed", "other"] },
+];
 
 export default async function BuyersHome() {
   const supabase = createSupabaseServer();
-  const { data: txns } = await supabase
-    .from("transactions")
-    .select("id, address, city, state, zip, price, status, target_close_date, client_id")
-    .order("created_at", { ascending: false });
-
-  const rows = txns ?? [];
-  const clientIds = [...new Set(rows.map((t: any) => t.client_id).filter(Boolean))];
-  const clientMap = new Map<string, string>();
-  if (clientIds.length) {
-    const { data } = await supabase.from("clients").select("id, name").in("id", clientIds);
-    (data ?? []).forEach((c: any) => clientMap.set(c.id, c.name));
-  }
+  const deals = await loadDeals(supabase, "transactions");
+  const inProgress = deals.filter((d) => d.statusKind === "under").length;
 
   return (
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-pearl">Buyers</h1>
-            <p className="mt-1 text-sm text-dusty">
-              {rows.length} {rows.length === 1 ? "buyer" : "buyers"} in progress
-            </p>
-          </div>
-          <a href="/dashboard/buyers/new" className="btn-aurora !px-5 !py-3">
-            + Add Buyer
-          </a>
-        </div>
-
-        {rows.length === 0 ? (
-          <div className="mt-10 rounded-xl2 border border-dusty/15 bg-plum/40 p-10 text-center text-dusty">
-            No buyers yet. Add one to start their closing tracker and share a private portal.
-          </div>
-        ) : (
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {rows.map((t) => {
-              const clientName = t.client_id ? clientMap.get(t.client_id) : null;
-              return (
-                <a
-                  key={t.id}
-                  href={`/dashboard/buyers/${t.id}`}
-                  className="aurora-ring block rounded-xl2 border border-dusty/15 bg-plum/50 p-6 transition-colors hover:border-auroraMauve/40"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      {clientName && <p className="text-sm text-mauve">{clientName}</p>}
-                      <h2 className="mt-0.5 text-lg font-semibold text-pearl">{t.address}</h2>
-                    </div>
-                    <span className="shrink-0 rounded-full bg-wine/40 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-pearl">
-                      {t.status}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm text-dusty">
-                    {[t.city, t.state].filter(Boolean).join(", ")} {t.zip ?? ""}
-                  </p>
-                  <div className="mt-3 flex items-center justify-between text-sm">
-                    <span className="font-semibold text-pearl">{money(t.price)}</span>
-                    {t.target_close_date && (
-                      <span className="text-xs text-dusty/70">
-                        Close: {new Date(t.target_close_date + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                      </span>
-                    )}
-                  </div>
-                </a>
-              );
-            })}
-          </div>
-        )}
+        <DashboardDeals
+          deals={deals}
+          title="Buyers"
+          subtitle={`${inProgress} ${inProgress === 1 ? "buyer" : "buyers"} in progress`}
+          action={{ href: "/dashboard/buyers/new", label: "+ Add Buyer" }}
+          filters={BUYER_FILTERS}
+        />
       </div>
     </main>
   );

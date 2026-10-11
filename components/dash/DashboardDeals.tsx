@@ -2,27 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import type { DashDeal } from "@/lib/deals";
 
-export type DashDeal = {
-  kind: "transaction" | "listing";
-  id: string;
-  href: string;
-  photoUrl: string | null;
-  address: string;
-  cityLine: string;
-  side: "Buyer side" | "Seller side";
-  statusLabel: string;
-  statusKind: "under" | "active" | "closed" | "other";
-  priceText: string;
-  metaText: string;
-  clientName: string | null;
-  clientInitials: string;
-  agentName: string | null;
-  agentInitials: string;
-  progressPct: number | null;
-  stageText: string | null;
-  stageCount: string | null;
-};
+export type { DashDeal } from "@/lib/deals";
 
 export type DashStats = {
   under: number;
@@ -32,17 +14,16 @@ export type DashStats = {
   nextCloseAddr: string;
 };
 
-type Filter = "motion" | "under" | "active" | "all";
+export type FilterDef = { label: string; kinds: DashDeal["statusKind"][] };
 type View = "tiles" | "list";
 
-const SHOW: Record<Filter, DashDeal["statusKind"][]> = {
-  motion: ["under", "active"],
-  under: ["under"],
-  active: ["active"],
-  all: ["under", "active", "closed", "other"],
-};
+const DEFAULT_FILTERS: FilterDef[] = [
+  { label: "In motion", kinds: ["under", "active"] },
+  { label: "Under contract", kinds: ["under"] },
+  { label: "Active listings", kinds: ["active"] },
+  { label: "All", kinds: ["under", "active", "closed", "other"] },
+];
 
-// muted placeholder tints (deterministic per deal) for when there's no photo yet
 const TINTS: [string, string][] = [
   ["#6c5767", "#2a1f28"], ["#5a6170", "#241f2a"], ["#6f5a5f", "#2a1f24"],
   ["#4d6368", "#1f262a"], ["#66605a", "#272320"], ["#4a4448", "#211d20"],
@@ -52,7 +33,6 @@ function tintFor(id: string): [string, string] {
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
   return TINTS[h % TINTS.length];
 }
-
 const PILL: Record<string, string> = {
   under: "bg-gold/95 text-[#2a1518]",
   active: "bg-green/90 text-[#09231a]",
@@ -60,81 +40,92 @@ const PILL: Record<string, string> = {
   other: "bg-[#786e72] text-white",
 };
 
-export default function DashboardDeals({ deals, stats }: { deals: DashDeal[]; stats: DashStats }) {
-  const [filter, setFilter] = useState<Filter>("motion");
+export default function DashboardDeals({
+  deals,
+  stats = null,
+  title = "Dashboard",
+  subtitle = "Everything in motion ... the deals that need you right now.",
+  action,
+  filters,
+  showTicker = false,
+}: {
+  deals: DashDeal[];
+  stats?: DashStats | null;
+  title?: string;
+  subtitle?: string;
+  action?: { href: string; label: string };
+  filters?: FilterDef[];
+  showTicker?: boolean;
+}) {
+  const fils = filters ?? DEFAULT_FILTERS;
+  const [fi, setFi] = useState(0);
   const [view, setView] = useState<View>("tiles");
-
-  const allow = SHOW[filter];
-  const shown = deals.filter((d) => allow.includes(d.statusKind));
   const list = view === "list";
+  const shown = deals.filter((d) => fils[fi].kinds.includes(d.statusKind));
 
   return (
     <>
-      <style>{`
-        @keyframes ahtick { from { transform: translateX(0) } to { transform: translateX(-50%) } }
-        .ahtrack { animation: ahtick 42s linear infinite; }
-        .ahticker:hover .ahtrack { animation-play-state: paused; }
-        @media (prefers-reduced-motion: reduce) { .ahtrack { animation: none } }
-        @keyframes ahblink { 0%,100%{opacity:.3} 50%{opacity:.95} }
-      `}</style>
+      {showTicker && (
+        <style>{`
+          @keyframes ahtick { from { transform: translateX(0) } to { transform: translateX(-50%) } }
+          .ahtrack { animation: ahtick 42s linear infinite; }
+          .ahticker:hover .ahtrack { animation-play-state: paused; }
+          @media (prefers-reduced-motion: reduce) { .ahtrack { animation: none } }
+          @keyframes ahblink { 0%,100%{opacity:.3} 50%{opacity:.95} }
+        `}</style>
+      )}
 
       {/* header + controls */}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="font-serif text-3xl font-medium text-pearl">Dashboard</h1>
-          <p className="mt-1 text-sm text-dusty">Everything in motion ... the deals that need you right now.</p>
+          <h1 className="font-serif text-3xl font-medium text-pearl">{title}</h1>
+          {subtitle && <p className="mt-1 text-sm text-dusty">{subtitle}</p>}
         </div>
         <div className="flex flex-wrap items-center gap-2.5">
           <Seg>
-            {(["motion", "under", "active", "all"] as Filter[]).map((f) => (
-              <button key={f} onClick={() => setFilter(f)} className={segBtn(filter === f)}>
-                {f === "motion" ? "In motion" : f === "under" ? "Under contract" : f === "active" ? "Active listings" : "All"}
-              </button>
+            {fils.map((f, i) => (
+              <button key={f.label} onClick={() => setFi(i)} className={segBtn(fi === i)}>{f.label}</button>
             ))}
           </Seg>
           <Seg>
-            <button onClick={() => setView("tiles")} className={segBtn(!list)} aria-label="Tiles">
-              <GridIcon /> Tiles
-            </button>
-            <button onClick={() => setView("list")} className={segBtn(list)} aria-label="List">
-              <ListIcon /> List
-            </button>
+            <button onClick={() => setView("tiles")} className={segBtn(!list)} aria-label="Tiles"><GridIcon /> Tiles</button>
+            <button onClick={() => setView("list")} className={segBtn(list)} aria-label="List"><ListIcon /> List</button>
           </Seg>
+          {action && <Link href={action.href} className="btn-mauve text-sm">{action.label}</Link>}
         </div>
       </div>
 
-      {/* ticker (below filters) */}
-      <div className="ahticker mt-5 flex items-stretch overflow-hidden rounded-xl2 border border-dusty/15 bg-bruised shadow-sm">
-        <div className="flex flex-none items-center gap-2 bg-mauve px-4 text-[11px] font-bold uppercase tracking-wider text-plum">
-          <span className="h-1.5 w-1.5 rounded-full bg-plum" style={{ animation: "ahblink 1.6s ease-in-out infinite" }} /> Today
-        </div>
-        <div className="relative flex-1 overflow-hidden">
-          <div className="ahtrack inline-flex whitespace-nowrap py-2.5">
-            {[0, 1].map((dup) => (
-              <span key={dup} className="inline-flex">
-                {TICKER.map((t, i) => (
-                  <span key={i} className="px-7 text-[13px] text-pearl/80">
-                    <b className="font-semibold text-mauve">{t.k}</b> {t.v}
-                  </span>
-                ))}
-              </span>
-            ))}
+      {showTicker && (
+        <div className="ahticker mt-5 flex items-stretch overflow-hidden rounded-xl2 border border-dusty/15 bg-bruised shadow-sm">
+          <div className="flex flex-none items-center gap-2 bg-mauve px-4 text-[11px] font-bold uppercase tracking-wider text-plum">
+            <span className="h-1.5 w-1.5 rounded-full bg-plum" style={{ animation: "ahblink 1.6s ease-in-out infinite" }} /> Today
+          </div>
+          <div className="relative flex-1 overflow-hidden">
+            <div className="ahtrack inline-flex whitespace-nowrap py-2.5">
+              {[0, 1].map((dup) => (
+                <span key={dup} className="inline-flex">
+                  {TICKER.map((t, i) => (
+                    <span key={i} className="px-7 text-[13px] text-pearl/80"><b className="font-semibold text-mauve">{t.k}</b> {t.v}</span>
+                  ))}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* stat tiles */}
-      <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
-        <Tile k="Under contract" v={String(stats.under)} d={stats.under ? "in progress" : "nothing pending"} />
-        <Tile k="Active listings" v={String(stats.active)} d={stats.active ? "on the market" : "none active"} />
-        <Tile k="Volume in motion" v={stats.volumeText} d={`across ${stats.under + stats.active} deal${stats.under + stats.active === 1 ? "" : "s"}`} />
-        <Tile k="Next closing" v={stats.nextCloseText} d={stats.nextCloseAddr} />
-      </div>
+      {stats && (
+        <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <Tile k="Under contract" v={String(stats.under)} d={stats.under ? "in progress" : "nothing pending"} />
+          <Tile k="Active listings" v={String(stats.active)} d={stats.active ? "on the market" : "none active"} />
+          <Tile k="Volume in motion" v={stats.volumeText} d={`across ${stats.under + stats.active} deal${stats.under + stats.active === 1 ? "" : "s"}`} />
+          <Tile k="Next closing" v={stats.nextCloseText} d={stats.nextCloseAddr} />
+        </div>
+      )}
 
-      {/* deals */}
       {shown.length === 0 ? (
         <div className="mt-6 rounded-xl2 border border-dusty/15 bg-bruised/40 p-10 text-center text-dusty">
-          Nothing here right now. Start a transaction or add a listing to see it on your dashboard.
+          Nothing here right now.
         </div>
       ) : (
         <div className={list ? "mt-6 flex flex-col gap-2.5 pb-16" : "mt-6 grid gap-5 pb-16 sm:grid-cols-2 lg:grid-cols-3"}>
@@ -150,8 +141,6 @@ const TICKER: { k: string; v: string }[] = [
   { k: "Tip", v: "hover to pause ... this scrolls your live updates" },
 ];
 
-/* ---------- pieces ---------- */
-
 function Photo({ d, h }: { d: DashDeal; h: string }) {
   const [a, b] = tintFor(d.id);
   return (
@@ -160,20 +149,11 @@ function Photo({ d, h }: { d: DashDeal; h: string }) {
         // eslint-disable-next-line @next/next/no-img-element
         <img src={d.photoUrl} alt={d.address} className="h-full w-full object-cover" />
       ) : (
-        <div className="grid h-full w-full place-items-center text-white/50">
-          <HouseIcon />
-        </div>
+        <div className="grid h-full w-full place-items-center text-white/50"><HouseIcon /></div>
       )}
-      <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide backdrop-blur ${PILL[d.statusKind]}`}>
-        {d.statusLabel}
-      </span>
+      <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide backdrop-blur ${PILL[d.statusKind]}`}>{d.statusLabel}</span>
       {d.agentName && (
-        <span
-          title={`${d.agentName} is on this deal`}
-          className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-plum/70 text-[10px] font-bold text-pearl ring-1 ring-white/25 backdrop-blur"
-        >
-          {d.agentInitials}
-        </span>
+        <span title={`${d.agentName} is on this deal`} className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-plum/70 text-[10px] font-bold text-pearl ring-1 ring-white/25 backdrop-blur">{d.agentInitials}</span>
       )}
     </div>
   );
@@ -181,7 +161,7 @@ function Photo({ d, h }: { d: DashDeal; h: string }) {
 
 function TileCard({ d }: { d: DashDeal }) {
   return (
-    <Link href={d.href} className="group block overflow-hidden rounded-[18px] border border-dusty/12 bg-bruised shadow-sm transition hover:-translate-y-0.5 hover:border-mauve/45">
+    <Link href={d.href} className="aurora-ring group block overflow-hidden rounded-[18px] border border-dusty/12 bg-bruised">
       <Photo d={d} h="h-[170px]" />
       <div className="p-[16px_18px_18px]">
         <div className="text-[11px] font-semibold uppercase tracking-[0.1em] text-mauve">{d.side}</div>
@@ -193,7 +173,7 @@ function TileCard({ d }: { d: DashDeal }) {
         </div>
         {d.progressPct != null && (
           <div className="mt-3">
-            <div className="h-[5px] overflow-hidden rounded-full bg-bruised">
+            <div className="h-[5px] overflow-hidden rounded-full bg-raise">
               <span className="block h-full bg-gradient-to-r from-wine to-gold" style={{ width: `${d.progressPct}%` }} />
             </div>
             <div className="mt-1.5 flex justify-between text-[11.5px] text-dusty">
@@ -213,10 +193,8 @@ function TileCard({ d }: { d: DashDeal }) {
 
 function ListRow({ d }: { d: DashDeal }) {
   return (
-    <Link href={d.href} className="flex items-stretch overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised shadow-sm transition hover:border-mauve/45">
-      <div className="w-[120px] flex-none">
-        <Photo d={d} h="h-full min-h-[86px]" />
-      </div>
+    <Link href={d.href} className="aurora-ring flex items-stretch overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised">
+      <div className="w-[120px] flex-none"><Photo d={d} h="h-full min-h-[86px]" /></div>
       <div className="grid flex-1 items-center gap-4 p-[12px_18px] md:grid-cols-[minmax(0,1.9fr)_1fr_1.3fr_1.1fr]">
         <div className="min-w-0">
           <h3 className="truncate font-serif text-[17px] font-medium text-pearl">{d.address}</h3>
@@ -229,7 +207,7 @@ function ListRow({ d }: { d: DashDeal }) {
         <div className="hidden min-w-0 md:block">
           {d.progressPct != null ? (
             <>
-              <div className="h-[5px] overflow-hidden rounded-full bg-bruised">
+              <div className="h-[5px] overflow-hidden rounded-full bg-raise">
                 <span className="block h-full bg-gradient-to-r from-wine to-gold" style={{ width: `${d.progressPct}%` }} />
               </div>
               <div className="mt-1 flex justify-between text-[11px] text-dusty"><span className="truncate">{d.stageText}</span><b className="font-semibold text-pearl/80">{d.stageCount}</b></div>
@@ -261,7 +239,7 @@ function Seg({ children }: { children: React.ReactNode }) {
   return <div className="inline-flex rounded-xl border border-dusty/15 bg-bruised/40 p-1">{children}</div>;
 }
 const segBtn = (on: boolean) =>
-  `inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12.5px] transition ${on ? "bg-bruised font-semibold text-pearl shadow-sm" : "text-dusty hover:text-pearl"}`;
+  `inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12.5px] transition ${on ? "bg-raise font-semibold text-pearl shadow-sm" : "text-dusty hover:text-pearl"}`;
 
 function GridIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className="h-[15px] w-[15px]"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>; }
 function ListIcon() { return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6} className="h-[15px] w-[15px]"><path d="M8 6h13M8 12h13M8 18h13M3.5 6h.01M3.5 12h.01M3.5 18h.01" strokeLinecap="round"/></svg>; }
