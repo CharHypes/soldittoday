@@ -17,15 +17,15 @@ export default function AgentHubHeader() {
     <header className="sticky top-0 z-30 border-b border-dusty/12 bg-plum/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center gap-5 px-6">
         {/* brand ... the REAL full-color logo, unchanged, in every theme */}
-        <Link href="/dashboard" className="flex shrink-0 items-center gap-3">
+        <Link href="/dashboard" className="flex shrink-0 flex-col items-start justify-center leading-none">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {brand.logoUrl ? (
-            <img src={brand.logoUrl} alt={brand.brandName ?? "Logo"} className="h-7 w-auto max-w-[180px] object-contain" />
+            <img src={brand.logoUrl} alt={brand.brandName ?? "Logo"} className="h-9 w-auto max-w-[210px] object-contain" />
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="h-6 w-auto" />
+            <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="h-8 w-auto" />
           )}
-          <span className="hidden border-l border-dusty/20 pl-3 font-serif text-sm text-dusty sm:inline">Agent Hub</span>
+          <span className="mt-1 font-serif text-[10.5px] uppercase tracking-[0.22em] text-dusty">Agent Hub</span>
         </Link>
 
         {/* tabs */}
