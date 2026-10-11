@@ -34,10 +34,10 @@ function tintFor(id: string): [string, string] {
   return TINTS[h % TINTS.length];
 }
 const PILL: Record<string, string> = {
-  under: "bg-gold/95 text-[#2a1518]",
-  active: "bg-green/90 text-[#09231a]",
-  closed: "bg-[#786e72] text-white",
-  other: "bg-[#786e72] text-white",
+  under: "bg-[#e3b19f] text-[#2a1518]",
+  active: "bg-[#2f9e6e] text-white",
+  closed: "bg-[#6b6469] text-white",
+  other: "bg-[#6b6469] text-white",
 };
 
 export default function DashboardDeals({
