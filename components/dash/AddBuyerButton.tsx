@@ -11,7 +11,10 @@ import { createBuyer } from "@/app/dashboard/actions";
  */
 const PERSON_SOURCES = ["Past client", "Sphere / personal", "Agent referral", "Repeat client"];
 
-export default function AddBuyerButton({ label = "+ Add buyer" }: { label?: string }) {
+export default function AddBuyerButton({
+  label = "+ Add buyer",
+  triggerClassName = "bo-btn bo-primary",
+}: { label?: string; triggerClassName?: string }) {
   const [open, setOpen] = useState(false);
   const [coBuyer, setCoBuyer] = useState(false);
   const [preapproved, setPreapproved] = useState(false);
@@ -26,7 +29,7 @@ export default function AddBuyerButton({ label = "+ Add buyer" }: { label?: stri
 
   return (
     <>
-      <button type="button" className="bo-btn bo-primary" onClick={() => setOpen(true)}>
+      <button type="button" className={triggerClassName} onClick={() => setOpen(true)}>
         {label}
       </button>
 

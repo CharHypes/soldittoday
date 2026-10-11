@@ -26,13 +26,11 @@ export default async function BuyersHome() {
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
-        <div className="mb-5 flex items-center justify-end">
-          <AddBuyerButton />
-        </div>
         <DashboardDeals
           deals={deals}
           title="Buyers"
           subtitle={`${inProgress} ${inProgress === 1 ? "buyer" : "buyers"} in progress`}
+          actionSlot={<AddBuyerButton />}
           filters={BUYER_FILTERS}
         />
       </div>

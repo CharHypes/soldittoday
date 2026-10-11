@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import AddBuyerButton from "@/components/dash/AddBuyerButton";
 import { useEffect, useState } from "react";
 import { signOut } from "@/app/dashboard/actions";
 import { useBrand } from "@/components/dash/BrandContext";
@@ -47,9 +48,7 @@ export default function AgentHubHeader() {
         >
           <GearIcon />
         </Link>
-        <Link href="/dashboard/buyers/new" className="btn-mauve text-sm">
-          <PlusIcon /> New Transaction
-        </Link>
+        <AddBuyerButton triggerClassName="btn-mauve text-sm" label="+ New Transaction" />
         <form action={signOut}>
           <button type="submit" className="ml-1 hidden text-xs text-dusty transition-colors hover:text-pearl sm:block">
             Sign out

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import ContactCard from "@/components/dash/ContactCard";
+import AddContactButton from "@/components/dash/AddContactButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
 import { avatarBg } from "@/lib/avatarColor";
@@ -191,10 +192,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
             <span className="hidden rounded-full border border-dusty/20 px-3 py-1 text-[11px] uppercase tracking-wider text-dusty/80 sm:inline">
               {list.length} {list.length === 1 ? "contact" : "contacts"}
             </span>
-            <Link href="/dashboard/contacts/new" className="btn-mauve text-sm">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4"><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>
-              New Contact
-            </Link>
+            <AddContactButton />
           </div>
         </div>
 

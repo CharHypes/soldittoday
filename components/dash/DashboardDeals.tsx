@@ -47,6 +47,7 @@ export default function DashboardDeals({
   subtitle = "Everything in motion ... the deals that need you right now.",
   action,
   secondaryAction,
+  actionSlot,
   filters,
   showTicker = false,
 }: {
@@ -56,6 +57,7 @@ export default function DashboardDeals({
   subtitle?: string;
   action?: { href: string; label: string };
   secondaryAction?: { href: string; label: string };
+  actionSlot?: React.ReactNode;
   filters?: FilterDef[];
   showTicker?: boolean;
 }) {
@@ -97,6 +99,7 @@ export default function DashboardDeals({
             <Link href={secondaryAction.href} className="rounded-xl border border-dusty/25 bg-bruised/40 px-3.5 py-1.5 text-sm text-dusty transition hover:border-mauve/50 hover:text-pearl">{secondaryAction.label}</Link>
           )}
           {action && <Link href={action.href} className="btn-mauve text-sm">{action.label}</Link>}
+          {actionSlot}
         </div>
       </div>
 
