@@ -141,7 +141,7 @@ const TICKER: { k: string; v: string }[] = [
   { k: "Tip", v: "hover to pause ... this scrolls your live updates" },
 ];
 
-function Photo({ d, h }: { d: DashDeal; h: string }) {
+function Photo({ d, h, overlays = true }: { d: DashDeal; h: string; overlays?: boolean }) {
   const [a, b] = tintFor(d.id);
   return (
     <div className={`relative ${h} overflow-hidden`} style={d.photoUrl ? undefined : { backgroundImage: `linear-gradient(135deg, ${a}, ${b})` }}>
@@ -151,12 +151,20 @@ function Photo({ d, h }: { d: DashDeal; h: string }) {
       ) : (
         <div className="grid h-full w-full place-items-center text-white/50"><HouseIcon /></div>
       )}
-      <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide backdrop-blur ${PILL[d.statusKind]}`}>{d.statusLabel}</span>
-      {d.agentName && (
-        <span title={`${d.agentName} is on this deal`} className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-plum/70 text-[10px] font-bold text-pearl ring-1 ring-white/25 backdrop-blur">{d.agentInitials}</span>
+      {overlays && (
+        <>
+          <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide backdrop-blur ${PILL[d.statusKind]}`}>{d.statusLabel}</span>
+          {d.agentName && (
+            <span title={`${d.agentName} is on this deal`} className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-plum/70 text-[10px] font-bold text-pearl ring-1 ring-white/25 backdrop-blur">{d.agentInitials}</span>
+          )}
+        </>
       )}
     </div>
   );
+}
+
+function StatusChip({ d }: { d: DashDeal }) {
+  return <span className={`inline-block rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide ${PILL[d.statusKind]}`}>{d.statusLabel}</span>;
 }
 
 function TileCard({ d }: { d: DashDeal }) {
@@ -194,9 +202,13 @@ function TileCard({ d }: { d: DashDeal }) {
 function ListRow({ d }: { d: DashDeal }) {
   return (
     <Link href={d.href} className="aurora-ring flex items-stretch overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised">
-      <div className="w-[120px] flex-none"><Photo d={d} h="h-full min-h-[86px]" /></div>
-      <div className="grid flex-1 items-center gap-4 p-[12px_18px] md:grid-cols-[minmax(0,1.9fr)_1fr_1.3fr_1.1fr]">
+      <div className="w-[116px] flex-none"><Photo d={d} h="h-full min-h-[96px]" overlays={false} /></div>
+      <div className="grid flex-1 items-center gap-4 p-[12px_18px] md:grid-cols-[minmax(0,1.9fr)_0.9fr_1.2fr_1.1fr]">
         <div className="min-w-0">
+          <div className="mb-1 flex items-center gap-2">
+            <StatusChip d={d} />
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-mauve">{d.side}</span>
+          </div>
           <h3 className="truncate font-serif text-[17px] font-medium text-pearl">{d.address}</h3>
           <div className="truncate text-[12.5px] text-dusty">{d.cityLine}</div>
         </div>
@@ -219,6 +231,9 @@ function ListRow({ d }: { d: DashDeal }) {
         <div className="flex items-center justify-end gap-2">
           <span className="grid h-6 w-6 place-items-center rounded-full bg-mauve text-[9.5px] font-bold text-plum">{d.clientInitials}</span>
           <span className="hidden truncate text-[12.5px] text-pearl/80 sm:inline">{d.clientName ?? "No client"}</span>
+          {d.agentName && (
+            <span title={`${d.agentName} is on this deal`} className="ml-1 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-plum/70 text-[9px] font-bold text-pearl ring-1 ring-dusty/25">{d.agentInitials}</span>
+          )}
         </div>
       </div>
     </Link>

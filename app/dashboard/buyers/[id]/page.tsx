@@ -10,6 +10,7 @@ import {
   uploadBuyerDocument,
   toggleDocumentShare,
   deleteDocument,
+  syncTransactionPhoto,
 } from "@/app/dashboard/actions";
 import { DOCS_ENABLED } from "@/lib/supabase/admin";
 
@@ -68,6 +69,32 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
         <div>
           <h1 className="text-2xl font-semibold text-pearl">{tx.address}</h1>
           {client?.name && <p className="text-sm text-dusty">Buyer: {client.name}</p>}
+        </div>
+
+        {/* Property photo */}
+        <div className={card}>
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm font-semibold text-pearl">Property photo</p>
+            {tx.mls_number && (
+              <form action={syncTransactionPhoto}>
+                <input type="hidden" name="id" value={tx.id} />
+                <button type="submit" className="text-xs text-auroraMauve hover:text-pearl">
+                  {tx.photo_url ? "Refresh from MLS →" : "Sync from MLS →"}
+                </button>
+              </form>
+            )}
+          </div>
+          <div className="mt-3 overflow-hidden rounded-xl border border-dusty/15">
+            {tx.photo_url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={tx.photo_url} alt={tx.address} className="h-56 w-full object-cover" />
+            ) : (
+              <div className="flex h-40 w-full items-center justify-center bg-bruised px-4 text-center text-xs text-dusty/60">
+                {tx.mls_number ? "Click “Sync from MLS” to pull the home’s main photo." : "Add an MLS number (Edit below) to pull the home photo from the MLS, or paste a photo URL."}
+              </div>
+            )}
+          </div>
+          {tx.mls_number && <p className="mt-2 text-xs text-dusty/70">MLS# {tx.mls_number}</p>}
         </div>
 
         {/* Portal link */}
@@ -191,8 +218,12 @@ export default async function EditBuyer({ params }: { params: { id: string } }) 
             </label>
           </div>
           <label className={lbl}>
-            House photo URL
-            <input name="photo_url" defaultValue={tx.photo_url ?? ""} placeholder="https://... (auto-fills once IDX is live)" className={`mt-1.5 ${inp}`} />
+            MLS number <span className="text-dusty/60">(pulls the home photo from the MLS)</span>
+            <input name="mls_number" defaultValue={tx.mls_number ?? ""} placeholder="e.g. 26039316" className={`mt-1.5 ${inp}`} />
+          </label>
+          <label className={lbl}>
+            House photo URL <span className="text-dusty/60">(optional)</span>
+            <input name="photo_url" defaultValue={tx.photo_url ?? ""} placeholder="https://..." className={`mt-1.5 ${inp}`} />
           </label>
           <button type="submit" className="btn-aurora">Save changes</button>
         </form>

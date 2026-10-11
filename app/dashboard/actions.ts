@@ -148,6 +148,34 @@ export async function syncListingPhoto(formData: FormData) {
   revalidatePath("/dashboard");
 }
 
+/** Resolve a buyer transaction's MLS number to its Spark ListingKey + main photo
+ *  and cache them on the transaction row. Agent-triggered; RLS-scoped. */
+export async function syncTransactionPhoto(formData: FormData) {
+  const { supabase, id: agent_id } = await ctx();
+  if (!agent_id) redirect("/dashboard/login");
+
+  const txId = str(formData.get("id"));
+  if (!txId) return;
+
+  const { data: tx } = await supabase
+    .from("transactions")
+    .select("id, mls_number")
+    .eq("id", txId)
+    .maybeSingle();
+
+  if (tx?.mls_number) {
+    const match = await getListingByMlsNumber(tx.mls_number);
+    if (match) {
+      const patch: { listing_key: string; photo_url?: string } = { listing_key: match.id };
+      if (match.photoUrl) patch.photo_url = match.photoUrl;
+      await supabase.from("transactions").update(patch).eq("id", txId);
+    }
+  }
+  revalidatePath(`/dashboard/buyers/${txId}`);
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/buyers");
+}
+
 export async function updateListing(formData: FormData) {
   const { supabase } = await ctx();
   const id = str(formData.get("id"));
@@ -450,6 +478,7 @@ export async function createBuyer(formData: FormData) {
       price: num(formData.get("price")),
       status: str(formData.get("status")) ?? "Under Contract",
       target_close_date: str(formData.get("target_close_date")),
+      mls_number: str(formData.get("mls_number")),
       photo_url: str(formData.get("photo_url")),
     })
     .select("id")
@@ -522,6 +551,7 @@ export async function updateTransaction(formData: FormData) {
       price: num(formData.get("price")),
       status: str(formData.get("status")) ?? "Under Contract",
       target_close_date: str(formData.get("target_close_date")),
+      mls_number: str(formData.get("mls_number")),
       photo_url: str(formData.get("photo_url")),
     })
     .eq("id", id);

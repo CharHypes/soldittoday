@@ -50,8 +50,12 @@ export default function NewBuyer() {
             </label>
           </div>
           <label className={lbl}>
-            House photo URL
-            <input name="photo_url" placeholder="https://... (paste a photo link; auto-fills once IDX is live)" className={`mt-1.5 ${inp}`} />
+            MLS number <span className="text-dusty/60">(to pull the home photo from the MLS)</span>
+            <input name="mls_number" placeholder="e.g. 26039316" className={`mt-1.5 ${inp}`} />
+          </label>
+          <label className={lbl}>
+            House photo URL <span className="text-dusty/60">(optional ... or paste a photo link)</span>
+            <input name="photo_url" placeholder="https://..." className={`mt-1.5 ${inp}`} />
           </label>
 
           <div className="flex gap-3">
