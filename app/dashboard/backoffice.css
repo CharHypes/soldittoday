@@ -1,0 +1,567 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   SOLD IT TODAY ... BACK OFFICE DESIGN SYSTEM
+   One stylesheet. Import it on every back-office screen and the design follows.
+   Written 2026-10-11. Replaces agent-hub-typography-brief.md and
+   agent-hub-forms-brief.md, which were two memos for one design.
+
+   ───────────────────────────────────────────────────────────────────────────
+   SCOPE, AND THIS MATTERS MORE THAN ANY VALUE BELOW
+
+   This is for the BACK OFFICE ONLY. The agent workspace. Transactions, listings,
+   leads, contacts, edit forms, dashboards. The place Charlotte and her agents
+   work in all day.
+
+   It is NOT for anything a client sees. The client portal, the public site, CMAs,
+   listing pages. Those are a shopfront and have the opposite job: generous,
+   warm, designed to attract. Do not import this there.
+
+       Back office  = a tool.      Dense, quiet, fast to scan, identical every day.
+       Client side  = a shopfront. Spacious, warm, memorable.
+
+   Charlotte, 2026-10-11: "The back end needs to look a certain way where we can
+   work out of it easily. The front end is designed to attract people."
+
+   ONE EXCEPTION crosses the line, deliberately: the record title (a property
+   address) stays in the brand serif. See THE ONE EXCEPTION at the bottom.
+   ───────────────────────────────────────────────────────────────────────────
+
+   HOW TO USE IT
+   - Every class is prefixed `bo-`, so you can tell at a glance whether a piece
+     of markup belongs to the tool or the shopfront. If you are writing `bo-`
+     on a client-facing page, something has gone wrong.
+   - Every token falls back to your existing one if you already define it, e.g.
+     `var(--surface, #1E171B)`. Define your own and this inherits them. Theme
+     switching keeps working untouched.
+   - Dark is the default, since Mulberry Noir is the default theme. Light is
+     under `[data-theme="light"]`. Rewire that selector to match your switch.
+   - Five palettes ship: Mulberry Noir (default), Mulberry Light, and three
+     borrowed from Butler. See EXTRA THEMES. A theme is a palette and nothing
+     else ... no component changes shape, so adding one is a picker entry.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+
+/* ───────────────────────────────── TOKENS ───────────────────────────────── */
+
+:root {
+  /* Surfaces. Fallbacks are the Mulberry Noir values; your own win. */
+  --bo-bg:        var(--bg,        #171114);
+  --bo-surface:   var(--surface,   #1E171B);
+  --bo-elev:      var(--elev,      #241C21);
+  --bo-border:    var(--border,    #332830);
+
+  /* Ink */
+  --bo-text:      var(--text,      #EDE4E6);
+  --bo-muted:     var(--muted,     #9A8A91);
+  --bo-dim:       var(--dim,       #6E616A);
+
+  /* Accent, and the washes derived from it */
+  --bo-accent:    var(--accent,    #E0B0AA);
+  --bo-accent-wash: rgba(224,176,170,.13);
+  --bo-accent-bd:   rgba(224,176,170,.38);
+
+  /* Semantic. Separate from the accent on purpose: these mean something. */
+  --bo-good:    var(--success, #7FA876);
+  --bo-warn:    var(--warning, #D9A86C);
+  --bo-danger:  var(--danger,  #C68387);
+  --bo-good-wash:   rgba(127,168,118,.16);
+  --bo-good-bd:     rgba(127,168,118,.38);
+  --bo-danger-bd:   rgba(198,131,135,.50);
+
+  /* A control is ALWAYS one step clear of the thing it sits inside.
+     This exists because the first version used --bo-elev for both the person card
+     and the input inside it, so in dark themes the field had no edge at all and
+     simply disappeared. Charlotte caught it: "it's just blended ... nothing's like
+     in a text box." Light themes got away with it only because a dark border on
+     pale ground does the work; dark themes have no such luck.
+     The ladder, darkest to lightest:  bg < surface < elev < input-bg. */
+  --bo-input-bg: #2E242B;
+  --bo-input-bd: #3F323A;
+
+  /* Neutral chip, for labels that carry no state */
+  --bo-chip-tx: var(--chip-tx, #B6A2A8);
+  --bo-chip-bg: var(--chip-bg, rgba(182,162,168,.09));
+  --bo-chip-bd: var(--chip-bd, rgba(182,162,168,.24));
+
+  /* Type. The working font is yours; only the display font is special. */
+  --bo-font:         var(--font-sans, Manrope, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+  --bo-font-mono:    var(--font-mono, 'IBM Plex Mono', ui-monospace, Menlo, monospace);
+  --bo-font-display: var(--font-display, Fraunces, Georgia, serif);  /* see THE ONE EXCEPTION */
+
+  /* The type scale. These four numbers are the house style. Do not drift. */
+  --bo-t-label:   10.5px;  /* a label above a value, read mode */
+  --bo-t-flabel:  9px;     /* a label above an input, edit mode. Smaller: the box frames it. */
+  --bo-t-value:   13px;    /* a value, and body text */
+  --bo-t-input:   12px;    /* text inside a control */
+  --bo-t-section: 11px;    /* a section heading */
+  --bo-t-micro:   9px;     /* pills, bylines */
+  --bo-track:     .07em;   /* letterspacing on uppercase labels */
+  --bo-track-wide:.08em;   /* on section headings and pills */
+
+  /* Space. The 3px is the single most important value in this file. */
+  --bo-gap-label: 3px;     /* label to its value or input. Binds them into one object. */
+  --bo-gap-row:   8px;     /* between form rows */
+  --bo-gap-col:   14px;    /* between form columns */
+  --bo-gap-pair:  14px;    /* between read-mode pairs */
+
+  /* Radius. Small on purpose. A big radius on a big box is what reads as bubbly. */
+  --bo-r-input:  5px;
+  --bo-r-card:   10px;
+  --bo-r-modal:  14px;
+  --bo-r-pill:   20px;
+}
+
+:root[data-theme="light"] {
+  --bo-bg:      var(--bg,      #F9F0F4);
+  --bo-surface: var(--surface, #FDF8FA);
+  --bo-elev:    var(--elev,    #FFFFFF);
+  --bo-border:  var(--border,  #E4D3DC);
+  --bo-text:    var(--text,    #241A20);
+  --bo-muted:   var(--muted,   #7D6A74);
+  --bo-dim:     var(--dim,     #9B8793);
+  --bo-accent:  var(--accent,  #8A5A74);
+  --bo-accent-wash: rgba(138,90,116,.10);
+  --bo-accent-bd:   rgba(138,90,116,.38);
+  /* Light: the card takes a faint tint so a white field reads as a field. */
+  --bo-elev:    var(--elev,    #F7EFF3);
+  --bo-input-bg: #FFFFFF;
+  --bo-input-bd: #DCC8D3;
+  --bo-chip-tx: var(--chip-tx, #6E5A64);
+  --bo-chip-bg: var(--chip-bg, rgba(110,90,100,.07));
+  --bo-chip-bd: var(--chip-bd, rgba(110,90,100,.22));
+  --bo-good:    var(--success, #5E8A57);
+  --bo-warn:    var(--warning, #B0883C);
+  --bo-danger:  var(--danger,  #A85F63);
+}
+
+
+/* ─────────────────────────── EXTRA THEMES ───────────────────────────────────
+   Mulberry Noir above stays the DEFAULT and is not touched. These are additional
+   choices for the Settings colour picker, lifted from Butler so the two products
+   can feel like the same house. Charlotte, 2026-10-11: "in the settings area I
+   want to add the Butler colours to this. We're going to keep the current theme,
+   we're just going to have extra settings in settings."
+
+   To add one to the picker, offer its data-theme value. Nothing else changes:
+   every component above reads tokens, so a theme is a palette and nothing more.
+
+       (none)            Mulberry Noir      the default
+       light             Mulberry Light
+       butler-warm       Butler Warm Dark   brown, blue accent, gold highlights
+       butler-midnight   Butler Midnight    near black, cooler, higher contrast
+       butler-linen      Butler Linen       warm paper, easiest in a bright room
+
+   The accent in all three Butler themes is a slate blue rather than a rose. That
+   is the point of offering them: a genuinely different room to work in, not a
+   tint of the same one. The display face and every size stay put, so only the
+   colour changes. */
+
+:root[data-theme="butler-warm"] {
+  --bo-bg: #1A1714;  --bo-surface: #221E18;  --bo-elev: #2A251E;  --bo-border: #3A342B;
+  --bo-text: #E4DBCB; --bo-muted: #A59C8B;   --bo-dim: #7E7667;
+  --bo-accent: #8BA3C2;
+  --bo-accent-wash: rgba(139,163,194,.13);
+  --bo-accent-bd:   rgba(139,163,194,.40);
+  --bo-good: #7FA876;  --bo-warn: #D4A94E;  --bo-danger: #C68387;
+  --bo-good-wash: rgba(127,168,118,.16); --bo-good-bd: rgba(127,168,118,.38);
+  --bo-danger-bd: rgba(198,131,135,.50);
+  --bo-chip-tx: #BCB3A2;
+  --bo-chip-bg: rgba(188,179,162,.09);
+  --bo-chip-bd: rgba(188,179,162,.24);
+  --bo-input-bg: #332C23;
+  --bo-input-bd: #473F33;
+}
+
+:root[data-theme="butler-midnight"] {
+  --bo-bg: #17161A;  --bo-surface: #201F24;  --bo-elev: #26252B;  --bo-border: #33313A;
+  --bo-text: #D9DCE6; --bo-muted: #8E8A7E;   --bo-dim: #6E6B74;
+  --bo-accent: #8BA3C2;
+  --bo-accent-wash: rgba(139,163,194,.13);
+  --bo-accent-bd:   rgba(139,163,194,.40);
+  --bo-good: #7FA876;  --bo-warn: #D4A94E;  --bo-danger: #C68387;
+  --bo-good-wash: rgba(127,168,118,.16); --bo-good-bd: rgba(127,168,118,.38);
+  --bo-danger-bd: rgba(198,131,135,.50);
+  --bo-chip-tx: #B4B2B8;
+  --bo-chip-bg: rgba(180,178,184,.09);
+  --bo-chip-bd: rgba(180,178,184,.24);
+  --bo-input-bg: #2F2E36;
+  --bo-input-bd: #403E49;
+}
+
+:root[data-theme="butler-linen"] {
+  --bo-bg: #E8E2D6;  --bo-surface: #F3EEE4;  --bo-elev: #FCF9F3;  --bo-border: #E0D9CB;
+  --bo-text: #26333F; --bo-muted: #5B6273;   --bo-dim: #8A8F98;
+  --bo-accent: #54718F;
+  --bo-accent-wash: rgba(84,113,143,.11);
+  --bo-accent-bd:   rgba(84,113,143,.36);
+  --bo-good: #5E8A57;  --bo-warn: #B0883C;  --bo-danger: #A85F63;
+  --bo-good-wash: rgba(94,138,87,.14);  --bo-good-bd: rgba(94,138,87,.40);
+  --bo-danger-bd: rgba(168,95,99,.50);
+  --bo-chip-tx: #46597C;
+  --bo-chip-bg: rgba(70,89,124,.07);
+  --bo-chip-bd: rgba(70,89,124,.22);
+  --bo-elev: #EFE9DD;
+  --bo-input-bg: #FCF9F3;
+  --bo-input-bd: #D6CDBB;
+}
+
+/* The dimmed ground behind a pop-out is lighter on a light theme, or the page
+   underneath disappears and you lose the whole point of the pop-out. */
+:root[data-theme="light"] .bo-overlay,
+:root[data-theme="butler-linen"] .bo-overlay { background: rgba(40,30,36,.38); }
+:root[data-theme="light"] .bo-modal,
+:root[data-theme="butler-linen"] .bo-modal { box-shadow: 0 24px 70px rgba(60,45,55,.22); }
+
+
+/* ──────────────────────────────── CARDS ─────────────────────────────────── */
+
+.bo-card {
+  background: var(--bo-surface);
+  border: 1px solid var(--bo-border);
+  border-radius: var(--bo-r-card);
+  padding: 15px 17px 16px;
+}
+.bo-card + .bo-card { margin-top: 14px; }
+
+/* The heading inside a card. Uppercase sans, quiet, never a serif headline:
+   a card title is a signpost, not a statement. */
+.bo-card-title {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  font-family: var(--bo-font);
+  font-size: var(--bo-t-section);
+  font-weight: 700;
+  letter-spacing: var(--bo-track-wide);
+  text-transform: uppercase;
+  color: var(--bo-accent);
+  margin: 2px 0 9px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--bo-border);
+}
+/* Helper copy that rides along with a heading ("optional, add it when they do").
+   Voice survives; it just stops shouting. */
+.bo-card-title .bo-aside {
+  font-size: 10.5px; font-weight: 600; letter-spacing: .03em;
+  text-transform: none; color: var(--bo-muted);
+}
+
+
+/* ────────────────────── READ MODE: label over value ─────────────────────── */
+/* The whole house style in six lines. Small loud label, normal quiet value,
+   3px apart so the eye reads ONE pair rather than two separate things. */
+
+.bo-pairs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bo-gap-pair) 20px;
+}
+@media (min-width: 1040px) { .bo-pairs { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.bo-pair  { min-width: 0; }
+.bo-pair.bo-full { grid-column: 1 / -1; }
+
+.bo-label {
+  font-size: var(--bo-t-label);
+  font-weight: 700;
+  letter-spacing: var(--bo-track);
+  text-transform: uppercase;
+  color: var(--bo-muted);
+  margin-bottom: var(--bo-gap-label);
+}
+.bo-value {
+  font-size: var(--bo-t-value);
+  font-weight: 400;
+  color: var(--bo-text);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.bo-value.bo-mono { font-family: var(--bo-font-mono); font-size: 12px; }
+
+
+/* ──────────────────────── EDIT MODE: forms ──────────────────────────────── */
+
+.bo-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bo-gap-row) var(--bo-gap-col);
+}
+@media (min-width: 1040px) { .bo-form-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+.bo-form-grid .bo-full  { grid-column: 1 / -1; }
+.bo-form-grid .bo-span2 { grid-column: span 2; }
+@media (max-width: 1039px) { .bo-form-grid .bo-span2 { grid-column: 1 / -1; } }
+
+/* Compact 4-up rows: Company | Name | Phone | Email */
+.bo-form-grid.bo-cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 1040px) { .bo-form-grid.bo-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 640px)  { .bo-form-grid.bo-cols-4 { grid-template-columns: 1fr; } }
+
+.bo-field { display: flex; flex-direction: column; gap: var(--bo-gap-label); min-width: 0; }
+
+.bo-field > label {
+  font-size: var(--bo-t-flabel);
+  font-weight: 700;
+  letter-spacing: var(--bo-track);
+  text-transform: uppercase;
+  color: var(--bo-muted);
+}
+
+.bo-field input,
+.bo-field select,
+.bo-field textarea {
+  width: 100%;
+  background: var(--bo-input-bg);
+  border: 1px solid var(--bo-input-bd);
+  color: var(--bo-text);
+  border-radius: var(--bo-r-input);
+  padding: 5px 8px;
+  font-size: var(--bo-t-input);
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.bo-field input:focus,
+.bo-field select:focus,
+.bo-field textarea:focus { border-color: var(--bo-accent); }
+.bo-field input::placeholder, .bo-field textarea::placeholder { color: var(--bo-dim); }
+.bo-field select { cursor: pointer; }
+.bo-field textarea { resize: vertical; min-height: 54px; line-height: 1.45; }
+
+/* A note under a field, for anything the user needs told before they type. */
+.bo-hint { font-size: 10.5px; color: var(--bo-muted); line-height: 1.4; }
+
+/* Touch. Butler is desktop-only; this product is not. 16px is not a style
+   choice: iOS Safari zooms the page on focus for anything smaller. */
+@media (max-width: 640px) {
+  .bo-field input,
+  .bo-field select,
+  .bo-field textarea { min-height: 40px; font-size: 16px; padding: 9px 11px; }
+}
+
+/* Collapsible form section. A long form is a short list until you open a part. */
+.bo-section { margin-bottom: 14px; }
+.bo-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: var(--bo-t-section); font-weight: 700;
+  letter-spacing: var(--bo-track-wide); text-transform: uppercase;
+  color: var(--bo-accent);
+  margin: 2px 0 9px; padding-bottom: 5px;
+  border-bottom: 1px solid var(--bo-border);
+  cursor: pointer;
+}
+.bo-section-chev { flex-shrink: 0; font-size: 11px; color: var(--bo-muted); transition: transform .15s; }
+.bo-section.bo-collapsed .bo-form-grid,
+.bo-section.bo-collapsed .bo-people { display: none; }
+.bo-section.bo-collapsed .bo-section-chev { transform: rotate(-90deg); }
+/* An add control on the heading sits right, and pushes nothing around. */
+.bo-section-title .bo-add { margin-left: auto; }
+
+
+/* ──────────────── REPEATING PEOPLE: borrowers, buyers, parties ──────────── */
+
+.bo-people { display: flex; flex-direction: column; gap: 12px; }
+
+.bo-person {
+  border: 1px solid var(--bo-border);
+  border-radius: var(--bo-r-card);
+  background: var(--bo-elev);
+  padding: 11px 12px 12px;
+}
+.bo-person-head { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-bottom: 9px; }
+.bo-person-title {
+  font-size: var(--bo-t-label); font-weight: 700;
+  letter-spacing: var(--bo-track); text-transform: uppercase; color: var(--bo-muted);
+}
+.bo-person-role {
+  font-size: var(--bo-t-label); font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--bo-chip-tx); background: var(--bo-chip-bg); border: 1px solid var(--bo-chip-bd);
+  border-radius: var(--bo-r-pill); padding: 2px 10px;
+}
+/* Remove is a quiet x inside the person's own header. Never a red button:
+   red is reserved for a confirmed destructive action, not for "one too many". */
+.bo-person-remove {
+  margin-left: auto; width: 24px; height: 24px; padding: 0;
+  border: none; background: none; color: var(--bo-muted);
+  font-size: 18px; line-height: 1; cursor: pointer; font-family: inherit;
+}
+.bo-person-remove:hover { color: var(--bo-danger); }
+
+/* The add control lives on the SECTION HEADING, not at the bottom of the list,
+   so it stays in one place however many people there are. */
+.bo-add {
+  font-family: inherit; font-size: var(--bo-t-label); font-weight: 700; letter-spacing: .03em;
+  padding: 3px 11px; border-radius: var(--bo-r-pill); cursor: pointer; text-transform: none;
+  background: var(--bo-accent-wash); border: 1px solid var(--bo-accent); color: var(--bo-accent);
+}
+.bo-add:hover { background: var(--bo-accent-bd); }
+
+
+/* ─────────────────────────── POP-OUT, NOT A PAGE ────────────────────────── */
+/* Every edit and every add opens OVER the record, dimmed but visible behind it.
+   Charlotte, 2026-10-11: "you can see the loan file card behind it. That's
+   important. It's very important for anything that I build."
+   Seeing the thing you are editing is what makes it feel like editing a record
+   rather than filling in a form. A full-page form loses that and it never
+   comes back. */
+
+.bo-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 9995;
+  display: flex;
+  align-items: flex-start;   /* NOT center. A centred panel traps the scroll on long forms. */
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;          /* the OVERLAY scrolls, never the panel */
+}
+.bo-modal {
+  background: var(--bo-surface);
+  border: 1px solid var(--bo-border);
+  border-radius: var(--bo-r-modal);
+  width: 100%;
+  max-width: 1200px;         /* wide on purpose: it is what allows 3 and 4 column grids */
+  margin: auto;
+  box-shadow: 0 24px 70px rgba(0,0,0,.5);
+  padding: 6px 20px 18px;
+}
+.bo-modal-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 12px 4px 6px;
+}
+.bo-modal-title {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: var(--bo-track-wide); text-transform: uppercase; color: var(--bo-text);
+}
+.bo-modal-actions { display: flex; align-items: center; gap: 6px; }
+
+/* Commit at the bottom right, where you finish reading.
+   Put the button in a .bo-modal-foot. Do NOT rely on align-self alone: it aligns on the
+   CROSS axis, so in a row-direction parent it pushes the button vertically and leaves it
+   stuck on the left. That exact bug was caught in the kit page before this shipped. */
+.bo-modal-foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+
+.bo-save {
+  align-self: flex-end;      /* correct when the parent is a column; .bo-modal-foot covers the rest */
+  margin-top: 0;
+  background: var(--bo-good-wash); color: var(--bo-good);
+  border: 1px solid var(--bo-good-bd); border-radius: var(--bo-r-input);
+  padding: 5px 16px; font-size: var(--bo-t-input); font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.bo-save:hover { filter: brightness(1.15); }
+
+/* Destructive and dismissive at the top right, away from the commit. */
+.bo-delete {
+  background: transparent; border: 1px solid var(--bo-danger-bd); color: var(--bo-danger);
+  font-size: 11px; font-weight: 600; padding: 4px 11px; border-radius: 7px;
+  cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.bo-delete:hover { background: var(--bo-danger); color: #fff; border-color: var(--bo-danger); }
+.bo-close {
+  background: transparent; border: none; color: var(--bo-muted);
+  font-size: 21px; line-height: 1; padding: 3px 9px; border-radius: 7px;
+  cursor: pointer; font-family: inherit;
+}
+.bo-close:hover { color: var(--bo-text); background: var(--bo-bg); }
+
+@media (max-width: 640px) { .bo-overlay { padding: 12px; } .bo-modal { padding: 4px 13px 14px; } }
+
+
+/* ───────────────────────── PILLS AND BUTTONS ────────────────────────────── */
+
+/* Status pill. Neutral by default; a tone only when the state means something. */
+.bo-pill {
+  display: inline-flex; align-items: center;
+  font-size: var(--bo-t-micro); font-weight: 700;
+  letter-spacing: var(--bo-track-wide); text-transform: uppercase;
+  padding: 3px 10px; border-radius: var(--bo-r-pill);
+  background: var(--bo-chip-bg); color: var(--bo-chip-tx); border: 1px solid var(--bo-chip-bd);
+  white-space: nowrap;
+}
+.bo-pill.bo-accent { background: var(--bo-accent-wash); color: var(--bo-accent); border-color: var(--bo-accent-bd); }
+.bo-pill.bo-good   { background: var(--bo-good-wash);   color: var(--bo-good);   border-color: var(--bo-good-bd); }
+.bo-pill.bo-warn   { background: rgba(217,168,108,.15); color: var(--bo-warn);   border-color: rgba(217,168,108,.42); }
+.bo-pill.bo-bad    { background: rgba(198,131,135,.15); color: var(--bo-danger); border-color: var(--bo-danger-bd); }
+
+/* Header buttons are pills, 32px tall. */
+.bo-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 32px; padding: 0 14px; border-radius: var(--bo-r-pill);
+  font-size: 12px; font-weight: 600; font-family: inherit; white-space: nowrap;
+  background: transparent; border: 1px solid var(--bo-border); color: var(--bo-muted);
+  cursor: pointer; transition: all .15s;
+}
+.bo-btn:hover { border-color: var(--bo-accent); color: var(--bo-text); }
+.bo-btn.bo-primary { background: var(--bo-accent-wash); border-color: var(--bo-accent-bd); color: var(--bo-accent); }
+/* Icon-only buttons are circles, not pills with dead space in them. */
+.bo-btn.bo-icon { width: 32px; padding: 0; gap: 0; }
+
+
+/* ───────────────────────────── KEY CONTACTS ─────────────────────────────── */
+/* Lead with whoever the relationship is with. Buyer, agent and lender lead with
+   the PERSON, because in real estate the person is the relationship. Title and
+   anything with two contacts leads with the COMPANY, because the closer rotates.
+   Phone and email go on ONE line in the accent colour: stacked grey text reads
+   as description, not as something you click. */
+
+.bo-contact { display: flex; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--bo-border); }
+.bo-contact:first-of-type { padding-top: 0; }
+.bo-contact:last-child { border-bottom: none; padding-bottom: 0; }
+
+.bo-avatars { display: flex; align-items: center; flex: 0 0 auto; }
+.bo-avatar {
+  width: 34px; height: 34px; border-radius: 50%; flex: 0 0 auto;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11.5px; font-weight: 700; overflow: hidden;
+}
+.bo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+/* Two people at one company: overlap them rather than repeating the company. */
+.bo-avatar + .bo-avatar { margin-left: -11px; border: 2px solid var(--bo-surface); }
+
+.bo-contact-body { min-width: 0; flex: 1 1 auto; }
+.bo-contact-role {
+  font-size: var(--bo-t-label); font-weight: 700;
+  letter-spacing: var(--bo-track); text-transform: uppercase; color: var(--bo-chip-tx);
+  margin-bottom: var(--bo-gap-label);
+}
+.bo-contact-name { font-size: 14px; font-weight: 700; color: var(--bo-accent); margin-bottom: 2px; }
+.bo-contact-co   { font-size: 11.5px; color: var(--bo-muted); margin-bottom: 2px; }
+.bo-contact-sub  { margin-top: 7px; }                 /* a person under a company */
+.bo-contact-sub-name { font-size: 11.5px; font-weight: 600; color: var(--bo-text); margin-bottom: 2px; }
+.bo-contact-line { font-size: 11px; display: flex; gap: 10px; flex-wrap: wrap; }
+.bo-contact-line a { color: var(--bo-accent); text-decoration: none; overflow-wrap: anywhere; }
+.bo-contact-line a:hover { text-decoration: underline; }
+.bo-contact-addr { font-size: 11px; color: var(--bo-muted); margin-top: 3px; }
+
+
+/* ═══════════════════════════ THE ONE EXCEPTION ══════════════════════════════
+   Everything above is deliberately plain, because a tool should be. This is not.
+
+   The record title ... the property address at the top of a transaction, listing
+   or lead ... stays in the brand serif. It is the one place the shopfront voice
+   appears in the tool, and the reason is not efficiency.
+
+   Charlotte, 2026-10-11: "I do want the transaction cards to stay with that one
+   font that I currently have that I like, because that makes me feel happy."
+
+   That is a good enough reason on its own. Do not sand it off in the name of
+   consistency.
+
+   LATER: this is meant to become a per-user setting. It is already a single
+   token, so that day is a dropdown writing --font-display, not a refactor.
+   Keep it that way: never hard-code the family anywhere but here.
+   ════════════════════════════════════════════════════════════════════════════ */
+
+.bo-record-title {
+  font-family: var(--bo-font-display);
+  font-size: 30px;
+  font-weight: 500;
+  letter-spacing: -.01em;
+  line-height: 1.15;
+  color: var(--bo-text);
+}
+.bo-record-sub { font-size: 13px; color: var(--bo-muted); margin-top: 5px; }
+
+/* Page-level titles may also take the display face. Card titles may NOT ... a
+   card title is a signpost and belongs in the working font. */
+.bo-page-title { font-family: var(--bo-font-display); font-size: 24px; font-weight: 500; letter-spacing: -.01em; }
+
+@media (max-width: 640px) { .bo-record-title { font-size: 23px; } }

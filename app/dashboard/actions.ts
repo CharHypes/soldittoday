@@ -592,11 +592,59 @@ const DEFAULT_MILESTONES = [
   "Closing Day",
 ];
 
+/**
+ * Create or reuse a CRM contact (person) and link it to a transaction with a
+ * role. Everyone added on a deal lands in Contacts ... enter once, reused
+ * everywhere. Dedupes against an existing contact when it confidently matches.
+ */
+async function linkPersonToTxn(
+  supabase: any,
+  orgId: string,
+  agentId: string,
+  txId: string,
+  p: { name: string; email: string | null; phone: string | null; type: string; role: string }
+) {
+  const match = await findMatchingPerson(supabase, orgId, { name: p.name, email: p.email, phone: p.phone });
+  let personId: string | null = match?.id ?? null;
+  if (!personId) {
+    const trimmed = p.name.trim();
+    const cut = trimmed.lastIndexOf(" ");
+    const { data } = await supabase
+      .from("people")
+      .insert({
+        organization_id: orgId,
+        agent_id: agentId,
+        visibility: "organization",
+        first_name: cut > 0 ? trimmed.slice(0, cut) : null,
+        last_name: cut > 0 ? trimmed.slice(cut + 1) : trimmed,
+        display_name: trimmed,
+        type: p.type,
+        email: p.email,
+        phone: p.phone,
+      })
+      .select("id")
+      .single();
+    personId = data?.id ?? null;
+  }
+  if (personId) {
+    await supabase
+      .from("transaction_people")
+      .upsert(
+        { organization_id: orgId, transaction_id: txId, person_id: personId, role: p.role, name_on_deal: p.name.trim() },
+        { onConflict: "transaction_id,person_id,role", ignoreDuplicates: true }
+      );
+  }
+  return personId;
+}
+
 export async function createBuyer(formData: FormData) {
   const { supabase, id: agent_id, orgId } = await ctx();
   if (!agent_id || !orgId) redirect("/dashboard/login");
 
-  const clientName = str(formData.get("client_name"));
+  // Primary buyer name: the pop-out posts first/last; the legacy page posts a single name.
+  const firstName = str(formData.get("client_first"));
+  const lastName = str(formData.get("client_last"));
+  const clientName = str(formData.get("client_name")) ?? ([firstName, lastName].filter(Boolean).join(" ") || null);
   const clientEmail = str(formData.get("client_email"));
   const clientPhone = str(formData.get("client_phone"));
 
@@ -627,6 +675,7 @@ export async function createBuyer(formData: FormData) {
       status: "Lead",
       pipeline_stage: "lead",
       lead_source: str(formData.get("lead_source")),
+      preapproval_amount: num(formData.get("preapproval_amount")),
       target_close_date: str(formData.get("target_close_date")),
       mls_number: str(formData.get("mls_number")),
       photo_url: str(formData.get("photo_url")),
@@ -679,6 +728,24 @@ export async function createBuyer(formData: FormData) {
             { onConflict: "transaction_id,person_id,role", ignoreDuplicates: true }
           );
       }
+    }
+
+    // Co-buyer (spouse / partner) ... also saved to Contacts and linked.
+    const cobuyerName = [str(formData.get("cobuyer_first")), str(formData.get("cobuyer_last"))].filter(Boolean).join(" ") || null;
+    if (cobuyerName) {
+      await linkPersonToTxn(supabase, orgId, agent_id, tx.id, {
+        name: cobuyerName, email: str(formData.get("cobuyer_email")), phone: str(formData.get("cobuyer_phone")),
+        type: "buyer", role: "co-buyer",
+      });
+    }
+
+    // Lender (when pre-approved) ... saved to Contacts and linked to the deal.
+    const lenderName = str(formData.get("lender_name"));
+    if (lenderName) {
+      await linkPersonToTxn(supabase, orgId, agent_id, tx.id, {
+        name: lenderName, email: str(formData.get("lender_email")), phone: str(formData.get("lender_phone")),
+        type: "lender", role: "lender",
+      });
     }
   }
 

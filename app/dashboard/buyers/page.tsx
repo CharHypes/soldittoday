@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DashboardDeals, { type FilterDef } from "@/components/dash/DashboardDeals";
+import AddBuyerButton from "@/components/dash/AddBuyerButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { loadDeals } from "@/lib/deals";
 
@@ -25,11 +26,13 @@ export default async function BuyersHome() {
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
+        <div className="mb-5 flex items-center justify-end">
+          <AddBuyerButton />
+        </div>
         <DashboardDeals
           deals={deals}
           title="Buyers"
           subtitle={`${inProgress} ${inProgress === 1 ? "buyer" : "buyers"} in progress`}
-          action={{ href: "/dashboard/buyers/new", label: "+ Add Buyer" }}
           filters={BUYER_FILTERS}
         />
       </div>

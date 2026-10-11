@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
+import AddBuyerButton from "@/components/dash/AddBuyerButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { moveStage } from "@/app/dashboard/actions";
 
@@ -50,7 +51,7 @@ export default async function LeadsHome() {
               {rows.length} {rows.length === 1 ? "lead" : "leads"} &middot; work them, then promote to buyer.
             </p>
           </div>
-          <Link href="/dashboard/buyers/new" className="btn-mauve text-sm">+ Add buyer</Link>
+          <AddBuyerButton />
         </div>
 
         {rows.length === 0 ? (
