@@ -3,7 +3,8 @@ import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DesignPicker from "@/components/dash/DesignPicker";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
-import { uploadOrgLogo, removeOrgLogo, updateBranding } from "@/app/dashboard/settings/actions";
+import { uploadOrgLogo, removeOrgLogo, updateBranding, updateAvatarStyle } from "@/app/dashboard/settings/actions";
+import { avatarBg } from "@/lib/avatarColor";
 
 export const metadata: Metadata = {
   title: "Settings | Sold It Today",
@@ -28,11 +29,13 @@ export default async function SettingsPage({ searchParams }: { searchParams: { s
   let logoUrl: string | null = null;
   let brandName: string | null = null;
   let tagline: string | null = null;
+  let avatarStyle = "colorful";
   if (orgId) {
-    const { data: org } = await supabase.from("organizations").select("logo_url, brand_name, tagline").eq("id", orgId).maybeSingle();
+    const { data: org } = await supabase.from("organizations").select("logo_url, brand_name, tagline, avatar_style").eq("id", orgId).maybeSingle();
     logoUrl = org?.logo_url ?? null;
     brandName = org?.brand_name ?? null;
     tagline = org?.tagline ?? null;
+    avatarStyle = (org?.avatar_style as string) ?? "colorful";
   }
   const canEdit = role === "owner" || role === "admin";
 
@@ -106,6 +109,29 @@ export default async function SettingsPage({ searchParams }: { searchParams: { s
                   <button type="submit" className="btn-mauve text-sm">Save brand</button>
                 </div>
               </form>
+
+              <div className="mt-7 border-t border-dusty/10 pt-5">
+                <h3 className="text-sm font-semibold text-pearl">Contact avatars</h3>
+                <p className="mt-1 text-sm text-dusty">One solid mauve, or a fun rotation of muted colors (each contact keeps its own).</p>
+                <div className="mt-3 flex -space-x-1.5">
+                  {["AB", "KA", "MA", "LB", "PC", "TO"].map((ini, i) => {
+                    const bg = avatarStyle === "colorful" ? avatarBg(`seed-${i}-${ini}`, "colorful") : null;
+                    return (
+                      <span
+                        key={i}
+                        className={`grid h-8 w-8 place-items-center rounded-full text-[10px] font-bold ring-2 ring-bruised ${bg ? "text-white" : "bg-mauve text-plum"}`}
+                        style={bg ? { background: bg } : undefined}
+                      >
+                        {ini}
+                      </span>
+                    );
+                  })}
+                </div>
+                <form action={updateAvatarStyle} className="mt-3 inline-flex rounded-xl border border-dusty/15 bg-plum/40 p-1">
+                  <button name="avatar_style" value="colorful" className={`rounded-lg px-3 py-1.5 text-sm ${avatarStyle === "colorful" ? "bg-mauve font-semibold text-plum" : "text-dusty hover:text-pearl"}`}>Colorful</button>
+                  <button name="avatar_style" value="solid" className={`rounded-lg px-3 py-1.5 text-sm ${avatarStyle === "solid" ? "bg-mauve font-semibold text-plum" : "text-dusty hover:text-pearl"}`}>Solid</button>
+                </form>
+              </div>
             </>
           ) : (
             <p className="mt-4 text-xs text-dusty/70">Only an owner or admin can change branding.</p>

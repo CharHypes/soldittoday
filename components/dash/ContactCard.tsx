@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { updatePerson, addPersonNote, deletePersonNote, savePersonReview, uploadPersonDocument, openPersonDocument, deletePersonDocument, mergePeople, addRelationship, deleteRelationship } from "@/app/dashboard/contacts/actions";
 import { money } from "@/lib/format";
+import { avatarBg } from "@/lib/avatarColor";
 import {
   fullName,
   lastFirst,
@@ -51,12 +52,14 @@ export type ContactCardProps = {
   review: Review | null;
   documents: Doc[];
   allContacts: { id: string; name: string }[];
+  avatarStyle: string;
 };
 
 type Section = "name" | "contact" | "personal" | "referral" | "review" | null;
 
 export default function ContactCard(props: ContactCardProps) {
-  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review, documents, allContacts } = props;
+  const { person, referredBy, theyReferred, rels, primaryRelName, primaryRelLabel, deals, notes, review, documents, allContacts, avatarStyle } = props;
+  const headBg = avatarBg(person.id, avatarStyle);
   const [editing, setEditing] = useState<Section>(null);
   const [uploadOpen, setUploadOpen] = useState(false);
 
@@ -98,7 +101,10 @@ export default function ContactCard(props: ContactCardProps) {
 
       {/* header */}
       <div className="mt-4 flex items-start gap-5">
-        <div className="av-chip grid h-16 w-16 shrink-0 place-items-center rounded-full bg-mauve font-serif text-lg font-semibold text-plum ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum">
+        <div
+          className={`av-chip grid h-16 w-16 shrink-0 place-items-center rounded-full font-serif text-lg font-semibold ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum ${headBg ? "text-white" : "bg-mauve text-plum"}`}
+          style={headBg ? { background: headBg } : undefined}
+        >
           {initials(person)}
         </div>
         <div className="min-w-0 flex-1">

@@ -3,6 +3,8 @@ import Link from "next/link";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import ContactCard from "@/components/dash/ContactCard";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getOrgContext } from "@/lib/context";
+import { avatarBg } from "@/lib/avatarColor";
 import { fullName, lastFirst, initials, typeLabel, RELATION_LABEL, type Person } from "@/lib/contacts";
 
 export const metadata: Metadata = {
@@ -28,6 +30,13 @@ type Deal = {
 export default async function ContactsPage({ searchParams }: { searchParams: { id?: string; q?: string; dupe?: string; merged?: string } }) {
   const supabase = createSupabaseServer();
   const q = (searchParams.q ?? "").trim();
+
+  const { orgId } = await getOrgContext(supabase);
+  let avatarStyle = "colorful";
+  if (orgId) {
+    const { data: org } = await supabase.from("organizations").select("avatar_style").eq("id", orgId).maybeSingle();
+    avatarStyle = (org?.avatar_style as string) ?? "colorful";
+  }
 
   let listQuery = supabase
     .from("people")
@@ -215,7 +224,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
               {list.length === 0 ? (
                 <p className="px-3 py-8 text-center text-sm text-dusty">{q ? "No contacts match that search." : "No contacts yet."}</p>
               ) : (
-                <ContactList list={list} selectedId={selectedId} q={q} withLine={withLine} />
+                <ContactList list={list} selectedId={selectedId} q={q} withLine={withLine} avatarStyle={avatarStyle} />
               )}
             </div>
           </aside>
@@ -234,6 +243,7 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
               review={review}
               documents={documents}
               allContacts={list.map((p) => ({ id: p.id, name: lastFirst(p) }))}
+              avatarStyle={avatarStyle}
             />
           ) : (
             <section className="grid min-h-[300px] place-items-center rounded-xl2 border border-dusty/15 bg-bruised text-dusty">
@@ -247,8 +257,8 @@ export default async function ContactsPage({ searchParams }: { searchParams: { i
 }
 
 function ContactList({
-  list, selectedId, q, withLine,
-}: { list: ListRow[]; selectedId?: string; q: string; withLine: Map<string, string> }) {
+  list, selectedId, q, withLine, avatarStyle,
+}: { list: ListRow[]; selectedId?: string; q: string; withLine: Map<string, string>; avatarStyle: string }) {
   const out: JSX.Element[] = [];
   let letter = "";
   for (const p of list) {
@@ -270,13 +280,19 @@ function ContactList({
         href={href}
         className={`flex items-center gap-3 border-b border-dusty/10 px-3 py-3 transition-colors ${active ? "bg-raise" : "hover:bg-raise/40"}`}
       >
-        <span
-          className={`av-chip grid h-10 w-10 shrink-0 place-items-center rounded-full bg-mauve text-xs font-semibold text-plum ${
-            active ? "ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum" : ""
-          }`}
-        >
-          {initials(p)}
-        </span>
+        {(() => {
+          const bg = avatarBg(p.id, avatarStyle);
+          return (
+            <span
+              className={`av-chip grid h-10 w-10 shrink-0 place-items-center rounded-full text-xs font-semibold ${bg ? "text-white" : "bg-mauve text-plum"} ${
+                active ? "ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum" : ""
+              }`}
+              style={bg ? { background: bg } : undefined}
+            >
+              {initials(p)}
+            </span>
+          );
+        })()}
         <span className="min-w-0">
           <span className="block truncate font-medium text-pearl">{lastFirst(p)}</span>
           <span className="block truncate text-xs text-dusty">{typeLabel(p.type)}</span>

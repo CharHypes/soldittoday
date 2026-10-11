@@ -65,6 +65,16 @@ export async function removeOrgLogo() {
   redirect("/dashboard/settings?saved=logo");
 }
 
+/** Contact avatar style: one solid mauve, or a colorful rotation. */
+export async function updateAvatarStyle(formData: FormData) {
+  const { supabase, orgId, role } = await ownerCtx();
+  if (role !== "owner" && role !== "admin") return;
+  const val = str(formData.get("avatar_style")) === "solid" ? "solid" : "colorful";
+  await supabase.from("organizations").update({ avatar_style: val }).eq("id", orgId);
+  revalidatePath("/dashboard", "layout");
+  redirect("/dashboard/settings?saved=avatars");
+}
+
 /** Update the brand name + tagline shown in the workspace. */
 export async function updateBranding(formData: FormData) {
   const { supabase, orgId, role } = await ownerCtx();
