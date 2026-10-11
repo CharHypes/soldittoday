@@ -134,7 +134,7 @@ export default function ListingWorkspace({
                   <form action={syncListingPhoto} className="mt-2">
                     <input type="hidden" name="id" value={listing.id} />
                     <button type="submit" className="w-full rounded-lg border border-dusty/25 bg-plum/50 px-3 py-1.5 text-xs font-medium text-dusty transition-colors hover:border-auroraMauve/50 hover:text-pearl">
-                      {listing.photo_url ? "Refresh IDX photo" : "Sync IDX photo"}
+                      {listing.photo_url ? "Refresh from MLS (price + photo)" : "Sync from MLS (price + photo)"}
                     </button>
                   </form>
                 )}
