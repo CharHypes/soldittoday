@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { BrandProvider, type Brand } from "@/components/dash/BrandContext";
 
 /**
  * Wraps the Agent Hub and applies the org's chosen WORKSPACE DESIGN:
@@ -10,7 +11,7 @@ import { useEffect, useState } from "react";
  * drive the same class later. Scoped to this wrapper so the marketing site is
  * never affected.
  */
-export default function AgentHubShell({ children }: { children: React.ReactNode }) {
+export default function AgentHubShell({ children, brand }: { children: React.ReactNode; brand?: Brand }) {
   const [neutral, setNeutral] = useState(false);
   useEffect(() => {
     const read = () => {
@@ -26,5 +27,9 @@ export default function AgentHubShell({ children }: { children: React.ReactNode 
       window.removeEventListener("storage", read);
     };
   }, []);
-  return <div className={neutral ? "theme-neutral" : undefined}>{children}</div>;
+  return (
+    <BrandProvider value={brand ?? { logoUrl: null, brandName: null, tagline: null }}>
+      <div className={neutral ? "theme-neutral" : undefined}>{children}</div>
+    </BrandProvider>
+  );
 }

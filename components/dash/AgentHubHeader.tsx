@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signOut } from "@/app/dashboard/actions";
+import { useBrand } from "@/components/dash/BrandContext";
 
 /** The Agent Hub top bar: logo, tabs, settings, theme toggle, New Transaction. */
 export default function AgentHubHeader() {
   const pathname = usePathname() || "";
   const is = (p: string, exact = false) => (exact ? pathname === p : pathname.startsWith(p));
+  const brand = useBrand();
 
   return (
     <header className="sticky top-0 z-30 border-b border-dusty/12 bg-plum/85 backdrop-blur-xl">
@@ -16,7 +18,12 @@ export default function AgentHubHeader() {
         {/* brand ... the REAL full-color logo, unchanged, in every theme */}
         <Link href="/dashboard/contacts" className="flex shrink-0 items-center gap-3">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="h-6 w-auto" />
+          {brand.logoUrl ? (
+            <img src={brand.logoUrl} alt={brand.brandName ?? "Logo"} className="h-7 w-auto max-w-[180px] object-contain" />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src="/assets/logos/optimized/sold-it-today-400w.png" alt="Sold It Today" className="h-6 w-auto" />
+          )}
           <span className="hidden border-l border-dusty/20 pl-3 font-serif text-sm text-dusty sm:inline">Agent Hub</span>
         </Link>
 

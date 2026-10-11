@@ -30,3 +30,6 @@ export const PORTAL_DOCS_BUCKET = "portal-docs";
 
 /** Private bucket that holds CRM person documents (IDs, pre-approvals, SSN cards). */
 export const PERSON_DOCS_BUCKET = "person-docs";
+
+/** PUBLIC bucket for organization brand logos (served via the public CDN). */
+export const BRAND_BUCKET = "brand-logos";
