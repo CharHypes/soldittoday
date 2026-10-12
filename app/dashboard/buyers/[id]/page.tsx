@@ -26,11 +26,12 @@ export default async function DealPage({ params }: { params: { id: string } }) {
   const { data: tx } = await supabase.from("transactions").select("*").eq("id", params.id).maybeSingle();
   if (!tx) redirect("/dashboard/buyers");
 
-  const [{ data: milestones }, { data: notes }, { data: documents }, { data: links }] = await Promise.all([
+  const [{ data: milestones }, { data: notes }, { data: documents }, { data: links }, { data: tasks }] = await Promise.all([
     supabase.from("milestones").select("*").eq("transaction_id", params.id).order("sort_order", { ascending: true }),
     supabase.from("notes").select("*").eq("transaction_id", params.id).order("created_at", { ascending: false }),
     supabase.from("documents").select("*").eq("transaction_id", params.id).order("created_at", { ascending: false }),
     supabase.from("transaction_people").select("role, name_on_deal, person_id").eq("transaction_id", params.id),
+    supabase.from("tasks").select("*").eq("transaction_id", params.id).order("done", { ascending: true }).order("due_date", { ascending: true, nullsFirst: false }).order("created_at", { ascending: true }),
   ]);
 
   // Key contacts: resolve the linked people records.
@@ -112,6 +113,7 @@ export default async function DealPage({ params }: { params: { id: string } }) {
           notes={(notes ?? []).map((n) => ({ id: n.id, body: n.body, from_client: n.from_client, client_visible: n.client_visible, created_at: n.created_at }))}
           docsEnabled={DOCS_ENABLED}
           fileNeeds={normalizeFileNeeds(tx.file_needs)}
+          tasks={(tasks ?? []).map((t) => ({ id: t.id, title: t.title, due_date: t.due_date, assignee: t.assignee, done: t.done, done_at: t.done_at, created_at: t.created_at }))}
           isOwner={isOwner}
           commission={
             // Owner-only: never serialize commission figures to a non-owner's page.

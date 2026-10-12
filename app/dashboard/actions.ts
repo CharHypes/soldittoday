@@ -1034,6 +1034,44 @@ export async function updateMilestones(formData: FormData) {
   revalidatePath(`/dashboard/buyers/${transaction_id}`);
 }
 
+// ============ Tasks (per-deal) ============
+
+export async function addTask(formData: FormData) {
+  const { supabase, id: agent_id, orgId } = await ctx();
+  const transaction_id = str(formData.get("transaction_id"));
+  const title = str(formData.get("title"));
+  if (!transaction_id || !title || !orgId) return;
+  await supabase.from("tasks").insert({
+    organization_id: orgId,
+    agent_id,
+    transaction_id,
+    title,
+    due_date: str(formData.get("due_date")),
+    assignee: str(formData.get("assignee")),
+  });
+  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
+export async function toggleTask(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  const transaction_id = str(formData.get("transaction_id"));
+  if (!id || !transaction_id) return;
+  const { data: row } = await supabase.from("tasks").select("done").eq("id", id).maybeSingle();
+  const next = !row?.done;
+  await supabase.from("tasks").update({ done: next, done_at: next ? new Date().toISOString() : null }).eq("id", id);
+  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
+export async function deleteTask(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  const transaction_id = str(formData.get("transaction_id"));
+  if (!id || !transaction_id) return;
+  await supabase.from("tasks").delete().eq("id", id);
+  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+}
+
 export async function addBuyerNote(formData: FormData) {
   const { supabase, orgId } = await ctx();
   const transaction_id = str(formData.get("transaction_id"));

@@ -12,6 +12,7 @@ import {
 import { visibleItems, type ChkItem, type ChkGroup, type FileNeeds, type CustomItem } from "@/lib/dealChecklist";
 import EmailGenerator from "@/components/dash/EmailGenerator";
 import { type EmailTo } from "@/lib/dealEmailTemplates";
+import TasksPanel, { type Task } from "@/components/dash/TasksPanel";
 
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
 type Milestone = { id: string; label: string; sort_order: number; status: string; date: string | null };
@@ -49,6 +50,7 @@ type Props = {
   isOwner: boolean;
   commission: CommissionInit;
   fileNeeds: FileNeeds;
+  tasks: Task[];
 };
 
 const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Email generator", "Contacts", "Client portal", "Commission", "Log"] as const;
@@ -459,14 +461,8 @@ export default function DealWorkspace(p: Props) {
         </div>
       )}
 
-      {/* ============ TASKS (coming soon) ============ */}
-      {tab === "Tasks" && (
-        <div className="panel">
-          <div className="card"><div className="cardhd"><h3>Tasks</h3></div>
-            <div className="cardbody"><p className="emptynote">Tasks for this deal are the next build here.</p></div>
-          </div>
-        </div>
-      )}
+      {/* ============ TASKS ============ */}
+      {tab === "Tasks" && <TasksPanel txId={p.tx.id} tasks={p.tasks} />}
 
       {/* danger */}
       <div className="foot-danger">
