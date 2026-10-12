@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DealWorkspace from "@/components/dash/DealWorkspace";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getOrgContext } from "@/lib/context";
 import { DOCS_ENABLED } from "@/lib/supabase/admin";
 import { dealEmailAddress } from "@/lib/dealEmail";
 
@@ -13,6 +14,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const SITE = "https://www.soldittoday.com";
+const n = (v: unknown): number | null => {
+  if (v == null || v === "") return null;
+  const x = Number(v);
+  return Number.isFinite(x) ? x : null;
+};
 
 export default async function DealPage({ params }: { params: { id: string } }) {
   const supabase = createSupabaseServer();
@@ -62,6 +68,9 @@ export default async function DealPage({ params }: { params: { id: string } }) {
     agentName = a?.name ?? null;
   }
 
+  const { role } = await getOrgContext(supabase);
+  const isOwner = role === "owner" || role === "admin";
+
   return (
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
@@ -83,6 +92,24 @@ export default async function DealPage({ params }: { params: { id: string } }) {
           documents={(documents ?? []).map((d) => ({ id: d.id, name: d.name, uploaded_by: d.uploaded_by, client_visible: d.client_visible, created_at: d.created_at }))}
           notes={(notes ?? []).map((n) => ({ id: n.id, body: n.body, from_client: n.from_client, client_visible: n.client_visible, created_at: n.created_at }))}
           docsEnabled={DOCS_ENABLED}
+          isOwner={isOwner}
+          commission={
+            // Owner-only: never serialize commission figures to a non-owner's page.
+            isOwner
+              ? {
+                  sale_price: n(tx.commission_sale_price ?? tx.price),
+                  rate: n(tx.commission_rate),
+                  flat: n(tx.commission_flat),
+                  referral_pct: n(tx.referral_pct),
+                  referral_to: tx.referral_to ?? null,
+                  sit_fee: n(tx.sit_fee),
+                  splits: Array.isArray(tx.commission_splits)
+                    ? tx.commission_splits.map((s: any) => ({ name: String(s?.name ?? ""), pct: Number(s?.pct) || 0 }))
+                    : null,
+                  notes: tx.commission_notes ?? null,
+                }
+              : { sale_price: null, rate: null, flat: null, referral_pct: null, referral_to: null, sit_fee: null, splits: null, notes: null }
+          }
         />
       </div>
     </main>

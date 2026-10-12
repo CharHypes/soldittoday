@@ -4,6 +4,7 @@ import { useState } from "react";
 import CopyLink from "@/components/dash/CopyLink";
 import DeleteButton from "@/components/dash/DeleteButton";
 import EditTransactionButton from "@/components/dash/EditTransactionButton";
+import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
 import {
   updateMilestones, uploadBuyerDocument, toggleDocumentShare, deleteDocument,
   addBuyerNote, syncTransactionPhoto, deleteTransaction,
@@ -29,6 +30,8 @@ type Props = {
   documents: Doc[];
   notes: Note[];
   docsEnabled: boolean;
+  isOwner: boolean;
+  commission: CommissionInit;
 };
 
 const TABS = ["Overview", "Checklist", "Documents", "Tasks", "Email", "Contacts", "Client portal", "Commission", "Log"] as const;
@@ -278,13 +281,19 @@ export default function DealWorkspace(p: Props) {
           </div>
         )}
 
+        {/* ---------------- COMMISSION (owner only) ---------------- */}
+        {tab === "Commission" && (
+          p.isOwner
+            ? <CommissionPanel txId={p.tx.id} address={p.tx.address} init={p.commission} />
+            : <div className="bo-card"><div className="bo-card-title">Commission · owner only 🔒</div><p className="text-sm text-dusty/70">Commission figures on this deal are visible to the workspace owner only.</p></div>
+        )}
+
         {/* ---------------- COMING SOON TABS ---------------- */}
-        {(tab === "Tasks" || tab === "Email" || tab === "Commission") && (
+        {(tab === "Tasks" || tab === "Email") && (
           <div className="bo-card">
-            <div className="bo-card-title">{tab === "Email" ? "Email generator" : tab}{tab === "Commission" ? " · owner only" : ""}</div>
+            <div className="bo-card-title">{tab === "Email" ? "Email generator" : tab}</div>
             <p className="text-sm text-dusty/70">
-              {tab === "Commission" ? "The owner-only commission calculator (splits, SIT fee, referral, breakdown-for-SkySlope) is the next piece to build here." :
-               tab === "Email" ? "The per-deal Email generator (templates + Resend send + auto-triggers) is coming next." :
+              {tab === "Email" ? "The per-deal Email generator (templates + Resend send + auto-triggers) is coming next." :
                "Tasks for this deal are coming next."}
             </p>
           </div>

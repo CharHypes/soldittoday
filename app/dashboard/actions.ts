@@ -809,6 +809,48 @@ export async function updateTransaction(formData: FormData) {
   revalidatePath("/dashboard/buyers");
 }
 
+/**
+ * Save the per-deal commission figures. Owner-only: commission is private to
+ * the workspace owner (the demo will relax this via a Settings toggle for
+ * admins). RLS still scopes the row to the org; this adds the role gate.
+ */
+export async function saveCommission(formData: FormData) {
+  const { supabase, role } = await ctx();
+  const id = str(formData.get("id"));
+  if (!id) return;
+  if (role !== "owner" && role !== "admin") return;
+
+  let splits: { name: string; pct: number }[] | null = null;
+  const raw = str(formData.get("splits"));
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        splits = parsed
+          .map((s) => ({ name: String(s?.name ?? "").trim(), pct: Number(s?.pct) }))
+          .filter((s) => s.name && Number.isFinite(s.pct));
+      }
+    } catch {
+      /* ignore malformed splits */
+    }
+  }
+
+  await supabase
+    .from("transactions")
+    .update({
+      commission_sale_price: num(formData.get("commission_sale_price")),
+      commission_rate: num(formData.get("commission_rate")),
+      commission_flat: num(formData.get("commission_flat")),
+      referral_pct: num(formData.get("referral_pct")),
+      referral_to: str(formData.get("referral_to")),
+      sit_fee: num(formData.get("sit_fee")),
+      commission_splits: splits,
+      commission_notes: str(formData.get("commission_notes")),
+    })
+    .eq("id", id);
+  revalidatePath(`/dashboard/buyers/${id}`);
+}
+
 export async function updateMilestones(formData: FormData) {
   const { supabase } = await ctx();
   const transaction_id = str(formData.get("transaction_id"));
