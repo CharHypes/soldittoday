@@ -36,19 +36,15 @@ const CSS = `
 .ucts-card{max-width:620px;margin:0 auto;background:var(--paper);border-radius:24px;overflow:hidden;
   box-shadow:0 2px 0 rgba(255,255,255,.6) inset, 0 30px 70px rgba(60,30,60,.26);
   border:1px solid #efe2d2}
-/* house-photo hero (rounded top) */
-.ucts-hero{position:relative;height:184px;background:linear-gradient(135deg,#6a2d4f,#4e2340);overflow:hidden}
-.ucts-hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 45%}
-.ucts-hero-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(40,20,38,.94) 2%,rgba(40,20,38,.4) 42%,rgba(40,20,38,.08) 100%)}
-.ucts-hero.noimg .ucts-hero-grad{background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(0,0,0,.14))}
-.ucts-hero-cap{position:absolute;left:0;right:0;bottom:15px;text-align:center}
-.ucts-hero-key{height:40px;width:auto;display:block;margin:0 auto 6px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.45))}
-.ucts-hero-ey{font-family:var(--sans);font-weight:800;letter-spacing:.26em;font-size:11px;text-indent:.26em;color:#f3dfce}
-.ucts-hero:after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:84px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--rosegold2),var(--gold))}
+/* plum header ... key + title, sized to its content (no empty band) */
+.ucts-hero{position:relative;background:linear-gradient(135deg,#6a2d4f,#4e2340);padding:26px 28px 24px;text-align:center}
+.ucts-hero-key{height:82px;width:auto;display:block;margin:0 auto 12px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.42))}
+.ucts-hero-ey{font-family:var(--sans);font-weight:800;letter-spacing:.3em;font-size:15.5px;text-indent:.3em;color:#f3dfce;display:inline-block}
+.ucts-hero:after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:90px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--rosegold2),var(--gold))}
 .ucts-ey{font-family:var(--sans);font-weight:800;letter-spacing:.34em;font-size:12px;text-indent:.34em;color:#f0dcc9;margin:0}
 .ucts-top h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.01em;margin:4px 0 0;color:#fff}
 
-.ucts-mid{padding:18px 28px 4px;text-align:center}
+.ucts-mid{padding:28px 28px 4px;text-align:center}
 .ucts-congrats{font-family:var(--serif);font-style:italic;font-weight:500;font-size:27px;color:var(--plum);margin:0 0 4px;line-height:1.05}
 .ucts-addr-h{font-family:var(--serif);font-weight:600;font-size:20px;color:#2a2230;margin:2px 0 0;line-height:1.15}
 .ucts-intro{font-size:12.5px;line-height:1.55;color:#5a505a;margin:10px auto 0;max-width:430px}
@@ -104,7 +100,7 @@ const CSS = `
 
 @media(max-width:430px){
   .ucts-facts{grid-template-columns:1fr}
-  .ucts-hero{height:158px}.ucts-congrats{font-size:23px}.ucts-addr-h{font-size:19px}
+  .ucts-hero{padding:22px 20px 20px}.ucts-hero-key{height:70px}.ucts-hero-ey{font-size:14px}.ucts-congrats{font-size:23px}.ucts-addr-h{font-size:19px}
   .tl-row{grid-template-columns:84px 20px 1fr;gap:9px}.tl-task{font-size:16px}.date-pill{font-size:12px;padding:8px 5px}
 }
 @media print{
@@ -160,17 +156,10 @@ export default function TimelineSheet({
       </div>
 
       <div className="ucts-card">
-        <div className={`ucts-hero${v.photoUrl ? "" : " noimg"}`}>
-          {v.photoUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img className="ucts-hero-img" src={v.photoUrl} alt="" />
-          )}
-          <div className="ucts-hero-grad" />
-          <div className="ucts-hero-cap">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="ucts-hero-key" src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png" alt="" />
-            <span className="ucts-hero-ey">UNDER CONTRACT TIMELINE</span>
-          </div>
+        <div className="ucts-hero">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="ucts-hero-key" src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png" alt="" />
+          <span className="ucts-hero-ey">UNDER CONTRACT TIMELINE</span>
         </div>
 
         <div className="ucts-mid">
