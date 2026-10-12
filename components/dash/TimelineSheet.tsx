@@ -41,6 +41,9 @@ const CSS = `
 .ucts-hero-key{height:82px;width:auto;display:block;margin:0 auto 12px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.42))}
 .ucts-hero-ey{font-family:var(--sans);font-weight:800;letter-spacing:.3em;font-size:15.5px;text-indent:.3em;color:#f3dfce;display:inline-block}
 .ucts-hero:after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:90px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--rosegold2),var(--gold))}
+/* home photo band ... below the banner, above everything else */
+.ucts-photo{position:relative;height:190px;background:#2a1f28;overflow:hidden}
+.ucts-photo img{width:100%;height:100%;object-fit:cover;object-position:50% 45%;display:block}
 .ucts-ey{font-family:var(--sans);font-weight:800;letter-spacing:.34em;font-size:12px;text-indent:.34em;color:#f0dcc9;margin:0}
 .ucts-top h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.01em;margin:4px 0 0;color:#fff}
 
@@ -100,7 +103,7 @@ const CSS = `
 
 @media(max-width:430px){
   .ucts-facts{grid-template-columns:1fr}
-  .ucts-hero{padding:22px 20px 20px}.ucts-hero-key{height:70px}.ucts-hero-ey{font-size:14px}.ucts-congrats{font-size:23px}.ucts-addr-h{font-size:19px}
+  .ucts-hero{padding:22px 20px 20px}.ucts-hero-key{height:70px}.ucts-hero-ey{font-size:14px}.ucts-photo{height:160px}.ucts-congrats{font-size:23px}.ucts-addr-h{font-size:19px}
   .tl-row{grid-template-columns:84px 20px 1fr;gap:9px}.tl-task{font-size:16px}.date-pill{font-size:12px;padding:8px 5px}
 }
 @media print{
@@ -161,6 +164,13 @@ export default function TimelineSheet({
           <img className="ucts-hero-key" src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png" alt="" />
           <span className="ucts-hero-ey">UNDER CONTRACT TIMELINE</span>
         </div>
+
+        {v.photoUrl && (
+          <div className="ucts-photo">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={v.photoUrl} alt="" />
+          </div>
+        )}
 
         <div className="ucts-mid">
           {editable
