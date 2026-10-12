@@ -17,6 +17,7 @@ import {
   formatPhone,
   telHref,
   formatBirthday,
+  formatAnniversary,
   type Person,
 } from "@/lib/contacts";
 
@@ -204,13 +205,14 @@ export default function ContactCard(props: ContactCardProps) {
               <Field label="Birthday" value={formatBirthday(person.birthday)} />
               <Field label="Marital status" value={person.marital_status ? MARITAL_LABEL[person.marital_status] ?? person.marital_status : null} />
               <Field label="Spouse" value={spouseRel?.name ?? null} href={spouseRel?.related_person_id ? `/dashboard/contacts?id=${spouseRel.related_person_id}` : undefined} />
-              <Field label="Homeiversary" value={fmtDate(homeiversary)} />
+              <Field label="Home anniversary" value={formatAnniversary(person.home_anniversary) ?? fmtDate(homeiversary)} />
             </>
             {editing === "personal" && (
               <Pop title="Edit personal" onClose={() => setEditing(null)}>
                 <form action={save} className="space-y-3 pt-1">
                   <input type="hidden" name="id" value={person.id} />
                   <LabeledInput name="birthday" label="Birthday" defaultValue={person.birthday} type="date" />
+                  <LabeledInput name="home_anniversary" label="Home anniversary" defaultValue={person.home_anniversary} type="date" />
                   <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-2">
                     <span className="text-sm text-dusty">Marital status</span>
                     <select name="marital_status" defaultValue={person.marital_status ?? ""} className={`${inp} w-full`}>

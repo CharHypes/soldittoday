@@ -16,6 +16,7 @@ export type Person = {
   phone?: string | null;
   address?: string | null;
   birthday?: string | null;
+  home_anniversary?: string | null;
   marital_status?: string | null;
   lead_source?: string | null;
   referred_by_person_id?: string | null;
@@ -106,6 +107,14 @@ export function formatBirthday(v: string | null | undefined): string | null {
   const d = new Date(`${raw}T00:00:00`);
   if (Number.isNaN(d.getTime())) return null;
   return d.toLocaleDateString("en-US", { month: "long", day: "numeric" });
+}
+
+export function formatAnniversary(v: string | null | undefined): string | null {
+  const raw = s(v);
+  if (!raw) return null;
+  const d = new Date(`${raw}T00:00:00`);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
 export const MARITAL_LABEL: Record<string, string> = {
