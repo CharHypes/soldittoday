@@ -29,6 +29,7 @@ type Tx = {
   county: string | null; occupancy: string | null; emd_received_date: string | null;
   inspection_period_days: number | null; inspection_deadline: string | null;
   appraisal_date: string | null; financing_contingency_date: string | null;
+  insurance_date: string | null; walkthrough_date: string | null;
   referral_how: string | null; referral_amount: number | string | null;
 };
 

@@ -49,9 +49,9 @@ export default async function TimelinePage({ params }: { params: { id: string } 
       { label: "Send contract to lender", date: md(tx.acceptance_date) },
       { label: "Schedule home inspection", date: md(tx.inspection_deadline) },
       { label: "Repair request due to seller", date: md(tx.inspection_deadline) },
-      { label: "Obtain home insurance plan", date: "" },
+      { label: "Obtain home insurance plan", date: md(tx.insurance_date) },
       { label: "Complete home appraisal", date: md(tx.appraisal_date) },
-      { label: "Schedule the walk through", date: "" },
+      { label: "Schedule the walk through", date: md(tx.walkthrough_date) },
       { label: "Closing date per contract", date: md(tx.target_close_date) },
     ],
   };

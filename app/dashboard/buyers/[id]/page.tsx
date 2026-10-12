@@ -97,6 +97,7 @@ export default async function DealPage({ params }: { params: { id: string } }) {
             county: tx.county, occupancy: tx.occupancy, emd_received_date: tx.emd_received_date,
             inspection_period_days: tx.inspection_period_days, inspection_deadline: tx.inspection_deadline,
             appraisal_date: tx.appraisal_date, financing_contingency_date: tx.financing_contingency_date,
+            insurance_date: tx.insurance_date, walkthrough_date: tx.walkthrough_date,
             referral_how: tx.referral_how, referral_amount: tx.referral_amount,
           }}
           buyerName={buyerName}

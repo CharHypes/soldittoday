@@ -877,6 +877,8 @@ export async function saveTransactionFull(formData: FormData) {
       inspection_deadline: str(formData.get("inspection_deadline")),
       appraisal_date: str(formData.get("appraisal_date")),
       financing_contingency_date: str(formData.get("financing_contingency_date")),
+      insurance_date: str(formData.get("insurance_date")),
+      walkthrough_date: str(formData.get("walkthrough_date")),
       // earnest money
       emd_amount: num(formData.get("emd_amount")),
       emd_held_by: str(formData.get("emd_held_by")),

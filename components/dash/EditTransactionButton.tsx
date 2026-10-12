@@ -17,6 +17,7 @@ type Tx = {
   dpa_program?: string | null; dpa_amount?: number | string | null;
   inspection_period_days?: number | null; inspection_deadline?: string | null;
   appraisal_date?: string | null; financing_contingency_date?: string | null;
+  insurance_date?: string | null; walkthrough_date?: string | null;
   referral_how?: string | null; referral_amount?: number | string | null;
 };
 
@@ -227,6 +228,8 @@ export default function EditTransactionButton({
                       <label className="ci"><span className="k">Inspection deadline</span><input type="date" className="inp" name="inspection_deadline" defaultValue={v(tx.inspection_deadline)} /></label>
                       <label className="ci"><span className="k">Appraisal</span><input type="date" className="inp" name="appraisal_date" defaultValue={v(tx.appraisal_date)} /></label>
                       <label className="ci"><span className="k">Financing contingency</span><input type="date" className="inp" name="financing_contingency_date" defaultValue={v(tx.financing_contingency_date)} /></label>
+                      <label className="ci"><span className="k">Insurance plan</span><input type="date" className="inp" name="insurance_date" defaultValue={v(tx.insurance_date)} /></label>
+                      <label className="ci"><span className="k">Walk-through</span><input type="date" className="inp" name="walkthrough_date" defaultValue={v(tx.walkthrough_date)} /></label>
                       <label className="ci"><span className="k">Closing</span><input type="date" className="inp" name="target_close_date" defaultValue={v(tx.target_close_date)} /></label>
                     </div>
                     <p className="helpnote" style={{ margin: "14px 0 0" }}>We flag the inspection deadline on the deal as it gets close so it never slips by.</p>
