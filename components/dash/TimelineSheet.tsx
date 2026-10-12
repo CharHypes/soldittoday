@@ -84,7 +84,7 @@ export default function TimelineSheet({ v, backHref }: { v: TimelineValues; back
             <div className="ucts-div" />
             <p className="ucts-lbl">PURCHASE PRICE:</p>
             <E className="ucts-val" ph="$000,000" text={v.purchasePrice} />
-            <p className="ucts-lbl">ESCROW DEPOSIT:</p>
+            <p className="ucts-lbl">EMD DEPOSIT:</p>
             <E className="ucts-val" ph="$0,000" text={v.escrow} />
             <div className="ucts-div" />
 
