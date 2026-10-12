@@ -171,6 +171,7 @@ export default function DealWorkspace(p: Props) {
                   </form>
                 )}
                 <a href={p.portalUrl} target="_blank" rel="noreferrer"><button type="button"><svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" /><circle cx="12" cy="12" r="3" /></svg> Preview client portal</button></a>
+                <a href={`/dashboard/buyers/${p.tx.id}/timeline`} target="_blank" rel="noreferrer"><button type="button"><svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.6}><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round" /></svg> Under-contract timeline</button></a>
               </div>
             )}
           </div>
