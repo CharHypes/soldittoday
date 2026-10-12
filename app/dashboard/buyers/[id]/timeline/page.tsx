@@ -56,5 +56,8 @@ export default async function TimelinePage({ params }: { params: { id: string } 
     ],
   };
 
-  return <TimelineSheet v={v} backHref={`/dashboard/buyers/${params.id}`} />;
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://www.soldittoday.com";
+  const shareUrl = tx.portal_token ? `${site}/buyer/${tx.portal_token}/timeline` : undefined;
+
+  return <TimelineSheet v={v} backHref={`/dashboard/buyers/${params.id}`} shareUrl={shareUrl} />;
 }

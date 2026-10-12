@@ -84,3 +84,23 @@ export async function getBuyerPortal(token: string): Promise<BuyerPortalData | n
   }
   return (data as BuyerPortalData | null) ?? null;
 }
+
+export type BuyerTimelineData = {
+  address: string | null; city: string | null; state: string | null; zip: string | null;
+  price: number | null; emd_amount: number | null;
+  acceptance_date: string | null; emd_received_date: string | null;
+  inspection_deadline: string | null; appraisal_date: string | null;
+  insurance_date: string | null; walkthrough_date: string | null; target_close_date: string | null;
+  client_name: string | null; title_company: string | null;
+};
+
+/** Public (token-only) read of the Under Contract Timeline data. */
+export async function getBuyerTimeline(token: string): Promise<BuyerTimelineData | null> {
+  const { data, error } = await supabase.rpc("get_buyer_timeline", { p_token: token });
+  if (error) {
+    // eslint-disable-next-line no-console
+    console.error("[portal] buyer timeline rpc error:", error.message);
+    return null;
+  }
+  return (data as BuyerTimelineData | null) ?? null;
+}
