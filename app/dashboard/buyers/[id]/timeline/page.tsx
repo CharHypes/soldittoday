@@ -44,6 +44,7 @@ export default async function TimelinePage({ params }: { params: { id: string } 
     escrow: usd0(tx.emd_amount),
     addressHtml: addressHtml || "",
     titleCompany,
+    photoUrl: tx.photo_url ?? null,
     rows: [
       { label: "Earnest money due", date: md(tx.emd_received_date) },
       { label: "Send contract to lender", date: md(tx.acceptance_date) },

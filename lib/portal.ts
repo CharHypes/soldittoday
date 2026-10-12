@@ -87,7 +87,7 @@ export async function getBuyerPortal(token: string): Promise<BuyerPortalData | n
 
 export type BuyerTimelineData = {
   address: string | null; city: string | null; state: string | null; zip: string | null;
-  price: number | null; emd_amount: number | null;
+  price: number | null; emd_amount: number | null; photo_url: string | null;
   acceptance_date: string | null; emd_received_date: string | null;
   inspection_deadline: string | null; appraisal_date: string | null;
   insurance_date: string | null; walkthrough_date: string | null; target_close_date: string | null;

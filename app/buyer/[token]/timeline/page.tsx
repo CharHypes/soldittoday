@@ -47,6 +47,7 @@ export default async function PublicTimelinePage({ params }: { params: { token: 
     escrow: usd0(d.emd_amount),
     addressHtml,
     titleCompany: d.title_company || "",
+    photoUrl: d.photo_url,
     rows: [
       { label: "Earnest money due", date: md(d.emd_received_date) },
       { label: "Send contract to lender", date: md(d.acceptance_date) },
