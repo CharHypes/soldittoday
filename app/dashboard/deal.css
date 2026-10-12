@@ -156,9 +156,15 @@
 .dealws .clmeta{font-size:13px;color:var(--ink3)}
 .dealws .clmeta b{color:var(--ink2);font-weight:600}
 
-/* icon edit */
-.dealws .iconedit{display:inline-grid;place-items:center;width:30px;height:30px;flex:none;border-radius:8px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink3);cursor:pointer}
-.dealws .iconedit:hover{color:var(--ink);border-color:color-mix(in srgb,var(--mauve) 45%,transparent)}
+/* icon edit ... a quiet pencil, no box */
+.dealws .iconedit{display:inline-grid;place-items:center;width:26px;height:26px;flex:none;border:0;background:none;color:var(--ink3);cursor:pointer;opacity:.7}
+.dealws .iconedit:hover{color:var(--mauve);opacity:1}
+
+/* inline edit on the meta strip ... dotted on hover, click to edit in place */
+.dealws .ival{border-bottom:1px dotted transparent;cursor:text;padding-bottom:1px}
+.dealws .ival:hover{border-bottom-color:color-mix(in srgb,var(--mauve) 75%,transparent);background:color-mix(in srgb,var(--mauve) 10%,transparent)}
+.dealws .iefinput{font:inherit;color:var(--ink);background:var(--bo-input-bg,var(--bg2));border:1px solid var(--mauve);border-radius:5px;padding:2px 8px;min-width:150px}
+.dealws .iefinput:focus{outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--mauve) 16%,transparent)}
 
 /* generic field inputs reused by tab panels */
 /* Inputs follow the backoffice.css house numbers: 26px tall, 5px radius,

@@ -964,6 +964,27 @@ export async function saveCommission(formData: FormData) {
   revalidatePath(`/dashboard/buyers/${id}`);
 }
 
+/** Inline-edit a single deal field from the meta strip (click-to-edit in place). */
+export async function updateDealField(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("transaction_id"));
+  const field = str(formData.get("field"));
+  const value = str(formData.get("value"));
+  if (!id || !field) return;
+  const allowed = new Set(["referred_by", "lead_source", "target_close_date", "waiting"]);
+  if (!allowed.has(field)) return;
+
+  if (field === "waiting") {
+    const { data: row } = await supabase.from("transactions").select("file_needs").eq("id", id).maybeSingle();
+    const fn = normalizeFileNeeds(row?.file_needs);
+    fn.waiting = (value ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+    await supabase.from("transactions").update({ file_needs: fn, waiting_on: fn.waiting.join(", ") || null }).eq("id", id);
+  } else {
+    await supabase.from("transactions").update({ [field]: value }).eq("id", id);
+  }
+  revalidatePath(`/dashboard/buyers/${id}`);
+}
+
 /** Toggle one predefined file-needs item (Checklist tab); preserves custom + waiting. */
 export async function toggleFileNeed(formData: FormData) {
   const { supabase } = await ctx();

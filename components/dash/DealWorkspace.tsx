@@ -7,7 +7,7 @@ import EditTransactionButton from "@/components/dash/EditTransactionButton";
 import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
 import {
   updateMilestones, uploadBuyerDocument, toggleDocumentShare, deleteDocument,
-  addBuyerNote, syncTransactionPhoto, deleteTransaction, toggleFileNeed, toggleFileNeedCustom,
+  addBuyerNote, syncTransactionPhoto, deleteTransaction, toggleFileNeed, toggleFileNeedCustom, updateDealField,
 } from "@/app/dashboard/actions";
 import { visibleItems, type ChkItem, type ChkGroup, type FileNeeds, type CustomItem } from "@/lib/dealChecklist";
 import EmailGenerator from "@/components/dash/EmailGenerator";
@@ -177,12 +177,12 @@ export default function DealWorkspace(p: Props) {
         </div>
       </div>
 
-      {/* meta strip */}
+      {/* meta strip ... hover shows a dotted underline, click to edit in place */}
       <div className="metastrip">
-        <span className="ms"><b>Waiting on</b> <span className="wait">{p.fileNeeds.waiting.length ? p.fileNeeds.waiting.join(", ") : (p.tx.waiting_on || "Nothing")}</span></span>
-        <span className="ms"><b>Referred by</b> {p.tx.referred_by || NS}</span>
-        <span className="ms"><b>Lead source</b> {p.tx.lead_source || NS}</span>
-        <span className="ms"><b>Est. closing</b> {dt(p.tx.target_close_date) || NS}</span>
+        <span className="ms"><b>Waiting on</b> <InlineEdit txId={p.tx.id} field="waiting" value={p.fileNeeds.waiting.join(", ")} display={p.fileNeeds.waiting.length ? p.fileNeeds.waiting.join(", ") : "Nothing"} className="wait" placeholder="Appraisal, insurance binder..." /></span>
+        <span className="ms"><b>Referred by</b> <InlineEdit txId={p.tx.id} field="referred_by" value={p.tx.referred_by ?? ""} display={p.tx.referred_by || "Not set"} placeholder="Name · brokerage" /></span>
+        <span className="ms"><b>Lead source</b> <InlineEdit txId={p.tx.id} field="lead_source" value={p.tx.lead_source ?? ""} display={p.tx.lead_source || "Not set"} placeholder="Agent referral" /></span>
+        <span className="ms"><b>Est. closing</b> <InlineEdit txId={p.tx.id} field="target_close_date" type="date" value={p.tx.target_close_date ?? ""} display={dt(p.tx.target_close_date) || "Not set"} /></span>
       </div>
 
       {/* tabs */}
@@ -491,6 +491,30 @@ function ChkRow({ txId, group, item, checked }: { txId: string; group: "docs" | 
   );
 }
 
+function InlineEdit({ txId, field, value, display, type = "text", className = "", placeholder }: {
+  txId: string; field: string; value: string; display: string; type?: string; className?: string; placeholder?: string;
+}) {
+  const [editing, setEditing] = useState(false);
+  const empty = !value;
+  if (!editing) {
+    return (
+      <span className={`ival ${className}`} style={empty ? { color: "var(--ink3)" } : undefined} onClick={() => setEditing(true)} role="button" tabIndex={0}
+        onKeyDown={(e) => { if (e.key === "Enter") setEditing(true); }}>{display}</span>
+    );
+  }
+  return (
+    <form action={updateDealField} style={{ display: "inline" }} onSubmit={() => setEditing(false)}>
+      <input type="hidden" name="transaction_id" value={txId} />
+      <input type="hidden" name="field" value={field} />
+      <input
+        name="value" type={type} defaultValue={value} placeholder={placeholder} className="iefinput" autoFocus
+        onBlur={(e) => e.currentTarget.form?.requestSubmit()}
+        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); e.currentTarget.form?.requestSubmit(); } if (e.key === "Escape") setEditing(false); }}
+      />
+    </form>
+  );
+}
+
 function CustomRow({ txId, item }: { txId: string; item: CustomItem }) {
   return (
     <form action={toggleFileNeedCustom} className="clrow">
@@ -519,16 +543,16 @@ function Party({ c, i }: { c: KC; i: number }) {
       <div className="pbody">
         <div className="prole">{prettyRole(c.role)}</div>
         <div className="pname">
-          <span className="hc">{c.personId ? <a href={`/dashboard/contacts?id=${c.personId}`} style={{ color: "inherit", textDecoration: "none" }}>{c.name}</a> : c.name}</span>
+          <span className="hc">{c.personId ? <a href={`/dashboard/contacts?id=${c.personId}`} style={{ color: "inherit", textDecoration: "none" }}>{c.name}</a> : c.name}<Copy className="hcbtn" text={c.name} /></span>
         </div>
         {c.company && <div className="pcompany">{c.company}</div>}
         {(c.phone || c.email) && (
           <div className="pline">
-            {c.phone && <a href={`tel:${c.phone}`}>{c.phone}</a>}
-            {c.email && <a href={`mailto:${c.email}`}>{c.email}</a>}
+            {c.phone && <span className="hc"><a href={`tel:${c.phone}`}>{c.phone}</a><Copy className="hcbtn" text={c.phone} /></span>}
+            {c.email && <span className="hc"><a href={`mailto:${c.email}`}>{c.email}</a><Copy className="hcbtn" text={c.email} /></span>}
           </div>
         )}
-        {c.address && <div className="paddr">{c.address}</div>}
+        {c.address && <div className="paddr"><span className="hc">{c.address}<Copy className="hcbtn" text={c.address} /></span></div>}
       </div>
     </div>
   );
