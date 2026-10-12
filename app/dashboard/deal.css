@@ -25,6 +25,25 @@
 .dealws *{box-sizing:border-box}
 .dealws .ic{width:16px;height:16px;flex:none}
 
+/* Deal page background ... pinned to the mockup's warm plum (Mulberry Noir)
+   so the workspace always matches the approved design, regardless of the
+   Agent Hub's neutral/mulberry workspace-design toggle. */
+.deal-page{
+  min-height:100vh;
+  background:
+    radial-gradient(46% 52% at 9% -4%,color-mix(in srgb,#7c5c69 8%,transparent) 0%,transparent 58%),
+    radial-gradient(46% 52% at 91% -4%,color-mix(in srgb,#7c5c69 8%,transparent) 0%,transparent 58%),
+    #f7edf2;
+  background-attachment:fixed;
+}
+[data-theme="dark"] .deal-page{
+  background:
+    radial-gradient(46% 52% at 9% -4%,color-mix(in srgb,#c2a3ad 8%,transparent) 0%,transparent 58%),
+    radial-gradient(46% 52% at 91% -4%,color-mix(in srgb,#c2a3ad 8%,transparent) 0%,transparent 58%),
+    #1a1518;
+  background-attachment:fixed;
+}
+
 /* header */
 .dealws .crumb{color:var(--ink3);font-size:13px;margin:0}
 .dealws .crumb a{color:var(--ink3);text-decoration:none;cursor:pointer}

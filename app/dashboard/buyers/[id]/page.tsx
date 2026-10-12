@@ -80,7 +80,7 @@ export default async function DealPage({ params }: { params: { id: string } }) {
     keyContacts.find((c) => /buyer/i.test(c.role))?.personId ?? null;
 
   return (
-    <main className="min-h-screen bg-agenthub">
+    <main className="deal-page">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-8">
         <DealWorkspace
