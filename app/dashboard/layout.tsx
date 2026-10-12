@@ -13,6 +13,7 @@ import { Fraunces, Manrope, IBM_Plex_Mono } from "next/font/google";
 // Back-office design system (bo- prefixed). Scoped to the dashboard only ... never
 // imported on the marketing site / client portal. See Shared-Projects/agent-hub-typography.
 import "./backoffice.css";
+import "./deal.css";
 
 // The three back-office faces. Exposed as the tokens backoffice.css reads
 // (--font-sans / --font-display / --font-mono), so the display exception

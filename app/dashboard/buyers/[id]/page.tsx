@@ -62,29 +62,42 @@ export default async function DealPage({ params }: { params: { id: string } }) {
     const { data: c } = await supabase.from("clients").select("name").eq("id", tx.client_id).maybeSingle();
     buyerName = c?.name ?? null;
   }
-  let agentName: string | null = null;
-  if (tx.agent_id) {
-    const { data: a } = await supabase.from("agents").select("name").eq("id", tx.agent_id).maybeSingle();
-    agentName = a?.name ?? null;
-  }
-
-  const { role } = await getOrgContext(supabase);
+  const { role, agentId: meAgentId } = await getOrgContext(supabase);
   const isOwner = role === "owner" || role === "admin";
+
+  // Resolve agent-on-file + the viewing owner's name in one lookup.
+  const nameIds = Array.from(new Set([tx.agent_id, meAgentId].filter(Boolean))) as string[];
+  const agentNames = new Map<string, string>();
+  if (nameIds.length) {
+    const { data: ags } = await supabase.from("agents").select("id, name").in("id", nameIds);
+    (ags ?? []).forEach((a) => agentNames.set(a.id, a.name));
+  }
+  const agentName = tx.agent_id ? agentNames.get(tx.agent_id) ?? null : null;
+  const ownerName = meAgentId ? agentNames.get(meAgentId) ?? null : null;
+
+  const buyerPersonId =
+    keyContacts.find((c) => /(^|_)buyer$/i.test(c.role) && !/co/i.test(c.role))?.personId ??
+    keyContacts.find((c) => /buyer/i.test(c.role))?.personId ?? null;
 
   return (
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-8">
-        <a href="/dashboard/buyers" className="mb-4 inline-block text-sm text-dusty hover:text-pearl">&larr; Back to buyers</a>
         <DealWorkspace
           tx={{
             id: tx.id, address: tx.address, city: tx.city, state: tx.state, zip: tx.zip,
             price: tx.price, status: tx.status, pipeline_stage: tx.pipeline_stage,
             target_close_date: tx.target_close_date, mls_number: tx.mls_number,
             photo_url: tx.photo_url, email_token: tx.email_token,
+            acceptance_date: tx.acceptance_date, emd_amount: tx.emd_amount, emd_held_by: tx.emd_held_by,
+            deal_type: tx.deal_type, office: tx.office, year_built: tx.year_built, seller_name: tx.seller_name,
+            waiting_on: tx.waiting_on, referred_by: tx.referred_by, lead_source: tx.lead_source, skyslope_email: tx.skyslope_email,
+            dpa_program: tx.dpa_program, dpa_amount: tx.dpa_amount,
           }}
           buyerName={buyerName}
+          buyerPersonId={buyerPersonId}
           agentName={agentName}
+          ownerName={ownerName}
           portalUrl={`${SITE}/buyer/${tx.portal_token}`}
           dealEmail={tx.email_token ? dealEmailAddress(tx.email_token) : null}
           keyContacts={keyContacts}

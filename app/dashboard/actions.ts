@@ -803,6 +803,20 @@ export async function updateTransaction(formData: FormData) {
       target_close_date: str(formData.get("target_close_date")),
       mls_number: str(formData.get("mls_number")),
       photo_url: str(formData.get("photo_url")),
+      // deal workspace detail fields (crm15)
+      acceptance_date: str(formData.get("acceptance_date")),
+      emd_amount: num(formData.get("emd_amount")),
+      emd_held_by: str(formData.get("emd_held_by")),
+      deal_type: str(formData.get("deal_type")),
+      office: str(formData.get("office")),
+      year_built: num(formData.get("year_built")),
+      seller_name: str(formData.get("seller_name")),
+      waiting_on: str(formData.get("waiting_on")),
+      referred_by: str(formData.get("referred_by")),
+      lead_source: str(formData.get("lead_source")),
+      skyslope_email: str(formData.get("skyslope_email")),
+      dpa_program: str(formData.get("dpa_program")),
+      dpa_amount: num(formData.get("dpa_amount")),
     })
     .eq("id", id);
   revalidatePath(`/dashboard/buyers/${id}`);

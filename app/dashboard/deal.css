@@ -1,0 +1,151 @@
+/* Deal workspace ... ported from the approved "Agent Hub Transaction" mockup.
+   All tokens + classes are scoped under .dealws so this renders exactly like the
+   mockup and never affects the rest of the dashboard. Dark is the default theme. */
+
+.dealws{
+  --plum:#f7edf2; --bg2:#f1e7ee; --surface:#ffffff; --surface2:#f6eef4; --raise:#efe6ee;
+  --ink:#1a1518; --ink2:#564950; --ink3:#9a8b93;
+  --line:rgba(26,21,24,.09); --line2:rgba(26,21,24,.14);
+  --mauve:#7c5c69; --gold:#aa744e; --wine:#8a5a70;
+  --green:#2f7f61; --red:#b2524f; --amber:#9a7b3a;
+  --ser:var(--font-display,"Fraunces",Georgia,serif);
+  --san:var(--font-sans,"Manrope",system-ui,sans-serif);
+  --mon:var(--font-mono,"IBM Plex Mono",ui-monospace,monospace);
+  --shadow:0 1px 2px rgba(40,20,50,.05),0 10px 34px rgba(60,30,80,.06);
+  font-family:var(--san);color:var(--ink);letter-spacing:-.005em;
+}
+[data-theme="dark"] .dealws{
+  --plum:#1a1518; --bg2:#1f181c; --surface:#241c21; --surface2:#2e232a; --raise:#33262d;
+  --ink:#f5e8e4; --ink2:#c3b2b8; --ink3:#8a7d83;
+  --line:rgba(245,232,228,.08); --line2:rgba(245,232,228,.14);
+  --mauve:#c2a3ad; --gold:#e0b0a0; --wine:#caa6b2;
+  --green:#7bbfa0; --red:#e08a86; --amber:#d8b887;
+  --shadow:0 1px 0 rgba(255,255,255,.02),0 24px 60px rgba(0,0,0,.4);
+}
+.dealws *{box-sizing:border-box}
+.dealws .ic{width:16px;height:16px;flex:none}
+
+/* header */
+.dealws .crumb{color:var(--ink3);font-size:13px;margin:0}
+.dealws .crumb a{color:var(--ink3);text-decoration:none;cursor:pointer}
+.dealws .crumb a:hover{color:var(--ink)}
+.dealws .dhead{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:8px}
+.dealws .dtitle{font-family:var(--ser);font-weight:500;font-size:32px;letter-spacing:-.015em;margin:0;display:flex;align-items:center;gap:12px;color:var(--ink)}
+.dealws .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.dealws .pill.under{background:color-mix(in srgb,var(--gold) 16%,transparent);color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent)}
+.dealws .pill.active{background:#2f9e6e;color:#fff}
+.dealws .sideline{color:var(--ink3);font-size:14px;margin-top:5px}
+.dealws .hbtns{display:flex;gap:9px;flex-wrap:wrap}
+.dealws .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:20px;height:32px;padding:0 14px;font:inherit;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--line2);background:var(--bg2);color:var(--ink);text-decoration:none}
+.dealws .btn:hover{border-color:color-mix(in srgb,var(--mauve) 50%,transparent)}
+.dealws .btn.mauve{background:var(--mauve);color:var(--plum);border:0}
+.dealws .hthumb{width:74px;height:74px;border-radius:14px;flex:none;overflow:hidden;background:linear-gradient(135deg,#6c5767,#2a1f28);display:grid;place-items:center;color:rgba(255,255,255,.55);box-shadow:var(--shadow)}
+.dealws .hthumb img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* menu */
+.dealws .menu{position:relative}
+.dealws .menu-pop{position:absolute;right:0;top:calc(100% + 6px);min-width:230px;background:var(--surface);border:1px solid var(--line2);border-radius:13px;box-shadow:0 18px 50px rgba(0,0,0,.28);padding:7px;z-index:30}
+.dealws .menu-pop button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;font:inherit;font-size:13.5px;color:var(--ink);padding:10px 11px;border-radius:9px;cursor:pointer}
+.dealws .menu-pop button:hover{background:var(--bg2)}
+.dealws .menu-pop button.danger{color:var(--red)}
+.dealws .menu-pop .sep{height:1px;background:var(--line);margin:5px 4px}
+
+/* meta strip */
+.dealws .metastrip{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:14px;padding:13px 2px 0;border-top:1px solid var(--line)}
+.dealws .ms{font-size:13.5px;color:var(--ink)}
+.dealws .ms b{color:var(--ink3);font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-right:8px;font-weight:700}
+.dealws .ms .wait{color:var(--gold);font-weight:600}
+
+/* tabs */
+.dealws .tabrow{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-top:22px;overflow-x:auto}
+.dealws .tabrow button{border:0;background:none;font:inherit;font-size:13.5px;color:var(--ink3);padding:11px 14px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:inline-flex;align-items:center;gap:2px}
+.dealws .tabrow button.on{color:var(--ink);font-weight:600;border-bottom-color:var(--mauve)}
+
+/* layout + cards */
+.dealws .panel{padding:22px 0 40px}
+.dealws .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.dealws .grid2{display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+@media(max-width:860px){.dealws .grid2{grid-template-columns:1fr}}
+.dealws .cardhd{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 2px}
+.dealws .cardhd h3{font-family:var(--san);font-weight:700;font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin:0}
+.dealws .cardbody{padding:4px 18px 16px}
+
+/* summary grid */
+.dealws .summary{padding:20px 22px}
+.dealws .sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 20px}
+@media(max-width:760px){.dealws .sgrid{grid-template-columns:repeat(2,1fr)}}
+.dealws .field .k{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:3px}
+.dealws .field .v{font-size:13px;color:var(--ink);font-weight:400;line-height:1.4}
+.dealws .field .v.link{color:var(--mauve)}
+.dealws .field .v.link a{color:var(--mauve);text-decoration:none}
+.dealws .field .v.link a:hover{text-decoration:underline}
+
+/* emails */
+.dealws .emails{margin-top:18px;border-top:1px solid var(--line);padding-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:620px){.dealws .emails{grid-template-columns:1fr}}
+.dealws .efield .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3)}
+.dealws .efield .eval{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:13.5px;word-break:break-all}
+.dealws .efield .eval a{color:var(--mauve);text-decoration:none}
+.dealws .efield .eval a:hover{text-decoration:underline}
+.dealws .efield .eval.muted a{color:var(--ink2)}
+.dealws .cpic{display:inline-flex;align-items:center;justify-content:center;width:27px;height:27px;flex:none;border-radius:7px;border:1px solid var(--line2);background:var(--surface);color:var(--ink3);cursor:pointer}
+.dealws .cpic:hover{color:var(--ink);border-color:color-mix(in srgb,var(--mauve) 45%,transparent)}
+.dealws .cpic.done{color:var(--green);border-color:color-mix(in srgb,var(--green) 45%,transparent)}
+
+/* assigned-to people */
+.dealws .person{display:flex;align-items:center;gap:11px;padding:12px 0}
+.dealws .person + .person{border-top:1px solid var(--line)}
+.dealws .av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--plum);flex:none}
+.dealws .person .role{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3)}
+.dealws .person .nm{font-size:14px;font-weight:500;color:var(--ink)}
+.dealws .ownertag{display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;background:color-mix(in srgb,var(--gold) 20%,transparent);color:var(--gold)}
+.dealws .assign{display:flex;align-items:center;gap:8px;margin-top:10px}
+.dealws .addlink{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;color:var(--mauve);cursor:pointer;border:1px dashed color-mix(in srgb,var(--mauve) 45%,transparent);border-radius:9px;padding:5px 9px;background:none}
+.dealws .addlink:hover{background:color-mix(in srgb,var(--mauve) 10%,transparent)}
+
+/* key contacts (Butler-style) + hover copy */
+.dealws .party{display:flex;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.dealws .party:first-child{border-top:0;padding-top:2px}
+.dealws .party .av{width:34px;height:34px;font-size:12px}
+.dealws .avstack{display:flex;flex:none}
+.dealws .avstack .av+.av{margin-left:-11px;border:2px solid var(--surface)}
+.dealws .pbody{min-width:0;flex:1}
+.dealws .prole{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);font-weight:700;margin-bottom:3px}
+.dealws .pname{font-size:14px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:2px}
+.dealws .pcompany{font-size:11.5px;color:var(--ink3);margin-bottom:2px}
+.dealws .pline{display:flex;flex-wrap:wrap;gap:2px 10px;margin-top:3px}
+.dealws .pline a{color:var(--mauve);text-decoration:none;font-size:11px}
+.dealws .pline a:hover{text-decoration:underline}
+.dealws .paddr{font-size:11px;color:var(--ink3);margin-top:3px}
+.dealws .chip{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gold);background:color-mix(in srgb,var(--gold) 15%,transparent);padding:2px 8px;border-radius:12px}
+.dealws .subperson{margin-top:8px}
+.dealws .spn{font-size:11.5px;font-weight:600;color:var(--ink)}
+.dealws .hc{display:inline-flex;align-items:center;gap:4px}
+.dealws .hcbtn{width:20px;height:20px;flex:none;border:0;background:none;color:var(--ink3);cursor:pointer;opacity:0;transition:opacity .12s;display:inline-grid;place-items:center;vertical-align:middle}
+.dealws .hc:hover .hcbtn{opacity:1}
+.dealws .hcbtn:hover{color:var(--mauve)}
+.dealws .hcbtn.done{color:var(--green);opacity:1}
+
+/* notes */
+.dealws .note{font-size:13px;color:var(--ink2);padding:11px 0;border-top:1px solid var(--line)}
+.dealws .note:first-child{border-top:0;padding-top:0}
+.dealws .note .meta{font-size:10.5px;color:var(--ink3);margin-top:4px}
+
+/* progress */
+.dealws .prog{height:7px;border-radius:999px;background:var(--bg2);overflow:hidden;margin-top:4px}
+.dealws .prog span{display:block;height:100%;background:linear-gradient(90deg,var(--wine),var(--gold))}
+.dealws .clmeta{font-size:13px;color:var(--ink3)}
+.dealws .clmeta b{color:var(--ink2);font-weight:600}
+
+/* icon edit */
+.dealws .iconedit{display:inline-grid;place-items:center;width:30px;height:30px;flex:none;border-radius:8px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink3);cursor:pointer}
+.dealws .iconedit:hover{color:var(--ink);border-color:color-mix(in srgb,var(--mauve) 45%,transparent)}
+
+/* generic field inputs reused by tab panels */
+.dealws .inp{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:9px 11px;font:inherit;font-size:14px;color:var(--ink)}
+.dealws .inp:focus{outline:none;border-color:var(--mauve);box-shadow:0 0 0 3px color-mix(in srgb,var(--mauve) 18%,transparent)}
+.dealws textarea.inp{resize:vertical;min-height:64px;line-height:1.45}
+.dealws .foot-danger{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding:16px 18px;border:1px solid color-mix(in srgb,var(--red) 30%,transparent);background:color-mix(in srgb,var(--red) 7%,transparent);border-radius:14px}
+.dealws .foot-danger .t{font-size:13.5px;font-weight:600;color:var(--ink)}
+.dealws .foot-danger .s{font-size:12px;color:var(--ink3)}
+.dealws .emptynote{font-size:13px;color:var(--ink3)}
