@@ -7,9 +7,9 @@ import EditTransactionButton from "@/components/dash/EditTransactionButton";
 import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
 import {
   updateMilestones, uploadBuyerDocument, toggleDocumentShare, deleteDocument,
-  addBuyerNote, syncTransactionPhoto, deleteTransaction, toggleFileNeed,
+  addBuyerNote, syncTransactionPhoto, deleteTransaction, toggleFileNeed, toggleFileNeedCustom,
 } from "@/app/dashboard/actions";
-import { DOC_GROUPS, ACTION_ITEMS, ALL_DOCS, type ChkItem } from "@/lib/dealChecklist";
+import { visibleItems, type ChkItem, type ChkGroup, type FileNeeds, type CustomItem } from "@/lib/dealChecklist";
 import EmailGenerator from "@/components/dash/EmailGenerator";
 import { type EmailTo } from "@/lib/dealEmailTemplates";
 
@@ -47,7 +47,7 @@ type Props = {
   docsEnabled: boolean;
   isOwner: boolean;
   commission: CommissionInit;
-  fileNeeds: { docs: string[]; actions: string[] };
+  fileNeeds: FileNeeds;
 };
 
 const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Email generator", "Contacts", "Client portal", "Commission", "Log"] as const;
@@ -94,8 +94,12 @@ export default function DealWorkspace(p: Props) {
   const pct = total ? Math.round((done / total) * 100) : 0;
   const current = p.milestones.find((m) => m.status === "in_progress") ?? p.milestones.filter((m) => m.status === "done").slice(-1)[0];
   const nextStep = (() => { const i = p.milestones.findIndex((m) => m.id === current?.id); return i >= 0 ? p.milestones[i + 1] : undefined; })();
-  const docsDone = ALL_DOCS.filter((d) => p.fileNeeds.docs.includes(d.key)).length;
-  const actsDone = ACTION_ITEMS.filter((a) => p.fileNeeds.actions.includes(a.key)).length;
+  const chk = visibleItems("buyer", p.tx.pipeline_stage);
+  const customDocs = p.fileNeeds.custom.filter((c) => c.group === "docs");
+  const customActs = p.fileNeeds.custom.filter((c) => c.group === "actions");
+  const docsDone = chk.docs.filter((d) => p.fileNeeds.docs.includes(d.key)).length + customDocs.filter((c) => c.done).length;
+  const actsDone = chk.actions.filter((a) => p.fileNeeds.actions.includes(a.key)).length + customActs.filter((c) => c.done).length;
+  const chkTotal = chk.docs.length + chk.actions.length + p.fileNeeds.custom.length;
 
   const typeLabel = p.tx.deal_type || "Purchase";
   const cityLine = [p.tx.city, [p.tx.state, p.tx.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
@@ -108,6 +112,7 @@ export default function DealWorkspace(p: Props) {
     contacts: p.keyContacts,
     buyer: { name: p.buyerName, phone: buyerC?.phone ?? null, email: buyerC?.email ?? null },
     fileNeeds: p.fileNeeds,
+    stage: p.tx.pipeline_stage,
   };
 
   // Email generator inputs.
@@ -174,7 +179,7 @@ export default function DealWorkspace(p: Props) {
 
       {/* meta strip */}
       <div className="metastrip">
-        <span className="ms"><b>Waiting on</b> <span className="wait">{p.tx.waiting_on || "Nothing"}</span></span>
+        <span className="ms"><b>Waiting on</b> <span className="wait">{p.fileNeeds.waiting.length ? p.fileNeeds.waiting.join(", ") : (p.tx.waiting_on || "Nothing")}</span></span>
         <span className="ms"><b>Referred by</b> {p.tx.referred_by || NS}</span>
         <span className="ms"><b>Lead source</b> {p.tx.lead_source || NS}</span>
         <span className="ms"><b>Est. closing</b> {dt(p.tx.target_close_date) || NS}</span>
@@ -315,22 +320,23 @@ export default function DealWorkspace(p: Props) {
       {tab === "Checklist" && (
         <div className="panel">
           <div className="clhead">
-            <div className="clmeta">Checklist · <b>{docsDone + actsDone} of {ALL_DOCS.length + ACTION_ITEMS.length} complete</b></div>
+            <div className="clmeta">Checklist · <b>{docsDone + actsDone} of {chkTotal} complete</b></div>
           </div>
 
-          {DOC_GROUPS.map((g) => (
-            <div className="group" key={g.title}>
-              <h2>{g.title}</h2>
-              <div className="cl">
-                {g.items.map((it) => <ChkRow key={it.key} txId={p.tx.id} group="docs" item={it} checked={p.fileNeeds.docs.includes(it.key)} />)}
-              </div>
+          <div className="group">
+            <h2>Documents needed / received</h2>
+            <div className="cl">
+              {chk.docs.map((it) => <ChkRow key={it.key} txId={p.tx.id} group="docs" item={it} checked={p.fileNeeds.docs.includes(it.key)} />)}
+              {customDocs.map((c) => <CustomRow key={c.id} txId={p.tx.id} item={c} />)}
+              {chk.docs.length === 0 && customDocs.length === 0 && <div style={{ padding: "12px 16px" }} className="emptynote">No documents yet ... add them in Edit transaction.</div>}
             </div>
-          ))}
+          </div>
 
           <div className="group">
             <h2>Follow-up / action items</h2>
             <div className="cl">
-              {ACTION_ITEMS.map((it) => <ChkRow key={it.key} txId={p.tx.id} group="actions" item={it} checked={p.fileNeeds.actions.includes(it.key)} />)}
+              {chk.actions.map((it) => <ChkRow key={it.key} txId={p.tx.id} group="actions" item={it} checked={p.fileNeeds.actions.includes(it.key)} />)}
+              {customActs.map((c) => <CustomRow key={c.id} txId={p.tx.id} item={c} />)}
             </div>
           </div>
 
@@ -481,6 +487,18 @@ function ChkRow({ txId, group, item, checked }: { txId: string; group: "docs" | 
       <input type="checkbox" className="cbx" defaultChecked={checked} onChange={(e) => e.currentTarget.form?.requestSubmit()} aria-label={item.label} />
       <span className={`doc${checked ? " is-done" : ""}`}>{item.label}</span>
       {status}
+    </form>
+  );
+}
+
+function CustomRow({ txId, item }: { txId: string; item: CustomItem }) {
+  return (
+    <form action={toggleFileNeedCustom} className="clrow">
+      <input type="hidden" name="transaction_id" value={txId} />
+      <input type="hidden" name="item_id" value={item.id} />
+      <input type="checkbox" className="cbx" defaultChecked={!!item.done} onChange={(e) => e.currentTarget.form?.requestSubmit()} aria-label={item.label} />
+      <span className={`doc${item.done ? " is-done" : ""}`}>{item.label}</span>
+      {item.done ? <span className="st done">Completed</span> : <span className="st opt">Custom</span>}
     </form>
   );
 }

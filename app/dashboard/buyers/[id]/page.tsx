@@ -6,6 +6,7 @@ import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
 import { DOCS_ENABLED } from "@/lib/supabase/admin";
 import { dealEmailAddress } from "@/lib/dealEmail";
+import { normalizeFileNeeds } from "@/lib/dealChecklist";
 
 export const metadata: Metadata = {
   title: "Deal | Sold It Today",
@@ -109,10 +110,7 @@ export default async function DealPage({ params }: { params: { id: string } }) {
           documents={(documents ?? []).map((d) => ({ id: d.id, name: d.name, uploaded_by: d.uploaded_by, client_visible: d.client_visible, created_at: d.created_at }))}
           notes={(notes ?? []).map((n) => ({ id: n.id, body: n.body, from_client: n.from_client, client_visible: n.client_visible, created_at: n.created_at }))}
           docsEnabled={DOCS_ENABLED}
-          fileNeeds={{
-            docs: Array.isArray(tx.file_needs?.docs) ? tx.file_needs.docs : [],
-            actions: Array.isArray(tx.file_needs?.actions) ? tx.file_needs.actions : [],
-          }}
+          fileNeeds={normalizeFileNeeds(tx.file_needs)}
           isOwner={isOwner}
           commission={
             // Owner-only: never serialize commission figures to a non-owner's page.

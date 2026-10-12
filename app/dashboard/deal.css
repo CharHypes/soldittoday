@@ -206,6 +206,17 @@
 @media(max-width:760px){.dealws .cigrid4{grid-template-columns:1fr 1fr}.dealws .checkgrid{grid-template-columns:1fr 1fr}}
 @media(max-width:520px){.dealws .cigrid4{grid-template-columns:1fr}}
 
+/* File needs ... one box (docs + follow-up + waiting), with custom items */
+.dealws .fnbox{border:1px solid var(--line);border-radius:14px;padding:16px}
+.dealws .fngrid{display:grid;grid-template-columns:1.5fr 1fr;gap:22px}
+@media(max-width:760px){.dealws .fngrid{grid-template-columns:1fr}}
+.dealws .fn-add{display:flex;gap:8px;margin-top:10px}
+.dealws .fn-add .inp{flex:1}
+.dealws .fn-x{margin-left:6px;border:0;background:none;color:var(--ink3);cursor:pointer;font-size:15px;line-height:1;padding:0}
+.dealws .fn-x:hover{color:var(--red)}
+.dealws .waitlist{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.dealws .waitchip{display:inline-flex;align-items:center;gap:2px;font-size:12px;color:var(--ink);background:var(--bg2);border:1px solid var(--line2);border-radius:999px;padding:3px 6px 3px 10px}
+
 /* ===== Checklist tab (document / action status rows) ===== */
 .dealws .clhead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
 .dealws .group{margin-top:20px}

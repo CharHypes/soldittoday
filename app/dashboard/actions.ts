@@ -9,6 +9,7 @@ import { createAdminClient, PORTAL_DOCS_BUCKET, LISTING_PHOTOS_BUCKET } from "@/
 import { AI_ENABLED, draftWithClaude } from "@/lib/ai";
 import { getListingByMlsNumber } from "@/lib/idx";
 import { findMatchingPerson } from "@/lib/peopleMatch";
+import { normalizeFileNeeds } from "@/lib/dealChecklist";
 
 const num = (v: FormDataEntryValue | null): number | null => {
   const s = String(v ?? "").trim();
@@ -844,14 +845,12 @@ export async function saveTransactionFull(formData: FormData) {
   const id = str(formData.get("id"));
   if (!id || !agent_id || !orgId) return;
 
-  // File-needs checklist: collect the checked doc_/act_ keys into grouped arrays.
-  const docs: string[] = [];
-  const actions: string[] = [];
-  for (const [k, v] of formData.entries()) {
-    if (v !== "on") continue;
-    if (k.startsWith("doc_")) docs.push(k.slice(4));
-    else if (k.startsWith("act_")) actions.push(k.slice(4));
-  }
+  // File-needs: the Edit sheet submits the whole object (docs/actions/custom/waiting) as JSON.
+  let fileNeeds = { docs: [] as string[], actions: [] as string[], custom: [] as any[], waiting: [] as string[] };
+  try {
+    const parsed = JSON.parse(str(formData.get("file_needs")) || "{}");
+    fileNeeds = normalizeFileNeeds(parsed);
+  } catch { /* keep empty */ }
 
   await supabase
     .from("transactions")
@@ -869,7 +868,7 @@ export async function saveTransactionFull(formData: FormData) {
       year_built: num(formData.get("year_built")),
       photo_url: str(formData.get("photo_url")),
       skyslope_email: str(formData.get("skyslope_email")),
-      waiting_on: str(formData.get("waiting_on")),
+      waiting_on: fileNeeds.waiting.join(", ") || null,
       seller_name: str(formData.get("seller_name")),
       // dates
       acceptance_date: str(formData.get("acceptance_date")),
@@ -889,7 +888,7 @@ export async function saveTransactionFull(formData: FormData) {
       referred_by: str(formData.get("referred_by")),
       lead_source: str(formData.get("lead_source")),
       referral_amount: num(formData.get("referral_amount")),
-      file_needs: { docs, actions },
+      file_needs: fileNeeds,
     })
     .eq("id", id);
 
@@ -965,7 +964,7 @@ export async function saveCommission(formData: FormData) {
   revalidatePath(`/dashboard/buyers/${id}`);
 }
 
-/** Toggle one file-needs checklist item (shared by the Checklist tab + Edit sheet). */
+/** Toggle one predefined file-needs item (Checklist tab); preserves custom + waiting. */
 export async function toggleFileNeed(formData: FormData) {
   const { supabase } = await ctx();
   const id = str(formData.get("transaction_id"));
@@ -973,14 +972,23 @@ export async function toggleFileNeed(formData: FormData) {
   const key = str(formData.get("key"));
   if (!id || !key || (group !== "docs" && group !== "actions")) return;
   const { data: row } = await supabase.from("transactions").select("file_needs").eq("id", id).maybeSingle();
-  const fn: any = row?.file_needs && typeof row.file_needs === "object" ? row.file_needs : {};
-  const updated = {
-    docs: Array.isArray(fn.docs) ? [...fn.docs] : [],
-    actions: Array.isArray(fn.actions) ? [...fn.actions] : [],
-  };
-  const arr = updated[group];
-  updated[group] = arr.includes(key) ? arr.filter((k: string) => k !== key) : [...arr, key];
-  await supabase.from("transactions").update({ file_needs: updated }).eq("id", id);
+  const fn = normalizeFileNeeds(row?.file_needs);
+  const arr = fn[group];
+  fn[group] = arr.includes(key) ? arr.filter((k) => k !== key) : [...arr, key];
+  await supabase.from("transactions").update({ file_needs: fn, waiting_on: fn.waiting.join(", ") || null }).eq("id", id);
+  revalidatePath(`/dashboard/buyers/${id}`);
+}
+
+/** Toggle a custom file-needs item's done state (Checklist tab). */
+export async function toggleFileNeedCustom(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("transaction_id"));
+  const itemId = str(formData.get("item_id"));
+  if (!id || !itemId) return;
+  const { data: row } = await supabase.from("transactions").select("file_needs").eq("id", id).maybeSingle();
+  const fn = normalizeFileNeeds(row?.file_needs);
+  fn.custom = fn.custom.map((c) => (c.id === itemId ? { ...c, done: !c.done } : c));
+  await supabase.from("transactions").update({ file_needs: fn }).eq("id", id);
   revalidatePath(`/dashboard/buyers/${id}`);
 }
 

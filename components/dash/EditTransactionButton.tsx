@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { saveTransactionFull } from "@/app/dashboard/actions";
-import { ALL_DOCS, ACTION_ITEMS } from "@/lib/dealChecklist";
+import { visibleItems, type FileNeeds, type CustomItem, type ChkGroup } from "@/lib/dealChecklist";
 
 type Tx = {
   id: string;
@@ -21,18 +21,18 @@ type Tx = {
 };
 
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
-type FileNeeds = { docs: string[]; actions: string[] };
 
 const Chev =() => <svg className="ic chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Plus = () => <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ width: 12, height: 12 }}><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>;
 
 export default function EditTransactionButton({
-  tx, contacts = [], buyer, fileNeeds, triggerClassName = "btn mauve", triggerLabel = "Edit transaction",
+  tx, contacts = [], buyer, fileNeeds, stage = null, triggerClassName = "btn mauve", triggerLabel = "Edit transaction",
 }: {
   tx: Tx;
   contacts?: KC[];
   buyer?: { name: string | null; phone: string | null; email: string | null } | null;
   fileNeeds?: FileNeeds | null;
+  stage?: string | null;
   triggerClassName?: string;
   triggerLabel?: React.ReactNode;
 }) {
@@ -41,7 +41,28 @@ export default function EditTransactionButton({
   const toggle = (k: string) => setAcc((a) => ({ ...a, [k]: !a[k] }));
   const close = () => setOpen(false);
   const v = (x: unknown) => (x == null ? "" : String(x));
-  const fn = fileNeeds ?? { docs: [], actions: [] };
+
+  // File-needs client state (submitted as one JSON field).
+  const fn0 = fileNeeds ?? { docs: [], actions: [], custom: [], waiting: [] };
+  const items = visibleItems("buyer", stage);
+  const [docs, setDocs] = useState<string[]>(fn0.docs ?? []);
+  const [acts, setActs] = useState<string[]>(fn0.actions ?? []);
+  const [custom, setCustom] = useState<CustomItem[]>(fn0.custom ?? []);
+  const [waiting, setWaiting] = useState<string[]>(fn0.waiting ?? []);
+  const [newDoc, setNewDoc] = useState("");
+  const [newAct, setNewAct] = useState("");
+  const [newWait, setNewWait] = useState("");
+  const fileNeedsJson = JSON.stringify({ docs, actions: acts, custom, waiting });
+  const togKey = (set: React.Dispatch<React.SetStateAction<string[]>>, key: string) =>
+    set((a) => (a.includes(key) ? a.filter((k) => k !== key) : [...a, key]));
+  const addCustom = (group: ChkGroup, label: string, reset: () => void) => {
+    const l = label.trim(); if (!l) return;
+    setCustom((c) => [...c, { id: `c${Date.now()}${Math.random().toString(36).slice(2, 6)}`, label: l, group, done: false }]);
+    reset();
+  };
+  const toggleCustom = (id: string) => setCustom((c) => c.map((x) => (x.id === id ? { ...x, done: !x.done } : x)));
+  const removeCustom = (id: string) => setCustom((c) => c.filter((x) => x.id !== id));
+
   const find = (re: RegExp) => contacts.find((c) => re.test(c.role));
   const co = find(/co.?buyer/i);
   const la = find(/listing|^agent$|list.?agent/i);
@@ -68,27 +89,63 @@ export default function EditTransactionButton({
               <input type="hidden" name="id" value={tx.id} />
               <div className="editbody">
 
-                {/* 1 ... File needs & follow-up */}
+                {/* 1 ... File needs & follow-up (one box) */}
+                <input type="hidden" name="file_needs" value={fileNeedsJson} />
                 <section className={`acc${acc.needs ? " open" : ""}`}>
                   <button type="button" className="acc-h" onClick={() => toggle("needs")}>File needs &amp; follow-up <Chev /></button>
                   <div className="acc-b">
-                    <div className="subcard">
-                      <h4>Documents needed / received</h4>
-                      <div className="checkgrid">
-                        {ALL_DOCS.map((d) => (
-                          <label key={d.key} className="chk"><input type="checkbox" name={`doc_${d.key}`} defaultChecked={fn.docs?.includes(d.key)} /> {d.label}</label>
-                        ))}
+                    <div className="fnbox">
+                      <div className="fngrid">
+                        {/* documents */}
+                        <div>
+                          <h4>Documents needed / received</h4>
+                          <div className="checkgrid">
+                            {items.docs.map((d) => (
+                              <label key={d.key} className="chk"><input type="checkbox" checked={docs.includes(d.key)} onChange={() => togKey(setDocs, d.key)} /> {d.label}</label>
+                            ))}
+                            {custom.filter((c) => c.group === "docs").map((c) => (
+                              <label key={c.id} className="chk"><input type="checkbox" checked={!!c.done} onChange={() => toggleCustom(c.id)} /> {c.label}<button type="button" className="fn-x" onClick={() => removeCustom(c.id)} aria-label="Remove">×</button></label>
+                            ))}
+                          </div>
+                          <div className="fn-add">
+                            <input className="inp" value={newDoc} onChange={(e) => setNewDoc(e.target.value)} placeholder="Add custom document / item"
+                              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom("docs", newDoc, () => setNewDoc("")); } }} />
+                            <button type="button" className="btn" onClick={() => addCustom("docs", newDoc, () => setNewDoc(""))}>Add</button>
+                          </div>
+                        </div>
+                        {/* actions + waiting */}
+                        <div>
+                          <h4>Follow-up / action items</h4>
+                          <div className="checkgrid" style={{ gridTemplateColumns: "1fr" }}>
+                            {items.actions.map((a) => (
+                              <label key={a.key} className="chk"><input type="checkbox" checked={acts.includes(a.key)} onChange={() => togKey(setActs, a.key)} /> {a.label}</label>
+                            ))}
+                            {custom.filter((c) => c.group === "actions").map((c) => (
+                              <label key={c.id} className="chk"><input type="checkbox" checked={!!c.done} onChange={() => toggleCustom(c.id)} /> {c.label}<button type="button" className="fn-x" onClick={() => removeCustom(c.id)} aria-label="Remove">×</button></label>
+                            ))}
+                          </div>
+                          <div className="fn-add">
+                            <input className="inp" value={newAct} onChange={(e) => setNewAct(e.target.value)} placeholder="Add custom follow-up"
+                              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addCustom("actions", newAct, () => setNewAct("")); } }} />
+                            <button type="button" className="btn" onClick={() => addCustom("actions", newAct, () => setNewAct(""))}>Add</button>
+                          </div>
+
+                          <h4 style={{ marginTop: 16 }}>Waiting on</h4>
+                          {waiting.length > 0 && (
+                            <div className="waitlist">
+                              {waiting.map((w, i) => (
+                                <span key={i} className="waitchip">{w}<button type="button" className="fn-x" onClick={() => setWaiting((a) => a.filter((_, j) => j !== i))} aria-label="Remove">×</button></span>
+                              ))}
+                            </div>
+                          )}
+                          <div className="fn-add">
+                            <input className="inp" value={newWait} onChange={(e) => setNewWait(e.target.value)} placeholder="Add item (e.g. Insurance binder)"
+                              onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); const l = newWait.trim(); if (l) { setWaiting((a) => [...a, l]); setNewWait(""); } } }} />
+                            <button type="button" className="btn" onClick={() => { const l = newWait.trim(); if (l) { setWaiting((a) => [...a, l]); setNewWait(""); } }}>Add</button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                    <div className="subcard">
-                      <h4>Follow-up / action items</h4>
-                      <div className="checkgrid">
-                        {ACTION_ITEMS.map((a) => (
-                          <label key={a.key} className="chk"><input type="checkbox" name={`act_${a.key}`} defaultChecked={fn.actions?.includes(a.key)} /> {a.label}</label>
-                        ))}
-                      </div>
-                    </div>
-                    <label className="ci" style={{ display: "block" }}><span className="k">Waiting on</span><input className="inp" name="waiting_on" defaultValue={v(tx.waiting_on)} placeholder="Appraisal" /></label>
                   </div>
                 </section>
 
