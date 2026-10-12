@@ -10,6 +10,8 @@ import {
   addBuyerNote, syncTransactionPhoto, deleteTransaction, toggleFileNeed,
 } from "@/app/dashboard/actions";
 import { DOC_GROUPS, ACTION_ITEMS, ALL_DOCS, type ChkItem } from "@/lib/dealChecklist";
+import EmailGenerator from "@/components/dash/EmailGenerator";
+import { type EmailTo } from "@/lib/dealEmailTemplates";
 
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
 type Milestone = { id: string; label: string; sort_order: number; status: string; date: string | null };
@@ -106,6 +108,24 @@ export default function DealWorkspace(p: Props) {
     contacts: p.keyContacts,
     buyer: { name: p.buyerName, phone: buyerC?.phone ?? null, email: buyerC?.email ?? null },
     fileNeeds: p.fileNeeds,
+  };
+
+  // Email generator inputs.
+  const findC = (re: RegExp) => p.keyContacts.find((c) => re.test(c.role));
+  const emailVars = {
+    buyer: p.buyerName || "there",
+    first_name: (p.buyerName || "there").split(/[\s&]+/)[0],
+    address: p.tx.address || "your home",
+    closing_date: dt(p.tx.target_close_date) || "your target date",
+    agent: p.agentName || "Your agent",
+    office: p.tx.office || "The Sold It Today Team",
+  };
+  const emailRecipients: Partial<Record<EmailTo, string>> = {
+    buyer: buyerC?.email ?? "",
+    listing_agent: findC(/listing|^agent$|list.?agent/i)?.email ?? "",
+    lender: findC(/lender|loan/i)?.email ?? "",
+    buyer_title: findC(/buyer.?title|^title$/i)?.email ?? "",
+    insurance: findC(/insur/i)?.email ?? "",
   };
 
   return (
@@ -424,11 +444,18 @@ export default function DealWorkspace(p: Props) {
         </div>
       )}
 
-      {/* ============ COMING SOON ============ */}
-      {(tab === "Tasks" || tab === "Email generator") && (
+      {/* ============ EMAIL GENERATOR ============ */}
+      {tab === "Email generator" && (
         <div className="panel">
-          <div className="card"><div className="cardhd"><h3>{tab}</h3></div>
-            <div className="cardbody"><p className="emptynote">{tab === "Email generator" ? "The per-deal email generator (templates + Resend send + auto-triggers) is the next build here." : "Tasks for this deal are the next build here."}</p></div>
+          <EmailGenerator vars={emailVars} recipients={emailRecipients} stage={p.tx.pipeline_stage} />
+        </div>
+      )}
+
+      {/* ============ TASKS (coming soon) ============ */}
+      {tab === "Tasks" && (
+        <div className="panel">
+          <div className="card"><div className="cardhd"><h3>Tasks</h3></div>
+            <div className="cardbody"><p className="emptynote">Tasks for this deal are the next build here.</p></div>
           </div>
         </div>
       )}

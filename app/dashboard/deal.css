@@ -222,3 +222,27 @@
 .dealws .st.req{background:color-mix(in srgb,var(--red) 20%,transparent);color:var(--red)}
 .dealws .st.opt{background:var(--bg2);color:var(--ink3)}
 @media(max-width:640px){.dealws .clrow{grid-template-columns:22px 1fr auto;gap:10px}}
+
+/* ===== Email generator ===== */
+.dealws .emailgen{display:grid;grid-template-columns:270px 1fr;gap:20px}
+@media(max-width:820px){.dealws .emailgen{grid-template-columns:1fr}}
+.dealws .tmplgroup{margin-bottom:16px}
+.dealws .tmplgroup h5{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--gold);margin:0 0 8px;font-weight:700}
+.dealws .tmplitem{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:11px;padding:11px 13px;font:inherit;font-size:13.5px;color:var(--ink);cursor:pointer;margin-bottom:8px}
+.dealws .tmplitem:hover{border-color:color-mix(in srgb,var(--mauve) 45%,transparent)}
+.dealws .tmplitem.on{background:var(--bg2);border-color:var(--mauve);font-weight:600}
+.dealws .tmplitem .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-right:8px;vertical-align:middle}
+.dealws .previewline{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:12px;padding:13px 16px;margin-bottom:14px;background:var(--bg2)}
+.dealws .previewline .pk{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink3)}
+.dealws .previewline .pv{font-size:15px;color:var(--ink);margin-top:3px;font-weight:500;word-break:break-word}
+.dealws .btn.gold{background:var(--gold);color:var(--plum);border:0;white-space:nowrap}
+.dealws .ebodywrap{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:30px 24px;display:flex;justify-content:center}
+.dealws .ebody{background:#f2ece1;color:#2f2730;border:1px solid rgba(0,0,0,.07);border-radius:10px;padding:42px 46px;font-size:14px;line-height:1.75;white-space:pre-wrap;width:100%;max-width:600px;box-shadow:0 20px 54px rgba(0,0,0,.34)}
+.dealws .trow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.dealws .trow:first-of-type{border-top:0}
+.dealws .tt{font-size:14px;font-weight:500;color:var(--ink)}
+.dealws .ts{font-size:12.5px;color:var(--ink3);margin-top:2px}
+.dealws .tog{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:5px 13px;border-radius:999px;flex:none}
+.dealws .tog.on{color:var(--green);background:color-mix(in srgb,var(--green) 16%,transparent)}
+.dealws .tog.off{color:var(--ink3);background:var(--bg2)}
+.dealws .sitchip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--gold);background:color-mix(in srgb,var(--gold) 16%,transparent);padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
