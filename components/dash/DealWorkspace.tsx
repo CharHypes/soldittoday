@@ -7,8 +7,9 @@ import EditTransactionButton from "@/components/dash/EditTransactionButton";
 import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
 import {
   updateMilestones, uploadBuyerDocument, toggleDocumentShare, deleteDocument,
-  addBuyerNote, syncTransactionPhoto, deleteTransaction,
+  addBuyerNote, syncTransactionPhoto, deleteTransaction, toggleFileNeed,
 } from "@/app/dashboard/actions";
+import { DOC_GROUPS, ACTION_ITEMS, ALL_DOCS, type ChkItem } from "@/lib/dealChecklist";
 
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
 type Milestone = { id: string; label: string; sort_order: number; status: string; date: string | null };
@@ -91,6 +92,8 @@ export default function DealWorkspace(p: Props) {
   const pct = total ? Math.round((done / total) * 100) : 0;
   const current = p.milestones.find((m) => m.status === "in_progress") ?? p.milestones.filter((m) => m.status === "done").slice(-1)[0];
   const nextStep = (() => { const i = p.milestones.findIndex((m) => m.id === current?.id); return i >= 0 ? p.milestones[i + 1] : undefined; })();
+  const docsDone = ALL_DOCS.filter((d) => p.fileNeeds.docs.includes(d.key)).length;
+  const actsDone = ACTION_ITEMS.filter((a) => p.fileNeeds.actions.includes(a.key)).length;
 
   const typeLabel = p.tx.deal_type || "Purchase";
   const cityLine = [p.tx.city, [p.tx.state, p.tx.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
@@ -288,26 +291,46 @@ export default function DealWorkspace(p: Props) {
         </div>
       )}
 
-      {/* ============ CHECKLIST ============ */}
+      {/* ============ CHECKLIST (file needs ... in sync with Edit) ============ */}
       {tab === "Checklist" && (
         <div className="panel">
-          <form action={updateMilestones} className="card">
-            <input type="hidden" name="transaction_id" value={p.tx.id} />
-            <div className="cardhd"><h3>Closing checklist</h3><span className="clmeta"><b>{done}</b> of {total} done</span></div>
-            <div className="cardbody">
-              <p className="emptynote" style={{ marginBottom: 12 }}>Update each step as you go ... your buyer sees it live on their portal.</p>
+          <div className="clhead">
+            <div className="clmeta">Checklist · <b>{docsDone + actsDone} of {ALL_DOCS.length + ACTION_ITEMS.length} complete</b></div>
+          </div>
+
+          {DOC_GROUPS.map((g) => (
+            <div className="group" key={g.title}>
+              <h2>{g.title}</h2>
+              <div className="cl">
+                {g.items.map((it) => <ChkRow key={it.key} txId={p.tx.id} group="docs" item={it} checked={p.fileNeeds.docs.includes(it.key)} />)}
+              </div>
+            </div>
+          ))}
+
+          <div className="group">
+            <h2>Follow-up / action items</h2>
+            <div className="cl">
+              {ACTION_ITEMS.map((it) => <ChkRow key={it.key} txId={p.tx.id} group="actions" item={it} checked={p.fileNeeds.actions.includes(it.key)} />)}
+            </div>
+          </div>
+
+          <div className="group">
+            <h2>Closing steps · shown on the buyer portal</h2>
+            <form action={updateMilestones} className="cl">
+              <input type="hidden" name="transaction_id" value={p.tx.id} />
               {p.milestones.map((m) => (
-                <div key={m.id} style={{ display: "grid", gridTemplateColumns: "1fr auto auto", gap: 12, alignItems: "center", padding: "10px 0", borderTop: "1px solid var(--line)" }}>
-                  <span style={{ fontSize: 14 }}>{m.sort_order}. {m.label}</span>
-                  <select name={`status_${m.id}`} defaultValue={m.status} className={inp} style={{ width: 150 }}>
+                <div key={m.id} className="clrow" style={{ gridTemplateColumns: "24px minmax(0,1fr) 150px 160px" }}>
+                  <span style={{ color: "var(--ink3)", fontSize: 13 }}>{m.sort_order}</span>
+                  <span className="doc">{m.label}</span>
+                  <select name={`status_${m.id}`} defaultValue={m.status} className={inp}>
                     <option value="upcoming">Upcoming</option><option value="in_progress">In progress</option><option value="done">Done</option>
                   </select>
-                  <input type="date" name={`date_${m.id}`} defaultValue={m.date ?? ""} className={inp} style={{ width: 170 }} />
+                  <input type="date" name={`date_${m.id}`} defaultValue={m.date ?? ""} className={inp} />
                 </div>
               ))}
-              <button type="submit" className="btn mauve" style={{ marginTop: 14 }}>Save checklist</button>
-            </div>
-          </form>
+              <div style={{ padding: "12px 16px" }}><button type="submit" className="btn mauve">Save closing steps</button></div>
+            </form>
+          </div>
         </div>
       )}
 
@@ -416,6 +439,22 @@ export default function DealWorkspace(p: Props) {
         <DeleteButton action={deleteTransaction} id={p.tx.id} label="Delete deal" confirmText={`Delete ${p.tx.address ?? "this deal"}? This removes the transaction and its notes and documents, and can't be undone.`} />
       </div>
     </div>
+  );
+}
+
+function ChkRow({ txId, group, item, checked }: { txId: string; group: "docs" | "actions"; item: ChkItem; checked: boolean }) {
+  const status = checked
+    ? <span className="st done">Completed</span>
+    : item.optional ? <span className="st opt">If applicable</span> : <span className="st req">Required</span>;
+  return (
+    <form action={toggleFileNeed} className="clrow">
+      <input type="hidden" name="transaction_id" value={txId} />
+      <input type="hidden" name="group" value={group} />
+      <input type="hidden" name="key" value={item.key} />
+      <input type="checkbox" className="cbx" defaultChecked={checked} onChange={(e) => e.currentTarget.form?.requestSubmit()} aria-label={item.label} />
+      <span className={`doc${checked ? " is-done" : ""}`}>{item.label}</span>
+      {status}
+    </form>
   );
 }
 

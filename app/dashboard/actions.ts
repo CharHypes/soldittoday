@@ -965,6 +965,25 @@ export async function saveCommission(formData: FormData) {
   revalidatePath(`/dashboard/buyers/${id}`);
 }
 
+/** Toggle one file-needs checklist item (shared by the Checklist tab + Edit sheet). */
+export async function toggleFileNeed(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("transaction_id"));
+  const group = str(formData.get("group"));
+  const key = str(formData.get("key"));
+  if (!id || !key || (group !== "docs" && group !== "actions")) return;
+  const { data: row } = await supabase.from("transactions").select("file_needs").eq("id", id).maybeSingle();
+  const fn: any = row?.file_needs && typeof row.file_needs === "object" ? row.file_needs : {};
+  const updated = {
+    docs: Array.isArray(fn.docs) ? [...fn.docs] : [],
+    actions: Array.isArray(fn.actions) ? [...fn.actions] : [],
+  };
+  const arr = updated[group];
+  updated[group] = arr.includes(key) ? arr.filter((k: string) => k !== key) : [...arr, key];
+  await supabase.from("transactions").update({ file_needs: updated }).eq("id", id);
+  revalidatePath(`/dashboard/buyers/${id}`);
+}
+
 export async function updateMilestones(formData: FormData) {
   const { supabase } = await ctx();
   const transaction_id = str(formData.get("transaction_id"));

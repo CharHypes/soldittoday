@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { saveTransactionFull } from "@/app/dashboard/actions";
+import { ALL_DOCS, ACTION_ITEMS } from "@/lib/dealChecklist";
 
 type Tx = {
   id: string;
@@ -22,17 +23,7 @@ type Tx = {
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
 type FileNeeds = { docs: string[]; actions: string[] };
 
-const DOCS: [string, string][] = [
-  ["purchase_agreement", "Purchase Agreement"], ["sellers_disclosure", "Seller's Disclosure"], ["lead_based_paint", "Lead-Based Paint"],
-  ["agency_disclosure", "Agency Disclosure"], ["emd_check", "Copy of EMD check"], ["mls_sheet", "MLS Sheet"],
-  ["broker_to_broker", "Broker to Broker"], ["addendums", "Addendums"], ["home_warranty_waiver", "Home Warranty Waiver"],
-];
-const ACTS: [string, string][] = [
-  ["order_appraisal", "Order appraisal"], ["schedule_inspection", "Schedule inspection"], ["schedule_closing", "Schedule closing"],
-  ["send_review_request", "Send review request"], ["thankyou_card", "Thank-you card sent"], ["add_homebot", "Add to Homebot"],
-];
-
-const Chev = () => <svg className="ic chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const Chev =() => <svg className="ic chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const Plus = () => <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ width: 12, height: 12 }}><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg>;
 
 export default function EditTransactionButton({
@@ -84,16 +75,16 @@ export default function EditTransactionButton({
                     <div className="subcard">
                       <h4>Documents needed / received</h4>
                       <div className="checkgrid">
-                        {DOCS.map(([k, label]) => (
-                          <label key={k} className="chk"><input type="checkbox" name={`doc_${k}`} defaultChecked={fn.docs?.includes(k)} /> {label}</label>
+                        {ALL_DOCS.map((d) => (
+                          <label key={d.key} className="chk"><input type="checkbox" name={`doc_${d.key}`} defaultChecked={fn.docs?.includes(d.key)} /> {d.label}</label>
                         ))}
                       </div>
                     </div>
                     <div className="subcard">
                       <h4>Follow-up / action items</h4>
                       <div className="checkgrid">
-                        {ACTS.map(([k, label]) => (
-                          <label key={k} className="chk"><input type="checkbox" name={`act_${k}`} defaultChecked={fn.actions?.includes(k)} /> {label}</label>
+                        {ACTION_ITEMS.map((a) => (
+                          <label key={a.key} className="chk"><input type="checkbox" name={`act_${a.key}`} defaultChecked={fn.actions?.includes(a.key)} /> {a.label}</label>
                         ))}
                       </div>
                     </div>
