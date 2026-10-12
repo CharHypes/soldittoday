@@ -35,19 +35,19 @@ const CSS = `
 .ucts-card{max-width:620px;margin:0 auto;background:var(--paper);border-radius:24px;overflow:hidden;
   box-shadow:0 2px 0 rgba(255,255,255,.6) inset, 0 30px 70px rgba(60,30,60,.26);
   border:1px solid #efe2d2}
-.ucts-top{position:relative;background:linear-gradient(135deg,#6a2d4f,#4e2340);padding:26px 28px 22px;text-align:center;color:#fff}
+.ucts-top{position:relative;background:linear-gradient(135deg,#6a2d4f,#4e2340);padding:20px 28px 18px;text-align:center;color:#fff}
 .ucts-top:after{content:"";position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:84px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--rosegold2),var(--gold))}
-.ucts-key{width:30px;height:30px;margin:0 auto 8px;color:var(--rosegold1);opacity:.95}
+.ucts-key{height:52px;width:auto;margin:0 auto 4px;display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,.28))}
 .ucts-ey{font-family:var(--sans);font-weight:800;letter-spacing:.34em;font-size:12px;text-indent:.34em;color:#f0dcc9;margin:0}
 .ucts-top h1{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:.01em;margin:4px 0 0;color:#fff}
 
-.ucts-mid{padding:24px 28px 8px;text-align:center}
-.ucts-congrats{font-family:var(--serif);font-style:italic;font-weight:500;font-size:27px;color:var(--plum);margin:0 0 6px;line-height:1.05}
-.ucts-addr-h{font-family:var(--serif);font-weight:600;font-size:22px;color:#2a2230;margin:2px 0 0;line-height:1.15}
-.ucts-intro{font-size:13px;line-height:1.6;color:#5a505a;margin:12px auto 0;max-width:460px}
+.ucts-mid{padding:18px 28px 4px;text-align:center}
+.ucts-congrats{font-family:var(--serif);font-style:italic;font-weight:500;font-size:27px;color:var(--plum);margin:0 0 4px;line-height:1.05}
+.ucts-addr-h{font-family:var(--serif);font-weight:600;font-size:20px;color:#2a2230;margin:2px 0 0;line-height:1.15}
+.ucts-intro{font-size:12.5px;line-height:1.55;color:#5a505a;margin:10px auto 0;max-width:430px}
 
 /* divider with diamond */
-.ucts-div{display:flex;align-items:center;gap:12px;max-width:380px;margin:20px auto 18px;color:var(--rosegold3)}
+.ucts-div{display:flex;align-items:center;gap:12px;max-width:380px;margin:16px auto 16px;color:var(--rosegold3)}
 .ucts-div:before,.ucts-div:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,var(--line),transparent)}
 .ucts-div span{width:7px;height:7px;background:linear-gradient(135deg,var(--rosegold2),var(--rose));transform:rotate(45deg);border-radius:1px}
 
@@ -68,7 +68,7 @@ const CSS = `
 .ucts-dates-h:before,.ucts-dates-h:after{content:"";height:1px;width:42px;background:linear-gradient(90deg,transparent,var(--gold))}
 .ucts-dates-h:after{background:linear-gradient(90deg,var(--gold),transparent)}
 .tl-row{display:grid;grid-template-columns:92px 24px 1fr;gap:12px;align-items:stretch}
-.date-pill{align-self:center;background:linear-gradient(135deg,#f5ead9,#efe0cd);border:1px solid #e7d6bf;border-radius:11px;text-align:center;padding:9px 4px;font-weight:800;font-size:13.5px;color:var(--plum);letter-spacing:.01em}
+.date-pill{align-self:center;background:linear-gradient(135deg,#f5ead9,#efe0cd);border:1px solid #e7d6bf;border-radius:11px;text-align:center;padding:9px 6px;font-weight:800;font-size:13px;color:var(--plum);white-space:nowrap;font-variant-numeric:tabular-nums;letter-spacing:0}
 .rail{position:relative;display:flex;justify-content:center}
 .rail:before{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--line)}
 .tl-row:first-child .rail:before{top:50%}
@@ -98,7 +98,7 @@ const CSS = `
 @media(max-width:430px){
   .ucts-facts{grid-template-columns:1fr}
   .ucts-top h1{font-size:25px}.ucts-congrats{font-size:23px}.ucts-addr-h{font-size:19px}
-  .tl-row{grid-template-columns:80px 22px 1fr;gap:10px}.tl-task{font-size:16px}
+  .tl-row{grid-template-columns:84px 20px 1fr;gap:9px}.tl-task{font-size:16px}.date-pill{font-size:12px;padding:8px 5px}
 }
 @media print{
   @page{size:letter;margin:14mm}
@@ -154,7 +154,8 @@ export default function TimelineSheet({
 
       <div className="ucts-card">
         <div className="ucts-top">
-          <svg className="ucts-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"><circle cx="8" cy="8" r="5"/><path d="M11.5 11.5 21 21M17 17l2-2M14.5 14.5l2.5-2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="ucts-key" src="/assets/logos/sold-it-today/Sold-It-Today-key-only-crisp-transparent.png" alt="" />
           <p className="ucts-ey">UNDER CONTRACT</p>
           <h1>Your Closing Timeline</h1>
         </div>
@@ -174,7 +175,6 @@ export default function TimelineSheet({
         <div className="ucts-facts">
           <div className="fact price"><div className="k">Purchase Price</div><Val cls="val" text={v.purchasePrice} ph="$000,000" editable={editable} /></div>
           <div className="fact price"><div className="k">EMD Deposit</div><Val cls="val" text={v.escrow} ph="$0,000" editable={editable} /></div>
-          <div className="fact span2"><div className="k">Address</div><Val cls="val" html={v.addressHtml} ph="Street, City MI 00000" editable={editable} /></div>
           <div className="fact span2"><div className="k">Title Company</div><Val cls="val" text={v.titleCompany} ph="Title company" editable={editable} /></div>
         </div>
 
