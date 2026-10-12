@@ -602,7 +602,7 @@ async function linkPersonToTxn(
   orgId: string,
   agentId: string,
   txId: string,
-  p: { name: string; email: string | null; phone: string | null; type: string; role: string }
+  p: { name: string; email: string | null; phone: string | null; type: string; role: string; company?: string | null; address?: string | null }
 ) {
   const match = await findMatchingPerson(supabase, orgId, { name: p.name, email: p.email, phone: p.phone });
   let personId: string | null = match?.id ?? null;
@@ -621,10 +621,20 @@ async function linkPersonToTxn(
         type: p.type,
         email: p.email,
         phone: p.phone,
+        company: p.company ?? null,
+        address: p.address ?? null,
       })
       .select("id")
       .single();
     personId = data?.id ?? null;
+  } else {
+    // Update the matched contact with any newly provided details (never blank out).
+    const upd: Record<string, unknown> = {};
+    if (p.email) upd.email = p.email;
+    if (p.phone) upd.phone = p.phone;
+    if (p.company) upd.company = p.company;
+    if (p.address) upd.address = p.address;
+    if (Object.keys(upd).length) await supabase.from("people").update(upd).eq("id", personId);
   }
   if (personId) {
     await supabase
@@ -819,6 +829,96 @@ export async function updateTransaction(formData: FormData) {
       dpa_amount: num(formData.get("dpa_amount")),
     })
     .eq("id", id);
+  revalidatePath(`/dashboard/buyers/${id}`);
+  revalidatePath("/dashboard/buyers");
+}
+
+/**
+ * Save the whole Edit-transaction accordion: all deal columns, the file-needs
+ * checklist, and the people (buyer/co-buyer/agents/title/lender/insurance),
+ * upserting them back to Contacts. One form, one save ... "changes save to the
+ * whole file", per the mockup.
+ */
+export async function saveTransactionFull(formData: FormData) {
+  const { supabase, id: agent_id, orgId } = await ctx();
+  const id = str(formData.get("id"));
+  if (!id || !agent_id || !orgId) return;
+
+  // File-needs checklist: collect the checked doc_/act_ keys into grouped arrays.
+  const docs: string[] = [];
+  const actions: string[] = [];
+  for (const [k, v] of formData.entries()) {
+    if (v !== "on") continue;
+    if (k.startsWith("doc_")) docs.push(k.slice(4));
+    else if (k.startsWith("act_")) actions.push(k.slice(4));
+  }
+
+  await supabase
+    .from("transactions")
+    .update({
+      address: str(formData.get("address")),
+      city: str(formData.get("city")),
+      state: str(formData.get("state")),
+      zip: str(formData.get("zip")),
+      county: str(formData.get("county")),
+      occupancy: str(formData.get("occupancy")),
+      price: num(formData.get("price")),
+      status: str(formData.get("status")) ?? "Under Contract",
+      deal_type: str(formData.get("deal_type")),
+      mls_number: str(formData.get("mls_number")),
+      year_built: num(formData.get("year_built")),
+      photo_url: str(formData.get("photo_url")),
+      skyslope_email: str(formData.get("skyslope_email")),
+      waiting_on: str(formData.get("waiting_on")),
+      seller_name: str(formData.get("seller_name")),
+      // dates
+      acceptance_date: str(formData.get("acceptance_date")),
+      target_close_date: str(formData.get("target_close_date")),
+      inspection_period_days: num(formData.get("inspection_period_days")),
+      inspection_deadline: str(formData.get("inspection_deadline")),
+      appraisal_date: str(formData.get("appraisal_date")),
+      financing_contingency_date: str(formData.get("financing_contingency_date")),
+      // earnest money
+      emd_amount: num(formData.get("emd_amount")),
+      emd_held_by: str(formData.get("emd_held_by")),
+      emd_received_date: str(formData.get("emd_received_date")),
+      // assistance + source
+      dpa_program: str(formData.get("dpa_program")),
+      dpa_amount: num(formData.get("dpa_amount")),
+      referral_how: str(formData.get("referral_how")),
+      referred_by: str(formData.get("referred_by")),
+      lead_source: str(formData.get("lead_source")),
+      referral_amount: num(formData.get("referral_amount")),
+      file_needs: { docs, actions },
+    })
+    .eq("id", id);
+
+  // Buyer ... update the linked client record (name/phone/email).
+  const buyerName = str(formData.get("buyer_name"));
+  const { data: txrow } = await supabase.from("transactions").select("client_id").eq("id", id).maybeSingle();
+  if (txrow?.client_id && buyerName) {
+    await supabase
+      .from("clients")
+      .update({ name: buyerName, phone: str(formData.get("buyer_phone")), email: str(formData.get("buyer_email")) })
+      .eq("id", txrow.client_id);
+  }
+
+  // People on the deal ... upsert each when a name/company is present.
+  const link = (name: string | null, type: string, role: string, phone: string | null, email: string | null, company: string | null, address: string | null) => {
+    const n = (name || company || "").trim();
+    if (!n) return Promise.resolve(null);
+    return linkPersonToTxn(supabase, orgId, agent_id, id, { name: n, email, phone, type, role, company, address });
+  };
+  await Promise.all([
+    link(buyerName, "buyer", "buyer", str(formData.get("buyer_phone")), str(formData.get("buyer_email")), null, null),
+    link(str(formData.get("cobuyer_name")), "buyer", "co_buyer", str(formData.get("cobuyer_phone")), str(formData.get("cobuyer_email")), null, null),
+    link(str(formData.get("la_name")), "agent", "listing_agent", str(formData.get("la_phone")), str(formData.get("la_email")), str(formData.get("la_company")), str(formData.get("la_address"))),
+    link(str(formData.get("lender_name")), "lender", "lender", str(formData.get("lender_phone")), str(formData.get("lender_email")), str(formData.get("lender_company")), str(formData.get("lender_address"))),
+    link(str(formData.get("btitle_contact")), "title", "buyer_title", str(formData.get("btitle_phone")), str(formData.get("btitle_email")), str(formData.get("btitle_company")), str(formData.get("btitle_address"))),
+    link(str(formData.get("stitle_contact")), "title", "seller_title", str(formData.get("stitle_phone")), str(formData.get("stitle_email")), str(formData.get("stitle_company")), str(formData.get("stitle_address"))),
+    link(str(formData.get("ins_contact")), "insurance", "insurance", str(formData.get("ins_phone")), str(formData.get("ins_email")), str(formData.get("ins_company")), str(formData.get("ins_address"))),
+  ]);
+
   revalidatePath(`/dashboard/buyers/${id}`);
   revalidatePath("/dashboard/buyers");
 }

@@ -23,6 +23,10 @@ type Tx = {
   deal_type: string | null; office: string | null; year_built: number | null; seller_name: string | null;
   waiting_on: string | null; referred_by: string | null; lead_source: string | null; skyslope_email: string | null;
   dpa_program: string | null; dpa_amount: number | string | null;
+  county: string | null; occupancy: string | null; emd_received_date: string | null;
+  inspection_period_days: number | null; inspection_deadline: string | null;
+  appraisal_date: string | null; financing_contingency_date: string | null;
+  referral_how: string | null; referral_amount: number | string | null;
 };
 
 type Props = {
@@ -40,6 +44,7 @@ type Props = {
   docsEnabled: boolean;
   isOwner: boolean;
   commission: CommissionInit;
+  fileNeeds: { docs: string[]; actions: string[] };
 };
 
 const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Email generator", "Contacts", "Client portal", "Commission", "Log"] as const;
@@ -92,6 +97,14 @@ export default function DealWorkspace(p: Props) {
   const sideline = ["Buyer side", typeLabel, cityLine, dt(p.tx.target_close_date) ? `Closes ${dt(p.tx.target_close_date)}` : null].filter(Boolean).join(" · ");
   const emd = usd(p.tx.emd_amount);
 
+  // Shared props for every Edit-transaction pop-out (prefills the people too).
+  const buyerC = p.keyContacts.find((c) => /(^|_)buyer$/i.test(c.role) && !/co/i.test(c.role));
+  const editExtras = {
+    contacts: p.keyContacts,
+    buyer: { name: p.buyerName, phone: buyerC?.phone ?? null, email: buyerC?.email ?? null },
+    fileNeeds: p.fileNeeds,
+  };
+
   return (
     <div className="dealws">
       {/* breadcrumb */}
@@ -117,7 +130,7 @@ export default function DealWorkspace(p: Props) {
           </div>
         </div>
         <div className="hbtns">
-          <EditTransactionButton tx={p.tx} triggerClassName="btn mauve" triggerLabel="Edit transaction" />
+          <EditTransactionButton tx={p.tx} {...editExtras} triggerClassName="btn mauve" triggerLabel="Edit transaction" />
           <div className="menu" ref={menuRef}>
             <button type="button" className="btn" onClick={() => setMenu((v) => !v)}>Transaction actions
               <svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ width: 13, height: 13 }}><path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -161,7 +174,7 @@ export default function DealWorkspace(p: Props) {
             <div>
               <div className="card summary">
                 <div className="cardhd" style={{ padding: "0 0 14px" }}><h3>Transaction details</h3>
-                  <EditTransactionButton tx={p.tx} triggerClassName="iconedit" triggerLabel={<PencilIcon />} />
+                  <EditTransactionButton tx={p.tx} {...editExtras} triggerClassName="iconedit" triggerLabel={<PencilIcon />} />
                 </div>
                 <div className="sgrid">
                   <Field k="Agent on file" link v={p.agentName} />
@@ -233,7 +246,7 @@ export default function DealWorkspace(p: Props) {
 
               <div className="card" style={{ marginTop: p.isOwner ? 18 : 0 }}>
                 <div className="cardhd"><h3>Key contacts</h3>
-                  <EditTransactionButton tx={p.tx} triggerClassName="iconedit" triggerLabel={<PencilIcon />} />
+                  <EditTransactionButton tx={p.tx} {...editExtras} triggerClassName="iconedit" triggerLabel={<PencilIcon />} />
                 </div>
                 <div className="cardbody">
                   {p.keyContacts.length === 0 && <p className="emptynote">No contacts linked yet. Add them in Edit transaction.</p>}
@@ -340,7 +353,7 @@ export default function DealWorkspace(p: Props) {
         <div className="panel">
           <div className="card">
             <div className="cardhd"><h3>People on this deal</h3>
-              <EditTransactionButton tx={p.tx} triggerClassName="iconedit" triggerLabel={<PencilIcon />} />
+              <EditTransactionButton tx={p.tx} {...editExtras} triggerClassName="iconedit" triggerLabel={<PencilIcon />} />
             </div>
             <div className="cardbody">
               {p.keyContacts.length === 0 && <p className="emptynote">No contacts linked yet.</p>}

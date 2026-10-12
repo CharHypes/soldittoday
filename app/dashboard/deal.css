@@ -168,3 +168,35 @@
 .dealws .foot-danger .t{font-size:13.5px;font-weight:600;color:var(--ink)}
 .dealws .foot-danger .s{font-size:12px;color:var(--ink3)}
 .dealws .emptynote{font-size:13px;color:var(--ink3)}
+
+/* ===== Edit transaction accordion sheet (ported from mockup) ===== */
+.dealws .editwrap{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:36px 16px;background:rgba(10,7,9,.6);backdrop-filter:blur(5px);overflow:auto}
+.dealws .editsheet{width:100%;max-width:920px;background:var(--plum);border:1px solid var(--line2);border-radius:20px;box-shadow:0 40px 120px rgba(0,0,0,.5);margin:auto;overflow:hidden}
+.dealws .edithead{display:flex;align-items:center;justify-content:space-between;padding:19px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--plum);z-index:2}
+.dealws .eh-title{font-family:var(--ser);font-size:21px;font-weight:500;color:var(--ink)}
+.dealws .eh-sub{font-size:13px;color:var(--ink3);margin-top:2px}
+.dealws .iconx{width:34px;height:34px;border-radius:9px;border:1px solid var(--line2);background:var(--bg2);color:var(--ink2);font-size:19px;cursor:pointer;display:grid;place-items:center}
+.dealws .iconx:hover{color:var(--ink)}
+.dealws .btn.danger-ghost{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,transparent)}
+.dealws .editbody{padding:6px 24px 16px}
+.dealws .acc{border-bottom:1px solid var(--line)}
+.dealws .acc-h{width:100%;display:flex;align-items:center;justify-content:space-between;background:none;border:0;font:inherit;font-family:var(--ser);font-size:17px;font-weight:500;color:var(--ink);padding:16px 2px;cursor:pointer}
+.dealws .acc-h .chev{transition:transform .2s;color:var(--ink3)}
+.dealws .acc.open .acc-h .chev{transform:rotate(90deg)}
+.dealws .acc-b{display:none;padding:2px 2px 22px}
+.dealws .acc.open .acc-b{display:block}
+.dealws .editfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 24px;border-top:1px solid var(--line);position:sticky;bottom:0;background:var(--plum)}
+.dealws .subcard{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.dealws .subcard h4{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin:0 0 13px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.dealws .cigrid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.dealws .checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.dealws .chk{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.dealws .chk input{accent-color:var(--mauve);width:15px;height:15px}
+.dealws .ownersec{border:1px solid color-mix(in srgb,var(--gold) 35%,transparent);background:color-mix(in srgb,var(--gold) 8%,transparent);border-radius:13px;padding:15px 16px;font-size:13.5px;color:var(--ink2)}
+.dealws .ci{display:block}
+.dealws .ci .k{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink3);margin-bottom:5px;font-weight:700}
+.dealws .helpnote{font-size:12.5px;color:var(--ink3);margin:0 0 14px;line-height:1.5}
+.dealws .flipnote{font-size:10px;font-weight:500;color:var(--ink3);text-transform:none;letter-spacing:0}
+.dealws .acc-b .addlink{margin-top:0}
+@media(max-width:760px){.dealws .cigrid4{grid-template-columns:1fr 1fr}.dealws .checkgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.dealws .cigrid4{grid-template-columns:1fr}}

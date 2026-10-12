@@ -93,6 +93,10 @@ export default async function DealPage({ params }: { params: { id: string } }) {
             deal_type: tx.deal_type, office: tx.office, year_built: tx.year_built, seller_name: tx.seller_name,
             waiting_on: tx.waiting_on, referred_by: tx.referred_by, lead_source: tx.lead_source, skyslope_email: tx.skyslope_email,
             dpa_program: tx.dpa_program, dpa_amount: tx.dpa_amount,
+            county: tx.county, occupancy: tx.occupancy, emd_received_date: tx.emd_received_date,
+            inspection_period_days: tx.inspection_period_days, inspection_deadline: tx.inspection_deadline,
+            appraisal_date: tx.appraisal_date, financing_contingency_date: tx.financing_contingency_date,
+            referral_how: tx.referral_how, referral_amount: tx.referral_amount,
           }}
           buyerName={buyerName}
           buyerPersonId={buyerPersonId}
@@ -105,6 +109,10 @@ export default async function DealPage({ params }: { params: { id: string } }) {
           documents={(documents ?? []).map((d) => ({ id: d.id, name: d.name, uploaded_by: d.uploaded_by, client_visible: d.client_visible, created_at: d.created_at }))}
           notes={(notes ?? []).map((n) => ({ id: n.id, body: n.body, from_client: n.from_client, client_visible: n.client_visible, created_at: n.created_at }))}
           docsEnabled={DOCS_ENABLED}
+          fileNeeds={{
+            docs: Array.isArray(tx.file_needs?.docs) ? tx.file_needs.docs : [],
+            actions: Array.isArray(tx.file_needs?.actions) ? tx.file_needs.actions : [],
+          }}
           isOwner={isOwner}
           commission={
             // Owner-only: never serialize commission figures to a non-owner's page.
