@@ -27,6 +27,7 @@ type Tx = {
   deal_type: string | null; office: string | null; year_built: number | null; seller_name: string | null;
   waiting_on: string | null; referred_by: string | null; lead_source: string | null; skyslope_email: string | null;
   dpa_program: string | null; dpa_amount: number | string | null;
+  created_at: string | null; stage_changed_at: string | null;
   county: string | null; occupancy: string | null; emd_received_date: string | null;
   inspection_period_days: number | null; inspection_deadline: string | null;
   appraisal_date: string | null; financing_contingency_date: string | null;
@@ -64,6 +65,7 @@ const dt = (s: string | null) => (s ? new Date(`${s}T00:00:00`).toLocaleDateStri
 const longDate = (s: string) => new Date(s).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 const initials = (name: string) => name.split(/\s+/).map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
 const prettyRole = (r: string) => r.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+const prettyStage = (s: string) => ({ lead: "Lead", buyer: "Active Buyer", under_contract: "Under Contract", closed: "Closed", archived: "Archived" }[s] ?? prettyRole(s));
 const AV = ["#6c5767", "#5a6170", "#6f5a5f", "#4d6368", "#66605a", "#4a4448"];
 const NS = <span style={{ color: "var(--ink3)" }}>Not set</span>;
 
@@ -103,6 +105,26 @@ export default function DealWorkspace(p: Props) {
   const docsDone = chk.docs.filter((d) => p.fileNeeds.docs.includes(d.key)).length + customDocs.filter((c) => c.done).length;
   const actsDone = chk.actions.filter((a) => p.fileNeeds.actions.includes(a.key)).length + customActs.filter((c) => c.done).length;
   const chkTotal = chk.docs.length + chk.actions.length + p.fileNeeds.custom.length;
+
+  // Activity log ... derived from everything that has a timestamp on this file.
+  type Act = { when: string; kind: string; text: string; detail?: string; dateOnly?: boolean };
+  const activity: Act[] = [];
+  if (p.tx.created_at) activity.push({ when: p.tx.created_at, kind: "created", text: "Deal created" });
+  if (p.tx.stage_changed_at && p.tx.pipeline_stage) activity.push({ when: p.tx.stage_changed_at, kind: "stage", text: `Moved to ${prettyStage(p.tx.pipeline_stage)}` });
+  p.notes.forEach((n) => activity.push({ when: n.created_at, kind: "note", text: n.from_client ? "Buyer added a note" : "You added a note", detail: n.body }));
+  p.documents.forEach((d) => activity.push({ when: d.created_at, kind: "doc", text: d.uploaded_by === "buyer" ? "Buyer added a document" : "You added a document", detail: d.name }));
+  p.tasks.forEach((t) => {
+    activity.push({ when: t.created_at, kind: "task", text: "Task added", detail: t.title });
+    if (t.done && t.done_at) activity.push({ when: t.done_at, kind: "done", text: "Task completed", detail: t.title });
+  });
+  p.milestones.forEach((m) => { if (m.status === "done" && m.date) activity.push({ when: `${m.date}T12:00:00`, kind: "done", text: "Step completed", detail: m.label, dateOnly: true }); });
+  activity.sort((a, b) => (a.when < b.when ? 1 : -1));
+  const fmtWhen = (it: Act) => {
+    const d = new Date(it.when);
+    if (Number.isNaN(d.getTime())) return "";
+    const date = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return it.dateOnly ? date : `${date} · ${d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}`;
+  };
 
   const typeLabel = p.tx.deal_type || "Purchase";
   const cityLine = [p.tx.city, [p.tx.state, p.tx.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
@@ -430,16 +452,33 @@ export default function DealWorkspace(p: Props) {
         </div>
       )}
 
-      {/* ============ LOG ============ */}
+      {/* ============ LOG (activity timeline) ============ */}
       {tab === "Log" && (
         <div className="panel">
           <div className="card">
-            <div className="cardhd"><h3>Notes &amp; activity</h3></div>
+            <div className="cardhd"><h3>Activity</h3><span className="clmeta">everything on this file</span></div>
             <div className="cardbody">
-              {p.notes.map((n) => (
-                <div key={n.id} className="note">{n.body}<div className="meta">{n.from_client ? "From buyer" : "You"} · {longDate(n.created_at)}</div></div>
-              ))}
-              {p.notes.length === 0 && <p className="emptynote">No activity yet.</p>}
+              <form action={addBuyerNote} style={{ marginBottom: 16 }}>
+                <input type="hidden" name="transaction_id" value={p.tx.id} />
+                <textarea name="body" rows={2} className={inp} placeholder="Log a note..." />
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--ink3)" }}><input type="checkbox" name="client_visible" /> Share with buyer</label>
+                  <button type="submit" className="btn mauve">Add note</button>
+                </div>
+              </form>
+              <div className="logfeed">
+                {activity.length === 0 && <p className="emptynote">Nothing logged yet.</p>}
+                {activity.map((it, i) => (
+                  <div className="logitem" key={i}>
+                    <span className={`logdot ${it.kind}`} />
+                    <div>
+                      <div className="logtext">{it.text}</div>
+                      {it.detail && <div className="logdetail">{it.detail}</div>}
+                      <div className="logtime">{fmtWhen(it)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

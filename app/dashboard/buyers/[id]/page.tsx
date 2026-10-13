@@ -95,6 +95,7 @@ export default async function DealPage({ params }: { params: { id: string } }) {
             deal_type: tx.deal_type, office: tx.office, year_built: tx.year_built, seller_name: tx.seller_name,
             waiting_on: tx.waiting_on, referred_by: tx.referred_by, lead_source: tx.lead_source, skyslope_email: tx.skyslope_email,
             dpa_program: tx.dpa_program, dpa_amount: tx.dpa_amount,
+            created_at: tx.created_at, stage_changed_at: tx.stage_changed_at,
             county: tx.county, occupancy: tx.occupancy, emd_received_date: tx.emd_received_date,
             inspection_period_days: tx.inspection_period_days, inspection_deadline: tx.inspection_deadline,
             appraisal_date: tx.appraisal_date, financing_contingency_date: tx.financing_contingency_date,

@@ -180,6 +180,20 @@
 .dealws .foot-danger .s{font-size:12px;color:var(--ink3)}
 .dealws .emptynote{font-size:13px;color:var(--ink3)}
 
+/* activity log (derived timeline) */
+.dealws .logfeed{margin-top:4px}
+.dealws .logitem{display:grid;grid-template-columns:22px 1fr;gap:12px;padding:11px 0;border-top:1px solid var(--line)}
+.dealws .logitem:first-child{border-top:0}
+.dealws .logdot{width:11px;height:11px;border-radius:50%;margin:5px auto 0;background:var(--ink3)}
+.dealws .logdot.note{background:var(--mauve)}
+.dealws .logdot.doc{background:var(--gold)}
+.dealws .logdot.task{background:var(--wine)}
+.dealws .logdot.done{background:var(--green)}
+.dealws .logdot.stage{background:var(--mauve)}
+.dealws .logtext{font-size:14px;color:var(--ink)}
+.dealws .logdetail{font-size:12.5px;color:var(--ink2);margin-top:2px;white-space:pre-line}
+.dealws .logtime{font-size:11px;color:var(--ink3);margin-top:3px}
+
 /* ===== Edit transaction accordion sheet (ported from mockup) ===== */
 .dealws .editwrap{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:36px 16px;background:rgba(10,7,9,.6);backdrop-filter:blur(5px);overflow:auto}
 .dealws .editsheet{width:100%;max-width:920px;background:var(--plum);border:1px solid var(--line2);border-radius:20px;box-shadow:0 40px 120px rgba(0,0,0,.5);margin:auto;overflow:hidden}
