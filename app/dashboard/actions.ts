@@ -658,6 +658,7 @@ export async function createBuyer(formData: FormData) {
   const clientName = str(formData.get("client_name")) ?? ([firstName, lastName].filter(Boolean).join(" ") || null);
   const clientEmail = str(formData.get("client_email"));
   const clientPhone = str(formData.get("client_phone"));
+  const clientPhoneType = str(formData.get("client_phone_type"));
 
   // Duplicate-matcher: reuse an existing contact when it confidently matches.
   const match = clientName ? await findMatchingPerson(supabase, orgId, { name: clientName, email: clientEmail, phone: clientPhone }) : null;
@@ -725,6 +726,7 @@ export async function createBuyer(formData: FormData) {
             type: "buyer",
             email: clientEmail,
             phone: clientPhone,
+            phone_type: clientPhoneType,
             source_client_id: client_id,
           })
           .select("id")

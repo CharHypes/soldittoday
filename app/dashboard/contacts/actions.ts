@@ -54,6 +54,7 @@ export async function updatePerson(formData: FormData) {
   setIf("type");
   setIf("email");
   setIf("phone");
+  setIf("phone_type");
   setIf("address");
   setIf("birthday");
   setIf("home_anniversary");

@@ -183,7 +183,7 @@ export default function ContactCard(props: ContactCardProps) {
         <div className="space-y-5">
           <Box label="Contact info" onEdit={() => setEditing("contact")}>
             <>
-              <Field label="Phone" value={formatPhone(person.phone)} />
+              <Field label="Phone" value={person.phone ? `${formatPhone(person.phone)}${person.phone_type ? ` · ${person.phone_type}` : ""}` : null} />
               <Field label="Email" value={person.email} />
               <Field label="Address" value={person.address} />
             </>
@@ -192,6 +192,15 @@ export default function ContactCard(props: ContactCardProps) {
                 <form action={save} className="space-y-3 pt-1">
                   <input type="hidden" name="id" value={person.id} />
                   <LabeledInput name="phone" label="Phone" defaultValue={person.phone} placeholder="(734) 555-1234" />
+                  <div className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-2">
+                    <label className="text-sm text-dusty">Phone type</label>
+                    <select name="phone_type" defaultValue={person.phone_type ?? ""} className={`${inp} w-full`}>
+                      <option value="">...</option>
+                      <option value="Cell">Cell</option>
+                      <option value="Home">Home</option>
+                      <option value="Work">Work</option>
+                    </select>
+                  </div>
                   <LabeledInput name="email" label="Email" defaultValue={person.email} placeholder="name@email.com" type="email" />
                   <LabeledInput name="address" label="Address" defaultValue={person.address} placeholder="123 Main St, City, MI 48000" />
                   <SaveCancel onCancel={() => setEditing(null)} />

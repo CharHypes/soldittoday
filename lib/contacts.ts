@@ -14,6 +14,7 @@ export type Person = {
   sort_key?: string | null;
   email?: string | null;
   phone?: string | null;
+  phone_type?: string | null;
   address?: string | null;
   birthday?: string | null;
   home_anniversary?: string | null;
