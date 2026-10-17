@@ -141,21 +141,25 @@
    want to add the Butler colours to this. We're going to keep the current theme,
    we're just going to have extra settings in settings."
 
-   To add one to the picker, offer its data-theme value. Nothing else changes:
-   every component above reads tokens, so a theme is a palette and nothing more.
+   Each one is a wrapper CLASS on the Agent Hub (`.theme-butler-warm`, etc.),
+   the same mechanism as `.theme-neutral`, so it is scoped to the back office
+   and never touches the marketing site. The matching Agent-Hub chrome tokens
+   (--plum/--pearl/--mauve ...) live in app/globals.css under the same class;
+   these blocks are only the --bo-* half. Every component reads tokens, so a
+   theme is a palette and nothing more.
 
        (none)            Mulberry Noir      the default
        light             Mulberry Light
-       butler-warm       Butler Warm Dark   brown, blue accent, gold highlights
-       butler-midnight   Butler Midnight    near black, cooler, higher contrast
-       butler-linen      Butler Linen       warm paper, easiest in a bright room
+       .theme-butler-warm       Butler Warm Dark   brown, blue accent, gold highlights
+       .theme-butler-midnight   Butler Midnight    near black, cooler, higher contrast
+       .theme-butler-linen      Butler Linen       warm paper, easiest in a bright room
 
    The accent in all three Butler themes is a slate blue rather than a rose. That
    is the point of offering them: a genuinely different room to work in, not a
    tint of the same one. The display face and every size stay put, so only the
    colour changes. */
 
-:root[data-theme="butler-warm"] {
+.theme-butler-warm {
   --bo-bg: #1A1714;  --bo-surface: #221E18;  --bo-elev: #2A251E;  --bo-border: #3A342B;
   --bo-text: #E4DBCB; --bo-muted: #A59C8B;   --bo-dim: #7E7667;
   --bo-accent: #8BA3C2;
@@ -171,7 +175,7 @@
   --bo-input-bd: #473F33;
 }
 
-:root[data-theme="butler-midnight"] {
+.theme-butler-midnight {
   --bo-bg: #17161A;  --bo-surface: #201F24;  --bo-elev: #26252B;  --bo-border: #33313A;
   --bo-text: #D9DCE6; --bo-muted: #8E8A7E;   --bo-dim: #6E6B74;
   --bo-accent: #8BA3C2;
@@ -187,7 +191,7 @@
   --bo-input-bd: #403E49;
 }
 
-:root[data-theme="butler-linen"] {
+.theme-butler-linen {
   --bo-bg: #E8E2D6;  --bo-surface: #F3EEE4;  --bo-elev: #FCF9F3;  --bo-border: #E0D9CB;
   --bo-text: #26333F; --bo-muted: #5B6273;   --bo-dim: #8A8F98;
   --bo-accent: #54718F;
@@ -207,9 +211,9 @@
 /* The dimmed ground behind a pop-out is lighter on a light theme, or the page
    underneath disappears and you lose the whole point of the pop-out. */
 :root[data-theme="light"] .bo-overlay,
-:root[data-theme="butler-linen"] .bo-overlay { background: rgba(40,30,36,.38); }
+.theme-butler-linen .bo-overlay { background: rgba(40,30,36,.38); }
 :root[data-theme="light"] .bo-modal,
-:root[data-theme="butler-linen"] .bo-modal { box-shadow: 0 24px 70px rgba(60,45,55,.22); }
+.theme-butler-linen .bo-modal { box-shadow: 0 24px 70px rgba(60,45,55,.22); }
 
 
 /* ──────────────────────────────── CARDS ─────────────────────────────────── */

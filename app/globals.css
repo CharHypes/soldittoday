@@ -195,6 +195,90 @@
 }
 .theme-neutral .txn-addr { color: rgb(var(--mauve)); }
 
+/* =====================================================================
+   BUTLER themes (OPT-IN, scoped to a wrapper class on the Agent Hub, the
+   same mechanism as .theme-neutral). Lifted from the Butler product so the
+   two feel like one house: a slate-blue accent instead of rose. The --bo-*
+   half of each palette lives in app/dashboard/backoffice.css under the same
+   class; these blocks are the Agent Hub chrome tokens, so the WHOLE
+   workspace reskins, not just the forms. Mulberry Noir stays the default
+   and is untouched. The marketing site is never affected (scoped class).
+   ===================================================================== */
+.theme-butler-warm {
+  --plum: 26 23 20;
+  --bruised: 34 30 24;
+  --raise: 42 37 30;
+  --pearl: 228 219 203;
+  --dusty: 165 156 139;
+  --ink3: 126 118 103;
+  --mauve: 139 163 194;
+  --aurora-mauve: 139 163 194;
+  --gold: 212 169 78;
+  --green: 127 168 118;
+  --wine: 198 131 135;
+}
+.theme-butler-midnight {
+  --plum: 23 22 26;
+  --bruised: 32 31 36;
+  --raise: 38 37 43;
+  --pearl: 217 220 230;
+  --dusty: 142 138 126;
+  --ink3: 110 107 116;
+  --mauve: 139 163 194;
+  --aurora-mauve: 139 163 194;
+  --gold: 212 169 78;
+  --green: 127 168 118;
+  --wine: 198 131 135;
+}
+.theme-butler-linen {
+  --plum: 232 226 214;
+  --bruised: 243 238 228;
+  --raise: 252 249 243;
+  --pearl: 38 51 63;
+  --dusty: 91 98 115;
+  --ink3: 138 143 152;
+  --mauve: 84 113 143;
+  --aurora-mauve: 84 113 143;
+  --gold: 176 136 60;
+  --green: 94 138 87;
+  --wine: 168 95 99;
+}
+/* Butler themes restyle the same components the neutral theme does, so the
+   Mulberry rose decoration doesn't fight the slate accent. */
+.theme-butler-warm .btn-mauve,
+.theme-butler-midnight .btn-mauve,
+.theme-butler-linen .btn-mauve {
+  outline: none;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+.theme-butler-warm .btn-mauve::after,
+.theme-butler-midnight .btn-mauve::after,
+.theme-butler-linen .btn-mauve::after { content: none; }
+.theme-butler-warm .av-chip,
+.theme-butler-midnight .av-chip,
+.theme-butler-linen .av-chip {
+  background-color: rgb(var(--raise));
+  color: rgb(var(--pearl));
+  --tw-ring-color: rgb(var(--mauve));
+}
+.theme-butler-warm .txn-addr,
+.theme-butler-midnight .txn-addr,
+.theme-butler-linen .txn-addr { color: rgb(var(--mauve)); }
+/* Linen is a LIGHT theme: give the closing tracker clear, legible markers
+   (the dark rose-gold gradient goes muddy on paper), tuned to the slate
+   accent so the checklist reads at a glance. */
+.theme-butler-linen .tracker-done {
+  background-image: linear-gradient(135deg, rgb(54 71 89), rgb(110 140 170));
+  color: #fff;
+}
+.theme-butler-linen .tracker-active {
+  border-color: rgba(54, 71, 89, 0.7);
+  background: rgba(110, 140, 170, 0.2);
+}
+.theme-butler-linen .tracker-rail-up {
+  background: rgba(54, 71, 89, 0.16);
+}
+
 /*
  * Buyer closing tracker ... light mode only. In dark mode the "done" marker is
  * the rose-gold gradient (which reads beautifully), but in light that same

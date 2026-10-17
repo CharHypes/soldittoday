@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const AREAS: { title: string; body: string }[] = [
-  { title: "Appearance", body: "Theme and typeface, per person. Mulberry Noir, Blush, Amethyst, Harbor." },
+  { title: "Appearance", body: "Theme and typeface, per person. Mulberry Noir, Neutral, and three Butler palettes." },
   { title: "Team & access", body: "Add agents and assistants, each with their own login and scoped access." },
   { title: "Integrations", body: "Zapier, MLS/IDX, email, texting and calling, calendar." },
   { title: "Templates", body: "Saved email and text snippets for fast, on-brand outreach." },
@@ -145,7 +145,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: { s
             <span className="rounded-full border border-green/30 bg-green/10 px-2 py-0.5 text-[10px] uppercase tracking-wide text-green">Live</span>
           </div>
           <p className="mb-4 text-sm text-dusty">
-            Choose how your Agent Hub looks. Sold It Today uses Mulberry Noir; switch to Neutral to preview the clean look we ship to other brokerages.
+            Choose how your Agent Hub looks. Sold It Today uses Mulberry Noir; switch to Neutral to preview the clean look we ship to other brokerages, or to a Butler palette for a slate-blue room shared with the Butler product.
           </p>
           <DesignPicker />
         </section>

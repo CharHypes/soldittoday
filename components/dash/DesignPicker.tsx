@@ -2,18 +2,24 @@
 
 import { useEffect, useState } from "react";
 
-type Design = "mulberry" | "neutral";
+type Design = "mulberry" | "neutral" | "butler-warm" | "butler-midnight" | "butler-linen";
 
 const OPTIONS: { id: Design; name: string; blurb: string; swatch: string[] }[] = [
   { id: "mulberry", name: "Mulberry Noir", blurb: "Your Sold It Today brand ... expressive and warm.", swatch: ["#1a1518", "#2a1f25", "#d4a2ba", "#e4bc90"] },
   { id: "neutral", name: "Neutral (Clean)", blurb: "The demo / sellable look ... calm grayscale + one accent.", swatch: ["#111214", "#23242a", "#8e3b58", "#9a9ca3"] },
+  { id: "butler-warm", name: "Butler Warm Dark", blurb: "Warm brown room, slate-blue accent, gold highlights.", swatch: ["#1a1714", "#2a251e", "#8ba3c2", "#d4a94e"] },
+  { id: "butler-midnight", name: "Butler Midnight", blurb: "Near-black and cool, higher contrast for low light.", swatch: ["#17161a", "#26252b", "#8ba3c2", "#b4b2b8"] },
+  { id: "butler-linen", name: "Butler Linen", blurb: "Warm paper, slate accent ... easiest in a bright room.", swatch: ["#e8e2d6", "#fcf9f3", "#54718f", "#b0883c"] },
 ];
+
+const KNOWN: Design[] = ["mulberry", "neutral", "butler-warm", "butler-midnight", "butler-linen"];
 
 export default function DesignPicker() {
   const [design, setDesign] = useState<Design>("mulberry");
   useEffect(() => {
     try {
-      setDesign(localStorage.getItem("agenthub-design") === "neutral" ? "neutral" : "mulberry");
+      const d = localStorage.getItem("agenthub-design") as Design | null;
+      setDesign(d && KNOWN.includes(d) ? d : "mulberry");
     } catch {}
   }, []);
   const choose = (d: Design) => {
