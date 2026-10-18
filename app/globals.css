@@ -26,6 +26,7 @@
   /* Third, more-muted text shade (mockup --ink3 #82757c) ... field labels, breadcrumb. */
   --ink3: 130 117 124;
   --wine: 61 37 48;
+  --green: 123 191 160;
   --ivory: 250 246 241;
   --champagne: 244 233 228;
   --stone: 236 224 220;
@@ -104,6 +105,7 @@
      small text clears 4.5:1 against the tinted page and the blush gradient. */
   --dusty: 86 73 80;
   --wine: 216 193 203;
+  --green: 47 127 97;
   /* ivory/champagne are used only by the inverted band — safe to flip. */
   --ivory: 40 29 35;
   --champagne: 54 39 47;
