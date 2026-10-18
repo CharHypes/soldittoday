@@ -5,7 +5,7 @@ import ContactCard from "@/components/dash/ContactCard";
 import AddContactButton from "@/components/dash/AddContactButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
-import { avatarBg } from "@/lib/avatarColor";
+import { avatarIndex } from "@/lib/avatarColor";
 import { fullName, lastFirst, initials, typeLabel, RELATION_LABEL, type Person } from "@/lib/contacts";
 
 export const metadata: Metadata = {
@@ -279,13 +279,12 @@ function ContactList({
         className={`flex items-center gap-3 border-b border-dusty/10 px-3 py-3 transition-colors ${active ? "bg-raise" : "hover:bg-raise/40"}`}
       >
         {(() => {
-          const bg = avatarBg(p.id, avatarStyle);
+          const ci = avatarIndex(p.id, avatarStyle);
           return (
             <span
-              className={`av-chip grid h-10 w-10 shrink-0 place-items-center rounded-full text-xs font-semibold ${bg ? "text-white" : "bg-mauve text-plum"} ${
+              className={`av-chip grid h-10 w-10 shrink-0 place-items-center rounded-full text-xs font-semibold ${ci !== null ? `av-c${ci} text-white` : "bg-mauve text-plum"} ${
                 active ? "ring-2 ring-[#e4bc90] ring-offset-2 ring-offset-plum" : ""
               }`}
-              style={bg ? { background: bg } : undefined}
             >
               {initials(p)}
             </span>

@@ -4,7 +4,6 @@ import DesignPicker from "@/components/dash/DesignPicker";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
 import { uploadOrgLogo, removeOrgLogo, updateBranding, updateAvatarStyle } from "@/app/dashboard/settings/actions";
-import { avatarBg } from "@/lib/avatarColor";
 
 export const metadata: Metadata = {
   title: "Settings | Sold It Today",
@@ -115,12 +114,14 @@ export default async function SettingsPage({ searchParams }: { searchParams: { s
                 <p className="mt-1 text-sm text-dusty">One solid mauve, or a fun rotation of muted colors (each contact keeps its own).</p>
                 <div className="mt-3 flex -space-x-1.5">
                   {["AB", "KA", "MA", "LB", "PC", "TO"].map((ini, i) => {
-                    const bg = avatarStyle === "colorful" ? avatarBg(`seed-${i}-${ini}`, "colorful") : null;
+                    // Force one of each palette index so the preview shows the
+                    // full rotation, and carry av-chip so it matches the real
+                    // avatars (and picks up Butler Linen's lighter set).
+                    const ci = avatarStyle === "colorful" ? i : null;
                     return (
                       <span
                         key={i}
-                        className={`grid h-8 w-8 place-items-center rounded-full text-[10px] font-bold ring-2 ring-bruised ${bg ? "text-white" : "bg-mauve text-plum"}`}
-                        style={bg ? { background: bg } : undefined}
+                        className={`av-chip grid h-8 w-8 place-items-center rounded-full text-[10px] font-bold ring-2 ring-bruised ${ci !== null ? `av-c${ci} text-white` : "bg-mauve text-plum"}`}
                       >
                         {ini}
                       </span>

@@ -198,13 +198,21 @@
 /* =====================================================================
    BUTLER themes (OPT-IN, scoped to a wrapper class on the Agent Hub, the
    same mechanism as .theme-neutral). Lifted from the Butler product so the
-   two feel like one house: a slate-blue accent instead of rose. The --bo-*
-   half of each palette lives in app/dashboard/backoffice.css under the same
-   class; these blocks are the Agent Hub chrome tokens, so the WHOLE
-   workspace reskins, not just the forms. Mulberry Noir stays the default
-   and is untouched. The marketing site is never affected (scoped class).
+   two feel like one house: a slate-blue accent instead of rose.
+
+   Butler is a LIGHT+DARK PAIR, exactly like Mulberry Noir/Light: the Agent
+   Hub light/dark button writes :root[data-theme] (see AgentHubHeader), and
+   these wrapper selectors flip the theme's face with it.
+     .theme-butler            dark face = Butler Warm Dark
+     .theme-butler-midnight   dark face = Butler Midnight (cooler near-black)
+     :root[data-theme="light"] .theme-butler(-midnight)  light face = Linen
+   The --bo-* form half lives in app/dashboard/backoffice.css under the same
+   selectors; these blocks are the Agent Hub chrome tokens so the WHOLE
+   workspace reskins. Mulberry Noir stays the default and is untouched; the
+   marketing site is never affected (scoped class).
    ===================================================================== */
-.theme-butler-warm {
+/* Dark face: Butler Warm Dark */
+.theme-butler {
   --plum: 26 23 20;
   --bruised: 34 30 24;
   --raise: 42 37 30;
@@ -217,6 +225,7 @@
   --green: 127 168 118;
   --wine: 198 131 135;
 }
+/* Dark face: Butler Midnight (cooler near-black) */
 .theme-butler-midnight {
   --plum: 23 22 26;
   --bruised: 32 31 36;
@@ -230,7 +239,10 @@
   --green: 127 168 118;
   --wine: 198 131 135;
 }
-.theme-butler-linen {
+/* Light face (shared): Butler Linen. Both Butler themes flip to this when the
+   light/dark button sets data-theme="light". */
+:root[data-theme="light"] .theme-butler,
+:root[data-theme="light"] .theme-butler-midnight {
   --plum: 232 226 214;
   --bruised: 243 238 228;
   --raise: 252 249 243;
@@ -243,38 +255,64 @@
   --green: 94 138 87;
   --wine: 168 95 99;
 }
-/* Butler themes restyle the same components the neutral theme does, so the
-   Mulberry rose decoration doesn't fight the slate accent. */
-.theme-butler-warm .btn-mauve,
-.theme-butler-midnight .btn-mauve,
-.theme-butler-linen .btn-mauve {
+/* Butler restyles the same components the neutral theme does, so the Mulberry
+   rose decoration doesn't fight the slate accent (applies in both faces). */
+.theme-butler .btn-mauve,
+.theme-butler-midnight .btn-mauve {
   outline: none;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
 }
-.theme-butler-warm .btn-mauve::after,
-.theme-butler-midnight .btn-mauve::after,
-.theme-butler-linen .btn-mauve::after { content: none; }
+.theme-butler .btn-mauve::after,
+.theme-butler-midnight .btn-mauve::after { content: none; }
 /* NOTE: do NOT override .av-chip here. The contact avatar is a per-person
    colored element (see lib/avatarColor.ts) ... the colorful palette fill is an
    inline style and the initials are text-white. An earlier version forced the
    initials to var(--pearl), which on the light Linen theme is dark navy, so the
    colorful avatars rendered dark-on-dark (muddy). Leaving av-chip alone makes
    the contact screen match the Settings preview, which never carried the class. */
-.theme-butler-warm .txn-addr,
-.theme-butler-midnight .txn-addr,
-.theme-butler-linen .txn-addr { color: rgb(var(--mauve)); }
-/* Linen is a LIGHT theme: give the closing tracker clear, legible markers
-   (the dark rose-gold gradient goes muddy on paper), tuned to the slate
-   accent so the checklist reads at a glance. */
-.theme-butler-linen .tracker-done {
+.theme-butler .txn-addr,
+.theme-butler-midnight .txn-addr { color: rgb(var(--mauve)); }
+
+/* ── Contact avatar palette (colorful style) ──────────────────────────────
+   The colorful avatar fill is a CLASS, not a baked-in hex, so a theme can swap
+   it. Default = the muted DARK set (good on Mulberry Noir + the dark Butler
+   themes), white initials. `.av-chip.av-cN` is specificity (0,2,0) and sits
+   after `.theme-neutral .av-chip`, so colorful still shows colors in the
+   neutral theme. The Butler LIGHT face (Linen) remaps to a LIGHTER, airier set
+   with dark initials, because the dark colors read heavy on the paper. Mulberry
+   Noir is untouched. See lib/avatarColor.ts. */
+.av-chip.av-c0 { background: #6c5767; }
+.av-chip.av-c1 { background: #5a6170; }
+.av-chip.av-c2 { background: #6f5a5f; }
+.av-chip.av-c3 { background: #4d6368; }
+.av-chip.av-c4 { background: #66605a; }
+.av-chip.av-c5 { background: #4a4448; }
+:root[data-theme="light"] .theme-butler .av-chip.av-c0,
+:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c0 { background: #c59cb3; color: #26333f; }
+:root[data-theme="light"] .theme-butler .av-chip.av-c1,
+:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c1 { background: #93aac6; color: #26333f; }
+:root[data-theme="light"] .theme-butler .av-chip.av-c2,
+:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c2 { background: #d0a39c; color: #26333f; }
+:root[data-theme="light"] .theme-butler .av-chip.av-c3,
+:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c3 { background: #8fbcb4; color: #26333f; }
+:root[data-theme="light"] .theme-butler .av-chip.av-c4,
+:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c4 { background: #cabd99; color: #26333f; }
+:root[data-theme="light"] .theme-butler .av-chip.av-c5,
+:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c5 { background: #aeb2a2; color: #26333f; }
+/* The Linen light face: give the closing tracker clear, legible markers (the
+   dark rose-gold gradient goes muddy on paper), tuned to the slate accent. */
+:root[data-theme="light"] .theme-butler .tracker-done,
+:root[data-theme="light"] .theme-butler-midnight .tracker-done {
   background-image: linear-gradient(135deg, rgb(54 71 89), rgb(110 140 170));
   color: #fff;
 }
-.theme-butler-linen .tracker-active {
+:root[data-theme="light"] .theme-butler .tracker-active,
+:root[data-theme="light"] .theme-butler-midnight .tracker-active {
   border-color: rgba(54, 71, 89, 0.7);
   background: rgba(110, 140, 170, 0.2);
 }
-.theme-butler-linen .tracker-rail-up {
+:root[data-theme="light"] .theme-butler .tracker-rail-up,
+:root[data-theme="light"] .theme-butler-midnight .tracker-rail-up {
   background: rgba(54, 71, 89, 0.16);
 }
 
