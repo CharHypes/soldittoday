@@ -254,13 +254,12 @@
 .theme-butler-warm .btn-mauve::after,
 .theme-butler-midnight .btn-mauve::after,
 .theme-butler-linen .btn-mauve::after { content: none; }
-.theme-butler-warm .av-chip,
-.theme-butler-midnight .av-chip,
-.theme-butler-linen .av-chip {
-  background-color: rgb(var(--raise));
-  color: rgb(var(--pearl));
-  --tw-ring-color: rgb(var(--mauve));
-}
+/* NOTE: do NOT override .av-chip here. The contact avatar is a per-person
+   colored element (see lib/avatarColor.ts) ... the colorful palette fill is an
+   inline style and the initials are text-white. An earlier version forced the
+   initials to var(--pearl), which on the light Linen theme is dark navy, so the
+   colorful avatars rendered dark-on-dark (muddy). Leaving av-chip alone makes
+   the contact screen match the Settings preview, which never carried the class. */
 .theme-butler-warm .txn-addr,
 .theme-butler-midnight .txn-addr,
 .theme-butler-linen .txn-addr { color: rgb(var(--mauve)); }
