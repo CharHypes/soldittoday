@@ -42,9 +42,42 @@ const BUYER_ITEMS: ChkItem[] = [
   { key: "add_home_actions", label: "Add to Home Actions", group: "actions", from: "closed" },
 ];
 
+// ---- Seller / listing-side items ----
+// Listings don't use the buyer STAGE_ORDER (their status is Active/Pending/Sold),
+// so these carry no `from` and are all shown ... the agent checks what applies.
+const LISTING_ITEMS: ChkItem[] = [
+  // documents
+  { key: "listing_agreement", label: "Listing Agreement", group: "docs" },
+  { key: "agency_disclosure", label: "Agency Disclosure", group: "docs" },
+  { key: "sellers_disclosure", label: "Seller's Disclosure", group: "docs" },
+  { key: "lead_based_paint", label: "Lead-Based Paint Disclosure", group: "docs" },
+  { key: "mls_input", label: "MLS Input Sheet", group: "docs" },
+  { key: "cma_pricing", label: "CMA / Pricing worksheet", group: "docs", optional: true },
+  { key: "plat_survey", label: "Plat / Survey", group: "docs", optional: true },
+  { key: "hoa_docs", label: "HOA Documents", group: "docs", optional: true },
+  { key: "purchase_agreement", label: "Purchase Agreement (offer)", group: "docs" },
+  { key: "title_commitment", label: "Title Commitment", group: "docs", optional: true },
+  { key: "wire_instructions", label: "Wire Instructions", group: "docs", optional: true },
+  { key: "addendums", label: "Addendums", group: "docs", optional: true },
+  // follow-up / actions
+  { key: "enter_in_mls", label: "Enter listing in MLS", group: "actions" },
+  { key: "schedule_photos", label: "Schedule photography", group: "actions" },
+  { key: "install_sign", label: "Install yard sign", group: "actions" },
+  { key: "place_lockbox", label: "Place lockbox", group: "actions" },
+  { key: "open_house", label: "Schedule open house", group: "actions", optional: true },
+  { key: "review_offers", label: "Review offers", group: "actions" },
+  { key: "order_title", label: "Order title", group: "actions", optional: true },
+  { key: "schedule_closing", label: "Schedule closing", group: "actions" },
+  { key: "send_review_request", label: "Send review request", group: "actions", optional: true },
+  { key: "thankyou_card", label: "Thank-you card sent", group: "actions", optional: true },
+];
+
 /** The predefined items visible for a transaction type at a given stage. */
 export function visibleItems(type: "buyer" | "listing", stage: string | null): { docs: ChkItem[]; actions: ChkItem[] } {
-  const all = type === "buyer" ? BUYER_ITEMS : BUYER_ITEMS; // listing set added with the Listings workspace
+  if (type === "listing") {
+    return { docs: LISTING_ITEMS.filter((i) => i.group === "docs"), actions: LISTING_ITEMS.filter((i) => i.group === "actions") };
+  }
+  const all = BUYER_ITEMS;
   const show = all.filter((it) => idx(stage) >= idx(it.from));
   return { docs: show.filter((i) => i.group === "docs"), actions: show.filter((i) => i.group === "actions") };
 }

@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { updateListing, addSnapshot, syncListingPhoto, deleteListing } from "@/app/dashboard/actions";
+import {
+  updateListing, addSnapshot, syncListingPhoto, deleteListing,
+  toggleListingFileNeed, toggleListingFileNeedCustom, uploadListingDocument, toggleDocumentShare, deleteDocument,
+} from "@/app/dashboard/actions";
+import { visibleItems, type ChkItem, type CustomItem, type FileNeeds } from "@/lib/dealChecklist";
 import DeleteButton from "@/components/dash/DeleteButton";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 import ListTracImport from "@/components/dash/ListTracImport";
@@ -24,7 +28,8 @@ type DocRow = { id: string; name: string; created_at: string; uploaded_by: strin
 type Listing = {
   id: string; address: string | null; city: string | null; state: string | null; zip: string | null;
   price: number | null; beds: number | null; baths: number | null; sqft: number | null;
-  status: string | null; list_date: string | null; mls_number: string | null; photo_url: string | null; email_token: string | null;
+  status: string | null; list_date: string | null; mls_number: string | null; photo_url: string | null;
+  email_token: string | null; created_at: string | null;
 };
 
 type Props = {
@@ -37,12 +42,14 @@ type Props = {
   notes: NoteRow[];
   snapshots: Snapshot[];
   documents: DocRow[];
+  fileNeeds: FileNeeds;
+  docsEnabled: boolean;
   portalUrl: string;
   listingEmail: string | null;
   aiEnabled: boolean;
 };
 
-const TABS = ["Overview", "Notes", "Activity", "Documents", "Contacts", "Client portal"] as const;
+const TABS = ["Overview", "Notes", "Checklist", "Documents", "Activity", "Contacts", "Client portal", "Log"] as const;
 type Tab = (typeof TABS)[number];
 
 const usd = (n: number | string | null) => {
@@ -100,6 +107,24 @@ export default function ListingWorkspace(p: Props) {
   const statusActive = /active|sold|closed/i.test(l.status || "");
   const bedsBaths = l.beds != null || l.baths != null ? `${l.beds ?? "?"} bd · ${l.baths ?? "?"} ba` : null;
   const sideline = ["Seller side", l.status, location, dt(l.list_date) ? `Listed ${dt(l.list_date)}` : null].filter(Boolean).join(" · ");
+
+  // Checklist (seller-side file needs).
+  const chk = visibleItems("listing", null);
+  const customDocs = p.fileNeeds.custom.filter((c) => c.group === "docs");
+  const customActs = p.fileNeeds.custom.filter((c) => c.group === "actions");
+  const docsDone = chk.docs.filter((d) => p.fileNeeds.docs.includes(d.key)).length + customDocs.filter((c) => c.done).length;
+  const actsDone = chk.actions.filter((a) => p.fileNeeds.actions.includes(a.key)).length + customActs.filter((c) => c.done).length;
+  const chkTotal = chk.docs.length + chk.actions.length + p.fileNeeds.custom.length;
+
+  // Activity log, derived from everything timestamped on this listing.
+  type Act = { when: string; kind: string; text: string; detail?: string };
+  const activity: Act[] = [];
+  if (l.created_at) activity.push({ when: l.created_at, kind: "created", text: "Listing created" });
+  p.notes.forEach((n) => activity.push({ when: n.created_at, kind: "note", text: "You added a note", detail: n.body }));
+  p.documents.forEach((d) => activity.push({ when: d.created_at, kind: "doc", text: d.uploaded_by === "seller" ? "Seller added a document" : "You added a document", detail: d.name }));
+  p.snapshots.forEach((s) => { if (s.period_end) activity.push({ when: `${s.period_end}T12:00:00`, kind: "stage", text: "Stats update", detail: `${s.total_views ?? 0} views` }); });
+  activity.sort((a, b) => (a.when < b.when ? 1 : -1));
+  const fmtWhen = (w: string) => { const d = new Date(w); return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); };
 
   const openEdit = () => setEditOpen(true);
 
@@ -272,6 +297,29 @@ export default function ListingWorkspace(p: Props) {
         </div>
       )}
 
+      {/* ============ CHECKLIST ============ */}
+      {tab === "Checklist" && (
+        <div className="panel">
+          <div className="clhead">
+            <div className="clmeta">Checklist · <b>{docsDone + actsDone} of {chkTotal} complete</b></div>
+          </div>
+          <div className="group">
+            <h2>Documents needed / received</h2>
+            <div className="cl">
+              {chk.docs.map((it) => <ChkRow key={it.key} listingId={l.id} group="docs" item={it} checked={p.fileNeeds.docs.includes(it.key)} />)}
+              {customDocs.map((c) => <CustomRow key={c.id} listingId={l.id} item={c} />)}
+            </div>
+          </div>
+          <div className="group">
+            <h2>Follow-up / action items</h2>
+            <div className="cl">
+              {chk.actions.map((it) => <ChkRow key={it.key} listingId={l.id} group="actions" item={it} checked={p.fileNeeds.actions.includes(it.key)} />)}
+              {customActs.map((c) => <CustomRow key={c.id} listingId={l.id} item={c} />)}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ============ ACTIVITY (ListTrac engagement) ============ */}
       {tab === "Activity" && (
         <div className="panel">
@@ -319,15 +367,30 @@ export default function ListingWorkspace(p: Props) {
           <div className="card">
             <div className="cardhd"><h3>Documents</h3></div>
             <div className="cardbody">
-              {p.listingEmail && (
-                <p className="emptynote" style={{ marginBottom: 12 }}>Email or forward anything (PDFs, photos, disclosures) to <a href={`mailto:${p.listingEmail}`} style={{ color: "var(--d-mauve)", textDecoration: "none" }}>{p.listingEmail}</a> and it files here automatically. In-app upload lands in the next update.</p>
+              {!p.docsEnabled && <p className="emptynote">Uploads activate once the Supabase service-role key is set in Vercel.</p>}
+              {p.docsEnabled && (
+                <form action={uploadListingDocument} style={{ marginBottom: 14 }}>
+                  <input type="hidden" name="listing_id" value={l.id} />
+                  <input type="file" name="file" required className="emptynote" />
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--d-ink3)" }}><input type="checkbox" name="client_visible" /> Share with seller right away</label>
+                    <button type="submit" className="btn mauve">Upload</button>
+                  </div>
+                </form>
               )}
+              {p.listingEmail && <p className="emptynote" style={{ marginBottom: 12 }}>Or email docs to <a href={`mailto:${p.listingEmail}`} style={{ color: "var(--d-mauve)", textDecoration: "none" }}>{p.listingEmail}</a> ... they file here automatically.</p>}
               {p.documents.length === 0 && <p className="emptynote">No documents on this listing yet.</p>}
               {p.documents.map((d) => (
                 <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 0", borderTop: "1px solid var(--d-line)" }}>
                   <div style={{ minWidth: 0 }}>
                     <a href={`/api/dash/documents/${d.id}`} target="_blank" rel="noreferrer" style={{ color: "var(--d-ink)", fontWeight: 500, fontSize: 14, textDecoration: "none" }}>{d.name}</a>
-                    <div className="meta" style={{ fontSize: 11, color: "var(--d-ink3)", marginTop: 3 }}>{d.uploaded_by || "You"} · {longDate(d.created_at)}{d.client_visible ? " · shared" : " · private"}</div>
+                    <div className="meta" style={{ fontSize: 11, color: "var(--d-ink3)", marginTop: 3 }}>{d.uploaded_by === "seller" ? "From seller" : "You"} · {longDate(d.created_at)}{d.uploaded_by === "agent" ? (d.client_visible ? " · shared" : " · private") : ""}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: 12, flexShrink: 0 }}>
+                    {d.uploaded_by === "agent" && (
+                      <form action={toggleDocumentShare}><input type="hidden" name="id" value={d.id} /><input type="hidden" name="listing_id" value={l.id} /><input type="hidden" name="share" value={d.client_visible ? "0" : "1"} /><button type="submit" className="addlink" style={{ border: 0, padding: 0 }}>{d.client_visible ? "Unshare" : "Share"}</button></form>
+                    )}
+                    <form action={deleteDocument}><input type="hidden" name="id" value={d.id} /><input type="hidden" name="listing_id" value={l.id} /><button type="submit" className="addlink" style={{ border: 0, padding: 0, color: "var(--d-red)" }}>Delete</button></form>
                   </div>
                 </div>
               ))}
@@ -367,6 +430,30 @@ export default function ListingWorkspace(p: Props) {
                   </div>
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============ LOG ============ */}
+      {tab === "Log" && (
+        <div className="panel">
+          <div className="card">
+            <div className="cardhd"><h3>Activity</h3><span className="clmeta">everything on this listing</span></div>
+            <div className="cardbody">
+              <div className="logfeed">
+                {activity.length === 0 && <p className="emptynote">Nothing logged yet.</p>}
+                {activity.map((it, i) => (
+                  <div className="logitem" key={i}>
+                    <span className={`logdot ${it.kind}`} />
+                    <div>
+                      <div className="logtext">{it.text}</div>
+                      {it.detail && <div className="logdetail">{it.detail}</div>}
+                      <div className="logtime">{fmtWhen(it.when)}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -423,6 +510,34 @@ export default function ListingWorkspace(p: Props) {
         </div>
       )}
     </div>
+  );
+}
+
+function ChkRow({ listingId, group, item, checked }: { listingId: string; group: "docs" | "actions"; item: ChkItem; checked: boolean }) {
+  const status = checked
+    ? <span className="st done">Completed</span>
+    : item.optional ? <span className="st opt">If applicable</span> : <span className="st req">Required</span>;
+  return (
+    <form action={toggleListingFileNeed} className="clrow">
+      <input type="hidden" name="listing_id" value={listingId} />
+      <input type="hidden" name="group" value={group} />
+      <input type="hidden" name="key" value={item.key} />
+      <input type="checkbox" className="cbx" defaultChecked={checked} onChange={(e) => e.currentTarget.form?.requestSubmit()} aria-label={item.label} />
+      <span className={`doc${checked ? " is-done" : ""}`}>{item.label}</span>
+      {status}
+    </form>
+  );
+}
+
+function CustomRow({ listingId, item }: { listingId: string; item: CustomItem }) {
+  return (
+    <form action={toggleListingFileNeedCustom} className="clrow">
+      <input type="hidden" name="listing_id" value={listingId} />
+      <input type="hidden" name="item_id" value={item.id} />
+      <input type="checkbox" className="cbx" defaultChecked={!!item.done} onChange={(e) => e.currentTarget.form?.requestSubmit()} aria-label={item.label} />
+      <span className={`doc${item.done ? " is-done" : ""}`}>{item.label}</span>
+      {item.done ? <span className="st done">Completed</span> : <span className="st opt">Custom</span>}
+    </form>
   );
 }
 

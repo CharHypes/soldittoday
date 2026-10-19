@@ -1141,6 +1141,8 @@ export async function toggleDocumentShare(formData: FormData) {
   if (!id) return;
   await supabase.from("documents").update({ client_visible: share }).eq("id", id);
   if (transaction_id) revalidatePath(`/dashboard/buyers/${transaction_id}`);
+  const share_listing_id = str(formData.get("listing_id"));
+  if (share_listing_id) revalidatePath(`/dashboard/listings/${share_listing_id}`);
 }
 
 /** Permanently delete a document (removes the stored file too). */
@@ -1157,6 +1159,75 @@ export async function deleteDocument(formData: FormData) {
   }
   await supabase.from("documents").delete().eq("id", id);
   if (transaction_id) revalidatePath(`/dashboard/buyers/${transaction_id}`);
+  const del_listing_id = str(formData.get("listing_id"));
+  if (del_listing_id) revalidatePath(`/dashboard/listings/${del_listing_id}`);
+}
+
+// ============ Listings: seller-side checklist + documents ============
+
+/** Toggle one predefined seller checklist item (Listing Checklist tab). */
+export async function toggleListingFileNeed(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("listing_id"));
+  const group = str(formData.get("group"));
+  const key = str(formData.get("key"));
+  if (!id || !key || (group !== "docs" && group !== "actions")) return;
+  const { data: row } = await supabase.from("listings").select("file_needs").eq("id", id).maybeSingle();
+  const fn = normalizeFileNeeds(row?.file_needs);
+  const arr = fn[group];
+  fn[group] = arr.includes(key) ? arr.filter((k) => k !== key) : [...arr, key];
+  await supabase.from("listings").update({ file_needs: fn }).eq("id", id);
+  revalidatePath(`/dashboard/listings/${id}`);
+}
+
+/** Toggle a custom seller checklist item's done state. */
+export async function toggleListingFileNeedCustom(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("listing_id"));
+  const itemId = str(formData.get("item_id"));
+  if (!id || !itemId) return;
+  const { data: row } = await supabase.from("listings").select("file_needs").eq("id", id).maybeSingle();
+  const fn = normalizeFileNeeds(row?.file_needs);
+  fn.custom = fn.custom.map((c) => (c.id === itemId ? { ...c, done: !c.done } : c));
+  await supabase.from("listings").update({ file_needs: fn }).eq("id", id);
+  revalidatePath(`/dashboard/listings/${id}`);
+}
+
+/** Agent uploads a document to a listing's file. Optionally shares with the seller. */
+export async function uploadListingDocument(formData: FormData) {
+  const { supabase, id: agent_id, orgId } = await ctx();
+  if (!agent_id || !orgId) redirect("/dashboard/login");
+  const listing_id = str(formData.get("listing_id"));
+  const file = formData.get("file");
+  if (!listing_id || !(file instanceof File) || file.size === 0) return;
+
+  const admin = createAdminClient();
+  if (!admin) return; // service-role key not configured yet
+
+  // Confirm the agent can access this listing (RLS-scoped read) before writing.
+  const { data: ls } = await supabase.from("listings").select("id").eq("id", listing_id).maybeSingle();
+  if (!ls) return;
+
+  const display = safeDocName(file.name);
+  const path = `listing/${listing_id}/${randomUUID()}-${display}`;
+  const buf = Buffer.from(await file.arrayBuffer());
+  const { error: upErr } = await admin.storage
+    .from(PORTAL_DOCS_BUCKET)
+    .upload(path, buf, { contentType: file.type || "application/octet-stream", upsert: false });
+  if (upErr) return;
+
+  await admin.from("documents").insert({
+    organization_id: orgId,
+    listing_id,
+    agent_id,
+    name: display,
+    storage_path: path,
+    content_type: file.type || null,
+    size_bytes: file.size,
+    uploaded_by: "agent",
+    client_visible: formData.get("client_visible") === "on",
+  });
+  revalidatePath(`/dashboard/listings/${listing_id}`);
 }
 
 export async function signOut() {

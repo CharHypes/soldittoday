@@ -5,6 +5,8 @@ import ListingWorkspace from "@/components/dash/ListingWorkspace";
 import { createSupabaseServer } from "@/lib/supabase/server";
 import { getOrgContext } from "@/lib/context";
 import { dealEmailAddress } from "@/lib/dealEmail";
+import { normalizeFileNeeds } from "@/lib/dealChecklist";
+import { DOCS_ENABLED } from "@/lib/supabase/admin";
 import { AI_ENABLED } from "@/lib/ai";
 
 export const metadata: Metadata = {
@@ -79,7 +81,7 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
             id: listing.id, address: listing.address, city: listing.city, state: listing.state, zip: listing.zip,
             price: listing.price, beds: listing.beds, baths: listing.baths, sqft: listing.sqft,
             status: listing.status, list_date: listing.list_date, mls_number: listing.mls_number,
-            photo_url: listing.photo_url, email_token: listing.email_token,
+            photo_url: listing.photo_url, email_token: listing.email_token, created_at: listing.created_at ?? null,
           }}
           sellerName={sellerName}
           agentName={agentName}
@@ -89,6 +91,8 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
           notes={(notes ?? []).map((n) => ({ id: n.id, body: n.body, client_visible: n.client_visible, created_at: n.created_at }))}
           snapshots={snaps ?? []}
           documents={docs ?? []}
+          fileNeeds={normalizeFileNeeds(listing.file_needs)}
+          docsEnabled={DOCS_ENABLED}
           portalUrl={`${SITE}/seller/${listing.portal_token}`}
           listingEmail={listing.email_token ? dealEmailAddress(listing.email_token) : null}
           aiEnabled={AI_ENABLED}
