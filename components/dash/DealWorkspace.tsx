@@ -481,6 +481,11 @@ export default function DealWorkspace(p: Props) {
               </div>
             </div>
           </div>
+
+          <div className="foot-danger">
+            <div><div className="t">Delete this deal</div><div className="s">Removes the transaction and its checklist, notes, and documents. Can&rsquo;t be undone.</div></div>
+            <DeleteButton action={deleteTransaction} id={p.tx.id} label="Delete deal" confirmText={`Delete ${p.tx.address ?? "this deal"}? This removes the transaction and its notes and documents, and can't be undone.`} />
+          </div>
         </div>
       )}
 
@@ -502,12 +507,6 @@ export default function DealWorkspace(p: Props) {
 
       {/* ============ TASKS ============ */}
       {tab === "Tasks" && <TasksPanel txId={p.tx.id} tasks={p.tasks} />}
-
-      {/* danger */}
-      <div className="foot-danger">
-        <div><div className="t">Delete this deal</div><div className="s">Removes the transaction and its checklist, notes, and documents. Can&rsquo;t be undone.</div></div>
-        <DeleteButton action={deleteTransaction} id={p.tx.id} label="Delete deal" confirmText={`Delete ${p.tx.address ?? "this deal"}? This removes the transaction and its notes and documents, and can't be undone.`} />
-      </div>
     </div>
   );
 }

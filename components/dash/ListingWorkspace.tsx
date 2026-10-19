@@ -511,14 +511,13 @@ export default function ListingWorkspace(p: Props) {
               </div>
             </div>
           </div>
+
+          <div className="foot-danger">
+            <div><div className="t">Delete this listing</div><div className="s">Removes the listing and its seller link, notes, and documents. Can&rsquo;t be undone.</div></div>
+            <DeleteButton action={deleteListing} id={l.id} label="Delete listing" confirmText={`Delete ${l.address ?? "this listing"}? This removes the listing and its notes and documents, and can't be undone.`} />
+          </div>
         </div>
       )}
-
-      {/* danger */}
-      <div className="foot-danger">
-        <div><div className="t">Delete this listing</div><div className="s">Removes the listing and its seller link, notes, and documents. Can&rsquo;t be undone.</div></div>
-        <DeleteButton action={deleteListing} id={l.id} label="Delete listing" confirmText={`Delete ${l.address ?? "this listing"}? This removes the listing and its notes and documents, and can't be undone.`} />
-      </div>
 
       {/* Edit listing pop-out (over the record) */}
       {editOpen && (
