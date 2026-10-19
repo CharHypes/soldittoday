@@ -306,18 +306,24 @@
 :root[data-theme="light"] .dtile-3 { background-image: linear-gradient(135deg, #d6e2e2, #c6d6d6); }
 :root[data-theme="light"] .dtile-4 { background-image: linear-gradient(135deg, #e6e0d5, #d8d1c5); }
 :root[data-theme="light"] .dtile-5 { background-image: linear-gradient(135deg, #e0dbde, #d0cbcf); }
-:root[data-theme="light"] .theme-butler .av-chip.av-c0,
-:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c0 { background: #c59cb3; color: #26333f; }
-:root[data-theme="light"] .theme-butler .av-chip.av-c1,
-:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c1 { background: #93aac6; color: #26333f; }
-:root[data-theme="light"] .theme-butler .av-chip.av-c2,
-:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c2 { background: #d0a39c; color: #26333f; }
-:root[data-theme="light"] .theme-butler .av-chip.av-c3,
-:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c3 { background: #8fbcb4; color: #26333f; }
-:root[data-theme="light"] .theme-butler .av-chip.av-c4,
-:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c4 { background: #cabd99; color: #26333f; }
-:root[data-theme="light"] .theme-butler .av-chip.av-c5,
-:root[data-theme="light"] .theme-butler-midnight .av-chip.av-c5 { background: #aeb2a2; color: #26333f; }
+/* Light theme faces (Mulberry Light + Butler Linen): the dark colorful palette
+   reads heavy on paper, so remap to the lighter/airier set with dark initials.
+   Applies to ANY light face via data-theme=light. The Neutral demo theme is
+   re-grayed just below so colorful avatars don't break its grayscale look. */
+:root[data-theme="light"] .av-chip.av-c0 { background: #c59cb3; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c1 { background: #93aac6; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c2 { background: #d0a39c; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c3 { background: #8fbcb4; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c4 { background: #cabd99; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c5 { background: #aeb2a2; color: #26333f; }
+/* Keep the Neutral demo grayscale even in light mode (more specific, so it wins
+   over the light palette above). */
+:root[data-theme="light"] .theme-neutral .av-chip.av-c0,
+:root[data-theme="light"] .theme-neutral .av-chip.av-c1,
+:root[data-theme="light"] .theme-neutral .av-chip.av-c2,
+:root[data-theme="light"] .theme-neutral .av-chip.av-c3,
+:root[data-theme="light"] .theme-neutral .av-chip.av-c4,
+:root[data-theme="light"] .theme-neutral .av-chip.av-c5 { background: rgb(var(--raise)); color: rgb(var(--pearl)); }
 /* The Linen light face: give the closing tracker clear, legible markers (the
    dark rose-gold gradient goes muddy on paper), tuned to the slate accent. */
 :root[data-theme="light"] .theme-butler .tracker-done,
