@@ -280,3 +280,20 @@
 .dealws .tog.on{color:var(--d-green);background:color-mix(in srgb,var(--d-green) 16%,transparent)}
 .dealws .tog.off{color:var(--d-ink3);background:var(--d-bg2)}
 .dealws .sitchip{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--d-gold);background:color-mix(in srgb,var(--d-gold) 16%,transparent);padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+
+/* Commission panel pink buttons: the wine toggle + the btn-aurora Save button
+   go too dark/brick on the LIGHT theme faces (Mulberry Light + Butler Linen).
+   Lighten them to a soft pink with dark text there, while the dark themes keep
+   the dusty pink Charlotte likes. Scoped to the back-office workspace
+   (.dealws) + data-theme=light, so the marketing site's btn-aurora and every
+   dark theme are untouched. */
+:root[data-theme="light"] .dealws .btn-aurora {
+  background: #dca2ac;
+  border-color: #cf8d98;
+  color: #3a2028;
+}
+:root[data-theme="light"] .dealws .btn-aurora:hover { background: #e4b2bb; }
+:root[data-theme="light"] .dealws .bg-wine {
+  background-color: #dca2ac;
+  color: #3a2028;
+}
