@@ -283,12 +283,12 @@
    neutral theme. The Butler LIGHT face (Linen) remaps to a LIGHTER, airier set
    with dark initials, because the dark colors read heavy on the paper. Mulberry
    Noir is untouched. See lib/avatarColor.ts. */
-.av-chip.av-c0 { background: #6c5767; }
-.av-chip.av-c1 { background: #5a6170; }
-.av-chip.av-c2 { background: #6f5a5f; }
-.av-chip.av-c3 { background: #4d6368; }
-.av-chip.av-c4 { background: #66605a; }
-.av-chip.av-c5 { background: #4a4448; }
+.av-chip.av-c0 { background: #7e5f6e; }
+.av-chip.av-c1 { background: #86735a; }
+.av-chip.av-c2 { background: #5f7466; }
+.av-chip.av-c3 { background: #52727e; }
+.av-chip.av-c4 { background: #656d8c; }
+.av-chip.av-c5 { background: #6f5f7c; }
 
 /* ── Deal-card photo placeholders (no-photo tiles on the dashboard) ──────────
    Deterministic per deal for variety; dark tints by default, soft light tints
@@ -310,12 +310,12 @@
    reads heavy on paper, so remap to the lighter/airier set with dark initials.
    Applies to ANY light face via data-theme=light. The Neutral demo theme is
    re-grayed just below so colorful avatars don't break its grayscale look. */
-:root[data-theme="light"] .av-chip.av-c0 { background: #c59cb3; color: #26333f; }
-:root[data-theme="light"] .av-chip.av-c1 { background: #93aac6; color: #26333f; }
-:root[data-theme="light"] .av-chip.av-c2 { background: #d0a39c; color: #26333f; }
-:root[data-theme="light"] .av-chip.av-c3 { background: #8fbcb4; color: #26333f; }
-:root[data-theme="light"] .av-chip.av-c4 { background: #cabd99; color: #26333f; }
-:root[data-theme="light"] .av-chip.av-c5 { background: #aeb2a2; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c0 { background: #dcb3bd; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c1 { background: #d6c3a4; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c2 { background: #b2c7b0; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c3 { background: #a2c3cb; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c4 { background: #b0b7d2; color: #26333f; }
+:root[data-theme="light"] .av-chip.av-c5 { background: #c3b2cf; color: #26333f; }
 /* Keep the Neutral demo grayscale even in light mode (more specific, so it wins
    over the light palette above). */
 :root[data-theme="light"] .theme-neutral .av-chip.av-c0,

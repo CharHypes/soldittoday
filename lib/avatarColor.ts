@@ -14,7 +14,7 @@ export type AvatarStyle = "solid" | "colorful";
  * `.av-cN` classes so a theme can swap them; this array is kept only so
  * `avatarBg` still works for any non-themed caller.
  */
-const PALETTE = ["#6c5767", "#5a6170", "#6f5a5f", "#4d6368", "#66605a", "#4a4448"];
+const PALETTE = ["#7e5f6e", "#86735a", "#5f7466", "#52727e", "#656d8c", "#6f5f7c"];
 
 function hashId(id: string): number {
   let h = 0;
