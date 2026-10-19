@@ -3,19 +3,22 @@
 import { useMemo, useState } from "react";
 import { EMAIL_TEMPLATES, EMAIL_GROUPS, type EmailTemplate, type EmailTo } from "@/lib/dealEmailTemplates";
 
-type Vars = { buyer: string; first_name: string; address: string; closing_date: string; agent: string; office: string };
+type Vars = { buyer: string; seller?: string; first_name: string; address: string; closing_date: string; agent: string; office: string };
 
 export default function EmailGenerator({
-  vars, recipients, stage,
+  vars, recipients, stage, audience = "buyer",
 }: {
   vars: Vars;
   recipients: Partial<Record<EmailTo, string>>;
   stage: string | null;
+  audience?: "buyer" | "seller";
 }) {
+  // Only the templates for this workspace (buyer deal vs seller listing).
+  const pool = EMAIL_TEMPLATES.filter((t) => (t.audience ?? "buyer") === audience);
   const [fitOnly, setFitOnly] = useState(true);
   const [sel, setSel] = useState<string>(() => {
-    const fit = EMAIL_TEMPLATES.find((t) => t.stages?.includes(stage ?? ""));
-    return (fit ?? EMAIL_TEMPLATES[0]).id;
+    const fit = pool.find((t) => t.stages?.includes(stage ?? ""));
+    return (fit ?? pool[0]).id;
   });
   const [copied, setCopied] = useState<string>("");
 
@@ -24,7 +27,7 @@ export default function EmailGenerator({
 
   const fits = (t: EmailTemplate) => !t.stages || t.stages.includes(stage ?? "");
   const visible = (t: EmailTemplate) => !fitOnly || fits(t);
-  const tmpl = EMAIL_TEMPLATES.find((t) => t.id === sel) ?? EMAIL_TEMPLATES[0];
+  const tmpl = pool.find((t) => t.id === sel) ?? pool[0];
 
   const subject = fill(tmpl.subject);
   const body = fill(tmpl.body);
@@ -36,12 +39,13 @@ export default function EmailGenerator({
   const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
   const groups = useMemo(
-    () => EMAIL_GROUPS.map((g) => ({ title: g, items: EMAIL_TEMPLATES.filter((t) => t.group === g && visible(t)) })).filter((g) => g.items.length),
-    [fitOnly, stage]
+    () => EMAIL_GROUPS.map((g) => ({ title: g, items: EMAIL_TEMPLATES.filter((t) => (t.audience ?? "buyer") === audience && t.group === g && visible(t)) })).filter((g) => g.items.length),
+    [fitOnly, stage, audience]
   );
 
   const toLabel: Record<EmailTo, string> = {
-    buyer: "Buyer", listing_agent: "Listing agent", lender: "Lender", buyer_title: "Buyer's title", insurance: "Insurance",
+    buyer: "Buyer", seller: "Seller", listing_agent: "Listing agent", buyer_agent: "Buyer's agent",
+    lender: "Lender", buyer_title: "Buyer's title", title: "Title", insurance: "Insurance",
   };
 
   return (
@@ -71,7 +75,7 @@ export default function EmailGenerator({
             <button type="button" className="btn gold" onClick={() => copy("subj", subject)}>{copied === "subj" ? "Copied ✓" : "Copy subject"}</button>
           </div>
           <div className="previewline">
-            <div><div className="pk">To · {toLabel[tmpl.to]}</div><div className="pv">{to || <span style={{ color: "var(--d-ink3)" }}>Add this contact in Edit transaction</span>}</div></div>
+            <div><div className="pk">To · {toLabel[tmpl.to]}</div><div className="pv">{to || <span style={{ color: "var(--d-ink3)" }}>Add this contact on the record</span>}</div></div>
             <button type="button" className="btn gold" onClick={() => copy("to", to)} disabled={!to}>{copied === "to" ? "Copied ✓" : "Copy to"}</button>
           </div>
           <div className="ebodywrap"><div className="ebody">{body}</div></div>
@@ -82,7 +86,7 @@ export default function EmailGenerator({
             <button type="button" className="btn" onClick={() => copy("body", body)}>{copied === "body" ? "Copied ✓" : "Copy body"}</button>
           </div>
           <div style={{ fontSize: 12, color: "var(--d-ink3)", marginTop: 10 }}>
-            Merge fields fill from the deal: <b>{"{{buyer}}"}</b> · <b>{"{{address}}"}</b> · <b>{"{{closing_date}}"}</b> · <b>{"{{agent}}"}</b>
+            Merge fields fill from the {audience === "seller" ? "listing" : "deal"}: <b>{audience === "seller" ? "{{seller}}" : "{{buyer}}"}</b> · <b>{"{{address}}"}</b> · <b>{"{{closing_date}}"}</b> · <b>{"{{agent}}"}</b>
           </div>
         </div>
       </div>
@@ -93,13 +97,22 @@ export default function EmailGenerator({
         <p style={{ fontSize: 13, color: "var(--d-ink2)", margin: "0 0 12px", lineHeight: 1.5 }}>
           Next step: hit a trigger and the matching email fires automatically through Resend, so nobody has to remember to send it. Shown here as the plan.
         </p>
-        {[
-          ["Under contract", "→ Under Contract Intro to buyer", "on"],
-          ["Appraisal ordered", "→ Appraisal update to buyer", "on"],
-          ["Clear to close", "→ Clear to Close to buyer", "on"],
-          ["7 days to closing", "→ Reminder to lender + title", "off"],
-          ["Closed", "→ Congrats + review request", "off"],
-        ].map(([t, s, on]) => (
+        {(audience === "seller"
+          ? [
+              ["Listing live", "→ Listing Is Live to seller", "on"],
+              ["Offer accepted", "→ Under Contract Intro to seller", "on"],
+              ["Clear to close", "→ Clear to Close to seller", "on"],
+              ["7 days to closing", "→ Reminder to seller + title", "off"],
+              ["Sold", "→ Congrats + review request", "off"],
+            ]
+          : [
+              ["Under contract", "→ Under Contract Intro to buyer", "on"],
+              ["Appraisal ordered", "→ Appraisal update to buyer", "on"],
+              ["Clear to close", "→ Clear to Close to buyer", "on"],
+              ["7 days to closing", "→ Reminder to lender + title", "off"],
+              ["Closed", "→ Congrats + review request", "off"],
+            ]
+        ).map(([t, s, on]) => (
           <div className="trow" key={t}><div><div className="tt">{t}</div><div className="ts">{s}</div></div><span className={`tog ${on}`}>{on === "on" ? "On" : "Off"}</span></div>
         ))}
       </div>

@@ -3,13 +3,14 @@
 // {{address}} {{closing_date}} {{agent}} {{office}}. `to` is the recipient role,
 // resolved to an address from the deal's people.
 
-export type EmailTo = "buyer" | "listing_agent" | "lender" | "buyer_title" | "insurance";
+export type EmailTo = "buyer" | "seller" | "listing_agent" | "buyer_agent" | "lender" | "buyer_title" | "title" | "insurance";
 export type EmailTemplate = {
   id: string; group: string; name: string; to: EmailTo;
-  subject: string; body: string; stages?: string[]; // which pipeline stages it fits
+  subject: string; body: string; stages?: string[]; // which pipeline / listing stages it fits
+  audience?: "buyer" | "seller"; // which workspace it belongs to (default buyer)
 };
 
-export const EMAIL_GROUPS = ["Your current emails", "Under contract", "Closing", "After closing"];
+export const EMAIL_GROUPS = ["Your current emails", "New listing", "Under contract", "Closing", "After closing"];
 
 export const EMAIL_TEMPLATES: EmailTemplate[] = [
   {
@@ -156,6 +157,189 @@ We hope you are settling in beautifully at {{address}}.
 If you have a minute, would you leave us a quick review? It genuinely means the world to a small team like ours, and it helps other families find their way home too. We will send the link in a follow-up.
 
 Thank you for trusting us. It was an honor.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+
+  // ===== Seller / listing-side (audience: "seller"). Merge fields: {{seller}} {{first_name}} {{address}} {{closing_date}} {{agent}} {{office}} =====
+  {
+    id: "sellerListingLive", group: "New listing", name: "Listing Is Live", to: "seller", audience: "seller", stages: ["active"],
+    subject: "Your home at {{address}} is officially live!",
+    body: `Hi {{first_name}},
+
+Great news ... {{address}} is now live on the market. The listing is active across the MLS and the major sites, and we are already driving eyes to it.
+
+Here is what happens next on our end:
+- We monitor every showing and gather feedback for you
+- We send you a weekly update on views, saves, and showing activity
+- We handle every inquiry and offer that comes in
+
+If you ever have a question or want to tweak anything, just reply here. We are honored to represent you.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerWeeklyUpdate", group: "New listing", name: "Weekly Seller Update", to: "seller", audience: "seller", stages: ["active"],
+    subject: "This week on {{address}}",
+    body: `Hi {{first_name}},
+
+Here is your weekly update on {{address}}:
+- Showings this week:
+- Online views / saves:
+- Feedback highlights:
+
+Our read on where we stand:
+
+We will keep the momentum going. Reply any time with questions.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerShowingFeedback", group: "New listing", name: "Showing Feedback Request", to: "buyer_agent", audience: "seller", stages: ["active"],
+    subject: "Feedback on {{address}}?",
+    body: `Hi,
+
+Thank you for showing {{address}}. When you have a moment, we would love any feedback from you and your buyer ... what they thought of the home, the price, and whether it is a fit.
+
+It helps us serve our seller well, and we are always happy to return the favor.
+
+Thank you,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerOfferReceived", group: "Under contract", name: "Offer Received", to: "seller", audience: "seller", stages: ["active", "pending"],
+    subject: "We have an offer on {{address}}",
+    body: `Hi {{first_name}},
+
+We received an offer on {{address}}. I would like to walk you through the terms so you can make the best decision ... price, financing, contingencies, and timeline.
+
+When is a good time to connect today? I will have everything laid out for you.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerUnderContract", group: "Under contract", name: "Under Contract Intro", to: "seller", audience: "seller", stages: ["pending"],
+    subject: "We are under contract on {{address}}!",
+    body: `Hi {{first_name}},
+
+Congratulations ... {{address}} is officially under contract. Here is what to expect over the next few weeks:
+- Inspection and any repair requests
+- Appraisal
+- The buyer's financing moving to clear-to-close
+- Final walkthrough and closing
+
+We will guide you through each step and keep you updated. Nothing moves without you knowing about it.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerOpenTitle", group: "Under contract", name: "Open Title (Listing)", to: "title", audience: "seller", stages: ["pending"],
+    subject: "Please open title ... {{address}}",
+    body: `Hi,
+
+We are under contract on {{address}} and would like to open title.
+
+Seller: {{seller}}
+Property: {{address}}
+Target close: {{closing_date}}
+
+Please let us know what you need from the seller to get started, and send over the title commitment when it is ready. Thank you for helping us close this smoothly.
+
+Thank you,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerInspection", group: "Under contract", name: "Inspection Update", to: "seller", audience: "seller", stages: ["pending"],
+    subject: "Inspection update ... {{address}}",
+    body: `Hi {{first_name}},
+
+The buyer completed their inspection on {{address}}. Here is where things stand and what, if anything, they are asking for:
+
+My recommendation:
+
+Let's talk through it so we respond in a way that protects your bottom line and keeps the deal on track.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerAppraisal", group: "Under contract", name: "Appraisal Scheduled", to: "seller", audience: "seller", stages: ["pending"],
+    subject: "Appraisal scheduled for {{address}}",
+    body: `Hi {{first_name}},
+
+The buyer's lender has ordered the appraisal on {{address}}. The appraiser will visit the home, and we will let you know the result as soon as it is in.
+
+You do not need to do anything ... just leave the home accessible and in showing shape. We will handle the rest.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerClearToClose", group: "Closing", name: "Clear to Close", to: "seller", audience: "seller", stages: ["pending"],
+    subject: "We are clear to close on {{address}}!",
+    body: `Hi {{first_name}},
+
+Wonderful news ... the buyer is clear to close on {{address}}, and we are on track for {{closing_date}}.
+
+Before closing we will:
+- Confirm your final walkthrough window
+- Review your settlement figures together
+- Coordinate keys, garage remotes, and any items you are leaving
+
+I will be with you at the table. Almost there!
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerSettlement", group: "Closing", name: "Settlement Figures Request", to: "title", audience: "seller", stages: ["pending"],
+    subject: "Seller settlement figures ... {{address}}",
+    body: `Hi,
+
+Could you please prepare the preliminary seller settlement figures for {{address}}, targeting a close of {{closing_date}}?
+
+We would like to review them with our seller ahead of time so there are no surprises at the table. Please send them over as soon as they are ready.
+
+Thank you,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerCongrats", group: "After closing", name: "Congrats / Sold", to: "seller", audience: "seller", stages: ["sold", "closed"],
+    subject: "Congratulations ... {{address}} is SOLD!",
+    body: `Hi {{first_name}},
+
+It is official ... {{address}} is sold! Thank you for trusting us to represent your home. It truly was a pleasure.
+
+If you need anything at all as you settle into your next chapter ... a referral, a question, a recommendation ... we are always here for you.
+
+Warmly,
+{{agent}}
+{{office}}`,
+  },
+  {
+    id: "sellerReview", group: "After closing", name: "Review Request", to: "seller", audience: "seller", stages: ["sold", "closed"],
+    subject: "Would you share a quick review?",
+    body: `Hi {{first_name}},
+
+Now that {{address}} has closed, would you be willing to share a short review of your experience with us? A few honest sentences make a world of difference for our small team.
+
+I will send the link in a follow-up ... and thank you, truly, for letting us be part of this.
 
 Warmly,
 {{agent}}

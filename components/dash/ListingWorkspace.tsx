@@ -9,6 +9,8 @@ import {
 import { visibleItems, type ChkItem, type CustomItem, type FileNeeds } from "@/lib/dealChecklist";
 import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
 import TasksPanel, { type Task } from "@/components/dash/TasksPanel";
+import EmailGenerator from "@/components/dash/EmailGenerator";
+import { type EmailTo } from "@/lib/dealEmailTemplates";
 import DeleteButton from "@/components/dash/DeleteButton";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 import ListTracImport from "@/components/dash/ListTracImport";
@@ -56,7 +58,7 @@ type Props = {
   aiEnabled: boolean;
 };
 
-const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Activity", "Contacts", "Client portal", "Commission", "Log"] as const;
+const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Email generator", "Activity", "Contacts", "Client portal", "Commission", "Log"] as const;
 type Tab = (typeof TABS)[number];
 
 const usd = (n: number | string | null) => {
@@ -139,6 +141,24 @@ export default function ListingWorkspace(p: Props) {
   p.snapshots.forEach((s) => { if (s.period_end) activity.push({ when: `${s.period_end}T12:00:00`, kind: "stage", text: "Stats update", detail: `${s.total_views ?? 0} views` }); });
   activity.sort((a, b) => (a.when < b.when ? 1 : -1));
   const fmtWhen = (w: string) => { const d = new Date(w); return Number.isNaN(d.getTime()) ? "" : d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }); };
+
+  // Email generator (seller audience) inputs.
+  const sellerC = p.keyContacts.find((c) => /seller/i.test(c.role) && !/co/i.test(c.role)) ?? p.keyContacts.find((c) => /seller/i.test(c.role));
+  const findC = (re: RegExp) => p.keyContacts.find((c) => re.test(c.role));
+  const emailVars = {
+    buyer: p.sellerName || "there",
+    seller: p.sellerName || "there",
+    first_name: (p.sellerName || "there").split(/[\s&]+/)[0],
+    address: l.address || "your home",
+    closing_date: "your target date",
+    agent: p.agentName || "Your agent",
+    office: "The Sold It Today Team",
+  };
+  const emailRecipients: Partial<Record<EmailTo, string>> = {
+    seller: sellerC?.email ?? "",
+    buyer_agent: findC(/buyer.?agent|buying|buyer/i)?.email ?? "",
+    title: findC(/title|escrow/i)?.email ?? "",
+  };
 
   const openEdit = () => setEditOpen(true);
 
@@ -480,6 +500,13 @@ export default function ListingWorkspace(p: Props) {
 
       {/* ============ TASKS ============ */}
       {tab === "Tasks" && <TasksPanel listingId={l.id} tasks={p.tasks} />}
+
+      {/* ============ EMAIL GENERATOR ============ */}
+      {tab === "Email generator" && (
+        <div className="panel">
+          <EmailGenerator vars={emailVars} recipients={emailRecipients} stage={(l.status ?? "").toLowerCase()} audience="seller" />
+        </div>
+      )}
 
       {/* ============ COMMISSION ============ */}
       {tab === "Commission" && (
