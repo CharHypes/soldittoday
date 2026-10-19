@@ -13,6 +13,7 @@ import { visibleItems, type ChkItem, type ChkGroup, type FileNeeds, type CustomI
 import EmailGenerator from "@/components/dash/EmailGenerator";
 import { type EmailTo } from "@/lib/dealEmailTemplates";
 import TasksPanel, { type Task } from "@/components/dash/TasksPanel";
+import { avatarClass } from "@/lib/avatarColor";
 
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
 type Milestone = { id: string; label: string; sort_order: number; status: string; date: string | null };
@@ -66,7 +67,6 @@ const longDate = (s: string) => new Date(s).toLocaleDateString("en-US", { month:
 const initials = (name: string) => name.split(/\s+/).map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
 const prettyRole = (r: string) => r.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 const prettyStage = (s: string) => ({ lead: "Lead", buyer: "Active Buyer", under_contract: "Under Contract", closed: "Closed", archived: "Archived" }[s] ?? prettyRole(s));
-const AV = ["#6c5767", "#5a6170", "#6f5a5f", "#4d6368", "#66605a", "#4a4448"];
 const NS = <span style={{ color: "var(--d-ink3)" }}>Not set</span>;
 
 function Copy({ text, className = "cpic" }: { text: string; className?: string }) {
@@ -285,11 +285,11 @@ export default function DealWorkspace(p: Props) {
                     <span className="ownertag"><svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 11, height: 11 }}><rect x="4" y="11" width="16" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg> You see commission</span>
                   </div>
                   <div className="cardbody">
-                    <div className="person"><span className="av" style={{ background: "#4d6368", color: "#fff" }}>{initials(p.ownerName || "Owner")}</span>
+                    <div className="person"><span className={`av ${avatarClass(p.ownerName || "Owner")}`}>{initials(p.ownerName || "Owner")}</span>
                       <div><div className="role">Owner · {p.tx.office || "Hypes Team"}</div><div className="nm">{p.ownerName || "Owner"} <span style={{ color: "var(--d-ink3)", fontWeight: 400 }}>· full access</span></div></div>
                     </div>
                     {p.agentName && p.agentName !== p.ownerName && (
-                      <div className="person"><span className="av" style={{ background: "#6f5a5f", color: "#fff" }}>{initials(p.agentName)}</span>
+                      <div className="person"><span className={`av ${avatarClass(p.agentName)}`}>{initials(p.agentName)}</span>
                         <div><div className="role">Agent on file · showing agent</div><div className="nm">{p.agentName} <span style={{ color: "var(--d-ink3)", fontWeight: 400 }}>· no commission access</span></div></div>
                       </div>
                     )}
@@ -575,7 +575,7 @@ function Field({ k, v, link }: { k: string; v: React.ReactNode | null; link?: bo
 function Party({ c, i }: { c: KC; i: number }) {
   return (
     <div className="party">
-      <div className="avstack"><span className="av" style={{ background: AV[i % AV.length], color: "#fff" }}>{initials(c.name)}</span></div>
+      <div className="avstack"><span className={`av ${avatarClass(c.personId ?? c.name)}`}>{initials(c.name)}</span></div>
       <div className="pbody">
         <div className="prole">{prettyRole(c.role)}</div>
         <div className="pname">

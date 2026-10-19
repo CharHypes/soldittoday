@@ -37,3 +37,13 @@ export function avatarBg(id: string, style: AvatarStyle | string | null | undefi
   const i = avatarIndex(id, style);
   return i === null ? null : PALETTE[i];
 }
+
+/**
+ * The themed `av-chip av-cN` classes for a person avatar, keyed by a stable id
+ * (person id preferred, else name) so the SAME person is the SAME color
+ * everywhere (contact card, deal/listing parties, tasks, deal cards) and adapts
+ * per theme via the .av-cN CSS. Always colorful; callers add size + text color.
+ */
+export function avatarClass(key: string): string {
+  return `av-chip av-c${hashId(key || "?") % 6}`;
+}

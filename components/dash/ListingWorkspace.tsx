@@ -7,6 +7,7 @@ import {
   updateListingMilestones, seedListingMilestones,
 } from "@/app/dashboard/actions";
 import { visibleItems, type ChkItem, type CustomItem, type FileNeeds } from "@/lib/dealChecklist";
+import { avatarClass } from "@/lib/avatarColor";
 import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
 import TasksPanel, { type Task } from "@/components/dash/TasksPanel";
 import EmailGenerator from "@/components/dash/EmailGenerator";
@@ -80,7 +81,6 @@ const daysOnMarket = (s: string | null) => {
   if (Number.isNaN(d.getTime())) return null;
   return Math.max(0, Math.floor((Date.now() - d.getTime()) / 86_400_000));
 };
-const AV = ["#6c5767", "#5a6170", "#6f5a5f", "#4d6368", "#66605a", "#4a4448"];
 const NS = <span style={{ color: "var(--d-ink3)" }}>Not set</span>;
 
 function Copy({ text, className = "cpic" }: { text: string; className?: string }) {
@@ -634,7 +634,7 @@ function Field({ k, v, link }: { k: string; v: React.ReactNode | null; link?: bo
 function Party({ c, i }: { c: KC; i: number }) {
   return (
     <div className="party">
-      <div className="avstack"><span className="av" style={{ background: AV[i % AV.length], color: "#fff" }}>{initials(c.name)}</span></div>
+      <div className="avstack"><span className={`av ${avatarClass(c.personId ?? c.name)}`}>{initials(c.name)}</span></div>
       <div className="pbody">
         <div className="prole">{prettyRole(c.role)}</div>
         <div className="pname">

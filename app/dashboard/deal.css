@@ -297,3 +297,10 @@
   background-color: #dca2ac;
   color: #3a2028;
 }
+
+/* Unified person avatars inside the deal/listing workspace now carry
+   `av av-chip av-cN` (themed per-person color). The base `.dealws .av` sets a
+   plum text color, so force white initials here for the colorful fills; the
+   light-face rule in globals.css (:root[data-theme=light] .av-chip.av-cN) still
+   wins to give dark initials on the light pastel avatars. */
+.dealws .av.av-chip { color: #fff; }

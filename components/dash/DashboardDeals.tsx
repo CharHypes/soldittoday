@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { DashDeal } from "@/lib/deals";
+import { avatarClass } from "@/lib/avatarColor";
 
 export type { DashDeal } from "@/lib/deals";
 
@@ -179,7 +180,7 @@ function StatusChip({ d }: { d: DashDeal }) {
 function ClientChip({ d, size }: { d: DashDeal; size: "tile" | "list" }) {
   const av = size === "tile" ? "h-[26px] w-[26px] text-[10.5px]" : "h-6 w-6 text-[9.5px]";
   const nameCls = size === "tile" ? "text-[13px] text-pearl/80" : "hidden truncate text-[12.5px] text-pearl/80 sm:inline";
-  const avatar = <span className={`grid ${av} place-items-center rounded-full bg-mauve font-bold text-plum`}>{d.clientInitials}</span>;
+  const avatar = <span className={`grid ${av} place-items-center rounded-full ${avatarClass(d.clientPersonId ?? d.clientName ?? d.id)} font-bold text-white`}>{d.clientInitials}</span>;
   const name = <span className={nameCls}>{d.clientName ?? (d.clientPersonId ? "Contact" : size === "tile" ? "No client yet" : "No client")}</span>;
   if (d.clientPersonId) {
     return (

@@ -2,15 +2,14 @@
 
 import { useState } from "react";
 import { addTask, addListingTask, toggleTask, deleteTask } from "@/app/dashboard/actions";
+import { avatarClass } from "@/lib/avatarColor";
 
 export type Task = {
   id: string; title: string; due_date: string | null; assignee: string | null;
   done: boolean; done_at: string | null; created_at: string;
 };
 
-const AV = ["#6c5767", "#5a6170", "#6f5a5f", "#4d6368", "#66605a", "#4a4448"];
 const initials = (s: string) => s.split(/\s+/).map((w) => w[0]).filter(Boolean).slice(0, 2).join("").toUpperCase();
-const hueOf = (s: string) => AV[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) % AV.length];
 const today = () => new Date().toISOString().slice(0, 10);
 const dueFmt = (d: string) => new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
@@ -63,7 +62,7 @@ export default function TasksPanel({ txId, listingId, tasks }: { txId?: string; 
                   {t.due_date ? dueFmt(t.due_date) : ""}
                 </span>
                 {t.assignee
-                  ? <span className="av" style={{ width: 26, height: 26, fontSize: 10, background: hueOf(t.assignee), color: "#fff", justifySelf: "center" }}>{initials(t.assignee)}</span>
+                  ? <span className={`av ${avatarClass(t.assignee)}`} style={{ width: 26, height: 26, fontSize: 10, justifySelf: "center" }}>{initials(t.assignee)}</span>
                   : <span />}
                 <form action={deleteTask} style={{ justifySelf: "center" }}>
                   <input type="hidden" name="id" value={t.id} />
