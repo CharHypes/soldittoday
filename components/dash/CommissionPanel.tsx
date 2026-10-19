@@ -73,11 +73,11 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
           <div className="space-y-1">
             <span className={lbl}>Commission</span>
             <div className="flex items-center gap-1.5">
-              <button type="button" onClick={() => setUseFlat(false)} className={`rounded-md px-2 py-1.5 text-xs ${!useFlat ? "bg-wine text-pearl" : "border border-dusty/20 text-dusty"}`}>%</button>
-              <button type="button" onClick={() => setUseFlat(true)} className={`rounded-md px-2 py-1.5 text-xs ${useFlat ? "bg-wine text-pearl" : "border border-dusty/20 text-dusty"}`}>Flat $</button>
+              <button type="button" onClick={() => setUseFlat(false)} className={`shrink-0 whitespace-nowrap rounded-md px-2 py-1.5 text-xs ${!useFlat ? "bg-wine text-pearl" : "border border-dusty/20 text-dusty"}`}>%</button>
+              <button type="button" onClick={() => setUseFlat(true)} className={`shrink-0 whitespace-nowrap rounded-md px-2 py-1.5 text-xs ${useFlat ? "bg-wine text-pearl" : "border border-dusty/20 text-dusty"}`}>Flat $</button>
               {useFlat
-                ? <div className="flex-1"><MoneyInput value={flat} onChange={setFlat} className={num} /></div>
-                : <div className="relative flex-1"><input type="number" inputMode="decimal" step="0.01" style={{ textAlign: "right" }} className={`${num} pr-6`} value={rate || ""} onChange={(e) => setRate(parseFloat(e.target.value) || 0)} /><span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-dusty">%</span></div>}
+                ? <div className="min-w-0 flex-1"><MoneyInput value={flat} onChange={setFlat} className={num} /></div>
+                : <div className="relative min-w-0 flex-1"><input type="number" inputMode="decimal" step="0.01" style={{ textAlign: "right" }} className={`${num} pr-6`} value={rate || ""} onChange={(e) => setRate(parseFloat(e.target.value) || 0)} /><span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-dusty">%</span></div>}
             </div>
           </div>
         </div>
