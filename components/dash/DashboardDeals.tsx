@@ -24,14 +24,12 @@ const DEFAULT_FILTERS: FilterDef[] = [
   { label: "All", kinds: ["under", "active", "closed", "other"] },
 ];
 
-const TINTS: [string, string][] = [
-  ["#6c5767", "#2a1f28"], ["#5a6170", "#241f2a"], ["#6f5a5f", "#2a1f24"],
-  ["#4d6368", "#1f262a"], ["#66605a", "#272320"], ["#4a4448", "#211d20"],
-];
-function tintFor(id: string): [string, string] {
+// Deterministic 0..5 tint index per deal; the actual colors (dark by default,
+// soft light on the light theme faces) live in globals.css as `.dtile-N`.
+function tintIdx(id: string): number {
   let h = 0;
   for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) >>> 0;
-  return TINTS[h % TINTS.length];
+  return h % 6;
 }
 const PILL: Record<string, string> = {
   under: "bg-[#e3b19f] text-[#2a1518]",
@@ -154,20 +152,19 @@ const TICKER: { k: string; v: string }[] = [
 ];
 
 function Photo({ d, h, overlays = true }: { d: DashDeal; h: string; overlays?: boolean }) {
-  const [a, b] = tintFor(d.id);
   return (
-    <div className={`relative ${h} overflow-hidden`} style={d.photoUrl ? undefined : { backgroundImage: `linear-gradient(135deg, ${a}, ${b})` }}>
+    <div className={`relative ${h} overflow-hidden ${d.photoUrl ? "" : `dtile-${tintIdx(d.id)}`}`}>
       {d.photoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={d.photoUrl} alt={d.address} className="h-full w-full object-cover" />
       ) : (
-        <div className="grid h-full w-full place-items-center text-white/50"><HouseIcon /></div>
+        <div className="grid h-full w-full place-items-center text-dusty/70"><HouseIcon /></div>
       )}
       {overlays && (
         <>
           <span className={`absolute left-3 top-3 rounded-full px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-wide backdrop-blur ${PILL[d.statusKind]}`}>{d.statusLabel}</span>
           {d.agentName && (
-            <span title={`${d.agentName} is on this deal`} className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-plum/70 text-[10px] font-bold text-pearl ring-1 ring-white/25 backdrop-blur">{d.agentInitials}</span>
+            <span title={`${d.agentName} is on this deal`} className="absolute right-3 top-3 grid h-7 w-7 place-items-center rounded-full bg-raise/85 text-[10px] font-bold text-pearl ring-1 ring-dusty/30 backdrop-blur">{d.agentInitials}</span>
           )}
         </>
       )}

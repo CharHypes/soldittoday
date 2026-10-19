@@ -289,6 +289,23 @@
 .av-chip.av-c3 { background: #4d6368; }
 .av-chip.av-c4 { background: #66605a; }
 .av-chip.av-c5 { background: #4a4448; }
+
+/* ── Deal-card photo placeholders (no-photo tiles on the dashboard) ──────────
+   Deterministic per deal for variety; dark tints by default, soft light tints
+   on the light theme faces so they don't read as dark blocks on Mulberry Light
+   or Butler Linen. See components/dash/DashboardDeals.tsx (tintIdx). */
+.dtile-0 { background-image: linear-gradient(135deg, #6c5767, #2a1f28); }
+.dtile-1 { background-image: linear-gradient(135deg, #5a6170, #241f2a); }
+.dtile-2 { background-image: linear-gradient(135deg, #6f5a5f, #2a1f24); }
+.dtile-3 { background-image: linear-gradient(135deg, #4d6368, #1f262a); }
+.dtile-4 { background-image: linear-gradient(135deg, #66605a, #272320); }
+.dtile-5 { background-image: linear-gradient(135deg, #4a4448, #211d20); }
+:root[data-theme="light"] .dtile-0 { background-image: linear-gradient(135deg, #e6d6de, #d8c6d1); }
+:root[data-theme="light"] .dtile-1 { background-image: linear-gradient(135deg, #d9dee6, #cad0db); }
+:root[data-theme="light"] .dtile-2 { background-image: linear-gradient(135deg, #e8d9dd, #dbcacf); }
+:root[data-theme="light"] .dtile-3 { background-image: linear-gradient(135deg, #d6e2e2, #c6d6d6); }
+:root[data-theme="light"] .dtile-4 { background-image: linear-gradient(135deg, #e6e0d5, #d8d1c5); }
+:root[data-theme="light"] .dtile-5 { background-image: linear-gradient(135deg, #e0dbde, #d0cbcf); }
 :root[data-theme="light"] .theme-butler .av-chip.av-c0,
 :root[data-theme="light"] .theme-butler-midnight .av-chip.av-c0 { background: #c59cb3; color: #26333f; }
 :root[data-theme="light"] .theme-butler .av-chip.av-c1,
