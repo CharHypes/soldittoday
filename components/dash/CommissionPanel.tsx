@@ -44,14 +44,14 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
     return { gross, referralAmt, afterReferral, net, splitPctTotal, rows };
   }, [useFlat, flat, salePrice, rate, referralPct, sitFee, splits]);
 
-  // SkySlope breakdown: only the team splits + the transaction fee (to SIT).
+  // SkySlope breakdown: only the team splits + the transaction fee (to SIT),
+  // ready to paste straight into SkySlope notes (no header line).
   const breakdown = useMemo(() => {
     const L: string[] = [];
-    L.push(`${address || "Deal"} ... team split`);
     c.rows.forEach((r) => L.push(`${r.name || "Agent"}: ${pct(r.pct)} = ${usd(r.amount)}`));
     if (sitFee > 0) L.push(`Transaction fee (to Sold It Today): ${usd(sitFee)}`);
     return L.join("\n");
-  }, [address, c, sitFee]);
+  }, [c, sitFee]);
 
   const copy = async () => {
     try { await navigator.clipboard.writeText(breakdown); setCopied(true); setTimeout(() => setCopied(false), 1600); } catch {}
@@ -69,15 +69,15 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
 
         <div className="grid grid-cols-2 gap-3">
           <label className="space-y-1"><span className={lbl}>Sale price</span>
-            <input type="number" inputMode="decimal" className={num} value={salePrice || ""} onChange={(e) => setSalePrice(parseFloat(e.target.value) || 0)} /></label>
+            <MoneyInput value={salePrice} onChange={setSalePrice} className={num} /></label>
           <div className="space-y-1">
             <span className={lbl}>Commission</span>
             <div className="flex items-center gap-1.5">
               <button type="button" onClick={() => setUseFlat(false)} className={`rounded-md px-2 py-1.5 text-xs ${!useFlat ? "bg-wine text-pearl" : "border border-dusty/20 text-dusty"}`}>%</button>
               <button type="button" onClick={() => setUseFlat(true)} className={`rounded-md px-2 py-1.5 text-xs ${useFlat ? "bg-wine text-pearl" : "border border-dusty/20 text-dusty"}`}>Flat $</button>
               {useFlat
-                ? <input type="number" inputMode="decimal" className={num} value={flat || ""} onChange={(e) => setFlat(parseFloat(e.target.value) || 0)} />
-                : <div className="relative flex-1"><input type="number" inputMode="decimal" step="0.01" className={`${num} pr-6`} value={rate || ""} onChange={(e) => setRate(parseFloat(e.target.value) || 0)} /><span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-dusty">%</span></div>}
+                ? <div className="flex-1"><MoneyInput value={flat} onChange={setFlat} className={num} /></div>
+                : <div className="relative flex-1"><input type="number" inputMode="decimal" step="0.01" style={{ textAlign: "right" }} className={`${num} pr-6`} value={rate || ""} onChange={(e) => setRate(parseFloat(e.target.value) || 0)} /><span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-dusty">%</span></div>}
             </div>
           </div>
         </div>
@@ -90,7 +90,7 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
         </div>
 
         <label className="block space-y-1"><span className={lbl}>Transaction fee <span className="font-normal normal-case tracking-normal text-dusty/60">· flat, paid to Sold It Today</span></span>
-          <input type="number" inputMode="decimal" className={`${num} max-w-[160px] text-left`} value={sitFee || ""} onChange={(e) => setSitFee(parseFloat(e.target.value) || 0)} /></label>
+          <div className="max-w-[160px]"><MoneyInput value={sitFee} onChange={setSitFee} className={num} /></div></label>
 
         {/* splits */}
         <div className="space-y-2">
@@ -150,6 +150,31 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
           <pre className="whitespace-pre-wrap rounded-lg border border-dusty/12 bg-plum/40 p-3 font-mono text-[12px] leading-relaxed text-pearl/90">{breakdown}</pre>
         </div>
       </div>
+    </div>
+  );
+}
+
+// Money input: shows "$1,234.56" at rest (dollar sign, commas, 2 decimals),
+// and a clean editable number while focused. Stores a plain number.
+function MoneyInput({ value, onChange, className }: { value: number; onChange: (n: number) => void; className: string }) {
+  const [focused, setFocused] = useState(false);
+  const [draft, setDraft] = useState("");
+  const shown = focused
+    ? draft
+    : value
+      ? value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+      : "";
+  return (
+    <div className="relative">
+      <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-sm text-dusty">$</span>
+      <input
+        type="text" inputMode="decimal" style={{ textAlign: "right" }}
+        className={`${className} pl-6`}
+        value={shown}
+        onFocus={() => { setDraft(value ? String(value) : ""); setFocused(true); }}
+        onChange={(e) => { const raw = e.target.value.replace(/[^0-9.]/g, ""); setDraft(raw); onChange(parseFloat(raw) || 0); }}
+        onBlur={() => setFocused(false)}
+      />
     </div>
   );
 }
