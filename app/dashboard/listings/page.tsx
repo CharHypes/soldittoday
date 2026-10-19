@@ -3,6 +3,7 @@ import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DashboardDeals, { type FilterDef } from "@/components/dash/DashboardDeals";
 import AddListingButton from "@/components/dash/AddListingButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getAvatarStyle } from "@/lib/context";
 import { loadDeals } from "@/lib/deals";
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default async function ListingsIndex() {
           action={{ href: "/dashboard/listings/import", label: "+ From MLS" }}
           actionSlot={<AddListingButton />}
           filters={LISTING_FILTERS}
+          avatarStyle={await getAvatarStyle(supabase)}
         />
       </div>
     </main>

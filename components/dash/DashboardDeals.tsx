@@ -50,6 +50,7 @@ export default function DashboardDeals({
   filters,
   hideFilters = false,
   showTicker = false,
+  avatarStyle = "colorful",
 }: {
   deals: DashDeal[];
   stats?: DashStats | null;
@@ -61,6 +62,7 @@ export default function DashboardDeals({
   filters?: FilterDef[];
   hideFilters?: boolean;
   showTicker?: boolean;
+  avatarStyle?: string;
 }) {
   const fils = filters ?? DEFAULT_FILTERS;
   const [fi, setFi] = useState(0);
@@ -140,7 +142,7 @@ export default function DashboardDeals({
         </div>
       ) : (
         <div className={list ? "mt-6 flex flex-col gap-2.5 pb-16" : "mt-6 grid gap-5 pb-16 sm:grid-cols-2 lg:grid-cols-3"}>
-          {shown.map((d) => (list ? <ListRow key={`${d.kind}-${d.id}`} d={d} /> : <TileCard key={`${d.kind}-${d.id}`} d={d} />))}
+          {shown.map((d) => (list ? <ListRow key={`${d.kind}-${d.id}`} d={d} avatarStyle={avatarStyle} /> : <TileCard key={`${d.kind}-${d.id}`} d={d} avatarStyle={avatarStyle} />))}
         </div>
       )}
     </>
@@ -177,10 +179,10 @@ function StatusChip({ d }: { d: DashDeal }) {
   return <span className={`inline-block rounded-full px-2 py-0.5 text-[9.5px] font-bold uppercase tracking-wide ${PILL[d.statusKind]}`}>{d.statusLabel}</span>;
 }
 
-function ClientChip({ d, size }: { d: DashDeal; size: "tile" | "list" }) {
+function ClientChip({ d, size, avatarStyle }: { d: DashDeal; size: "tile" | "list"; avatarStyle: string }) {
   const av = size === "tile" ? "h-[26px] w-[26px] text-[10.5px]" : "h-6 w-6 text-[9.5px]";
   const nameCls = size === "tile" ? "text-[13px] text-pearl/80" : "hidden truncate text-[12.5px] text-pearl/80 sm:inline";
-  const avatar = <span className={`grid ${av} place-items-center rounded-full ${avatarClass(d.clientPersonId ?? d.clientName ?? d.id)} font-bold text-white`}>{d.clientInitials}</span>;
+  const avatar = <span className={`grid ${av} place-items-center rounded-full font-bold ${avatarClass(d.clientPersonId ?? d.clientName ?? d.id, avatarStyle)}`}>{d.clientInitials}</span>;
   const name = <span className={nameCls}>{d.clientName ?? (d.clientPersonId ? "Contact" : size === "tile" ? "No client yet" : "No client")}</span>;
   if (d.clientPersonId) {
     return (
@@ -192,7 +194,7 @@ function ClientChip({ d, size }: { d: DashDeal; size: "tile" | "list" }) {
   return <span className="flex items-center gap-2">{avatar}{name}</span>;
 }
 
-function TileCard({ d }: { d: DashDeal }) {
+function TileCard({ d, avatarStyle }: { d: DashDeal; avatarStyle: string }) {
   return (
     <article className="aurora-ring group relative block overflow-hidden rounded-[18px] border border-dusty/12 bg-bruised">
       <Link href={d.href} aria-label={`Open ${d.address}`} className="absolute inset-0" />
@@ -217,14 +219,14 @@ function TileCard({ d }: { d: DashDeal }) {
           </div>
         )}
         <div className="mt-3 flex items-center gap-2 border-t border-dusty/10 pt-3">
-          <ClientChip d={d} size="tile" />
+          <ClientChip d={d} size="tile" avatarStyle={avatarStyle} />
         </div>
       </div>
     </article>
   );
 }
 
-function ListRow({ d }: { d: DashDeal }) {
+function ListRow({ d, avatarStyle }: { d: DashDeal; avatarStyle: string }) {
   return (
     <article className="aurora-ring relative flex items-stretch overflow-hidden rounded-xl2 border border-dusty/12 bg-bruised">
       <Link href={d.href} aria-label={`Open ${d.address}`} className="absolute inset-0" />
@@ -255,7 +257,7 @@ function ListRow({ d }: { d: DashDeal }) {
           )}
         </div>
         <div className="flex items-center justify-end gap-2">
-          <ClientChip d={d} size="list" />
+          <ClientChip d={d} size="list" avatarStyle={avatarStyle} />
           {d.agentName && (
             <span title={`${d.agentName} is on this deal`} className="ml-1 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-plum/70 text-[9px] font-bold text-pearl ring-1 ring-dusty/25">{d.agentInitials}</span>
           )}

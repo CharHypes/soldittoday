@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import ListingWorkspace from "@/components/dash/ListingWorkspace";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { getOrgContext } from "@/lib/context";
+import { getOrgContext, getAvatarStyle } from "@/lib/context";
 import { dealEmailAddress } from "@/lib/dealEmail";
 import { normalizeFileNeeds } from "@/lib/dealChecklist";
 import { DOCS_ENABLED } from "@/lib/supabase/admin";
@@ -69,8 +69,9 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
     const { data: c } = await supabase.from("clients").select("name").eq("id", listing.client_id).maybeSingle();
     sellerName = c?.name ?? null;
   }
-  const { role, agentId: meAgentId } = await getOrgContext(supabase);
+  const { role, agentId: meAgentId, orgId } = await getOrgContext(supabase);
   const isOwner = role === "owner" || role === "admin";
+  const avatarStyle = await getAvatarStyle(supabase, orgId);
   const nameIds = Array.from(new Set([listing.agent_id, meAgentId].filter(Boolean))) as string[];
   const agentNames = new Map<string, string>();
   if (nameIds.length) {
@@ -103,6 +104,7 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
           tasks={(tasks ?? []).map((t) => ({ id: t.id, title: t.title, due_date: t.due_date, assignee: t.assignee, done: t.done, done_at: t.done_at, created_at: t.created_at }))}
           fileNeeds={normalizeFileNeeds(listing.file_needs)}
           docsEnabled={DOCS_ENABLED}
+          avatarStyle={avatarStyle}
           commission={
             // Owner-only: never serialize commission figures to a non-owner's page.
             isOwner

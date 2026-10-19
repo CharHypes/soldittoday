@@ -3,6 +3,7 @@ import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DashboardDeals, { type FilterDef } from "@/components/dash/DashboardDeals";
 import AddBuyerButton from "@/components/dash/AddBuyerButton";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getAvatarStyle } from "@/lib/context";
 import { loadDeals } from "@/lib/deals";
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default async function BuyersHome() {
           subtitle={`${inProgress} ${inProgress === 1 ? "buyer" : "buyers"} in progress`}
           actionSlot={<AddBuyerButton />}
           filters={BUYER_FILTERS}
+          avatarStyle={await getAvatarStyle(supabase)}
         />
       </div>
     </main>

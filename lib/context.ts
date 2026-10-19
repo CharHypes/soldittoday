@@ -24,3 +24,18 @@ export async function getOrgContext(supabase: SupabaseClient): Promise<OrgContex
     membershipId: row?.membership_id as string | undefined,
   };
 }
+
+/**
+ * The active org's contact-avatar style ("solid" | "colorful"), used app-wide so
+ * every person avatar honors the Settings toggle. Defaults to "colorful".
+ * Pass `orgId` to skip the extra my_context RPC when the caller already has it.
+ */
+export async function getAvatarStyle(
+  supabase: SupabaseClient,
+  orgId?: string,
+): Promise<"solid" | "colorful"> {
+  const id = orgId ?? (await getOrgContext(supabase)).orgId;
+  if (!id) return "colorful";
+  const { data } = await supabase.from("organizations").select("avatar_style").eq("id", id).maybeSingle();
+  return (data?.avatar_style as string) === "solid" ? "solid" : "colorful";
+}

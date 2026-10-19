@@ -13,7 +13,7 @@ const initials = (s: string) => s.split(/\s+/).map((w) => w[0]).filter(Boolean).
 const today = () => new Date().toISOString().slice(0, 10);
 const dueFmt = (d: string) => new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-export default function TasksPanel({ txId, listingId, tasks }: { txId?: string; listingId?: string; tasks: Task[] }) {
+export default function TasksPanel({ txId, listingId, tasks, avatarStyle = "colorful" }: { txId?: string; listingId?: string; tasks: Task[]; avatarStyle?: string }) {
   const [adding, setAdding] = useState(false);
   const open = tasks.filter((t) => !t.done).length;
   const done = tasks.length - open;
@@ -62,7 +62,7 @@ export default function TasksPanel({ txId, listingId, tasks }: { txId?: string; 
                   {t.due_date ? dueFmt(t.due_date) : ""}
                 </span>
                 {t.assignee
-                  ? <span className={`av ${avatarClass(t.assignee)}`} style={{ width: 26, height: 26, fontSize: 10, justifySelf: "center" }}>{initials(t.assignee)}</span>
+                  ? <span className={`av ${avatarClass(t.assignee, avatarStyle)}`} style={{ width: 26, height: 26, fontSize: 10, justifySelf: "center" }}>{initials(t.assignee)}</span>
                   : <span />}
                 <form action={deleteTask} style={{ justifySelf: "center" }}>
                   <input type="hidden" name="id" value={t.id} />

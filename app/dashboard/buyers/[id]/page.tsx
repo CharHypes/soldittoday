@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DealWorkspace from "@/components/dash/DealWorkspace";
 import { createSupabaseServer } from "@/lib/supabase/server";
-import { getOrgContext } from "@/lib/context";
+import { getOrgContext, getAvatarStyle } from "@/lib/context";
 import { DOCS_ENABLED } from "@/lib/supabase/admin";
 import { dealEmailAddress } from "@/lib/dealEmail";
 import { normalizeFileNeeds } from "@/lib/dealChecklist";
@@ -64,8 +64,9 @@ export default async function DealPage({ params }: { params: { id: string } }) {
     const { data: c } = await supabase.from("clients").select("name").eq("id", tx.client_id).maybeSingle();
     buyerName = c?.name ?? null;
   }
-  const { role, agentId: meAgentId } = await getOrgContext(supabase);
+  const { role, agentId: meAgentId, orgId } = await getOrgContext(supabase);
   const isOwner = role === "owner" || role === "admin";
+  const avatarStyle = await getAvatarStyle(supabase, orgId);
 
   // Resolve agent-on-file + the viewing owner's name in one lookup.
   const nameIds = Array.from(new Set([tx.agent_id, meAgentId].filter(Boolean))) as string[];
@@ -113,6 +114,7 @@ export default async function DealPage({ params }: { params: { id: string } }) {
           documents={(documents ?? []).map((d) => ({ id: d.id, name: d.name, uploaded_by: d.uploaded_by, client_visible: d.client_visible, created_at: d.created_at }))}
           notes={(notes ?? []).map((n) => ({ id: n.id, body: n.body, from_client: n.from_client, client_visible: n.client_visible, created_at: n.created_at }))}
           docsEnabled={DOCS_ENABLED}
+          avatarStyle={avatarStyle}
           fileNeeds={normalizeFileNeeds(tx.file_needs)}
           tasks={(tasks ?? []).map((t) => ({ id: t.id, title: t.title, due_date: t.due_date, assignee: t.assignee, done: t.done, done_at: t.done_at, created_at: t.created_at }))}
           isOwner={isOwner}

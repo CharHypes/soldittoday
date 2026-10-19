@@ -39,11 +39,13 @@ export function avatarBg(id: string, style: AvatarStyle | string | null | undefi
 }
 
 /**
- * The themed `av-chip av-cN` classes for a person avatar, keyed by a stable id
- * (person id preferred, else name) so the SAME person is the SAME color
+ * Full avatar classes (background + text) for a person avatar, keyed by a stable
+ * id (person id preferred, else name) so the SAME person is the SAME color
  * everywhere (contact card, deal/listing parties, tasks, deal cards) and adapts
- * per theme via the .av-cN CSS. Always colorful; callers add size + text color.
+ * per theme via the .av-cN CSS. When the org's style is "solid", returns the
+ * single mauve treatment instead. Callers add size only.
  */
-export function avatarClass(key: string): string {
-  return `av-chip av-c${hashId(key || "?") % 6}`;
+export function avatarClass(key: string, style?: AvatarStyle | string | null): string {
+  if (style === "solid") return "bg-mauve text-plum";
+  return `av-chip av-c${hashId(key || "?") % 6} text-white`;
 }

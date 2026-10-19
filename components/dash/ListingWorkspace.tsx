@@ -53,6 +53,7 @@ type Props = {
   tasks: Task[];
   fileNeeds: FileNeeds;
   docsEnabled: boolean;
+  avatarStyle: string;
   commission: CommissionInit;
   portalUrl: string;
   listingEmail: string | null;
@@ -294,7 +295,7 @@ export default function ListingWorkspace(p: Props) {
                 </div>
                 <div className="cardbody">
                   {p.keyContacts.length === 0 && <p className="emptynote">{p.sellerName ? `Seller: ${p.sellerName}` : "No contacts linked yet."}</p>}
-                  {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} />)}
+                  {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} avatarStyle={p.avatarStyle} />)}
                 </div>
               </div>
 
@@ -471,7 +472,7 @@ export default function ListingWorkspace(p: Props) {
             </div>
             <div className="cardbody">
               {p.keyContacts.length === 0 && <p className="emptynote">{p.sellerName ? `Seller: ${p.sellerName} ... link full contact records with the contacts module.` : "No contacts linked yet."}</p>}
-              {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} />)}
+              {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} avatarStyle={p.avatarStyle} />)}
             </div>
           </div>
         </div>
@@ -499,7 +500,7 @@ export default function ListingWorkspace(p: Props) {
       )}
 
       {/* ============ TASKS ============ */}
-      {tab === "Tasks" && <TasksPanel listingId={l.id} tasks={p.tasks} />}
+      {tab === "Tasks" && <TasksPanel listingId={l.id} tasks={p.tasks} avatarStyle={p.avatarStyle} />}
 
       {/* ============ EMAIL GENERATOR ============ */}
       {tab === "Email generator" && (
@@ -631,10 +632,10 @@ function Field({ k, v, link }: { k: string; v: React.ReactNode | null; link?: bo
   );
 }
 
-function Party({ c, i }: { c: KC; i: number }) {
+function Party({ c, avatarStyle }: { c: KC; i: number; avatarStyle: string }) {
   return (
     <div className="party">
-      <div className="avstack"><span className={`av ${avatarClass(c.personId ?? c.name)}`}>{initials(c.name)}</span></div>
+      <div className="avstack"><span className={`av ${avatarClass(c.personId ?? c.name, avatarStyle)}`}>{initials(c.name)}</span></div>
       <div className="pbody">
         <div className="prole">{prettyRole(c.role)}</div>
         <div className="pname">

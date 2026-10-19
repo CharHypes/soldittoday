@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import AgentHubHeader from "@/components/dash/AgentHubHeader";
 import DashboardDeals, { type DashStats } from "@/components/dash/DashboardDeals";
 import { createSupabaseServer } from "@/lib/supabase/server";
+import { getAvatarStyle } from "@/lib/context";
 import { loadDeals, money } from "@/lib/deals";
 
 export const metadata: Metadata = {
@@ -37,7 +38,7 @@ export default async function DashboardHome() {
     <main className="min-h-screen bg-agenthub">
       <AgentHubHeader />
       <div className="mx-auto max-w-6xl px-6 py-9">
-        <DashboardDeals deals={deals} stats={stats} hideFilters showTicker />
+        <DashboardDeals deals={deals} stats={stats} hideFilters showTicker avatarStyle={await getAvatarStyle(supabase)} />
       </div>
     </main>
   );

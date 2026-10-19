@@ -53,6 +53,7 @@ type Props = {
   commission: CommissionInit;
   fileNeeds: FileNeeds;
   tasks: Task[];
+  avatarStyle: string;
 };
 
 const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Email generator", "Contacts", "Client portal", "Commission", "Log"] as const;
@@ -285,11 +286,11 @@ export default function DealWorkspace(p: Props) {
                     <span className="ownertag"><svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} style={{ width: 11, height: 11 }}><rect x="4" y="11" width="16" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg> You see commission</span>
                   </div>
                   <div className="cardbody">
-                    <div className="person"><span className={`av ${avatarClass(p.ownerName || "Owner")}`}>{initials(p.ownerName || "Owner")}</span>
+                    <div className="person"><span className={`av ${avatarClass(p.ownerName || "Owner", p.avatarStyle)}`}>{initials(p.ownerName || "Owner")}</span>
                       <div><div className="role">Owner · {p.tx.office || "Hypes Team"}</div><div className="nm">{p.ownerName || "Owner"} <span style={{ color: "var(--d-ink3)", fontWeight: 400 }}>· full access</span></div></div>
                     </div>
                     {p.agentName && p.agentName !== p.ownerName && (
-                      <div className="person"><span className={`av ${avatarClass(p.agentName)}`}>{initials(p.agentName)}</span>
+                      <div className="person"><span className={`av ${avatarClass(p.agentName, p.avatarStyle)}`}>{initials(p.agentName)}</span>
                         <div><div className="role">Agent on file · showing agent</div><div className="nm">{p.agentName} <span style={{ color: "var(--d-ink3)", fontWeight: 400 }}>· no commission access</span></div></div>
                       </div>
                     )}
@@ -304,7 +305,7 @@ export default function DealWorkspace(p: Props) {
                 </div>
                 <div className="cardbody">
                   {p.keyContacts.length === 0 && <p className="emptynote">No contacts linked yet. Add them in Edit transaction.</p>}
-                  {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} />)}
+                  {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} avatarStyle={p.avatarStyle} />)}
                 </div>
               </div>
 
@@ -432,7 +433,7 @@ export default function DealWorkspace(p: Props) {
             </div>
             <div className="cardbody">
               {p.keyContacts.length === 0 && <p className="emptynote">No contacts linked yet.</p>}
-              {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} />)}
+              {p.keyContacts.map((c, i) => <Party key={i} c={c} i={i} avatarStyle={p.avatarStyle} />)}
             </div>
           </div>
         </div>
@@ -506,7 +507,7 @@ export default function DealWorkspace(p: Props) {
       )}
 
       {/* ============ TASKS ============ */}
-      {tab === "Tasks" && <TasksPanel txId={p.tx.id} tasks={p.tasks} />}
+      {tab === "Tasks" && <TasksPanel txId={p.tx.id} tasks={p.tasks} avatarStyle={p.avatarStyle} />}
     </div>
   );
 }
@@ -572,10 +573,10 @@ function Field({ k, v, link }: { k: string; v: React.ReactNode | null; link?: bo
   );
 }
 
-function Party({ c, i }: { c: KC; i: number }) {
+function Party({ c, avatarStyle }: { c: KC; i: number; avatarStyle: string }) {
   return (
     <div className="party">
-      <div className="avstack"><span className={`av ${avatarClass(c.personId ?? c.name)}`}>{initials(c.name)}</span></div>
+      <div className="avstack"><span className={`av ${avatarClass(c.personId ?? c.name, avatarStyle)}`}>{initials(c.name)}</span></div>
       <div className="pbody">
         <div className="prole">{prettyRole(c.role)}</div>
         <div className="pname">
