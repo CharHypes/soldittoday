@@ -71,7 +71,7 @@ export default function EmailGenerator({
             <button type="button" className="btn gold" onClick={() => copy("subj", subject)}>{copied === "subj" ? "Copied ✓" : "Copy subject"}</button>
           </div>
           <div className="previewline">
-            <div><div className="pk">To · {toLabel[tmpl.to]}</div><div className="pv">{to || <span style={{ color: "var(--ink3)" }}>Add this contact in Edit transaction</span>}</div></div>
+            <div><div className="pk">To · {toLabel[tmpl.to]}</div><div className="pv">{to || <span style={{ color: "var(--d-ink3)" }}>Add this contact in Edit transaction</span>}</div></div>
             <button type="button" className="btn gold" onClick={() => copy("to", to)} disabled={!to}>{copied === "to" ? "Copied ✓" : "Copy to"}</button>
           </div>
           <div className="ebodywrap"><div className="ebody">{body}</div></div>
@@ -81,7 +81,7 @@ export default function EmailGenerator({
             </a>
             <button type="button" className="btn" onClick={() => copy("body", body)}>{copied === "body" ? "Copied ✓" : "Copy body"}</button>
           </div>
-          <div style={{ fontSize: 12, color: "var(--ink3)", marginTop: 10 }}>
+          <div style={{ fontSize: 12, color: "var(--d-ink3)", marginTop: 10 }}>
             Merge fields fill from the deal: <b>{"{{buyer}}"}</b> · <b>{"{{address}}"}</b> · <b>{"{{closing_date}}"}</b> · <b>{"{{agent}}"}</b>
           </div>
         </div>
@@ -89,8 +89,8 @@ export default function EmailGenerator({
 
       {/* triggers (roadmap) */}
       <div className="card summary" style={{ marginTop: 22 }}>
-        <div className="cardhd" style={{ padding: "0 0 12px" }}><h3>Auto-send triggers</h3><span className="sitchip" style={{ color: "var(--ink3)", background: "var(--bg2)" }}>Coming soon</span></div>
-        <p style={{ fontSize: 13, color: "var(--ink2)", margin: "0 0 12px", lineHeight: 1.5 }}>
+        <div className="cardhd" style={{ padding: "0 0 12px" }}><h3>Auto-send triggers</h3><span className="sitchip" style={{ color: "var(--d-ink3)", background: "var(--d-bg2)" }}>Coming soon</span></div>
+        <p style={{ fontSize: 13, color: "var(--d-ink2)", margin: "0 0 12px", lineHeight: 1.5 }}>
           Next step: hit a trigger and the matching email fires automatically through Resend, so nobody has to remember to send it. Shown here as the plan.
         </p>
         {[

@@ -59,7 +59,7 @@ export default function TasksPanel({ txId, listingId, tasks }: { txId?: string; 
                   <input type="checkbox" className="cbx" defaultChecked={t.done} onChange={(e) => e.currentTarget.form?.requestSubmit()} aria-label={t.title} />
                 </form>
                 <span className={`doc${t.done ? " is-done" : ""}`}>{t.title}</span>
-                <span style={{ fontSize: 12.5, textAlign: "right", color: overdue ? "var(--red)" : "var(--ink3)", fontWeight: overdue ? 700 : 400 }}>
+                <span style={{ fontSize: 12.5, textAlign: "right", color: overdue ? "var(--d-red)" : "var(--d-ink3)", fontWeight: overdue ? 700 : 400 }}>
                   {t.due_date ? dueFmt(t.due_date) : ""}
                 </span>
                 {t.assignee

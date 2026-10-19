@@ -67,7 +67,7 @@ const initials = (name: string) => name.split(/\s+/).map((w) => w[0]).filter(Boo
 const prettyRole = (r: string) => r.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 const prettyStage = (s: string) => ({ lead: "Lead", buyer: "Active Buyer", under_contract: "Under Contract", closed: "Closed", archived: "Archived" }[s] ?? prettyRole(s));
 const AV = ["#6c5767", "#5a6170", "#6f5a5f", "#4d6368", "#66605a", "#4a4448"];
-const NS = <span style={{ color: "var(--ink3)" }}>Not set</span>;
+const NS = <span style={{ color: "var(--d-ink3)" }}>Not set</span>;
 
 function Copy({ text, className = "cpic" }: { text: string; className?: string }) {
   const [done, setDone] = useState(false);
@@ -254,13 +254,13 @@ export default function DealWorkspace(p: Props) {
                     <div className="k">Deal inbox · email docs here</div>
                     {p.dealEmail
                       ? <div className="eval"><a href={`mailto:${p.dealEmail}`}>{p.dealEmail}</a><Copy text={p.dealEmail} /></div>
-                      : <div className="eval muted"><span style={{ color: "var(--ink3)" }}>Generated when the deal is saved</span></div>}
+                      : <div className="eval muted"><span style={{ color: "var(--d-ink3)" }}>Generated when the deal is saved</span></div>}
                   </div>
                   <div className="efield">
                     <div className="k">SkySlope · forward to broker</div>
                     {p.tx.skyslope_email
                       ? <div className="eval muted"><a href={`mailto:${p.tx.skyslope_email}`}>{p.tx.skyslope_email}</a><Copy text={p.tx.skyslope_email} /></div>
-                      : <div className="eval muted"><span style={{ color: "var(--ink3)" }}>Add in Edit transaction</span></div>}
+                      : <div className="eval muted"><span style={{ color: "var(--d-ink3)" }}>Add in Edit transaction</span></div>}
                   </div>
                 </div>
               </div>
@@ -286,11 +286,11 @@ export default function DealWorkspace(p: Props) {
                   </div>
                   <div className="cardbody">
                     <div className="person"><span className="av" style={{ background: "#4d6368", color: "#fff" }}>{initials(p.ownerName || "Owner")}</span>
-                      <div><div className="role">Owner · {p.tx.office || "Hypes Team"}</div><div className="nm">{p.ownerName || "Owner"} <span style={{ color: "var(--ink3)", fontWeight: 400 }}>· full access</span></div></div>
+                      <div><div className="role">Owner · {p.tx.office || "Hypes Team"}</div><div className="nm">{p.ownerName || "Owner"} <span style={{ color: "var(--d-ink3)", fontWeight: 400 }}>· full access</span></div></div>
                     </div>
                     {p.agentName && p.agentName !== p.ownerName && (
                       <div className="person"><span className="av" style={{ background: "#6f5a5f", color: "#fff" }}>{initials(p.agentName)}</span>
-                        <div><div className="role">Agent on file · showing agent</div><div className="nm">{p.agentName} <span style={{ color: "var(--ink3)", fontWeight: 400 }}>· no commission access</span></div></div>
+                        <div><div className="role">Agent on file · showing agent</div><div className="nm">{p.agentName} <span style={{ color: "var(--d-ink3)", fontWeight: 400 }}>· no commission access</span></div></div>
                       </div>
                     )}
                     <div className="assign"><button type="button" className="addlink"><svg className="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} style={{ width: 13, height: 13 }}><path d="M12 5v14M5 12h14" strokeLinecap="round" /></svg> Assign another agent</button></div>
@@ -312,7 +312,7 @@ export default function DealWorkspace(p: Props) {
                 <div className="cardhd"><h3>Closing progress</h3><span className="clmeta"><b>{done}</b> of {total}</span></div>
                 <div className="cardbody">
                   <div className="prog"><span style={{ width: `${pct}%` }} /></div>
-                  {current && <div style={{ marginTop: 8, fontSize: 13, color: "var(--ink3)" }}>Current step: <b style={{ color: "var(--ink2)" }}>{current.label}</b>{nextStep ? ` · next: ${nextStep.label.toLowerCase()}` : ""}</div>}
+                  {current && <div style={{ marginTop: 8, fontSize: 13, color: "var(--d-ink3)" }}>Current step: <b style={{ color: "var(--d-ink2)" }}>{current.label}</b>{nextStep ? ` · next: ${nextStep.label.toLowerCase()}` : ""}</div>}
                 </div>
               </div>
             </div>
@@ -330,7 +330,7 @@ export default function DealWorkspace(p: Props) {
                 <input type="hidden" name="transaction_id" value={p.tx.id} />
                 <textarea name="body" rows={3} className={inp} placeholder="Share an update your buyer will see on their portal..." />
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--ink3)" }}><input type="checkbox" name="client_visible" defaultChecked /> Visible to buyer</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--d-ink3)" }}><input type="checkbox" name="client_visible" defaultChecked /> Visible to buyer</label>
                   <button type="submit" className="btn mauve">Add note</button>
                 </div>
               </form>
@@ -372,7 +372,7 @@ export default function DealWorkspace(p: Props) {
               <input type="hidden" name="transaction_id" value={p.tx.id} />
               {p.milestones.map((m) => (
                 <div key={m.id} className="clrow" style={{ gridTemplateColumns: "24px minmax(0,1fr) 150px 160px" }}>
-                  <span style={{ color: "var(--ink3)", fontSize: 13 }}>{m.sort_order}</span>
+                  <span style={{ color: "var(--d-ink3)", fontSize: 13 }}>{m.sort_order}</span>
                   <span className="doc">{m.label}</span>
                   <select name={`status_${m.id}`} defaultValue={m.status} className={inp}>
                     <option value="upcoming">Upcoming</option><option value="in_progress">In progress</option><option value="done">Done</option>
@@ -398,23 +398,23 @@ export default function DealWorkspace(p: Props) {
                   <input type="hidden" name="transaction_id" value={p.tx.id} />
                   <input type="file" name="file" required className="emptynote" />
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--ink3)" }}><input type="checkbox" name="client_visible" /> Share with buyer right away</label>
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--d-ink3)" }}><input type="checkbox" name="client_visible" /> Share with buyer right away</label>
                     <button type="submit" className="btn mauve">Upload</button>
                   </div>
                 </form>
               )}
               {p.documents.length === 0 && <p className="emptynote">No documents yet.</p>}
               {p.documents.map((d) => (
-                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 0", borderTop: "1px solid var(--line)" }}>
+                <div key={d.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "11px 0", borderTop: "1px solid var(--d-line)" }}>
                   <div style={{ minWidth: 0 }}>
-                    <a href={`/api/dash/documents/${d.id}`} target="_blank" rel="noreferrer" style={{ color: "var(--ink)", fontWeight: 500, fontSize: 14, textDecoration: "none" }}>{d.name}</a>
-                    <div className="meta" style={{ fontSize: 11, color: "var(--ink3)", marginTop: 3 }}>{d.uploaded_by === "buyer" ? "From buyer" : "You"} · {longDate(d.created_at)}{d.uploaded_by === "agent" ? (d.client_visible ? " · shared" : " · private") : ""}</div>
+                    <a href={`/api/dash/documents/${d.id}`} target="_blank" rel="noreferrer" style={{ color: "var(--d-ink)", fontWeight: 500, fontSize: 14, textDecoration: "none" }}>{d.name}</a>
+                    <div className="meta" style={{ fontSize: 11, color: "var(--d-ink3)", marginTop: 3 }}>{d.uploaded_by === "buyer" ? "From buyer" : "You"} · {longDate(d.created_at)}{d.uploaded_by === "agent" ? (d.client_visible ? " · shared" : " · private") : ""}</div>
                   </div>
                   <div style={{ display: "flex", gap: 12, flexShrink: 0 }}>
                     {d.uploaded_by === "agent" && (
                       <form action={toggleDocumentShare}><input type="hidden" name="id" value={d.id} /><input type="hidden" name="transaction_id" value={p.tx.id} /><input type="hidden" name="share" value={d.client_visible ? "0" : "1"} /><button type="submit" className="addlink" style={{ border: 0, padding: 0 }}>{d.client_visible ? "Unshare" : "Share"}</button></form>
                     )}
-                    <form action={deleteDocument}><input type="hidden" name="id" value={d.id} /><input type="hidden" name="transaction_id" value={p.tx.id} /><button type="submit" className="addlink" style={{ border: 0, padding: 0, color: "var(--red)" }}>Delete</button></form>
+                    <form action={deleteDocument}><input type="hidden" name="id" value={d.id} /><input type="hidden" name="transaction_id" value={p.tx.id} /><button type="submit" className="addlink" style={{ border: 0, padding: 0, color: "var(--d-red)" }}>Delete</button></form>
                   </div>
                 </div>
               ))}
@@ -462,7 +462,7 @@ export default function DealWorkspace(p: Props) {
                 <input type="hidden" name="transaction_id" value={p.tx.id} />
                 <textarea name="body" rows={2} className={inp} placeholder="Log a note..." />
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 10 }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--ink3)" }}><input type="checkbox" name="client_visible" /> Share with buyer</label>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--d-ink3)" }}><input type="checkbox" name="client_visible" /> Share with buyer</label>
                   <button type="submit" className="btn mauve">Add note</button>
                 </div>
               </form>
@@ -534,7 +534,7 @@ function InlineEdit({ txId, field, value, display, type = "text", className = ""
   const empty = !value;
   if (!editing) {
     return (
-      <span className={`ival ${className}`} style={empty ? { color: "var(--ink3)" } : undefined} onClick={() => setEditing(true)} role="button" tabIndex={0}
+      <span className={`ival ${className}`} style={empty ? { color: "var(--d-ink3)" } : undefined} onClick={() => setEditing(true)} role="button" tabIndex={0}
         onKeyDown={(e) => { if (e.key === "Enter") setEditing(true); }}>{display}</span>
     );
   }

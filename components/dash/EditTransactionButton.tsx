@@ -274,7 +274,7 @@ export default function EditTransactionButton({
               </div>
 
               <div className="editfoot">
-                <span style={{ fontSize: 12, color: "var(--ink3)" }}>Changes save to the whole file</span>
+                <span style={{ fontSize: 12, color: "var(--d-ink3)" }}>Changes save to the whole file</span>
                 <div style={{ display: "flex", gap: 10 }}>
                   <button type="button" className="btn" onClick={close}>Cancel</button>
                   <button type="submit" className="btn mauve">Save</button>
