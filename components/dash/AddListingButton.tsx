@@ -10,6 +10,9 @@ import { createListing } from "@/app/dashboard/actions";
 export default function AddListingButton({ label = "+ Add manually" }: { label?: string }) {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
+  const [sellers, setSellers] = useState<{ id: string }[]>([{ id: "s0" }]);
+  const addSeller = () => setSellers((rows) => [...rows, { id: `s${Date.now()}-${rows.length}` }]);
+  const removeSeller = (rid: string) => setSellers((rows) => rows.filter((r) => r.id !== rid));
 
   return (
     <>
@@ -55,14 +58,20 @@ export default function AddListingButton({ label = "+ Add manually" }: { label?:
                 </div>
               </div>
 
-              {/* SELLER */}
+              {/* SELLERS (add as many as the listing has) */}
               <div className="bo-section">
-                <div className="bo-section-title">Seller</div>
-                <div className="bo-form-grid">
-                  <div className="bo-field"><label>Name</label><input name="client_name" /></div>
-                  <div className="bo-field"><label>Email</label><input name="client_email" type="email" /></div>
-                  <div className="bo-field"><label>Phone</label><input name="client_phone" /></div>
-                </div>
+                <div className="bo-section-title">Sellers</div>
+                {sellers.map((s, i) => (
+                  <div key={s.id} style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 0.9fr auto", gap: 10, alignItems: "end", marginBottom: 10 }}>
+                    <div className="bo-field"><label>{i === 0 ? "Seller" : "Co-seller"}</label><input name={`seller_name_${i}`} placeholder="Full name" /></div>
+                    <div className="bo-field"><label>Email</label><input name={`seller_email_${i}`} type="email" /></div>
+                    <div className="bo-field"><label>Phone</label><input name={`seller_phone_${i}`} /></div>
+                    {sellers.length > 1
+                      ? <button type="button" onClick={() => removeSeller(s.id)} aria-label="Remove seller" className="text-dusty transition-colors hover:text-wine" style={{ fontSize: 18, marginBottom: 8 }}>&times;</button>
+                      : <span />}
+                  </div>
+                ))}
+                <button type="button" className="bo-add" onClick={addSeller}>+ Add seller</button>
               </div>
 
               <div className="bo-modal-foot">

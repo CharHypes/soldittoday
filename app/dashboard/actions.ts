@@ -35,33 +35,101 @@ async function ctx() {
   return { supabase, id: agentId, orgId, role };
 }
 
+// ---- Shared listing-seller helpers (used by create + update) ----
+type SellerInput = { personId: string | null; name: string; email: string | null; phone: string | null };
+
+/** Read seller rows from the form: the dynamic seller_name_i/... fields, or the
+ * single legacy client_name/email/phone (so the old new-listing page still works). */
+function readSellerRows(formData: FormData): SellerInput[] {
+  const rows: SellerInput[] = [];
+  if (formData.has("seller_name_0")) {
+    for (let i = 0; formData.has(`seller_name_${i}`); i++) {
+      const name = (str(formData.get(`seller_name_${i}`)) ?? "").trim();
+      if (!name) continue;
+      rows.push({
+        personId: str(formData.get(`seller_person_id_${i}`)) || null,
+        name,
+        email: str(formData.get(`seller_email_${i}`)),
+        phone: str(formData.get(`seller_phone_${i}`)),
+      });
+    }
+  } else {
+    const name = (str(formData.get("client_name")) ?? "").trim();
+    if (name) rows.push({ personId: null, name, email: str(formData.get("client_email")), phone: str(formData.get("client_phone")) });
+  }
+  return rows;
+}
+
+/** Create/match a CRM person for each seller, link them to the listing
+ * (role seller for the first, co_seller for the rest), and keep the primary
+ * seller's legacy clients row + listings.client_id in sync. */
+async function linkListingSellers(
+  supabase: Parameters<typeof findMatchingPerson>[0],
+  orgId: string, agentId: string | undefined, listingId: string,
+  rows: SellerInput[], opts: { replace: boolean },
+) {
+  if (!rows.length) return;
+  if (opts.replace) await supabase.from("listing_people").delete().eq("listing_id", listingId).in("role", ["seller", "co_seller"]);
+  let primaryClientId: string | null = null;
+  for (let i = 0; i < rows.length; i++) {
+    const s = rows[i];
+    let personId = s.personId;
+    let clientId: string | null = null;
+    if (!personId) {
+      const match = await findMatchingPerson(supabase, orgId, { name: s.name, email: s.email, phone: s.phone });
+      personId = match?.id ?? null;
+      clientId = match?.source_client_id ?? null;
+    }
+    if (!personId) {
+      const cut = s.name.lastIndexOf(" ");
+      const { data: person } = await supabase
+        .from("people")
+        .insert({
+          organization_id: orgId, agent_id: agentId, visibility: "organization",
+          first_name: cut > 0 ? s.name.slice(0, cut) : null,
+          last_name: cut > 0 ? s.name.slice(cut + 1) : s.name,
+          display_name: s.name, type: "seller", email: s.email, phone: s.phone,
+        })
+        .select("id, source_client_id")
+        .single();
+      personId = person?.id ?? null;
+      clientId = person?.source_client_id ?? null;
+    }
+    if (!personId) continue;
+    await supabase.from("listing_people").insert({
+      organization_id: orgId, listing_id: listingId, person_id: personId,
+      role: i === 0 ? "seller" : "co_seller", name_on_deal: s.name,
+    });
+    if (i === 0) primaryClientId = clientId;
+  }
+  const primary = rows[0];
+  if (primary) {
+    if (primaryClientId) {
+      await supabase.from("clients").update({ name: primary.name, email: primary.email, phone: primary.phone }).eq("id", primaryClientId);
+      await supabase.from("listings").update({ client_id: primaryClientId }).eq("id", listingId);
+    } else {
+      const { data: client } = await supabase
+        .from("clients")
+        .insert({ organization_id: orgId, agent_id: agentId, name: primary.name, email: primary.email, phone: primary.phone, type: "seller" })
+        .select("id")
+        .single();
+      if (client?.id) await supabase.from("listings").update({ client_id: client.id }).eq("id", listingId);
+    }
+  }
+}
+
 export async function createListing(formData: FormData) {
   const { supabase, id: agent_id, orgId } = await ctx();
   if (!agent_id || !orgId) redirect("/dashboard/login");
 
-  const clientName = str(formData.get("client_name"));
-  const clientEmail = str(formData.get("client_email"));
-  const clientPhone = str(formData.get("client_phone"));
-
-  // Duplicate-matcher: reuse an existing contact when it confidently matches.
-  const match = clientName ? await findMatchingPerson(supabase, orgId, { name: clientName, email: clientEmail, phone: clientPhone }) : null;
-
-  let client_id: string | null = match?.source_client_id ?? null;
-  if (!client_id && clientName) {
-    const { data: client } = await supabase
-      .from("clients")
-      .insert({ organization_id: orgId, agent_id, name: clientName, email: clientEmail, phone: clientPhone, type: "seller" })
-      .select("id")
-      .single();
-    client_id = client?.id ?? null;
-  }
+  const sellers = readSellerRows(formData);
 
   const { data: listing } = await supabase
     .from("listings")
     .insert({
       organization_id: orgId,
       agent_id,
-      client_id,
+      client_id: null,
       address: str(formData.get("address")),
       city: str(formData.get("city")),
       state: str(formData.get("state")),
@@ -78,50 +146,17 @@ export async function createListing(formData: FormData) {
     .select("id")
     .single();
 
-  // Seed the seller-side closing steps so the Listing workspace has a progress
-  // track from day one (mirrors how a buyer transaction seeds its milestones).
   if (listing?.id) {
+    // Seed the seller-side closing steps so the Listing workspace has a progress
+    // track from day one (mirrors how a buyer transaction seeds its milestones).
     await supabase.from("milestones").insert(
       DEFAULT_LISTING_MILESTONES.map((label, i) => ({
         organization_id: orgId, listing_id: listing.id, label, sort_order: i + 1,
         status: i === 0 ? "in_progress" : "upcoming",
       }))
     );
-  }
-
-  // Create/link a CRM contact (person) so this listing shows on a contact card.
-  // Reuse the matched contact when there is one; otherwise create a new person.
-  if (clientName && listing?.id) {
-    const trimmed = clientName.trim();
-    let personId = match?.id ?? null;
-    if (!personId) {
-      const cut = trimmed.lastIndexOf(" ");
-      const { data: person } = await supabase
-        .from("people")
-        .insert({
-          organization_id: orgId,
-          agent_id,
-          visibility: "organization",
-          first_name: cut > 0 ? trimmed.slice(0, cut) : null,
-          last_name: cut > 0 ? trimmed.slice(cut + 1) : trimmed,
-          display_name: trimmed,
-          type: "seller",
-          email: clientEmail,
-          phone: clientPhone,
-          source_client_id: client_id,
-        })
-        .select("id")
-        .single();
-      personId = person?.id ?? null;
-    }
-    if (personId) {
-      await supabase
-        .from("listing_people")
-        .upsert(
-          { organization_id: orgId, listing_id: listing.id, person_id: personId, role: "seller", name_on_deal: trimmed },
-          { onConflict: "listing_id,person_id,role", ignoreDuplicates: true }
-        );
-    }
+    // Link every seller (people + listing_people + the primary clients row).
+    await linkListingSellers(supabase, orgId, agent_id, listing.id, sellers, { replace: false });
   }
 
   revalidatePath("/dashboard");
@@ -358,74 +393,9 @@ export async function updateListing(formData: FormData) {
     })
     .eq("id", id);
 
-  // Reconcile SELLERS (supports any number). The edit pop-out submits rows
-  // seller_name_i / seller_email_i / seller_phone_i / seller_person_id_i.
-  // Each becomes a CRM person + a listing_people link (role seller for the
-  // first, co_seller for the rest); the first also syncs the legacy clients
-  // row so the seller portal + Overview name keep working.
+  // Reconcile SELLERS from the edit pop-out (seller_* fields). See linkListingSellers.
   if (orgId && formData.has("seller_name_0")) {
-    const rows: { personId: string | null; name: string; email: string | null; phone: string | null }[] = [];
-    for (let i = 0; formData.has(`seller_name_${i}`); i++) {
-      const name = (str(formData.get(`seller_name_${i}`)) ?? "").trim();
-      if (!name) continue;
-      rows.push({
-        personId: str(formData.get(`seller_person_id_${i}`)) || null,
-        name,
-        email: str(formData.get(`seller_email_${i}`)),
-        phone: str(formData.get(`seller_phone_${i}`)),
-      });
-    }
-    if (rows.length) {
-      // Clear existing seller links, then re-add fresh with correct roles.
-      await supabase.from("listing_people").delete().eq("listing_id", id).in("role", ["seller", "co_seller"]);
-      let primaryClientId: string | null = null;
-      for (let i = 0; i < rows.length; i++) {
-        const s = rows[i];
-        let personId = s.personId;
-        let clientId: string | null = null;
-        if (!personId) {
-          const match = await findMatchingPerson(supabase, orgId, { name: s.name, email: s.email, phone: s.phone });
-          personId = match?.id ?? null;
-          clientId = match?.source_client_id ?? null;
-        }
-        if (!personId) {
-          const cut = s.name.lastIndexOf(" ");
-          const { data: person } = await supabase
-            .from("people")
-            .insert({
-              organization_id: orgId, agent_id, visibility: "organization",
-              first_name: cut > 0 ? s.name.slice(0, cut) : null,
-              last_name: cut > 0 ? s.name.slice(cut + 1) : s.name,
-              display_name: s.name, type: "seller", email: s.email, phone: s.phone,
-            })
-            .select("id, source_client_id")
-            .single();
-          personId = person?.id ?? null;
-          clientId = person?.source_client_id ?? null;
-        }
-        if (!personId) continue;
-        await supabase.from("listing_people").insert({
-          organization_id: orgId, listing_id: id, person_id: personId,
-          role: i === 0 ? "seller" : "co_seller", name_on_deal: s.name,
-        });
-        if (i === 0) primaryClientId = clientId;
-      }
-      // Keep the primary seller's legacy clients row in sync (portal + Overview).
-      const primary = rows[0];
-      if (primary) {
-        if (primaryClientId) {
-          await supabase.from("clients").update({ name: primary.name, email: primary.email, phone: primary.phone }).eq("id", primaryClientId);
-          await supabase.from("listings").update({ client_id: primaryClientId }).eq("id", id);
-        } else {
-          const { data: client } = await supabase
-            .from("clients")
-            .insert({ organization_id: orgId, agent_id, name: primary.name, email: primary.email, phone: primary.phone, type: "seller" })
-            .select("id")
-            .single();
-          if (client?.id) await supabase.from("listings").update({ client_id: client.id }).eq("id", id);
-        }
-      }
-    }
+    await linkListingSellers(supabase, orgId, agent_id, id, readSellerRows(formData), { replace: true });
   }
 
   revalidatePath(`/dashboard/listings/${id}`);
