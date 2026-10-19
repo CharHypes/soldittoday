@@ -26,6 +26,7 @@ import CopyLink from "@/components/dash/CopyLink";
 
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
 type Milestone = { id: string; label: string; sort_order: number; status: string; date: string | null };
+type SellerRow = { id: string; personId: string | null; name: string; email: string; phone: string };
 type Snapshot = {
   total_views: number | null; shares: number | null; favorites: number | null; returning_pct: number | null;
   period_start: string | null; period_end: string | null;
@@ -102,6 +103,15 @@ export default function ListingWorkspace(p: Props) {
   const [tab, setTab] = useState<Tab>("Overview");
   const [menu, setMenu] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  // Sellers editor (supports as many sellers as the listing has).
+  const seedSellers: SellerRow[] = p.keyContacts
+    .filter((c) => /seller/i.test(c.role))
+    .map((c, i) => ({ id: `seed-${i}`, personId: c.personId, name: c.name, email: c.email ?? "", phone: c.phone ?? "" }));
+  const [sellers, setSellers] = useState<SellerRow[]>(
+    seedSellers.length ? seedSellers : [{ id: "seed-0", personId: null, name: p.sellerName ?? "", email: "", phone: "" }],
+  );
+  const addSeller = () => setSellers((rows) => [...rows, { id: `new-${Date.now()}-${rows.length}`, personId: null, name: "", email: "", phone: "" }]);
+  const removeSeller = (rid: string) => setSellers((rows) => rows.filter((r) => r.id !== rid));
   const menuRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const h = (e: MouseEvent) => { if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenu(false); };
@@ -582,6 +592,21 @@ export default function ListingWorkspace(p: Props) {
                   <div className="bo-field"><label>Listed</label><input type="date" name="list_date" defaultValue={l.list_date ?? ""} /></div>
                   <div className="bo-field bo-span2"><label>Photo URL</label><input name="photo_url" defaultValue={l.photo_url ?? ""} placeholder="https://..." /></div>
                 </div>
+              </div>
+              <div className="bo-section">
+                <div className="bo-section-title">Sellers</div>
+                {sellers.map((s, i) => (
+                  <div key={s.id} style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 0.9fr auto", gap: 10, alignItems: "end", marginBottom: 10 }}>
+                    <input type="hidden" name={`seller_person_id_${i}`} defaultValue={s.personId ?? ""} />
+                    <div className="bo-field"><label>{i === 0 ? "Seller" : "Co-seller"}</label><input name={`seller_name_${i}`} defaultValue={s.name} placeholder="Full name" /></div>
+                    <div className="bo-field"><label>Email</label><input name={`seller_email_${i}`} type="email" defaultValue={s.email} /></div>
+                    <div className="bo-field"><label>Phone</label><input name={`seller_phone_${i}`} defaultValue={s.phone} /></div>
+                    {sellers.length > 1
+                      ? <button type="button" className="fn-x" onClick={() => removeSeller(s.id)} aria-label="Remove seller" style={{ fontSize: 18, marginBottom: 8 }}>&times;</button>
+                      : <span />}
+                  </div>
+                ))}
+                <button type="button" className="bo-add" onClick={addSeller}>+ Add seller</button>
               </div>
               <div className="bo-modal-foot">
                 <button type="button" className="bo-btn" onClick={() => setEditOpen(false)}>Cancel</button>
