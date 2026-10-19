@@ -20,7 +20,7 @@ const usd = (n: number) => "$" + n.toLocaleString("en-US", { minimumFractionDigi
 const pct = (n: number) => `${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
 const DEFAULT_SPLITS: Split[] = [{ name: "Charlotte", pct: 80 }, { name: "Christopher", pct: 20 }];
 
-export default function CommissionPanel({ txId, address, init }: { txId: string; address: string | null; init: CommissionInit }) {
+export default function CommissionPanel({ txId, address, init, scope = "transaction" }: { txId: string; address: string | null; init: CommissionInit; scope?: "transaction" | "listing" }) {
   const [salePrice, setSalePrice] = useState(init.sale_price ?? 0);
   const [useFlat, setUseFlat] = useState(init.flat != null && init.flat > 0);
   const [rate, setRate] = useState(init.rate ?? 3);
@@ -119,6 +119,7 @@ export default function CommissionPanel({ txId, address, init }: { txId: string;
         {/* save */}
         <form action={saveCommission} className="pt-1">
           <input type="hidden" name="id" value={txId} />
+          <input type="hidden" name="scope" value={scope} />
           <input type="hidden" name="commission_sale_price" value={salePrice} />
           <input type="hidden" name="commission_rate" value={useFlat ? "" : rate} />
           <input type="hidden" name="commission_flat" value={useFlat ? flat : ""} />

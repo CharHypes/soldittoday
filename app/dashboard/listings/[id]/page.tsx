@@ -16,6 +16,11 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 const SITE = "https://www.soldittoday.com";
+const n = (v: unknown): number | null => {
+  if (v == null || v === "") return null;
+  const x = Number(v);
+  return Number.isFinite(x) ? x : null;
+};
 
 export default async function ListingWorkspacePage({ params }: { params: { id: string } }) {
   const supabase = createSupabaseServer();
@@ -93,6 +98,23 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
           documents={docs ?? []}
           fileNeeds={normalizeFileNeeds(listing.file_needs)}
           docsEnabled={DOCS_ENABLED}
+          commission={
+            // Owner-only: never serialize commission figures to a non-owner's page.
+            isOwner
+              ? {
+                  sale_price: n(listing.commission_sale_price ?? listing.price),
+                  rate: n(listing.commission_rate),
+                  flat: n(listing.commission_flat),
+                  referral_pct: n(listing.referral_pct),
+                  referral_to: listing.referral_to ?? null,
+                  sit_fee: n(listing.sit_fee),
+                  splits: Array.isArray(listing.commission_splits)
+                    ? listing.commission_splits.map((s: any) => ({ name: String(s?.name ?? ""), pct: Number(s?.pct) || 0 }))
+                    : null,
+                  notes: listing.commission_notes ?? null,
+                }
+              : { sale_price: null, rate: null, flat: null, referral_pct: null, referral_to: null, sit_fee: null, splits: null, notes: null }
+          }
           portalUrl={`${SITE}/seller/${listing.portal_token}`}
           listingEmail={listing.email_token ? dealEmailAddress(listing.email_token) : null}
           aiEnabled={AI_ENABLED}

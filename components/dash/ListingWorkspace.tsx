@@ -6,6 +6,7 @@ import {
   toggleListingFileNeed, toggleListingFileNeedCustom, uploadListingDocument, toggleDocumentShare, deleteDocument,
 } from "@/app/dashboard/actions";
 import { visibleItems, type ChkItem, type CustomItem, type FileNeeds } from "@/lib/dealChecklist";
+import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
 import DeleteButton from "@/components/dash/DeleteButton";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 import ListTracImport from "@/components/dash/ListTracImport";
@@ -44,12 +45,13 @@ type Props = {
   documents: DocRow[];
   fileNeeds: FileNeeds;
   docsEnabled: boolean;
+  commission: CommissionInit;
   portalUrl: string;
   listingEmail: string | null;
   aiEnabled: boolean;
 };
 
-const TABS = ["Overview", "Notes", "Checklist", "Documents", "Activity", "Contacts", "Client portal", "Log"] as const;
+const TABS = ["Overview", "Notes", "Checklist", "Documents", "Activity", "Contacts", "Client portal", "Commission", "Log"] as const;
 type Tab = (typeof TABS)[number];
 
 const usd = (n: number | string | null) => {
@@ -432,6 +434,15 @@ export default function ListingWorkspace(p: Props) {
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ============ COMMISSION ============ */}
+      {tab === "Commission" && (
+        <div className="panel">
+          {p.isOwner
+            ? <CommissionPanel txId={l.id} address={l.address} init={p.commission} scope="listing" />
+            : <div className="card"><div className="cardhd"><h3>Commission · owner only</h3></div><div className="cardbody"><p className="emptynote">Commission figures on this listing are visible to the workspace owner only.</p></div></div>}
         </div>
       )}
 

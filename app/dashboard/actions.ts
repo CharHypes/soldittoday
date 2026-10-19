@@ -936,6 +936,7 @@ export async function saveCommission(formData: FormData) {
   const id = str(formData.get("id"));
   if (!id) return;
   if (role !== "owner" && role !== "admin") return;
+  const isListing = str(formData.get("scope")) === "listing";
 
   let splits: { name: string; pct: number }[] | null = null;
   const raw = str(formData.get("splits"));
@@ -953,7 +954,7 @@ export async function saveCommission(formData: FormData) {
   }
 
   await supabase
-    .from("transactions")
+    .from(isListing ? "listings" : "transactions")
     .update({
       commission_sale_price: num(formData.get("commission_sale_price")),
       commission_rate: num(formData.get("commission_rate")),
@@ -965,7 +966,7 @@ export async function saveCommission(formData: FormData) {
       commission_notes: str(formData.get("commission_notes")),
     })
     .eq("id", id);
-  revalidatePath(`/dashboard/buyers/${id}`);
+  revalidatePath(isListing ? `/dashboard/listings/${id}` : `/dashboard/buyers/${id}`);
 }
 
 /** Inline-edit a single deal field from the meta strip (click-to-edit in place). */
