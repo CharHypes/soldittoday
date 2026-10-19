@@ -309,7 +309,7 @@ export default function ContactCard(props: ContactCardProps) {
                       <HouseIcon />
                     </div>
                     <div className="min-w-0">
-                      <Link href={d.href} className="txn-addr block truncate text-[13.5px] font-semibold text-[#dcc4cb] hover:underline">
+                      <Link href={d.href} className="txn-addr block truncate text-[13.5px] font-semibold text-mauve hover:underline">
                         {d.address ?? "Property"}
                       </Link>
                       <p className="mt-0.5 text-[12px] text-dusty">
