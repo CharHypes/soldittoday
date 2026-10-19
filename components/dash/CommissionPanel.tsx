@@ -27,7 +27,7 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
   const [flat, setFlat] = useState(init.flat ?? 0);
   const [referralPct, setReferralPct] = useState(init.referral_pct ?? 0);
   const [referralTo, setReferralTo] = useState(init.referral_to ?? "");
-  const [sitFee, setSitFee] = useState(init.sit_fee ?? 0);
+  const [sitFee, setSitFee] = useState(init.sit_fee ?? 695);
   const [splits, setSplits] = useState<Split[]>(init.splits?.length ? init.splits : DEFAULT_SPLITS);
   const [notes, setNotes] = useState(init.notes ?? "");
   const [copied, setCopied] = useState(false);
@@ -36,26 +36,22 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
     const gross = useFlat ? flat : salePrice * (rate / 100);
     const referralAmt = gross * (referralPct / 100);
     const afterReferral = gross - referralAmt;
-    const net = afterReferral - sitFee;
+    // The transaction fee is NOT taken off the top ... it is a separate flat fee
+    // paid to Sold It Today. The team split is on the full (after-referral) net.
+    const net = afterReferral;
     const splitPctTotal = splits.reduce((s, x) => s + (Number.isFinite(x.pct) ? x.pct : 0), 0);
     const rows = splits.map((s) => ({ name: s.name, pct: s.pct, amount: net * (s.pct / 100) }));
     return { gross, referralAmt, afterReferral, net, splitPctTotal, rows };
   }, [useFlat, flat, salePrice, rate, referralPct, sitFee, splits]);
 
+  // SkySlope breakdown: only the team splits + the transaction fee (to SIT).
   const breakdown = useMemo(() => {
     const L: string[] = [];
-    L.push(`${address || "Deal"} ... buy side`);
-    L.push(`Sale price: ${usd(salePrice)}`);
-    L.push(useFlat ? `Commission (flat): ${usd(c.gross)}` : `Commission (${pct(rate)}): ${usd(c.gross)}`);
-    if (referralPct > 0) {
-      L.push(`Referral${referralTo ? ` to ${referralTo}` : ""} (${pct(referralPct)}): -${usd(c.referralAmt)}`);
-      L.push(`Net after referral: ${usd(c.afterReferral)}`);
-    }
-    if (sitFee > 0) L.push(`SIT fee: -${usd(sitFee)}`);
-    L.push(`Net commission: ${usd(c.net)}`);
-    c.rows.forEach((r) => L.push(`Split ... ${r.name} (${pct(r.pct)}): ${usd(r.amount)}`));
+    L.push(`${address || "Deal"} ... team split`);
+    c.rows.forEach((r) => L.push(`${r.name || "Agent"}: ${pct(r.pct)} = ${usd(r.amount)}`));
+    if (sitFee > 0) L.push(`Transaction fee (to Sold It Today): ${usd(sitFee)}`);
     return L.join("\n");
-  }, [address, salePrice, useFlat, c, rate, referralPct, referralTo, sitFee]);
+  }, [address, c, sitFee]);
 
   const copy = async () => {
     try { await navigator.clipboard.writeText(breakdown); setCopied(true); setTimeout(() => setCopied(false), 1600); } catch {}
@@ -93,7 +89,7 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
             <input className={txt} placeholder="Name / brokerage" value={referralTo} onChange={(e) => setReferralTo(e.target.value)} /></label>
         </div>
 
-        <label className="block space-y-1"><span className={lbl}>SIT fee (flat, off the top)</span>
+        <label className="block space-y-1"><span className={lbl}>Transaction fee <span className="font-normal normal-case tracking-normal text-dusty/60">· flat, paid to Sold It Today</span></span>
           <input type="number" inputMode="decimal" className={`${num} max-w-[160px] text-left`} value={sitFee || ""} onChange={(e) => setSitFee(parseFloat(e.target.value) || 0)} /></label>
 
         {/* splits */}
@@ -105,7 +101,7 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
           {splits.map((s, i) => (
             <div key={i} className="flex items-center gap-2">
               <input className={txt} value={s.name} placeholder="Name" onChange={(e) => setSplits(splits.map((x, j) => j === i ? { ...x, name: e.target.value } : x))} />
-              <div className="relative w-24"><input type="number" inputMode="decimal" step="0.01" className={`${num} pr-6`} value={s.pct || ""} onChange={(e) => setSplits(splits.map((x, j) => j === i ? { ...x, pct: parseFloat(e.target.value) || 0 } : x))} /><span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-dusty">%</span></div>
+              <div className="relative w-24 shrink-0"><input type="number" inputMode="decimal" step="0.01" style={{ textAlign: "right" }} className={`${num} pr-7 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`} value={s.pct || ""} onChange={(e) => setSplits(splits.map((x, j) => j === i ? { ...x, pct: parseFloat(e.target.value) || 0 } : x))} /><span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-xs text-dusty">%</span></div>
               <span className="w-24 shrink-0 text-right text-sm text-pearl/90">{usd(c.rows[i]?.amount ?? 0)}</span>
               {splits.length > 1 && <button type="button" onClick={() => setSplits(splits.filter((_, j) => j !== i))} className="text-dusty hover:text-red-400" aria-label="Remove">×</button>}
             </div>
@@ -140,11 +136,12 @@ export default function CommissionPanel({ txId, address, init, scope = "transact
             <Row k="Gross commission" v={usd(c.gross)} />
             {referralPct > 0 && <Row k={`Referral${referralTo ? ` ... ${referralTo}` : ""} (${pct(referralPct)})`} v={`-${usd(c.referralAmt)}`} muted />}
             {referralPct > 0 && <Row k="After referral" v={usd(c.afterReferral)} />}
-            {sitFee > 0 && <Row k="SIT fee" v={`-${usd(sitFee)}`} muted />}
             <div className="my-1 border-t border-dusty/12" />
             <Row k="Net commission" v={usd(c.net)} strong />
             <div className="my-1 border-t border-dusty/12" />
             {c.rows.map((r, i) => <Row key={i} k={`${r.name || "Unnamed"} (${pct(r.pct)})`} v={usd(r.amount)} />)}
+            {sitFee > 0 && <div className="my-1 border-t border-dusty/12" />}
+            {sitFee > 0 && <Row k="Transaction fee ... to Sold It Today" v={usd(sitFee)} muted />}
           </dl>
         </div>
 
