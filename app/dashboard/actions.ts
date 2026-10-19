@@ -78,6 +78,17 @@ export async function createListing(formData: FormData) {
     .select("id")
     .single();
 
+  // Seed the seller-side closing steps so the Listing workspace has a progress
+  // track from day one (mirrors how a buyer transaction seeds its milestones).
+  if (listing?.id) {
+    await supabase.from("milestones").insert(
+      DEFAULT_LISTING_MILESTONES.map((label, i) => ({
+        organization_id: orgId, listing_id: listing.id, label, sort_order: i + 1,
+        status: i === 0 ? "in_progress" : "upcoming",
+      }))
+    );
+  }
+
   // Create/link a CRM contact (person) so this listing shows on a contact card.
   // Reuse the matched contact when there is one; otherwise create a new person.
   if (clientName && listing?.id) {
@@ -1059,20 +1070,81 @@ export async function toggleTask(formData: FormData) {
   const { supabase } = await ctx();
   const id = str(formData.get("id"));
   const transaction_id = str(formData.get("transaction_id"));
-  if (!id || !transaction_id) return;
+  const listing_id = str(formData.get("listing_id"));
+  if (!id || (!transaction_id && !listing_id)) return;
   const { data: row } = await supabase.from("tasks").select("done").eq("id", id).maybeSingle();
   const next = !row?.done;
   await supabase.from("tasks").update({ done: next, done_at: next ? new Date().toISOString() : null }).eq("id", id);
-  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+  if (transaction_id) revalidatePath(`/dashboard/buyers/${transaction_id}`);
+  if (listing_id) revalidatePath(`/dashboard/listings/${listing_id}`);
 }
 
 export async function deleteTask(formData: FormData) {
   const { supabase } = await ctx();
   const id = str(formData.get("id"));
   const transaction_id = str(formData.get("transaction_id"));
-  if (!id || !transaction_id) return;
+  const listing_id = str(formData.get("listing_id"));
+  if (!id || (!transaction_id && !listing_id)) return;
   await supabase.from("tasks").delete().eq("id", id);
-  revalidatePath(`/dashboard/buyers/${transaction_id}`);
+  if (transaction_id) revalidatePath(`/dashboard/buyers/${transaction_id}`);
+  if (listing_id) revalidatePath(`/dashboard/listings/${listing_id}`);
+}
+
+// ============ Listing tasks + closing steps (seller side) ============
+
+const DEFAULT_LISTING_MILESTONES = [
+  "Listed / Active",
+  "Showings & Marketing",
+  "Offer Accepted",
+  "Inspection",
+  "Appraisal",
+  "Clear to Close",
+  "Closing Day",
+];
+
+export async function addListingTask(formData: FormData) {
+  const { supabase, id: agent_id, orgId } = await ctx();
+  const listing_id = str(formData.get("listing_id"));
+  const title = str(formData.get("title"));
+  if (!listing_id || !title || !orgId) return;
+  await supabase.from("tasks").insert({
+    organization_id: orgId,
+    agent_id,
+    listing_id,
+    title,
+    due_date: str(formData.get("due_date")),
+    assignee: str(formData.get("assignee")),
+  });
+  revalidatePath(`/dashboard/listings/${listing_id}`);
+}
+
+export async function updateListingMilestones(formData: FormData) {
+  const { supabase } = await ctx();
+  const listing_id = str(formData.get("listing_id"));
+  if (!listing_id) return;
+  const { data: ms } = await supabase.from("milestones").select("id").eq("listing_id", listing_id);
+  for (const m of ms ?? []) {
+    const status = str(formData.get(`status_${m.id}`));
+    const date = str(formData.get(`date_${m.id}`));
+    await supabase.from("milestones").update({ status: status ?? "upcoming", date }).eq("id", m.id);
+  }
+  revalidatePath(`/dashboard/listings/${listing_id}`);
+}
+
+/** Seed default seller closing steps for an existing listing that has none. */
+export async function seedListingMilestones(formData: FormData) {
+  const { supabase, orgId } = await ctx();
+  const listing_id = str(formData.get("listing_id"));
+  if (!listing_id || !orgId) return;
+  const { data: existing } = await supabase.from("milestones").select("id").eq("listing_id", listing_id).limit(1);
+  if (existing && existing.length) return; // already seeded
+  await supabase.from("milestones").insert(
+    DEFAULT_LISTING_MILESTONES.map((label, i) => ({
+      organization_id: orgId, listing_id, label, sort_order: i + 1,
+      status: i === 0 ? "in_progress" : "upcoming",
+    }))
+  );
+  revalidatePath(`/dashboard/listings/${listing_id}`);
 }
 
 export async function addBuyerNote(formData: FormData) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addTask, toggleTask, deleteTask } from "@/app/dashboard/actions";
+import { addTask, addListingTask, toggleTask, deleteTask } from "@/app/dashboard/actions";
 
 export type Task = {
   id: string; title: string; due_date: string | null; assignee: string | null;
@@ -14,11 +14,14 @@ const hueOf = (s: string) => AV[[...s].reduce((a, c) => a + c.charCodeAt(0), 0) 
 const today = () => new Date().toISOString().slice(0, 10);
 const dueFmt = (d: string) => new Date(`${d}T00:00:00`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
-export default function TasksPanel({ txId, tasks }: { txId: string; tasks: Task[] }) {
+export default function TasksPanel({ txId, listingId, tasks }: { txId?: string; listingId?: string; tasks: Task[] }) {
   const [adding, setAdding] = useState(false);
   const open = tasks.filter((t) => !t.done).length;
   const done = tasks.length - open;
   const inp = "inp";
+  const addAction = listingId ? addListingTask : addTask;
+  const ParentInput = () =>
+    listingId ? <input type="hidden" name="listing_id" value={listingId} /> : <input type="hidden" name="transaction_id" value={txId ?? ""} />;
 
   return (
     <div className="panel">
@@ -30,9 +33,9 @@ export default function TasksPanel({ txId, tasks }: { txId: string; tasks: Task[
       </div>
 
       {adding && (
-        <form action={addTask} className="card" style={{ padding: 14, marginBottom: 14 }}
+        <form action={addAction} className="card" style={{ padding: 14, marginBottom: 14 }}
           onSubmit={() => setTimeout(() => setAdding(false), 0)}>
-          <input type="hidden" name="transaction_id" value={txId} />
+          <ParentInput />
           <div style={{ display: "grid", gridTemplateColumns: "1fr 140px 150px auto", gap: 10, alignItems: "end" }}>
             <label className="ci"><span className="k">Task</span><input className={inp} name="title" required placeholder="e.g. Order the appraisal" autoFocus /></label>
             <label className="ci"><span className="k">Due</span><input className={inp} type="date" name="due_date" /></label>
@@ -52,7 +55,7 @@ export default function TasksPanel({ txId, tasks }: { txId: string; tasks: Task[
               <div key={t.id} className="clrow" style={{ gridTemplateColumns: "26px minmax(0,1fr) 92px 30px 26px" }}>
                 <form action={toggleTask} style={{ display: "contents" }}>
                   <input type="hidden" name="id" value={t.id} />
-                  <input type="hidden" name="transaction_id" value={txId} />
+                  <ParentInput />
                   <input type="checkbox" className="cbx" defaultChecked={t.done} onChange={(e) => e.currentTarget.form?.requestSubmit()} aria-label={t.title} />
                 </form>
                 <span className={`doc${t.done ? " is-done" : ""}`}>{t.title}</span>
@@ -64,7 +67,7 @@ export default function TasksPanel({ txId, tasks }: { txId: string; tasks: Task[
                   : <span />}
                 <form action={deleteTask} style={{ justifySelf: "center" }}>
                   <input type="hidden" name="id" value={t.id} />
-                  <input type="hidden" name="transaction_id" value={txId} />
+                  <ParentInput />
                   <button type="submit" className="fn-x" aria-label="Delete task">×</button>
                 </form>
               </div>

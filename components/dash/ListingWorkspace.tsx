@@ -4,9 +4,11 @@ import { useEffect, useRef, useState } from "react";
 import {
   updateListing, addSnapshot, syncListingPhoto, deleteListing,
   toggleListingFileNeed, toggleListingFileNeedCustom, uploadListingDocument, toggleDocumentShare, deleteDocument,
+  updateListingMilestones, seedListingMilestones,
 } from "@/app/dashboard/actions";
 import { visibleItems, type ChkItem, type CustomItem, type FileNeeds } from "@/lib/dealChecklist";
 import CommissionPanel, { type CommissionInit } from "@/components/dash/CommissionPanel";
+import TasksPanel, { type Task } from "@/components/dash/TasksPanel";
 import DeleteButton from "@/components/dash/DeleteButton";
 import SellerNoteComposer from "@/components/dash/SellerNoteComposer";
 import ListTracImport from "@/components/dash/ListTracImport";
@@ -20,6 +22,7 @@ import CopyLink from "@/components/dash/CopyLink";
    backends come in a fast follow (Stage 2). */
 
 type KC = { role: string; name: string; company: string | null; email: string | null; phone: string | null; address: string | null; personId: string | null };
+type Milestone = { id: string; label: string; sort_order: number; status: string; date: string | null };
 type Snapshot = {
   total_views: number | null; shares: number | null; favorites: number | null; returning_pct: number | null;
   period_start: string | null; period_end: string | null;
@@ -43,6 +46,8 @@ type Props = {
   notes: NoteRow[];
   snapshots: Snapshot[];
   documents: DocRow[];
+  milestones: Milestone[];
+  tasks: Task[];
   fileNeeds: FileNeeds;
   docsEnabled: boolean;
   commission: CommissionInit;
@@ -51,7 +56,7 @@ type Props = {
   aiEnabled: boolean;
 };
 
-const TABS = ["Overview", "Notes", "Checklist", "Documents", "Activity", "Contacts", "Client portal", "Commission", "Log"] as const;
+const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Activity", "Contacts", "Client portal", "Commission", "Log"] as const;
 type Tab = (typeof TABS)[number];
 
 const usd = (n: number | string | null) => {
@@ -117,6 +122,13 @@ export default function ListingWorkspace(p: Props) {
   const docsDone = chk.docs.filter((d) => p.fileNeeds.docs.includes(d.key)).length + customDocs.filter((c) => c.done).length;
   const actsDone = chk.actions.filter((a) => p.fileNeeds.actions.includes(a.key)).length + customActs.filter((c) => c.done).length;
   const chkTotal = chk.docs.length + chk.actions.length + p.fileNeeds.custom.length;
+
+  // Closing steps (seller milestones).
+  const msDone = p.milestones.filter((m) => m.status === "done").length;
+  const msTotal = p.milestones.length;
+  const msPct = msTotal ? Math.round((msDone / msTotal) * 100) : 0;
+  const msCurrent = p.milestones.find((m) => m.status === "in_progress") ?? p.milestones.filter((m) => m.status === "done").slice(-1)[0];
+  const msNext = (() => { const i = p.milestones.findIndex((m) => m.id === msCurrent?.id); return i >= 0 ? p.milestones[i + 1] : undefined; })();
 
   // Activity log, derived from everything timestamped on this listing.
   type Act = { when: string; kind: string; text: string; detail?: string };
@@ -267,15 +279,20 @@ export default function ListingWorkspace(p: Props) {
               </div>
 
               <div className="card" style={{ marginTop: 18 }}>
-                <div className="cardhd"><h3>Listing snapshot</h3>{latest?.period_end && <span className="clmeta">as of {longDate(latest.period_end)}</span>}</div>
+                <div className="cardhd"><h3>Closing progress</h3><span className="clmeta"><b>{msDone}</b> of {msTotal}</span></div>
                 <div className="cardbody">
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px 18px" }}>
-                    <Field k="Status" v={l.status} />
-                    <Field k="Days on market" v={dom != null ? `${dom}` : null} />
-                    <Field k="Online views" v={latest ? num(latest.total_views) : null} />
-                    <Field k="Favorites" v={latest ? num(latest.favorites) : null} />
-                  </div>
-                  <div style={{ marginTop: 10 }}><button type="button" className="addlink" style={{ border: 0, padding: 0 }} onClick={() => setTab("Activity")}>Manage activity →</button></div>
+                  {msTotal === 0 ? (
+                    <form action={seedListingMilestones}>
+                      <input type="hidden" name="listing_id" value={l.id} />
+                      <p className="emptynote" style={{ marginBottom: 10 }}>No closing steps yet.</p>
+                      <button type="submit" className="btn mauve">Set up closing steps</button>
+                    </form>
+                  ) : (
+                    <>
+                      <div className="prog"><span style={{ width: `${msPct}%` }} /></div>
+                      {msCurrent && <div style={{ marginTop: 8, fontSize: 13, color: "var(--d-ink3)" }}>Current step: <b style={{ color: "var(--d-ink2)" }}>{msCurrent.label}</b>{msNext ? ` · next: ${msNext.label.toLowerCase()}` : ""}</div>}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -318,6 +335,30 @@ export default function ListingWorkspace(p: Props) {
               {chk.actions.map((it) => <ChkRow key={it.key} listingId={l.id} group="actions" item={it} checked={p.fileNeeds.actions.includes(it.key)} />)}
               {customActs.map((c) => <CustomRow key={c.id} listingId={l.id} item={c} />)}
             </div>
+          </div>
+
+          <div className="group">
+            <h2>Closing steps · shown on the seller portal</h2>
+            {p.milestones.length === 0 ? (
+              <div className="cl" style={{ padding: "12px 16px" }}>
+                <form action={seedListingMilestones}><input type="hidden" name="listing_id" value={l.id} /><button type="submit" className="btn mauve">Set up closing steps</button></form>
+              </div>
+            ) : (
+              <form action={updateListingMilestones} className="cl">
+                <input type="hidden" name="listing_id" value={l.id} />
+                {p.milestones.map((m) => (
+                  <div key={m.id} className="clrow" style={{ gridTemplateColumns: "24px minmax(0,1fr) 150px 160px" }}>
+                    <span style={{ color: "var(--d-ink3)", fontSize: 13 }}>{m.sort_order}</span>
+                    <span className="doc">{m.label}</span>
+                    <select name={`status_${m.id}`} defaultValue={m.status} className={inp}>
+                      <option value="upcoming">Upcoming</option><option value="in_progress">In progress</option><option value="done">Done</option>
+                    </select>
+                    <input type="date" name={`date_${m.id}`} defaultValue={m.date ?? ""} className={inp} />
+                  </div>
+                ))}
+                <div style={{ padding: "12px 16px" }}><button type="submit" className="btn mauve">Save closing steps</button></div>
+              </form>
+            )}
           </div>
         </div>
       )}
@@ -436,6 +477,9 @@ export default function ListingWorkspace(p: Props) {
           </div>
         </div>
       )}
+
+      {/* ============ TASKS ============ */}
+      {tab === "Tasks" && <TasksPanel listingId={l.id} tasks={p.tasks} />}
 
       {/* ============ COMMISSION ============ */}
       {tab === "Commission" && (

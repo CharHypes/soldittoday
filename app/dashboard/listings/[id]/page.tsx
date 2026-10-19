@@ -27,13 +27,16 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
   const { data: listing } = await supabase.from("listings").select("*").eq("id", params.id).maybeSingle();
   if (!listing) redirect("/dashboard");
 
-  const [{ data: notes }, { data: snaps }, { data: docs }, { data: links }] = await Promise.all([
+  const [{ data: notes }, { data: snaps }, { data: docs }, { data: links }, { data: milestones }, { data: tasks }] = await Promise.all([
     supabase.from("notes").select("*").eq("listing_id", params.id).order("created_at", { ascending: false }),
     supabase.from("engagement_snapshots").select("*").eq("listing_id", params.id)
       .order("period_end", { ascending: false, nullsFirst: false }).order("captured_at", { ascending: false }).limit(6),
     supabase.from("documents").select("id,name,created_at,uploaded_by,client_visible")
       .eq("listing_id", params.id).order("created_at", { ascending: false }),
     supabase.from("listing_people").select("role, name_on_deal, person_id").eq("listing_id", params.id),
+    supabase.from("milestones").select("id,label,sort_order,status,date").eq("listing_id", params.id).order("sort_order", { ascending: true }),
+    supabase.from("tasks").select("id,title,due_date,assignee,done,done_at,created_at").eq("listing_id", params.id)
+      .order("done", { ascending: true }).order("due_date", { ascending: true, nullsFirst: false }).order("created_at", { ascending: true }),
   ]);
 
   // Key contacts: resolve the linked people records (same shape as the buyer workspace).
@@ -96,6 +99,8 @@ export default async function ListingWorkspacePage({ params }: { params: { id: s
           notes={(notes ?? []).map((n) => ({ id: n.id, body: n.body, client_visible: n.client_visible, created_at: n.created_at }))}
           snapshots={snaps ?? []}
           documents={docs ?? []}
+          milestones={(milestones ?? []).map((m) => ({ id: m.id, label: m.label, sort_order: m.sort_order, status: m.status, date: m.date }))}
+          tasks={(tasks ?? []).map((t) => ({ id: t.id, title: t.title, due_date: t.due_date, assignee: t.assignee, done: t.done, done_at: t.done_at, created_at: t.created_at }))}
           fileNeeds={normalizeFileNeeds(listing.file_needs)}
           docsEnabled={DOCS_ENABLED}
           commission={
