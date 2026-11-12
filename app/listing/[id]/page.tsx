@@ -18,16 +18,56 @@ import { contact } from "@/lib/data";
 // Default "Nearby" tiles on the detail page (shown to everyone, no prefs set).
 const NEARBY_DEFAULT: AmenityKey[] = ["hospital", "grocery", "school_elem", "pharmacy"];
 
-export const metadata: Metadata = {
-  title: "Home for Sale | SOLD IT TODAY",
-  // Individual IDX listings change often and duplicate across broker sites;
-  // keep them out of the index (still followable) to avoid thin/duplicate SEO.
-  robots: { index: false, follow: true },
-};
 export const dynamic = "force-dynamic";
+
+const SITE = "https://www.soldittoday.com";
 
 function money(n: number): string {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+}
+
+// Per-listing link preview (Open Graph) so a shared link shows the HOUSE PHOTO
+// and the address under the Sold It Today brand ... never a personal name.
+// IDX listings change often + duplicate across broker sites, so keep them out
+// of search indexing (still followable), same as before.
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const listing = await getListing(params.id);
+  if (!listing) {
+    return { title: "Home for Sale | Sold It Today", robots: { index: false, follow: true } };
+  }
+  const cityLine = [listing.city, [listing.state, listing.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
+  const headline = listing.showAddress
+    ? [listing.address, cityLine].filter(Boolean).join(", ")
+    : `Home for sale in ${listing.city || "Southeast Michigan"}`;
+  const title = `${headline} | Sold It Today`;
+  const description = [
+    listing.price ? money(listing.price) : null,
+    listing.beds != null ? `${listing.beds} bd` : null,
+    listing.baths != null ? `${listing.baths} ba` : null,
+    listing.sqft != null ? `${listing.sqft.toLocaleString("en-US")} sqft` : null,
+  ].filter(Boolean).join("  ·  ") || "View this home for sale with Sold It Today.";
+  const photo = listing.photos?.[0] ?? listing.photoUrl ?? null;
+  const url = `${SITE}/listing/${params.id}`;
+  return {
+    title,
+    description,
+    robots: { index: false, follow: true },
+    alternates: { canonical: url },
+    openGraph: {
+      title: headline,
+      description,
+      url,
+      siteName: "Sold It Today",
+      type: "website",
+      ...(photo ? { images: [{ url: photo, alt: listing.showAddress ? listing.address : "Home for sale" }] } : {}),
+    },
+    twitter: {
+      card: photo ? "summary_large_image" : "summary",
+      title: headline,
+      description,
+      ...(photo ? { images: [photo] } : {}),
+    },
+  };
 }
 
 export default async function ListingPage({ params }: { params: { id: string } }) {
