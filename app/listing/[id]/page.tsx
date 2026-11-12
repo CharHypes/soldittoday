@@ -36,8 +36,12 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
     return { title: "Home for Sale | Sold It Today", robots: { index: false, follow: true } };
   }
   const cityLine = [listing.city, [listing.state, listing.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
+  // The MLS address (UnparsedAddress) often already includes the city/state/zip,
+  // so only append cityLine when the address does not already contain the city.
+  const addrHasCity =
+    !!listing.city && listing.address.toLowerCase().includes(listing.city.toLowerCase());
   const headline = listing.showAddress
-    ? [listing.address, cityLine].filter(Boolean).join(", ")
+    ? (addrHasCity ? listing.address : [listing.address, cityLine].filter(Boolean).join(", "))
     : `Home for sale in ${listing.city || "Southeast Michigan"}`;
   const title = `${headline} | Sold It Today`;
   const description = [
