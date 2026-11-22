@@ -25,22 +25,39 @@ export async function GET(request: Request) {
   const token = process.env.IDX_FEED_TOKEN;
   if (!token) return NextResponse.json({ error: "feed token missing" }, { status: 500 });
 
-  const url = id
-    ? `${SPARK_BASE}/listings/${encodeURIComponent(id)}?_expand=Photos`
-    : `${SPARK_BASE}/listings?_filter=${encodeURIComponent(`ListingId Eq '${String(mls).replace(/'/g, "''")}'`)}&_limit=1`;
+  // Try several ways to resolve the record; report what each one did.
+  const attempts: { label: string; url: string }[] = [];
+  if (id) {
+    attempts.push({ label: "byPathId", url: `${SPARK_BASE}/listings/${encodeURIComponent(id)}?_expand=Photos` });
+    attempts.push({ label: "filterId", url: `${SPARK_BASE}/listings?_filter=${encodeURIComponent(`Id Eq '${String(id).replace(/'/g, "''")}'`)}&_expand=Photos&_limit=1` });
+    attempts.push({ label: "filterListingId", url: `${SPARK_BASE}/listings?_filter=${encodeURIComponent(`ListingId Eq '${String(id).replace(/'/g, "''")}'`)}&_expand=Photos&_limit=1` });
+  }
+  if (mls) {
+    attempts.push({ label: "filterMls", url: `${SPARK_BASE}/listings?_filter=${encodeURIComponent(`ListingId Eq '${String(mls).replace(/'/g, "''")}'`)}&_expand=Photos&_limit=1` });
+  }
 
+  const tried: { label: string; status: number; ok: boolean; body?: string }[] = [];
   try {
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      return NextResponse.json({ error: "feed not ok", status: res.status }, { status: 502 });
-    }
-    const json = await res.json();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rec: any = json?.D?.Results?.[0];
-    if (!rec) return NextResponse.json({ error: "not found" }, { status: 404 });
+    let rec: any = null;
+    for (const a of attempts) {
+      const res = await fetch(a.url, {
+        headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        const body = await res.text().catch(() => "");
+        tried.push({ label: a.label, status: res.status, ok: false, body: body.slice(0, 300) });
+        continue;
+      }
+      const json = await res.json();
+      const r = json?.D?.Results?.[0];
+      tried.push({ label: a.label, status: res.status, ok: true });
+      if (r) { rec = r; break; }
+    }
+    if (!rec) {
+      return NextResponse.json({ error: "no record from any method", tried }, { status: 404 });
+    }
     const f = rec.StandardFields || {};
 
     // Any field whose NAME hints at area / square footage / grade / finished.
@@ -56,6 +73,7 @@ export async function GET(request: Request) {
       address: f.UnparsedAddress,
       city: f.City,
       currentlyMappedSqft: f.BuildingAreaTotal ?? f.LivingArea ?? null,
+      resolvedVia: tried,
       areaRelatedFields: matched,
       allFieldNames: Object.keys(f).sort(),
     });
