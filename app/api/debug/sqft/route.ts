@@ -18,8 +18,10 @@ export async function GET(request: Request) {
   }
   const id = searchParams.get("id");
   const mls = searchParams.get("mls");
-  if (!id && !mls) {
-    return NextResponse.json({ error: "pass ?id=<ListingKey> or ?mls=<ListingId>" }, { status: 400 });
+  const city = searchParams.get("city");
+  const street = searchParams.get("street"); // substring of the address, e.g. "13th"
+  if (!id && !mls && !city) {
+    return NextResponse.json({ error: "pass ?id= or ?mls= or ?city=&street=" }, { status: 400 });
   }
 
   const token = process.env.IDX_FEED_TOKEN;
@@ -34,6 +36,9 @@ export async function GET(request: Request) {
   }
   if (mls) {
     attempts.push({ label: "filterMls", url: `${SPARK_BASE}/listings?_filter=${encodeURIComponent(`ListingId Eq '${String(mls).replace(/'/g, "''")}'`)}&_expand=Photos&_limit=1` });
+  }
+  if (city) {
+    attempts.push({ label: "filterCity", url: `${SPARK_BASE}/listings?_filter=${encodeURIComponent(`City Eq '${String(city).replace(/'/g, "''")}'`)}&_expand=Photos&_limit=50`, many: true } as any);
   }
 
   const tried: { label: string; status: number; ok: boolean; body?: string }[] = [];
@@ -51,9 +56,21 @@ export async function GET(request: Request) {
         continue;
       }
       const json = await res.json();
-      const r = json?.D?.Results?.[0];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const results: any[] = json?.D?.Results ?? [];
       tried.push({ label: a.label, status: res.status, ok: true });
-      if (r) { rec = r; break; }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((a as any).many) {
+        const needle = (street || "").toLowerCase();
+        const hit = needle
+          ? results.find((x) => String(x?.StandardFields?.UnparsedAddress || "").toLowerCase().includes(needle))
+          : results[0];
+        if (hit) { rec = hit; break; }
+        // No street match: fall through, but remember how many we saw.
+        tried[tried.length - 1].body = `city returned ${results.length}, none matched "${street}"`;
+        continue;
+      }
+      if (results[0]) { rec = results[0]; break; }
     }
     if (!rec) {
       return NextResponse.json({ error: "no record from any method", tried }, { status: 404 });
