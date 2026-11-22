@@ -276,6 +276,22 @@ function mapRecord(rec: any): Listing | null {
     ? f.Photos.map((p: any) => https(p?.UriLarge || p?.Uri)).filter(Boolean)
     : [];
 
+  // Total finished square footage. In the MichRIC/RESO feed, LivingArea is the
+  // TOTAL finished living area (above grade PLUS finished basement) ... the same
+  // number Zillow and the public portals display. BuildingAreaTotal is often only
+  // the above-grade footprint (e.g. 1,176 when the true total is 2,365), so we
+  // prefer LivingArea, then BuildingAreaTotal, then the sum of finished areas.
+  const aboveFinished = num(f.AboveGradeFinishedArea);
+  const belowFinished = num(f.BelowGradeFinishedArea);
+  const summedFinished =
+    aboveFinished != null || belowFinished != null
+      ? (aboveFinished ?? 0) + (belowFinished ?? 0)
+      : null;
+  const totalSqft =
+    num(f.LivingArea) ??
+    num(f.BuildingAreaTotal) ??
+    (summedFinished && summedFinished > 0 ? summedFinished : null);
+
   return {
     id: String(rec.Id || f.ListingKey || ""),
     mlsNumber: String(f.ListingId || f.ListingKey || rec.Id || ""),
@@ -287,7 +303,7 @@ function mapRecord(rec: any): Listing | null {
     price: num(f.ListPrice) ?? 0,
     beds: num(f.BedsTotal),
     baths: num(f.BathsTotal),
-    sqft: num(f.BuildingAreaTotal) ?? num(f.LivingArea),
+    sqft: totalSqft,
     propertyType: f.PropertyType || "",
     status: mapStatus(f.MlsStatus),
     photoUrl: photos[0] ?? null,
