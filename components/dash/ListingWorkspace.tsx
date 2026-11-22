@@ -5,6 +5,7 @@ import {
   updateListing, addSnapshot, syncListingPhoto, deleteListing,
   toggleListingFileNeed, toggleListingFileNeedCustom, uploadListingDocument, toggleDocumentShare, deleteDocument,
   updateListingMilestones, seedListingMilestones,
+  saveListingPublic, uploadListingPhotos, removeListingPhoto,
 } from "@/app/dashboard/actions";
 import { visibleItems, type ChkItem, type CustomItem, type FileNeeds } from "@/lib/dealChecklist";
 import { avatarClass } from "@/lib/avatarColor";
@@ -38,6 +39,8 @@ type Listing = {
   price: number | null; beds: number | null; baths: number | null; sqft: number | null;
   status: string | null; list_date: string | null; mls_number: string | null; photo_url: string | null;
   email_token: string | null; created_at: string | null;
+  published?: boolean | null; public_slug?: string | null; description?: string | null;
+  photos?: string[] | null; overrides?: Record<string, unknown> | null;
 };
 
 type Props = {
@@ -61,7 +64,7 @@ type Props = {
   aiEnabled: boolean;
 };
 
-const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Email generator", "Activity", "Contacts", "Client portal", "Commission", "Log"] as const;
+const TABS = ["Overview", "Notes", "Checklist", "Documents", "Tasks", "Email generator", "Activity", "Contacts", "Client portal", "Public page", "Commission", "Log"] as const;
 type Tab = (typeof TABS)[number];
 
 const usd = (n: number | string | null) => {
@@ -84,6 +87,10 @@ const daysOnMarket = (s: string | null) => {
   return Math.max(0, Math.floor((Date.now() - d.getTime()) / 86_400_000));
 };
 const NS = <span style={{ color: "var(--d-ink3)" }}>Not set</span>;
+
+const PUBLIC_SITE = "https://www.soldittoday.com";
+const slugify = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
 
 function Copy({ text, className = "cpic" }: { text: string; className?: string }) {
   const [done, setDone] = useState(false);
@@ -508,6 +515,109 @@ export default function ListingWorkspace(p: Props) {
           </div>
         </div>
       )}
+
+      {/* ============ PUBLIC PAGE (FSBO + overrides) ============ */}
+      {tab === "Public page" && (() => {
+        const isFsbo = !l.mls_number;
+        const defaultSlug = slugify([l.address ?? "", l.city ?? ""].filter(Boolean).join(" "));
+        const ov = (k: string) => {
+          const v = l.overrides?.[k];
+          return v == null ? "" : String(v);
+        };
+        return (
+          <div className="panel">
+            <div className="card">
+              <div className="cardhd">
+                <h3>Public page</h3>
+                <span className="clmeta" style={l.published ? { color: "var(--d-green)" } : undefined}>
+                  {l.published ? "Live" : "Draft"}
+                </span>
+              </div>
+              <div className="cardbody">
+                <p className="emptynote" style={{ marginBottom: 10 }}>
+                  {isFsbo
+                    ? "For Sale by Owner (no MLS). Publishing gives it a shareable page on soldittoday.com with the house photo."
+                    : "Publish to overlay your corrections (sq ft, price, description) onto this MLS listing's public page."}
+                </p>
+
+                {l.published && l.public_slug && (
+                  <div style={{ marginBottom: 14 }}>
+                    <div className="efield"><div className="k">Public link</div></div>
+                    <CopyLink url={`${PUBLIC_SITE}/l/${l.public_slug}`} />
+                    <div style={{ marginTop: 8 }}>
+                      <a href={`${PUBLIC_SITE}/l/${l.public_slug}`} target="_blank" rel="noreferrer" className="addlink" style={{ border: 0, padding: 0 }}>Open public page →</a>
+                    </div>
+                  </div>
+                )}
+
+                <form action={saveListingPublic} className="pubform">
+                  <input type="hidden" name="id" value={l.id} />
+                  <input type="hidden" name="address" value={l.address ?? ""} />
+                  <input type="hidden" name="city" value={l.city ?? ""} />
+
+                  <label className="pubrow">
+                    <input type="checkbox" name="published" defaultChecked={!!l.published} />
+                    <span>Published to the public site</span>
+                  </label>
+
+                  <div className="efield">
+                    <div className="k">Custom link (optional)</div>
+                    <div className="eval" style={{ gap: 4 }}>
+                      <span style={{ color: "var(--d-ink3)" }}>/l/</span>
+                      <input name="public_slug" defaultValue={l.public_slug ?? defaultSlug} placeholder={defaultSlug} className="pubinput" />
+                    </div>
+                  </div>
+
+                  <div className="efield">
+                    <div className="k">Public description</div>
+                    <textarea name="description" defaultValue={l.description ?? ""} rows={4} className="pubinput" placeholder="What makes this home special..." />
+                  </div>
+
+                  {!isFsbo && (
+                    <fieldset className="pubfs">
+                      <legend>Override the MLS feed (leave blank to keep the feed value)</legend>
+                      <div className="pubgrid">
+                        <label className="k">Sq ft<input name="ov_sqft" type="number" defaultValue={ov("sqft")} className="pubinput" /></label>
+                        <label className="k">Price<input name="ov_price" type="number" defaultValue={ov("price")} className="pubinput" /></label>
+                        <label className="k">Beds<input name="ov_beds" type="number" defaultValue={ov("beds")} className="pubinput" /></label>
+                        <label className="k">Baths<input name="ov_baths" type="number" step="0.5" defaultValue={ov("baths")} className="pubinput" /></label>
+                      </div>
+                    </fieldset>
+                  )}
+
+                  <button type="submit" className="bo-save" style={{ marginTop: 12 }}>Save public page</button>
+                </form>
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="cardhd"><h3>Photos</h3><span className="clmeta">{l.photos?.length ?? 0} uploaded</span></div>
+              <div className="cardbody">
+                <form action={uploadListingPhotos} className="pubform">
+                  <input type="hidden" name="id" value={l.id} />
+                  <input type="file" name="photos" accept="image/*" multiple className="pubinput" />
+                  <button type="submit" className="bo-save" style={{ marginTop: 10 }}>Upload photos</button>
+                </form>
+                {!!l.photos?.length && (
+                  <div className="pubphotos">
+                    {l.photos.map((url) => (
+                      <div className="pubphoto" key={url}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt="" />
+                        <form action={removeListingPhoto}>
+                          <input type="hidden" name="id" value={l.id} />
+                          <input type="hidden" name="url" value={url} />
+                          <button type="submit" className="pubx" title="Remove photo">×</button>
+                        </form>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* ============ TASKS ============ */}
       {tab === "Tasks" && <TasksPanel listingId={l.id} tasks={p.tasks} avatarStyle={p.avatarStyle} />}

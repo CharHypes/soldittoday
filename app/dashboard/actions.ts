@@ -10,6 +10,7 @@ import { AI_ENABLED, draftWithClaude } from "@/lib/ai";
 import { getListingByMlsNumber } from "@/lib/idx";
 import { findMatchingPerson } from "@/lib/peopleMatch";
 import { normalizeFileNeeds } from "@/lib/dealChecklist";
+import { slugifyAddress } from "@/lib/publicListing";
 
 const num = (v: FormDataEntryValue | null): number | null => {
   const s = String(v ?? "").trim();
@@ -400,6 +401,124 @@ export async function updateListing(formData: FormData) {
 
   revalidatePath(`/dashboard/listings/${id}`);
   revalidatePath("/dashboard");
+}
+
+// ---- Public listing: FSBO + overrides (CRM Stage 27) ----
+
+/** The public_slug unique index is cross-tenant, so check globally with the
+ *  admin client. Appends -2, -3, ... until free. Falls back to the clean slug
+ *  when the admin key is absent (dev). */
+async function uniqueSlug(base: string, selfId: string): Promise<string> {
+  const clean = base || `listing-${selfId.slice(0, 8)}`;
+  const admin = createAdminClient();
+  if (!admin) return clean;
+  let candidate = clean;
+  for (let n = 2; n < 60; n++) {
+    const { data } = await admin.from("listings").select("id").eq("public_slug", candidate).limit(1).maybeSingle();
+    if (!data || data.id === selfId) return candidate;
+    candidate = `${clean}-${n}`;
+  }
+  return `${clean}-${selfId.slice(0, 6)}`;
+}
+
+/**
+ * Save the "Public page" settings for a listing: publish on/off, the human
+ * slug, the public description, and (for a feed listing) only the fields
+ * Charlotte deliberately overrides. RLS scopes the update to her own listing.
+ */
+export async function saveListingPublic(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  if (!id) return;
+
+  const publish = ["on", "true", "1"].includes(String(formData.get("published") ?? ""));
+  const description = str(formData.get("description"));
+
+  // Deliberate overrides for a feed listing (omit any left blank).
+  const overrides: Record<string, number | string> = {};
+  const oPrice = num(formData.get("ov_price"));
+  const oBeds = num(formData.get("ov_beds"));
+  const oBaths = num(formData.get("ov_baths"));
+  const oSqft = num(formData.get("ov_sqft"));
+  const oStatus = str(formData.get("ov_status"));
+  if (oPrice !== null) overrides.price = oPrice;
+  if (oBeds !== null) overrides.beds = oBeds;
+  if (oBaths !== null) overrides.baths = oBaths;
+  if (oSqft !== null) overrides.sqft = oSqft;
+  if (oStatus) overrides.status = oStatus;
+  if (description) overrides.description = description;
+
+  // Resolve the slug: use the typed value, else build from the address.
+  const typed = str(formData.get("public_slug"));
+  const address = str(formData.get("address")) ?? "";
+  const city = str(formData.get("city")) ?? "";
+  let slug: string | null = null;
+  if (publish || typed) {
+    slug = await uniqueSlug(slugifyAddress(typed || `${address} ${city}`), id);
+  }
+
+  await supabase
+    .from("listings")
+    .update({
+      published: publish,
+      public_slug: slug,
+      description,
+      overrides: Object.keys(overrides).length ? overrides : null,
+    })
+    .eq("id", id);
+
+  revalidatePath(`/dashboard/listings/${id}`);
+  if (slug) revalidatePath(`/l/${slug}`);
+  revalidatePath("/dashboard");
+}
+
+/** Upload one or more photos for a listing (FSBO gallery). Stores OUR copies in
+ *  the public listing-photos bucket and appends their URLs to listings.photos. */
+export async function uploadListingPhotos(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  if (!id) return;
+  const admin = createAdminClient();
+  if (!admin) return;
+
+  const files = formData.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
+  if (!files.length) return;
+
+  const { data: row } = await supabase.from("listings").select("photos, photo_url").eq("id", id).single();
+  const current: string[] = Array.isArray(row?.photos) ? (row!.photos as string[]) : [];
+  const added: string[] = [];
+  for (const file of files) {
+    const ext = (file.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    const path = `fsbo/${id}/${randomUUID()}.${ext}`;
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const up = await admin.storage
+      .from(LISTING_PHOTOS_BUCKET)
+      .upload(path, bytes, { contentType: file.type || "image/jpeg", upsert: true });
+    if (up.error) continue;
+    const { data } = admin.storage.from(LISTING_PHOTOS_BUCKET).getPublicUrl(path);
+    if (data?.publicUrl) added.push(data.publicUrl);
+  }
+  if (!added.length) return;
+
+  const photos = [...current, ...added];
+  const patch: Record<string, unknown> = { photos };
+  if (!row?.photo_url) patch.photo_url = photos[0];
+  await supabase.from("listings").update(patch).eq("id", id);
+  revalidatePath(`/dashboard/listings/${id}`);
+}
+
+/** Remove one photo URL from a listing's gallery. */
+export async function removeListingPhoto(formData: FormData) {
+  const { supabase } = await ctx();
+  const id = str(formData.get("id"));
+  const url = str(formData.get("url"));
+  if (!id || !url) return;
+  const { data: row } = await supabase.from("listings").select("photos, photo_url").eq("id", id).single();
+  const photos = (Array.isArray(row?.photos) ? (row!.photos as string[]) : []).filter((p) => p !== url);
+  const patch: Record<string, unknown> = { photos };
+  if (row?.photo_url === url) patch.photo_url = photos[0] ?? null;
+  await supabase.from("listings").update(patch).eq("id", id);
+  revalidatePath(`/dashboard/listings/${id}`);
 }
 
 export async function addNote(formData: FormData) {

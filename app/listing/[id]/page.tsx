@@ -6,7 +6,8 @@ import ComplianceFooter from "@/components/search/ComplianceFooter";
 import PhotoGallery from "@/components/search/PhotoGallery";
 import FavoriteButton from "@/components/search/FavoriteButton";
 import ShareButton from "@/components/search/ShareButton";
-import { getListing, getSimilarListings, formatUpdated, IDX_DISCLAIMER } from "@/lib/idx";
+import { getListing, getSimilarListings, formatUpdated, IDX_DISCLAIMER, type ListingDetail } from "@/lib/idx";
+import { getListingOverride, type ListingOverride } from "@/lib/publicListing";
 import ListingCard from "@/components/search/ListingCard";
 import ListingPaymentCalculator from "@/components/search/ListingPaymentCalculator";
 import WhyThisHomeWorks from "@/components/search/WhyThisHomeWorks";
@@ -26,15 +27,30 @@ function money(n: number): string {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 }
 
+// Overlay Charlotte's own published values (sqft, price, etc.) onto a feed
+// listing. Only fields she actually set are present on the override.
+function applyOverride(l: ListingDetail, o: ListingOverride): ListingDetail {
+  return {
+    ...l,
+    ...(o.price != null ? { price: o.price } : {}),
+    ...(o.beds != null ? { beds: o.beds } : {}),
+    ...(o.baths != null ? { baths: o.baths } : {}),
+    ...(o.sqft != null ? { sqft: o.sqft } : {}),
+    ...(o.description ? { description: o.description } : {}),
+  };
+}
+
 // Per-listing link preview (Open Graph) so a shared link shows the HOUSE PHOTO
 // and the address under the Sold It Today brand ... never a personal name.
 // IDX listings change often + duplicate across broker sites, so keep them out
 // of search indexing (still followable), same as before.
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const listing = await getListing(params.id);
-  if (!listing) {
+  const base = await getListing(params.id);
+  if (!base) {
     return { title: "Home for Sale | Sold It Today", robots: { index: false, follow: true } };
   }
+  const ov = await getListingOverride(base.mlsNumber);
+  const listing = ov ? applyOverride(base, ov) : base;
   const cityLine = [listing.city, [listing.state, listing.zip].filter(Boolean).join(" ")].filter(Boolean).join(", ");
   // The MLS address (UnparsedAddress) often already includes the city/state/zip,
   // so only append cityLine when the address does not already contain the city.
@@ -75,7 +91,10 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 }
 
 export default async function ListingPage({ params }: { params: { id: string } }) {
-  const listing = await getListing(params.id);
+  const base = await getListing(params.id);
+  // Overlay any values Charlotte set on our own record for this MLS listing.
+  const override = base ? await getListingOverride(base.mlsNumber) : null;
+  const listing = base && override ? applyOverride(base, override) : base;
 
   if (!listing) {
     return (
